@@ -54,7 +54,8 @@ class Config:
                    'videoMediaConverter_mpg',
                    'videoMediaConverter_avi', 'audioMediaConverter_ogg',
                    'audioMediaConverter_au', 'audioMediaConverter_mp3',
-                   'audioMediaConverter_wav', 'ffmpegPath'),
+                   'audioMediaConverter_wav', 'ffmpegPath',
+                   'wtkemulatorpath'),
         'user': ('locale', 'lastDir', 'showPreferencesOnStart'),
     }
 
@@ -161,6 +162,8 @@ class Config:
         self.audioMediaConverter_mp3 = ""
         self.audioMediaConverter_wav = ""
         self.ffmpegPath = ""
+        self.wtkemulatorpath = ""
+        
         self.mediaProfilePath = self.exePath.dirname()/'mediaprofiles'
         
         # likewise, a canonical (English) names of iDevices not to show in the
@@ -194,6 +197,13 @@ class Config:
         self.loadLocales()
         self.loadStyles()
 
+
+    #its here so it can be used in standalone and in linuxconfig
+    def _setDefaultMobilePathLinux(self):
+        self.wtkemulatorpath = "/opt/WTK2.5.2/bin/emulator"
+        
+    def _setDefaultMobilePathWin(self):
+        self.wtkemulatorpath = ""
 
     def _overrideDefaultVals(self):
         """
