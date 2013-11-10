@@ -48,6 +48,10 @@ class StandaloneConfig(Config):
         self.stylesDir     = Path(exePath/'style').abspath()
         self.styles        = []
         self.lastDir       = exePath
+        if os.name == "posix":
+            self._setDefaultMobilePathLinux()
+        elif os.name[0:3] == "win":
+            self._setDefaultMobilePathWin() 
 
     def _getConfigPathOptions(self):
         """
