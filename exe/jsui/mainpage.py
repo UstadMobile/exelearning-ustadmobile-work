@@ -59,6 +59,7 @@ from urllib                      import unquote, urlretrieve
 from exe.engine.locationbuttons import LocationButtons
 from exe.export.epub3export import Epub3Export
 from exe.export.xmlexport import XMLExport
+from exe.export.wtkpreviewthread import WTKPreviewThread
 
 from exe.engine.lom import lomsubs
 from exe.engine.lom.lomclassification import Classification
@@ -972,7 +973,9 @@ class MainPage(RenderableLivePage):
     def exportXML(self, client, filename, stylesDir):
         try:
             xmlExport = XMLExport(self.config, stylesDir, filename)
-            xmlExport.export(self.package)        
+            xmlExport.export(self.package)
+            client.alert(_(u'Ustad Mobile version exported to %s') % filename)
+            self._startFileWTK(filename)        
         except Exception, e:
             client.alert(_('EXPORT FAILED!\n%s') % str(e))
             raise
@@ -1213,6 +1216,11 @@ class MainPage(RenderableLivePage):
         else:
             filename /= 'index.html'
             G.application.config.browser.open('file://'+filename)
+            
+    # run the mobile emulator (j2me)
+    def _startFileWTK(self, filename):
+        wtkPreviewThread = WTKPreviewThread(filename)
+        wtkPreviewThread.start()
 
     def _loadPackage(self, client, filename, newLoad=True,
                      destinationPackage=None):
