@@ -42,7 +42,7 @@ class WebsiteExport(object):
     """
     WebsiteExport will export a package as a website of HTML pages
     """
-    def __init__(self, config, styleDir, filename, prefix="", report=False):
+    def __init__(self, config, styleDir, filename, prefix="", report=False, skipNavigation=False, ustadMobileMode=False):
         """
         'stylesDir' is the directory where we can copy the stylesheets from
         'outputDir' is the directory that will be [over]written
@@ -58,6 +58,8 @@ class WebsiteExport(object):
         self.pages        = []
         self.prefix       = prefix
         self.report       = report
+        self.skipNavigation = skipNavigation
+        self.ustadMobileMode = ustadMobileMode
 
     def exportZip(self, package):
         """ 
@@ -269,6 +271,11 @@ class WebsiteExport(object):
             if dT != "HTML5":
                 jsFile = (self.scriptsDir/'exe_html5.js')
                 jsFile.copyfile(outputDir/'exe_html5.js')
+
+        if self.ustadMobileMode:
+            self.templatesDir.copylist(WebsitePage.getUstadMobileScriptList(), outputDir)
+            self.templatesDir.copylist(WebsitePage.getUstadMobileCSSList(), outputDir)
+            
 
         if hasattr(package, 'exportSource') and package.exportSource:
             (G.application.config.webDir/'templates'/'content.xsd').copyfile(outputDir/'content.xsd')

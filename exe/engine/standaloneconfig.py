@@ -25,6 +25,8 @@ configuration
 import sys, os
 from exe.engine.config import Config
 from exe.engine.path import Path
+from exe                      import globals as G
+
 
 # ===========================================================================
 class StandaloneConfig(Config):
@@ -37,7 +39,11 @@ class StandaloneConfig(Config):
         """
         Setup with our default settings
         """
-        self.exePath = Path(sys.argv[0])
+        if G.application.exePathOverride is None:
+            self.exePath = Path(sys.argv[0])
+        else:
+            self.exePath = Path(G.application.exePathOverride)
+            
         if self.exePath.isfile():
             self.exePath = self.exePath.dirname()
         exePath = self.exePath
@@ -50,6 +56,7 @@ class StandaloneConfig(Config):
         self.lastDir       = exePath
         if os.name == "posix":
             self._setDefaultMobilePathLinux()
+            self._setDefaultMediaPathLinux()
         elif os.name[0:3] == "win":
             self._setDefaultMobilePathWin() 
 

@@ -30,8 +30,9 @@ from exe.engine.error         import Error
 from exe.engine.path          import Path
 from exe.engine.version       import release
 from exe.export.pages         import Page, uniquifyNames
-from exe.webui                import common 
+from exe.webui                import common
 from exe                      import globals as G
+
 log = logging.getLogger(__name__)
 
 
@@ -41,18 +42,18 @@ class WebsitePage(Page):
     This class transforms an eXe node into a page on a self-contained website
     """
 
-    def save(self, outputDir, prevPage, nextPage, pages):
+    def save(self, outputDir, prevPage, nextPage, pages, ustadMobileMode = False, skipNavLinks = False):
         """
         This is the main function. It will render the page and save it to a
         file.  'outputDir' is the directory where the filenames will be saved
         (a 'path' instance)
         """
         outfile = open(outputDir / self.name+".html", "wb")
-        outfile.write(self.render(prevPage, nextPage, pages))
+        outfile.write(self.render(prevPage, nextPage, pages, ustadMobileMode = ustadMobileMode, skipNavLinks = skipNavLinks))
         outfile.close()
         
 
-    def render(self, prevPage, nextPage, pages):
+    def render(self, prevPage, nextPage, pages, ustadMobileMode = False, skipNavLinks = False):
         """
         Returns an XHTML string rendering this page.
         """
@@ -126,11 +127,26 @@ class WebsitePage(Page):
         html += u'<script type="text/javascript" src="lernmodule_net.js"></script>'+lb
         if common.hasMagnifier(self.node):
             html += u'<script type="text/javascript" src="mojomagnify.js"></script>'+lb
+        
+        if ustadMobileMode == True:
+            html += WebsitePage.makeUstadMobileHeadElement(escape(self.node.titleLong))
+        
         # Some styles might have their own JavaScript files (see their config.xml file)
         if style.hasValidConfig:
             html += style.get_extra_head()
         html += u"</head>"+lb
-        html += u'<body class="exe-web-site">'+lb
+        
+        onLoadFunction = ""
+        if ustadMobileMode == True:
+            onLoadFunction = " onload='_onLoadFunction();' "
+        html += u'<body class="exe-web-site" %s>' % onLoadFunction
+        html += lb
+        
+        if ustadMobileMode == True:
+            #do the header another way
+            html += WebsitePage.makeUstadMobileHeader(escape(self.node.titleLong), nextPage, prevPage)
+        
+        
         html += u"<"+sectionTag+" id=\"content\">"+lb
         html += '<p id="skipNav"><a href="#main">'+_('Skip navigation')+'</a></p>'+lb
 
@@ -155,20 +171,24 @@ class WebsitePage(Page):
             html += "<"+sectionTag+" id=\"emptyHeader\"></"+sectionTag+">"+lb
         
         # add left navigation html
-        html += u"<"+navTag+" id=\"siteNav\">"+lb
-        html += self.leftNavigationBar(pages)
-        html += u"</"+navTag+">"+lb
-        html += "<"+sectionTag+" id='topPagination'>"+lb
-        html += self.getNavigationLink(prevPage, nextPage)
-        html += "</"+sectionTag+">"+lb
+        if skipNavLinks == False:
+            html += u"<"+navTag+" id=\"siteNav\">"+lb
+            html += self.leftNavigationBar(pages)
+            html += u"</"+navTag+">"+lb
+            html += "<"+sectionTag+" id='topPagination'>"+lb
+            html += self.getNavigationLink(prevPage, nextPage)
+            html += "</"+sectionTag+">"+lb
+            
         html += u"<"+sectionTag+" id=\"main-wrapper\">"+lb
         html += u"<"+sectionTag+" id=\"main\"><a name=\"main\"></a>"+lb
-
-        html += '<'+headerTag+' id=\"nodeDecoration\">'
-        html += '<h1 id=\"nodeTitle\">'
-        html += escape(self.node.titleLong)
-        html += '</h1>'
-        html += '</'+headerTag+'>'+lb
+        
+        
+        if ustadMobileMode == False:
+            html += '<'+headerTag+' id=\"nodeDecoration\">'
+            html += '<h1 id=\"nodeTitle\">'
+            html += escape(self.node.titleLong)
+            html += '</h1>'
+            html += '</'+headerTag+'>'+lb
 
         for idevice in self.node.idevices:
             if idevice.klass != 'NotaIdevice':
@@ -187,19 +207,19 @@ class WebsitePage(Page):
                         block.renderView(self.node.package.style))
                 html += u'</'+sectionTag+'>'+lb # iDevice div
 
-        if not themeHasXML:
+        if not themeHasXML and ustadMobileMode is False :
             html += "<"+sectionTag+" id='bottomPagination'>"+lb
             html += self.getNavigationLink(prevPage, nextPage)
             html += "</"+sectionTag+">"+lb
         # writes the footer for each page 
         html += self.renderLicense()
-        if not themeHasXML:
+        if not themeHasXML and ustadMobileMode is False:
         #if not style.hasValidConfig:
             html += self.renderFooter()
         html += "<"+sectionTag+" id=\"lmsubmit\"></"+sectionTag+"><script type=\"text/javascript\" language=\"javascript\">doStart();</script>"+lb
         html += u"</"+sectionTag+">"+lb # /main
         html += u"</"+sectionTag+">"+lb # /main-wrapper
-        if themeHasXML:
+        if themeHasXML and ustadMobileMode is False:
         #if style.hasValidConfig:
             html += "<"+sectionTag+" id='bottomPagination'>"+lb
             html += self.getNavigationLink(prevPage, nextPage)
@@ -208,21 +228,25 @@ class WebsitePage(Page):
         html += u"</"+sectionTag+">"+lb # /content
         if themeHasXML:
         #if style.hasValidConfig:
-            html += style.get_extra_body()        
+            html += style.get_extra_body()  
+            
+        if ustadMobileMode == True:
+            html += WebsitePage.makeUstadMobileFooter()
+        
         html += u'</body></html>'
         html = html.encode('utf8')
         # JR: Eliminamos los atributos de las ecuaciones
         aux = re.compile("exe_math_latex=\"[^\"]*\"")
-	html = aux.sub("", html)
-	aux = re.compile("exe_math_size=\"[^\"]*\"")
-	html = aux.sub("", html)
-	#JR: Cambio el & en los enlaces del glosario
-	html = html.replace("&concept", "&amp;concept")
-    # Remove "resources/" from data="resources/ and the url param
-	html = html.replace("video/quicktime\" data=\"resources/", "video/quicktime\" data=\"")
-	html = html.replace("application/x-mplayer2\" data=\"resources/", "application/x-mplayer2\" data=\"")
-	html = html.replace("audio/x-pn-realaudio-plugin\" data=\"resources/", "audio/x-pn-realaudio-plugin\" data=\"")
-	html = html.replace("<param name=\"url\" value=\"resources/", "<param name=\"url\" value=\"")
+        html = aux.sub("", html)
+        aux = re.compile("exe_math_size=\"[^\"]*\"")
+        html = aux.sub("", html)
+        #JR: Cambio el & en los enlaces del glosario
+        html = html.replace("&concept", "&amp;concept")
+        # Remove "resources/" from data="resources/ and the url param
+        html = html.replace("video/quicktime\" data=\"resources/", "video/quicktime\" data=\"")
+        html = html.replace("application/x-mplayer2\" data=\"resources/", "application/x-mplayer2\" data=\"")
+        html = html.replace("audio/x-pn-realaudio-plugin\" data=\"resources/", "audio/x-pn-realaudio-plugin\" data=\"")
+        html = html.replace("<param name=\"url\" value=\"resources/", "<param name=\"url\" value=\"")
         return html
 
     def indent(self,level):
@@ -341,4 +365,83 @@ class WebsitePage(Page):
         using the fully exported (and unique) file names for each node.
         """
         return common.renderInternalLinkNodeFilenames(package, html)
+    
+    """
+    Make a header with all the needed scripts and stylesheets etc.
+    make sure to get rid of main-wrapper extra padding
+    """
+    @classmethod
+    def makeUstadMobileHeadElement(cls, title):
+        html = u""
+        html += """<style type='text/css'>
+                #main-wrapper { padding: 0px; }
+                </style>
+            """
+        for scriptName in WebsitePage.getUstadMobileScriptList():
+            html += "<script src=\"%s\" type=\"text/javascript\"></script>\n" % scriptName
+        for cssName in WebsitePage.getUstadMobileCSSList():
+            html += "<link type=\"text/css\" rel=\"stylesheet\" href=\"%s\"/>\n" % cssName
         
+        html += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> \n"
+        
+        
+        
+        
+        return html
+    
+    @classmethod
+    def makeUstadMobileHeader(cls, title, nextPage, prevPage):
+        html = u""
+        
+        #set the next and back links
+        nextlink = ""
+        prevlink = ""
+        if nextPage:
+            nextlink = quote(nextPage.name)+".html"
+        else:
+            nextlink = "#"
+        
+        if prevPage:
+            prevlink  = quote(prevPage.name)+".html"
+        else:
+            prevlink = "#"
+            
+        
+        html += """
+        <div data-role="page" id="exemainpage">
+        <div data-role="header" data-position="fixed">
+        <p style="background-image:url('res/umres/banne1.png'); background-repeat:repeat-x;margin-top:-8px;" >.</p>
+        <a id="UMUsername"></a>
+        <a id="UMLogout" data-role="button" data-icon="home" data-iconshadow="false" data-direction="reverse" onclick="umLogout()" class="ui-btn-right"></a> 
+        <h3>%s</h3> <!-- Note the page title that needs to be replaced with the Page Tite -->
+        </div>
+        <div data-role="content">
+        """ % title
+        html += "<a href='%s' style='display: none' id='exeNextPage'>&nbsp;</a>" % nextlink
+        html += "<a href='%s' style='display: none' id='exePreviousPage'>&nbsp;</a>" % prevlink
+        
+        return html
+    
+    @classmethod
+    def makeUstadMobileFooter(cls):
+        html = u""
+        html += """
+        <div data-role="footer" data-position="fixed" style="text-align: center;">
+            <a id="umBack" data-role="button" data-icon="arrow-l" class="ui-btn-left" onclick="exePreviousPageOpen()"  data-theme="a" data-inline="true">Back</a>
+            <a onclick="exeMenuPageOpen()"   style="text-align: center;" data-transition="slideup" data-inline="true" data-icon="grid" data-theme="a">Menu</a>         
+            <a id="umForward" data-role="button" data-icon="arrow-r" class="ui-btn-right" data-direction="reverse" onclick="exeNextPageOpen()" data-theme="a" data-inline="true">Forward</a>
+        </div>
+        </div>   """
+        
+        return html
+    
+    @classmethod
+    def getUstadMobileScriptList(cls):
+        return ["jquery.mobile-1.3.2.min.js", "ustadmobile.js",\
+                 "ustadmobile-common.js", "ustadmobile-constants.js",\
+                 "ustadmobile-booklist.js", "cordova.js", "cordova_plugins.js"]
+    
+    @classmethod
+    def getUstadMobileCSSList(cls):
+        return ["jquery.mobile-1.3.2.css"]
+    
