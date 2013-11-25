@@ -297,7 +297,8 @@ class TextAreaElement(ElementWithResources):
         for strToRemove in self.dontCountStrs:
             htmlContentMediaAdapted = htmlContentMediaAdapted.replace(strToRemove, "")
         
-        htmlContentMediaAdapted = re.sub(re.compile('<div(.)*?>', re.MULTILINE), '\1', htmlContentMediaAdapted)
+        #get rid of div tags
+        htmlContentMediaAdapted = re.sub(re.compile('<div(.)*?>', re.MULTILINE), '', htmlContentMediaAdapted)
         
         htmlContentMediaAdapted = htmlContentMediaAdapted.replace("\n", "")
         htmlContentMediaAdapted = htmlContentMediaAdapted.replace("\r", "")
@@ -385,7 +386,7 @@ class TextAreaElement(ElementWithResources):
         
         if xmlType == self.MEDIA_ONLY_SLIDE:
             xml += u"<%s type='mediaslide' id='%s'>\n" % (elementToMake, myId)
-            htmlContentInc = self.getMediaAdaptedStrippedHTML(self.renderView(), {"resizemethod" : "stretch"} )
+            htmlContentInc = self.getMediaAdaptedStrippedHTML(self.renderView(), {"mode" : "mediaslide"} )
             scriptStart = htmlContentInc.find("<script")
             if scriptStart != -1:
                 scriptEnd = htmlContentInc.find("</script>", scriptStart) + len("</script>")

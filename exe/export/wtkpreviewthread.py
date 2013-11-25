@@ -32,6 +32,8 @@ import threading
 import subprocess
 from exe                         import globals as G
 from exe.engine.path          import Path, TempDirPath
+import os
+import sys
 
 class WTKPreviewThread(threading.Thread):
     '''
@@ -48,7 +50,19 @@ class WTKPreviewThread(threading.Thread):
         
     def run(self):
         jadPath = G.application.config.webDir/"templates"/"EXEMobile2.jad"
-        cmd = [G.application.config.wtkemulatorpath, "-Xdescriptor:%s" % jadPath, "-Xdomain:manufacturer"]
+        
+        emulatorExec = G.application.config.wtkemulatorpath + os.sep + "emulator"
+        workingDir = os.getcwd()
+        cmdEnv = {'PATH' : os.environ['PATH'] }
+         
+        if sys.platform[:3] == "win":
+            emulatorExec += "emulator.exe"
+            cmdEnv['PATH'] =  G.application.config.wtkemulatorpath
+            cmdEnv['SYSTEMROOT'] = os.environ['SYSTEMROOT']
+        
+        cmd = [emulatorExec, "-Xdescriptor:%s" % jadPath, "-Xdomain:manufacturer"]
+        
+        
         wtkProcess = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         foundStorageRoot = False
         

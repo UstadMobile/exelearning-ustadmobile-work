@@ -4,11 +4,18 @@ import sys, os
 from exe.engine.config import Config
 from exe.engine.path import Path
 from subprocess import call
+from exe                      import globals as G
+
 import ConfigParser
 try:
     from PIL import Image
 except:
     import Image
+
+
+ENGINE_IMAGE_SIZES = [ "100x100", "240x320", "320x240", "480x640", "640x480"]
+ENGINE_AUDIO_FORMATS = ["WAV", "MP3", "OGG"]
+ENGINE_VIDEO_FORMATS = ["MP4", "3GP", "OGV", "MPG"]
 
 '''
 This class is designed to go over through a given exported object
@@ -31,25 +38,17 @@ class ExportMediaConverter(object):
     autoMediaOnly = False
     
 
-    def __init__(self, configProfileName):
+    def __init__(self):
         '''
         Constructor
         '''
-        self.configProfileName = configProfileName
-        self.configParser = None
         self.resizedImages = {}
         
         ExportMediaConverter.currentMediaConverter = self
     
     def setCurrentPackage(self, pkg):
-        if self.configParser is None:
-            print "setCurrentPackage says - Eh - you need to load the config values before you call me buddy"
             
         self.currentPackage = pkg
-        if self.currentPackage.mxmlheight != "":
-            self.configParser.set("media", "maxheight", self.currentPackage.mxmlheight)
-        if self.currentPackage.mxmlwidth != "":
-            self.configParser.set("media", "maxwidth", self.currentPackage.mxmlwidth)
         
     @classmethod
     def getInstance(cls):
@@ -92,26 +91,30 @@ class ExportMediaConverter(object):
         return retVal
     
         
-    '''
-    This will load the configuration for this export media converter
-    according to the given profile (see system config -> mediaProfilePath
-    
-    '''
-    def loadConfigVals(self):
-        x = 0
-        #Set this as a class var - there should only be one
-        ExportMediaConverter.appConfig = globals.application.config
-        
-        mediaProfilePath = ExportMediaConverter.appConfig.mediaProfilePath
-        self.configParser = ConfigParser.RawConfigParser()
-        cfgFileName = mediaProfilePath +"/" + self.configProfileName + ".ini"
-        self.configParser.read(cfgFileName)
     
     def getProfileWidth(self):
         return int(self.configParser.get("media", "maxwidth"))
     
     def getProfileHeight(self):
         return int(self.configParser.get("media", "maxheight"))
+    
+    """
+    Calculate what the new dimensions should be
+    """
+    def calcNewDimensions(self, origWidth, origHeight, profWidth, profHeight, resizeStrategy):
+        if resizeStrategy == "none":
+            return [origWidth, origHeight]
+        elif resizeStrategy == "stretch":
+            return [profWidth, profHeight]
+        elif resizeStrategy == "scalefit":
+            scaleX = float(profWidth) / float(origWidth)
+            scaleY = float(profHeight) / float(origHeight)
+            fitScale = min(scaleX, scaleY)
+            return [int(fitScale * origWidth), int(fitScale * origHeight)]
+        
+        pass
+    
+    
     
     '''
     This will resize an image according to the rules of this media
@@ -120,91 +123,79 @@ class ExportMediaConverter(object):
     Will only act on this image if that has not already been done
     '''
     def resizeImg(self, imgPath, maxWidth = -1, maxHeight = -1, resizeInfo = {}, mediaParams = {}):
-        if imgPath in self.resizedImages:
-            return None
+        #if imgPath in self.resizedImages:
+        #    return None
         
-        if maxWidth == -1 or maxHeight == -1:
-            #default to profile's width/height
-            maxWidth = int(self.configParser.get("media", "maxwidth"))
-            maxHeight = int(self.configParser.get("media", "maxheight"))
+        sizeResults = {}
+         
+        img = Image.open(imgPath)
+        origWidth = img.size[0]
+        origHeight = img.size[1]
         
-        print "Resizing %(imgname)s to %(maxwidth)d %(maxheight)d" % \
-            {"imgname" : imgPath, "maxwidth" : maxWidth, "maxheight" : maxHeight}
-        try:
+        mediaSlide = False
+        if "mode" in mediaParams:
+            if mediaParams["mode"] == "mediaslide":
+                mediaSlide = True
+        
+        
+        """
+        check and see if we were told something before
+        e.g. this has a width/height attribute
+        """
+        if "width" in resizeInfo:
+            origWidth = resizeInfo['width']
             
-            img = Image.open(imgPath)
+        if "height" in resizeInfo:
+            origHeight = resizeInfo['height']
             
-            origWidth = img.size[0]
-            origHeight = img.size[1]
+        
+        #go through all sizes
+        for profileName in ENGINE_IMAGE_SIZES:
+            xPos = profileName.find('x')
+            enabled = getattr(self.currentPackage, "ustadMobileIncRes"+profileName)
+            profWidth = int(profileName[:xPos])
+            profHeight = int(profileName[xPos+1:])
             
-            """
-            check and see if we were told something before
-            e.g. this has a width/height attribute
-            """
-            if "width" in resizeInfo:
-                origWidth = resizeInfo['width']
-                
-            if "height" in resizeInfo:
-                origHeight = resizeInfo['height']
-            
-            newWidth = 1
-            newHeight = 1
-            
-            #default scale factor
-            if "resizemethod" in mediaParams and mediaParams['resizemethod'] == "stretch":
-                newWidth = maxWidth
-                newHeight = maxHeight
+            resizeStrategy = self.currentPackage.ustadMobileImageResizeStrategy
+            if mediaSlide:
+                newDimension = self.calcNewDimensions(origWidth, origHeight, profWidth, profHeight, resizeStrategy)
             else:
-                scaleFactor = float(self.configParser.get("media", "scalefactor"))
+                scaleX = float(profWidth) / float(origWidth)
+                scaleY = float(profHeight) / float(origHeight)
+                fitScale = min(scaleX, scaleY)
+                strToEval = self.currentPackage.inlineImageResizeFormula % \
+                    {"fitscale" : str(fitScale)}
+                scale = eval(strToEval)
+                newDimension = [int(origWidth * scale), int(origHeight * scale)]
                 
-                newWidth = origWidth * scaleFactor
-                newHeight = origHeight * scaleFactor 
-                
-                newFactor = scaleFactor
-                
-                if newWidth > maxWidth:
-                    newFactor = float(maxWidth) / float(origWidth)
-                    newWidth = origWidth * newFactor
-                    newHeight = origHeight * newFactor
-                    
-                    if newHeight > maxHeight:
-                        newFactor = float(maxHeight) / float(origHeight)
-                        newHeight = origHeight * newFactor
-                        newWidth = origWidth * newFactor
-                
-                if newHeight > maxHeight:
-                    newFactor = float(maxHeight) / float(origHeight)
-                    newWidth = origWidth * newFactor
-                    newHeight = origHeight * newFactor
-                    
-                    if newWidth > maxWidth:
-                        newFactor = float(maxWidth) / float(origWidth)
-                        newHeight = origHeight * newFactor
-                        newWidth = origWidth * newFactor
-                
-                
-                
-            img = img.resize((int(newWidth), int(newHeight)), Image.ANTIALIAS)
-            img.save(imgPath)
-            
-            result =  (int(newWidth), int(newHeight))
-            self.resizedImages[imgPath] = result
-            
-            return result
-        #this is a lie because it mysteriously fails for no reason in pyclipse
-        except:
-            print "Skipping resize image actually... debug hack\n"
-            return (maxWidth, maxHeight)
-    
+            newFileName = imgPath.namebase + "-" + profileName + imgPath.ext
+            newPath = imgPath.parent/newFileName
+            sizeResults[profileName] = newDimension
+            try:
+                newImg = img.resize((newDimension[0], newDimension[1]), Image.ANTIALIAS)
+                newImg.save(newPath)
+            except:
+                #because pyclipse does weird stuff....
+                print "Unexpected error:", sys.exc_info()[0]
+                print "Error resizing image " + newFileName + " to " + str(newDimension[0]) + "x" + str(newDimension[1]) + "\n"
+            pass
+        
+        return sizeResults
+        #now it's done    
+        
+         
     '''
     Handle the image modifications stored in longdesc 
     '''
     def handleImageVersions(self, htmlContent, mediaParams = {}):
         startIndex = 0
         htmlContentLower = htmlContent.lower()
+        isMediaMode = False
+        if "mode" in mediaParams:
+            if mediaParams["mode"] == "mediaslide":
+                isMediaMode = True
         
         #figure out which image version we are using in this profiles
-        screenProfile = self.configParser.get("media", "screenprofile")
         startIndex = self._findNextTagStart(htmlContentLower, startIndex, ['img'])
         
         while startIndex != -1:
@@ -226,16 +217,39 @@ class ExportMediaConverter(object):
             imgPath = ExportMediaConverter.workingDir/imgSrc
             resizeResult = None
             
-            if not ("noresize" in mediaParams and mediaParams["noresize"] == True): 
-                if imgPath in self.resizedImages:
-                    resizeResult = self.resizedImages[imgPath]
-                else:
-                    resizeResult = self.resizeImg(imgPath, -1, -1, resizeParams, mediaParams)
+            htmlContentLower = htmlContent.lower()
+            endOfTagIndex = htmlContentLower.find(">", startIndex);
+            tagContent = htmlContent[startIndex:endOfTagIndex+1]
+            
+             
+            if imgPath in self.resizedImages:
+                resizeResult = self.resizedImages[imgPath] #here should add the -res to it
+            else:
+                resizeResult = self.resizeImg(imgPath, -1, -1, resizeParams, mediaParams)
+            
                     
             if resizeResult is not None:
                 widthAttribInfo = {}
                 heightAttribInfo = {}
                 
+                altSizeStr = ""
+                for resProfileName, resProfileValue in resizeResult.iteritems():
+                    altSizeStr += resProfileName + ":" + str(resProfileValue[0]) + "," + str(resProfileValue[1]) + ";" 
+                
+                altSizeStr = " data-ustadsizes='" + altSizeStr + "' "
+                
+                newTagContent = tagContent.strip()
+                tagEnding = ">"
+                if newTagContent[len(newTagContent)-2:] == "/>":
+                    tagEnding = "/>"
+                
+                newTagContent = newTagContent[:len(newTagContent)-len(tagEnding)] \
+                    + altSizeStr + tagEnding 
+                
+                htmlContent = htmlContent[:startIndex] + newTagContent + htmlContent[endOfTagIndex+1:]
+                endOfTagIndex = startIndex + len(newTagContent)
+                
+                """
                 widthAttr = self._getTagAttribVal(htmlContent, "width", startIndex, widthAttribInfo)
                 if widthAttr is not None:
                     htmlContent = htmlContent[:widthAttribInfo['start']] \
@@ -247,12 +261,11 @@ class ExportMediaConverter(object):
                     htmlContent = htmlContent[:heightAttribInfo['start']] \
                         + " height=\"" + str(resizeResult[1]) + "\" " \
                         + htmlContent[heightAttribInfo['stop']:]
-                    
-            htmlContentLower = htmlContent.lower()
+                """
             
-            endOfTagIndex = htmlContentLower.find(">", startIndex);
-            tagContent = htmlContent[startIndex:endOfTagIndex+1]
-             
+                    
+            
+            """ 
             import re
             longDesc = re.sub(re.compile(r'<img (.*) longdesc\s*?=\s*?(\'|")(.*)(\'|").*>', re.MULTILINE), r'\3', tagContent)
             
@@ -313,7 +326,7 @@ class ExportMediaConverter(object):
                         htmlContent = htmlContent[:startIndex] + replacedTagContent \
                             + htmlContent[endOfTagIndex + 1]
                         endOfTagIndex = startIndex + len(replacedTagContent)
-            
+            """
             #do an else here to find those that don't have any special instructions
                     
             startIndex = endOfTagIndex + 1
@@ -328,6 +341,29 @@ class ExportMediaConverter(object):
         htmlContentMediaAdapted = self.handleImageVersions(htmlContentMediaAdapted)
         return htmlContentMediaAdapted
         
+    
+    def runConversionCmd(self, inFilePath, targetFormat, conversionCommandBase):
+        workingDir = Path(inFilePath).parent
+        mediaName = inFilePath.name
+        import os
+        mediaBaseName = os.path.splitext(mediaName)[0] 
+        newFileName = mediaBaseName + "." + targetFormat
+        outFilePath = workingDir + "/" + newFileName
+        
+        cmdEnv = {'PATH' : os.environ['PATH'] }
+        
+        exeDir = globals.application.config.exePath.parent
+        mediaToolsDir = str(exeDir/"mediaconverters")
+        if sys.platform[:3] == "win":
+            cmdEnv['PATH'] = mediaToolsDir + os.pathsep + cmdEnv['PATH']
+            cmdEnv['SYSTEMROOT'] = os.environ['SYSTEMROOT']
+            
+        conversionCommand = conversionCommandBase  \
+                % {"infile" : mediaName, "outfile" : newFileName}
+        print "Converting: run %s\n" % conversionCommand
+        call(conversionCommand, shell=True, cwd=workingDir, env=cmdEnv)
+        pass
+    
     '''
     This should go through and detect audio and video tags,
     then perform the appropriate conversions.
@@ -368,7 +404,7 @@ class ExportMediaConverter(object):
                 break
             
             mediaBaseName = mediaNameParts[0]
-            mediaExtension = mediaNameParts[1][1:] 
+            mediaExtension = mediaNameParts[1][1:].lower()
             workingDir = ExportMediaConverter.workingDir
             conversionCommandBase = ""
             inFilePath = workingDir/mediaName
@@ -376,8 +412,26 @@ class ExportMediaConverter(object):
             
             #handle audio conversion
             if tagName == "audio":
-                countAudio = countAudio + 1
+                #new way of doing things - we go through all the formats - and then convert
+                for formatName in ENGINE_AUDIO_FORMATS:
+                    if formatName.lower() == mediaExtension:
+                        #we already have it - this is the original format - skip
+                        continue
+                    
+                    #is this included in package
+                    propName = "ustadMobileAudio" + formatName
+                    if getattr(self.currentPackage, propName):
+                        #ok - we need to convert this
+                        convertCmd = getattr(G.application.config, "audioMediaConverter_" + formatName.lower())
+                        print "We should run %(cmd)s to convert %(infile)s\n" % \
+                            {"cmd" : convertCmd, "infile" : str(inFilePath)}
+                        self.runConversionCmd(inFilePath, formatName.lower(), convertCmd)
                 
+                
+                
+                countAudio = countAudio + 1
+                """
+                This is obsolete
                 targetFormat = self.configParser.get("media", "audioformat")
                 
                 if targetFormat == "au":
@@ -388,10 +442,27 @@ class ExportMediaConverter(object):
                     conversionCommandBase = ExportMediaConverter.appConfig.audioMediaConverter_ogg
                 elif targetFormat == "wav":
                     conversionCommandBase = ExportMediaConverter.appConfig.audioMediaConverter_wav
-                
+                """
             if tagName == "video":
-                countVideo = countVideo + 1
+                #new way of doing things - we go through all the formats - and then convert
+                for formatName in ENGINE_VIDEO_FORMATS:
+                    if formatName.lower() == mediaExtension:
+                        #we already have it - this is the original format - skip
+                        continue
+                    
+                    #is this included in package
+                    propName = "ustadMobileVideo" + formatName
+                    if getattr(self.currentPackage, propName):
+                        #ok - we need to convert this
+                        convertCmd = getattr(G.application.config, "videoMediaConverter_" + formatName.lower())
+                        print "We should run %(cmd)s to convert %(infile)s\n" % \
+                            {"cmd" : convertCmd, "infile" : str(inFilePath)}
+                        self.runConversionCmd(inFilePath, formatName.lower(), convertCmd)
                 
+                countVideo = countVideo + 1
+                """
+                
+                This part is obsolete
                 targetFormat = self.configParser.get("media", "videoformat")
                 
                 if targetFormat == "3gp":
@@ -402,7 +473,10 @@ class ExportMediaConverter(object):
                     conversionCommandBase = ExportMediaConverter.appConfig.videoMediaConverter_ogv
                 elif targetFormat == "avi":
                     conversionCommandBase = ExportMediaConverter.appConfig.videoMediaConverter_avi
-                
+                """
+            
+            """
+            This is obsolete
             newFileName = mediaBaseName + "." + targetFormat
             outFilePath = workingDir + "/" + newFileName
             if tagName == "audio":
@@ -428,9 +502,13 @@ class ExportMediaConverter(object):
             htmlContent = htmlContent.replace(mediaName, newFileName)
                     
             # go forward so we don't find the same one again
+            """
             startIndex = startIndex + 1
         
         #see if we have one audio and one video - in which case auto mix them
+        """
+        Semi obsolete - the mixer
+        
         if countVideo == 1 and countAudio == 1:
             audioInFileAbs = workingDir + "/" + audioInFile
             videoInFileAbs = workingDir + "/" + videoInFile
@@ -443,6 +521,7 @@ class ExportMediaConverter(object):
             print "Running command %s \n" % mixCommand   
             
             call(mixCommand, shell=True)
+        """
         
         #remove the <script part that exe made for FF3- compatibility
         #TODO: potential case sensitivity issue here -but exe always makes lower case...

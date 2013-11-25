@@ -36,7 +36,7 @@ from zipfile                  import ZipFile, ZIP_DEFLATED
 from exe.export.websiteexport import *
 from exe.export.websitepage   import *
 from exe.export.xmlpage         import XMLPage
-from exe.export.exportmediaconverter    import ExportMediaConverter
+from exe.export.exportmediaconverter    import *
 
 import sys, os, fnmatch, glob, shutil, codecs, md5
 
@@ -54,6 +54,8 @@ class XMLExport(WebsiteExport):
         WebsiteExport.__init__(self, config, styleDir, filename)
         self.langOverride = langOverride
         self.forceMediaOnly = forceMediaOnly
+        self.ustadMobileMode = True
+        self.skipNavigation = True
     
     @staticmethod
     def encodeEntities(html):
@@ -68,6 +70,14 @@ class XMLExport(WebsiteExport):
         TODO: Make output directory for each type of export media profile
         """
         outputDir = self.filename
+        currentOutputDir = Path(outputDir/package.name)
+        
+        #copy needed files
+        if not outputDir.exists(): 
+            outputDir.mkdir()
+        
+        if not currentOutputDir.exists():
+            currentOutputDir.mkdir()
         
         #Command line option to override language for export
         if self.langOverride != None:
@@ -80,75 +90,66 @@ class XMLExport(WebsiteExport):
         #track idevices that dont really  export
         nonDevices = []
         
-        #copy needed files
-        if not outputDir.exists(): 
-            outputDir.mkdir()
-        
         #
         #This is passed from the command line export
         #
         if self.forceMediaOnly == True:
             package.mxmlforcemediaonly = "true"
         
-        """
-        Now go through the list of target media profiles and do the conversion
-        for each one here.
+        mediaConverter = ExportMediaConverter()
         
-        For now this will just go through and create them - will settle on the
-        last one
-        """
-        
-        if package.mxmlprofilelist is None or package.mxmlprofilelist == "":
-            package.mxmlprofilelist = "nokia"
-        
-        
-        
-        profileList = package.mxmlprofilelist.split(",")
-        """
-        Go through all the profiles in the list - and make a directory if
-        it not just 'default'.  For each one make a exportmediaconverter
-        and then go through the export routine
-        """
-        for currentProfile in profileList:
-            mediaConverter = None
-            currentOutputDir = outputDir    
 
-            if currentProfile != "default":
-                mediaConverter = ExportMediaConverter(currentProfile)
-                mediaConverter.loadConfigVals()
-                mediaConverter.setCurrentPackage(package)
-                ExportMediaConverter.autoMediaOnly = package.mxmlforcemediaonly
-                
-                currentOutputDir = outputDir.joinpath(currentProfile)
-                if not currentOutputDir.exists(): 
-                    currentOutputDir.mkdir()
-            
-            
-                ExportMediaConverter.setWorkingDir(currentOutputDir)
-    
-            
-            self.copyFiles(package, currentOutputDir)
-            self.pages = [ XMLPage("index", 1, package.root) ]
-            self.generatePages(package.root, 1)
-            uniquifyNames(self.pages)
-            
         
-            prevPage = None
-            thisPage = self.pages[0]
-            
+        mediaConverter.setCurrentPackage(package)
+        ExportMediaConverter.autoMediaOnly = package.mxmlforcemediaonly
+        
+        ExportMediaConverter.setWorkingDir(currentOutputDir)
+
+        
+        self.pages = [ XMLPage("index", 1, package.root) ]
+        
+        self.copyFilesXML(package, currentOutputDir)
+        
+        self.generatePagesXML(package.root, 1)
+        
+        
+        
+        uniquifyNames(self.pages)
+        
     
-            for nextPage in self.pages[1:]:
-                pageDevCount = thisPage.save(currentOutputDir, prevPage, \
-                                             nextPage, self.pages, nonDevices)
-                numDevicesByPage[thisPage.name] = pageDevCount
-                prevPage = thisPage
-                thisPage = nextPage
-                 
-            pageDevCount = thisPage.save(currentOutputDir, prevPage, None, self.pages, nonDevices)
+        prevPage = None
+        thisPage = self.pages[0]
+        
+
+        for nextPage in self.pages[1:]:
+            pageDevCount = thisPage.save(currentOutputDir, prevPage, \
+                                         nextPage, self.pages, nonDevices)
             numDevicesByPage[thisPage.name] = pageDevCount
-            
-            self._writeTOCXML(currentOutputDir, numDevicesByPage, nonDevices, package)
+            prevPage = thisPage
+            thisPage = nextPage
+             
+        pageDevCount = thisPage.save(currentOutputDir, prevPage, None, self.pages, nonDevices)
+        numDevicesByPage[thisPage.name] = pageDevCount
         
+        self._writeTOCXML(currentOutputDir, numDevicesByPage, nonDevices, package)
+        
+        #now go through and make the HTML output
+        self.pages = [ WebsitePage(self.prefix + "index", 0, package.root) ]
+        self.generatePages(package.root, 1)
+        uniquifyNames(self.pages)
+        
+        prevPage = None
+        thisPage = self.pages[0]
+        
+        for nextPage in self.pages[1:]:
+            thisPage.save(currentOutputDir, prevPage, nextPage, self.pages, \
+                          ustadMobileMode = True, skipNavLinks = True)
+            prevPage = thisPage
+            thisPage = nextPage
+        
+        #the last page
+        thisPage.save(currentOutputDir, prevPage, nextPage, self.pages, \
+                      ustadMobileMode = True, skipNavLinks = True)
         
         
 
@@ -167,7 +168,21 @@ class XMLExport(WebsiteExport):
         if lang is not None and lang != '':
             langAttrib = " xml:lang='%s' " % lang 
         
-        xmlDirectoryFile.write("<exebase%s>\n" % langAttrib)
+        mediaAttrib = " audioformats='"
+        
+        for audioFormat in ENGINE_AUDIO_FORMATS:
+            mediaAttrib += audioFormat + ","
+        
+        mediaAttrib += "' videoformats='"
+        for videoFormat in ENGINE_VIDEO_FORMATS:
+            mediaAttrib += videoFormat +  "," 
+        
+        mediaAttrib += "' resolutions='" 
+        for screenRes in ENGINE_IMAGE_SIZES:
+            mediaAttrib += screenRes  +  ","
+        mediaAttrib += "' "
+        
+        xmlDirectoryFile.write("<exebase%s>\n" % (langAttrib + mediaAttrib))
         
         
         
@@ -200,7 +215,7 @@ class XMLExport(WebsiteExport):
         xmlDirectoryFile.close()   
         
         
-    def generatePages(self, node, depth):
+    def generatePagesXML(self, node, depth):
         """
         Recursively generate pages and store in pages member variable
         for retrieving later
@@ -212,9 +227,9 @@ class XMLExport(WebsiteExport):
                 pageName = "__"
 
             self.pages.append(XMLPage(pageName, depth, child))
-            self.generatePages(child, depth + 1)
+            self.generatePagesXML(child, depth + 1)
             
-    def copyFiles(self, package, outputDir):
+    def copyFilesXML(self, package, outputDir):
         
         #copy defined items from the style directory for the mobile output
         styleFiles = self.stylesDir.files("icon_*.png")
@@ -227,9 +242,11 @@ class XMLExport(WebsiteExport):
         self.stylesDir.copylist(styleFiles, outputDir)
         
         # copy the package's resource files
-        package.resourceDir.copyfiles(outputDir)
+        #package.resourceDir.copyfiles(outputDir)
+        self.copyFiles(package, outputDir)
         
 
+    
 """
 Utility method
 """            

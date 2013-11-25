@@ -51,7 +51,7 @@ class Config:
         'system': ('webDir', 'jsDir', 'port', 'dataDir',
                    'configDir', 'localeDir', 'browser', 'mediaProfilePath',
                    'videoMediaConverter_ogv', 'videoMediaConverter_3gp',
-                   'videoMediaConverter_mpg',
+                   'videoMediaConverter_mpg', 'videoMediaConverter_mp4',
                    'videoMediaConverter_avi', 'audioMediaConverter_ogg',
                    'audioMediaConverter_au', 'audioMediaConverter_mp3',
                    'audioMediaConverter_wav', 'ffmpegPath',
@@ -118,6 +118,10 @@ class Config:
         # Set default values
         # exePath is the whole path and filename of the exe executable
         self.exePath     = Path(sys.argv[0]).abspath()
+        
+        #use this to do unit testing etc when we are not really using exe's path
+        self.exePathOverride = None
+        
         # webDir is the parent directory for styles,scripts and templates
         self.webDir      = self.exePath.dirname()
         self.jsDir       = self.exePath.dirname()
@@ -157,6 +161,7 @@ class Config:
         self.videoMediaConverter_3gp = ""
         self.videoMediaConverter_avi = ""
         self.videoMediaConverter_mpg = ""
+        self.videoMediaConverter_mp4 = ""
         self.audioMediaConverter_ogg = ""
         self.audioMediaConverter_au = ""
         self.audioMediaConverter_mp3 = ""
@@ -204,6 +209,17 @@ class Config:
         
     def _setDefaultMobilePathWin(self):
         self.wtkemulatorpath = ""
+
+    def _setDefaultMediaPathLinux(self):
+        # Media converters - defaults for now
+        self.videoMediaConverter_ogv = ""
+        self.videoMediaConverter_3gp = '/usr/bin/ffmpeg -y -i %(infile)s -s qcif -vcodec h263 -acodec libvo_aacenc -ac 1 -ar 8000 -r 25 -ab 32 -y %(outfile)s'
+        self.videoMediaConverter_mpg = "/usr/bin/ffmpeg -y -i %(infile)s  %(outfile)s"
+        self.videoMediaConverter_mp4 = "/usr/bin/ffmpeg -y -i %(infile)s  %(outfile)s"
+        self.audioMediaConverter_au = "/usr/bin/sox %(infile)s %(outfile)s"
+        self.audioMediaConverter_wav = "/usr/bin/sox %(infile)s %(outfile)s"
+        self.audioMediaConverter_mp3 = "/usr/bin/sox %(infile)s -t wav - | /usr/bin/lame -b 32 - %(outfile)s"
+        self.ffmpegPath = "/usr/bin/ffmpeg"
 
     def _overrideDefaultVals(self):
         """
@@ -293,6 +309,7 @@ class Config:
                 self.videoMediaConverter_3gp = system.videoMediaConverter_3gp
                 self.videoMediaConverter_avi = system.videoMediaConverter_avi
                 self.videoMediaConverter_mpg = system.videoMediaConverter_mpg
+                self.videoMediaConverter_mp4 = system.videoMediaConverter_mp4
                 self.audioMediaConverter_ogg = system.audioMediaConverter_ogg
                 self.audioMediaConverter_mp3 = system.audioMediaConverter_mp3
                 self.ffmpegPath = system.ffmpegPath
