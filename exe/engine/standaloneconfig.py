@@ -39,11 +39,6 @@ class StandaloneConfig(Config):
         """
         Setup with our default settings
         """
-        if G.application.exePathOverride is None:
-            self.exePath = Path(sys.argv[0])
-        else:
-            self.exePath = Path(G.application.exePathOverride)
-            
         if self.exePath.isfile():
             self.exePath = self.exePath.dirname()
         exePath = self.exePath
