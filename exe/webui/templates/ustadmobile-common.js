@@ -46,9 +46,22 @@ If you need a commercial license to remove these restrictions please contact us 
 
 //replace every string with this function. eg: alert(_(error) + value );
 
-
+var platformCommon;
+var exeLastPage = "../";
 var exeMenuPage = "ustadmobile_menuPage.html";
+var exeMenuPage2 = "ustadmobile_menuPage2.html";
 //localStorage.setItem('exeMenuPage',exeMenuP);
+var globalXMLListFolderName = "all";
+
+
+document.addEventListener('deviceready', function(){
+                          if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
+                            platformCommon = "bb10";
+                          }
+                          window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+                          window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFSumc, commonfail);
+                          },
+                          false);
 
 function _(msgid) {
     if (msgid in messages) {
@@ -59,7 +72,7 @@ function _(msgid) {
 }
 
 function commonfail(){
-    console.log("Failed at ustadmobile-common.js.");
+    debugLog("Failed at ustadmobile-common.js.");
     alert("Something went wrong in the app start procedure.");
 }
 
@@ -71,13 +84,33 @@ function loadLocale(localeCode) {
 }
 
 function gotFSumc(fileSystem){
+    var getDir;
+    var getDir2Pre;
+    if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
+    //if(platformCommon == "bb10"){
+        console.log("ustadmobile-common.js: Detected Blackberry 10 device.");
+        blackberry.io.sandbox = false;
+        getDir = blackberry.io.SDCard + "/ustadmobileContent";
+        //getDir2Pre = blackberry.io.SDCard + "/ustadmobileContent/";
+    }else{
+        getDir = "ustadmobileContent";
+        console.log("Not BB device, continuing..");
+        //getDir2Pre = "ustadmobileContent/";
+    }
     //window.rootFS = fileSystem.root;
     //so the rootFS.fullPath is the app Path.< Use that (not tested).
+	debugLog("Cordova is ready: in ustadmobile-common.js");
+	//alert("STARTUP: Cordova is ready");
+		//var getDir = "ustadmobileContent";
+        debugLog("CHECKING IF DIRECTORY: " + getDir + " EXISTS. IF NOT, CREATING IT.");
+        fileSystem.root.getDirectory(getDir, {create:true, exclusive:false}, function(){
+            debugLog("STARTUP: Creating Dir /ustadmobileContent/ success or already exists.");
+			var getDir2 = getDir + "/" + globalXMLListFolderName;
+			debugLog("STARTUP: CHECKING IF DIRECTORY: " + getDir2 + " EXISTS. IF NOT, CREATING IT.");
+			fileSystem.root.getDirectory(getDir2, {create:true, exclusive:false}, function(){
+					debugLog("STARTUP: Creating Dir /ustadmobileContent/all success or already exists.");
+				}, function(){debugLog("STARTUP: Creating package Dir /ustadmobileContent/ unsuccess.");$.mobile.loading('hide'); alert("STARTUP: Some features might not work on your device.");});
+        }, function(){debugLog("STARTUP: Creating package Dir /ustadmobileContent/all/ unsuccess.");$.mobile.loading('hide'); alert("STARTUP: Some features might not work on your device.");});
 }
 
-document.addEventListener('deviceready', function(){
-        window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFSumc, commonfail);
-            },
-     false);
 
