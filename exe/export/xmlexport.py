@@ -36,7 +36,7 @@ from zipfile                  import ZipFile, ZIP_DEFLATED
 from exe.export.websiteexport import *
 from exe.export.websitepage   import *
 from exe.export.xmlpage         import XMLPage
-from exe.export.exportmediaconverter    import ExportMediaConverter
+from exe.export.exportmediaconverter    import *
 
 import sys, os, fnmatch, glob, shutil, codecs, md5
 
@@ -54,6 +54,9 @@ class XMLExport(WebsiteExport):
         WebsiteExport.__init__(self, config, styleDir, filename)
         self.langOverride = langOverride
         self.forceMediaOnly = forceMediaOnly
+        self.ustadMobileMode = True
+        self.skipNavigation = True
+        self.pkgNodeToPageDict = None
     
     @staticmethod
     def encodeEntities(html):
@@ -68,6 +71,14 @@ class XMLExport(WebsiteExport):
         TODO: Make output directory for each type of export media profile
         """
         outputDir = self.filename
+        currentOutputDir = Path(outputDir/package.name)
+        
+        #copy needed files
+        if not outputDir.exists(): 
+            outputDir.mkdir()
+        
+        if not currentOutputDir.exists():
+            currentOutputDir.mkdir()
         
         #Command line option to override language for export
         if self.langOverride != None:
@@ -80,78 +91,215 @@ class XMLExport(WebsiteExport):
         #track idevices that dont really  export
         nonDevices = []
         
-        #copy needed files
-        if not outputDir.exists(): 
-            outputDir.mkdir()
-        
         #
         #This is passed from the command line export
         #
         if self.forceMediaOnly == True:
             package.mxmlforcemediaonly = "true"
         
-        """
-        Now go through the list of target media profiles and do the conversion
-        for each one here.
+        mediaConverter = ExportMediaConverter()
         
-        For now this will just go through and create them - will settle on the
-        last one
-        """
-        
-        if package.mxmlprofilelist is None or package.mxmlprofilelist == "":
-            package.mxmlprofilelist = "nokia"
-        
-        
-        
-        profileList = package.mxmlprofilelist.split(",")
-        """
-        Go through all the profiles in the list - and make a directory if
-        it not just 'default'.  For each one make a exportmediaconverter
-        and then go through the export routine
-        """
-        for currentProfile in profileList:
-            mediaConverter = None
-            currentOutputDir = outputDir    
 
-            if currentProfile != "default":
-                mediaConverter = ExportMediaConverter(currentProfile)
-                mediaConverter.loadConfigVals()
-                mediaConverter.setCurrentPackage(package)
-                ExportMediaConverter.autoMediaOnly = package.mxmlforcemediaonly
-                
-                currentOutputDir = outputDir.joinpath(currentProfile)
-                if not currentOutputDir.exists(): 
-                    currentOutputDir.mkdir()
-            
-            
-                ExportMediaConverter.setWorkingDir(currentOutputDir)
-    
-            
-            self.copyFiles(package, currentOutputDir)
-            self.pages = [ XMLPage("index", 1, package.root) ]
-            self.generatePages(package.root, 1)
-            uniquifyNames(self.pages)
-            
         
-            prevPage = None
-            thisPage = self.pages[0]
-            
+        mediaConverter.setCurrentPackage(package)
+        ExportMediaConverter.autoMediaOnly = package.mxmlforcemediaonly
+        
+        ExportMediaConverter.setWorkingDir(currentOutputDir)
+
+        indexPageXML = XMLPage("index", 1, package.root)
+        self.pages = [ indexPageXML ]
+        
+        self.copyFilesXML(package, currentOutputDir)
+        
+        self.pkgNodeToPageDict = self.generatePagesXML(package.root, 1)
+        self.pkgNodeToPageDict[package.root] = indexPageXML
+        
+        uniquifyNames(self.pages)
+        
+        self.generateJQueryMobileTOC(package.root, currentOutputDir)
     
-            for nextPage in self.pages[1:]:
-                pageDevCount = thisPage.save(currentOutputDir, prevPage, \
-                                             nextPage, self.pages, nonDevices)
-                numDevicesByPage[thisPage.name] = pageDevCount
-                prevPage = thisPage
-                thisPage = nextPage
-                 
-            pageDevCount = thisPage.save(currentOutputDir, prevPage, None, self.pages, nonDevices)
+        prevPage = None
+        thisPage = self.pages[0]
+        
+
+        for nextPage in self.pages[1:]:
+            pageDevCount = thisPage.save(currentOutputDir, prevPage, \
+                                         nextPage, self.pages, nonDevices)
             numDevicesByPage[thisPage.name] = pageDevCount
-            
-            self._writeTOCXML(currentOutputDir, numDevicesByPage, nonDevices, package)
+            prevPage = thisPage
+            thisPage = nextPage
+             
+        pageDevCount = thisPage.save(currentOutputDir, prevPage, None, self.pages, nonDevices)
+        numDevicesByPage[thisPage.name] = pageDevCount
         
+        self._writeTOCXML(currentOutputDir, numDevicesByPage, nonDevices, package)
         
+        #now go through and make the HTML output
+        self.pages = [ WebsitePage(self.prefix + "index", 0, package.root) ]
+        self.generatePages(package.root, 1)
+        uniquifyNames(self.pages)
         
+        prevPage = None
+        thisPage = self.pages[0]
+        
+        for nextPage in self.pages[1:]:
+            thisPage.save(currentOutputDir, prevPage, nextPage, self.pages, \
+                          ustadMobileMode = True, skipNavLinks = True)
+            prevPage = thisPage
+            thisPage = nextPage
+        
+        #the last page
+        thisPage.save(currentOutputDir, prevPage, nextPage, self.pages, \
+                      ustadMobileMode = True, skipNavLinks = True)
+        
+        #now make filelists
+        self.generateContentListXML(currentOutputDir, package)
+        
+    """
+    
+    """    
+    def generateJQueryMobileTOC(self, rootNode, outputDir):
+        tocFile = open(outputDir + "/exetoc.html", "w")
+        tocTitle = _("Table of Contents")
+        output = "<html><head>"
+        
+        #add the CSS from EXE
+        output += """
+        <link rel="stylesheet" type="text/css" href="base.css" />
+        <link rel="stylesheet" type="text/css" href="content.css" />
+        <link rel="stylesheet" type="text/css" href="nav.css" />
+        """
+        
+        #add the Javascript from EXE
+        output += """
+        <script src='exe_jquery.js' type="text/javascript"></script>
+        <script type="text/javascript">$exe_i18n={show:"Show",hide:"Hide",menu:"Menu"}</script>
+        <script src="common.js" type="text/javascript"></script>
+        <script src="my_js.js" type="text/javascript"></script>
+        <script src="lernmodule_net.js" type="text/javascript"></script>
+        """
 
+        output += WebsitePage.makeUstadMobileHeadElement(tocTitle)
+        #this has to come after ustadmobile.js scripts load
+        output += """
+            <script type="text/javascript">
+            initTableOfContents();
+            </script>
+            """
+        output += "</head>"
+        output += "<body class=\"exe-web-site\" onload='_onLoadFunction();' >"
+        output += WebsitePage.makeUstadMobileHeader(tocTitle, None, None)
+        output += self.generateJQueryMobileTOCNode(rootNode, 0)
+        output += WebsitePage.makeUstadMobileFooter()
+        output += "</body></html>"
+        tocFile.write(output)
+        tocFile.close()
+        return output
+        
+        
+    def generateJQueryMobileTOCNode(self, node, depth):
+        html = ""
+        page = self.pkgNodeToPageDict[node]
+        if len(page.node.children) == 0:
+            html += "<a href=\"%s\" data-inline=\"true\" data-role=\"button\" class=\"buttonLevel%s\">%s</a><br/>\n" \
+                %  (page.name + ".html", str(depth), page.node.title) 
+        else:
+            #html += "<div data-role=\"collapsible\">\n"
+            #html += "<h3 class='tocHeader' data-toc-pagename=\"%s\">%s</h3>\n" \
+            # % (page.name + ".html", node.title)
+            
+            html += """
+            <span id="tocButtonShowSpan%(nodeid)s">
+            <input type="button" data-role="button" data-icon="arrow-d" data-inline="true" id="tocButtonShow%(nodeid)s" data-toc-showing="false" onclick="tocTrigger('%(nodeid)s', true)" data-iconpos="notext"/>
+            </span>
+            
+            <span id="tocButtonHideSpan%(nodeid)s" style='display: none'>
+            <input style="display: none" type="button" data-role="button" data-icon="arrow-u" data-inline="true" id="tocButtonHide%(nodeid)s" data-toc-showing="true" data-iconpos="notext"/>
+            </span>
+            
+            <a href="%(nodeid)s.html" class="buttonLevel%(depth)s" data-role="button" data-inline="true" style="width: 300px" >%(title)s</a>
+            <div id="tocDiv%(nodeid)s" style="display: none; padding-left: 35px">
+            """ % {"nodeid" : page.name, "title" : page.node.title, "depth" : str(depth)}
+            
+            
+            for child in node.children:
+                html += self.generateJQueryMobileTOCNode(child, depth+1)
+            html += "</div>\n"
+        return html
+
+
+    """
+    
+    """
+    def generateContentListXML(self, outputDir, package):
+        #first make the HTML5 list
+        filelist = []
+        incAllExtensions = ["js", "html", "css"]
+        for extension in incAllExtensions:
+            filelist += outputDir.files("*.%s" % extension)
+        
+        for file in package.resourceDir.files():
+            filelist.append(file)
+        
+        #go through styles and see if there is anything else to mop up
+        #bad - this was copy/pasted but should go in a util function at sometime
+        styleFiles = []
+        if os.path.isdir(self.stylesDir):
+            # Copy the style sheet files to the output dir
+            styleFiles  = [self.stylesDir/'..'/'base.css']
+            styleFiles += [self.stylesDir/'..'/'popup_bg.gif']
+            styleFiles += self.stylesDir.files("*.css")
+            styleFiles += self.stylesDir.files("*.jpg")
+            styleFiles += self.stylesDir.files("*.gif")
+            styleFiles += self.stylesDir.files("*.png")
+            styleFiles += self.stylesDir.files("*.js")
+            styleFiles += self.stylesDir.files("*.html")
+            styleFiles += self.stylesDir.files("*.ico")
+            styleFiles += self.stylesDir.files("*.ttf")
+            styleFiles += self.stylesDir.files("*.eot")
+            styleFiles += self.stylesDir.files("*.otf")
+            styleFiles += self.stylesDir.files("*.woff")
+            
+        filelist += styleFiles
+        
+        #now make it into strings
+        fileStrList = []
+        for currentFile in filelist:
+            filename = currentFile.name
+            if not filename in fileStrList:
+                fileStrList.append(str(filename))
+
+        html5ListFile = open(outputDir  + "/ustadpkg_html5.xml", "w")
+        html5Content = u"<?xml version='1.0' encoding='UTF-8'?>\n"
+        html5Content += "<ustadpackage>\n"
+        for currentFile in fileStrList:
+            html5Content += "<file>%s</file>\n" % currentFile 
+        
+        #now our only subdirectory - the jquery mobile theme
+        jqmImageDir = outputDir/"images"
+        for file in jqmImageDir.files():
+            html5Content += "<file>images/%s</file>\n" % file.name
+        
+        html5Content += "</ustadpackage>"
+        html5ListFile.write(html5Content)
+        html5ListFile.close()
+        
+        #now make the J2ME version
+        filelist = []
+        incAllExtensions = ["xml"]
+        for extension in incAllExtensions:
+            filelist += outputDir.files("*.%s" % extension)
+        
+        for file in package.resourceDir.files():
+            filelist.append(file)
+        
+        
+        
+        
+        pass
+        
+        
+    
 
     """
     Makes the table of contents XML file
@@ -167,7 +315,21 @@ class XMLExport(WebsiteExport):
         if lang is not None and lang != '':
             langAttrib = " xml:lang='%s' " % lang 
         
-        xmlDirectoryFile.write("<exebase%s>\n" % langAttrib)
+        mediaAttrib = " audioformats='"
+        
+        for audioFormat in ENGINE_AUDIO_FORMATS:
+            mediaAttrib += audioFormat + ","
+        
+        mediaAttrib += "' videoformats='"
+        for videoFormat in ENGINE_VIDEO_FORMATS:
+            mediaAttrib += videoFormat +  "," 
+        
+        mediaAttrib += "' resolutions='" 
+        for screenRes in ENGINE_IMAGE_SIZES:
+            mediaAttrib += screenRes  +  ","
+        mediaAttrib += "' "
+        
+        xmlDirectoryFile.write("<exebase%s>\n" % (langAttrib + mediaAttrib))
         
         
         
@@ -200,21 +362,27 @@ class XMLExport(WebsiteExport):
         xmlDirectoryFile.close()   
         
         
-    def generatePages(self, node, depth):
+    def generatePagesXML(self, node, depth):
         """
         Recursively generate pages and store in pages member variable
         for retrieving later
-        """           
+        """
+        nodeToPageDict = {}           
         for child in node.children:
             pageName = child.titleShort.lower().replace(" ", "_")
             pageName = re.sub(r"\W", "", pageName)
             if not pageName:
                 pageName = "__"
 
-            self.pages.append(XMLPage(pageName, depth, child))
-            self.generatePages(child, depth + 1)
+            newPage = XMLPage(pageName, depth, child)
+            self.pages.append(newPage)
+            nodeToPageDict[child] = newPage
+            childNodeToPageDict = self.generatePagesXML(child, depth + 1)
+            nodeToPageDict.update(childNodeToPageDict)
+        
+        return nodeToPageDict
             
-    def copyFiles(self, package, outputDir):
+    def copyFilesXML(self, package, outputDir):
         
         #copy defined items from the style directory for the mobile output
         styleFiles = self.stylesDir.files("icon_*.png")
@@ -226,10 +394,22 @@ class XMLExport(WebsiteExport):
         styleFiles = self.stylesDir.files("icon_*.gif")
         self.stylesDir.copylist(styleFiles, outputDir)
         
+        #JQuery Mobile theme files
+        jqmImagesDirSrc = self.templatesDir/"ustad-jqmimages"
+        jqmImagesDirDst = outputDir/"images"
+        if not jqmImagesDirDst.isdir():
+            jqmImagesDirDst.mkdir()
+            
+        jqmImagesDirSrc.copylist(jqmImagesDirSrc.files("*.png"),jqmImagesDirDst)
+        jqmImagesDirSrc.copylist(jqmImagesDirSrc.files("*.gif"),jqmImagesDirDst)
+        
+        
         # copy the package's resource files
-        package.resourceDir.copyfiles(outputDir)
+        #package.resourceDir.copyfiles(outputDir)
+        self.copyFiles(package, outputDir)
         
 
+    
 """
 Utility method
 """            
