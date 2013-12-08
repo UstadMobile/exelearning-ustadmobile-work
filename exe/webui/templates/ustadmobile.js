@@ -63,6 +63,18 @@ function debugLog(msg) {
     }
 }
 
+
+/*
+ There is an issue with the cloze because eXe sets the width
+ according to the number of letters; jQuery mobile wants to 
+ make this the width of the screen.  That results in what
+ looks like a text box but only a small part being selectable.
+*/
+function setupClozeWidth() {
+    $(".ClozeIdevice input[type=text]").css("width", "");
+}
+
+
 /*
 Even though the documentation says that this should
 happen apparently it does not
@@ -76,6 +88,8 @@ $(document).on("pageshow", function(event, ui) {
 //var nPageHREF = $(".ui-page-active #exeNextPage").attr("href");
 //console.log("First Next page: " + nPageHREF);
 $(document).on("pagechange", function(event){
+    setupClozeWidth();
+    
     //alert("touch activated..2..");   
     $('.ui-page-active').swipe( {
     //Generic swipe handler for all directions
@@ -201,7 +215,7 @@ function exeMenuPageOpen(){
 	//end of never used.
 
     //Windows Phone check..
-	if($.mobile.path.getLocation("x-wmapp0://www/ustadmobile_menuPage2.html") != "x-wmapp0://www/ustadmobile_menuPage.html"){
+	if($.mobile.path.getLocation("x-wmapp0://www/ustadmobile_menuPage2.html") != "x-wmapp0://www/ustadmobile_menuPage2.html"){
 		console.log('there is path problem');
 	}else{
 		console.log('everything is OK with paths');
@@ -357,6 +371,17 @@ function openAboutUM(){
 	$.mobile.changePage(aboutLink, { changeHash: false, transition: "slide"});
 }
 
+function openTOCPage(){
+	$.mobile.loading('show', {
+        text: 'Loading TOC..',
+        textVisible: true,
+        theme: 'b',
+        html: ""}
+    );
+	var tableOfContentsPage = "exetoc.html";
+    debugLog("Going to Table of Contents page: " + tableOfContentsPage);
+    $.mobile.changePage( tableOfContentsPage, { transition: "slideup", reverse: true} );	
+}
 
 //Test function. Does nothing. Delete it.
 function listPackagesFromServer2(){
