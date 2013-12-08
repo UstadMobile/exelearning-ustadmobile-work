@@ -358,6 +358,27 @@ class Package(Persistable):
         self.mxmlwidth = ""
         self.mxmlforcemediaonly = False
         
+        self.ustadMobileAutoOpen = False
+        self.ustadMobileImageResizeStrategy = "scalefit"
+        self.inlineImageResizeFormula = "0.6"
+        
+        #mobile screen formats - predone resizes
+        self.ustadMobileIncRes100x100 = True
+        self.ustadMobileIncRes320x240 = True
+        self.ustadMobileIncRes240x320 = True
+        self.ustadMobileIncRes640x480 = True
+        self.ustadMobileIncRes480x640 = True
+        
+        #audio media formats to include
+        self.ustadMobileAudioWAV = False
+        self.ustadMobileAudioMP3 = True
+        self.ustadMobileAudioOGG = True
+        
+        #video media formats to include
+        self.ustadMobileVideoMPG = False
+        self.ustadMobileVideoMP4 = True
+        self.ustadMobileVideoOGV = True
+        self.ustadMobileVideo3GP = True
 
         # Temporary directory to hold resources in
         self.resourceDir = TempDirPath()
