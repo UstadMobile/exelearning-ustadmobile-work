@@ -2164,17 +2164,19 @@ class SelectOptionElement(Element):
         ident = self.field.question.id + str(self.index)
 # JR Maquetamos con div en vez de con tabla
 #        html  = '<tr><td>'  
-	html = '<div style="display: table-row; clear: both;" class="answer">\n'
-	html += '<div style="float: left; display: table-cell; margin-left: 0.2em;">\n'
+        html = '<div style="display: table-row; clear: both;" class="answer">\n'
+        html += '<div style="float: left; display: table-cell; margin-left: 0.2em;">\n'
 #JR Anado op al identificador para no empiece por un numero    
         html += u'<input type="checkbox" id="op%s"' % ident
         html += u' value="%s" />\n' %str(self.field.isCorrect)
                 
         ansIdent = "ans" + self.field.question.id + str(self.index)
 #        html += '</td><td><div id="%s" style="color:black">\n' % ansIdent
-	html += '</div>\n'
-	html += '<div style="float: left; display: table-cell; margin-left: 0.5em; width: 93%;">\n'
-	html += '<div id="%s">\n' % ansIdent
+        html += '</div>\n'
+        
+        html += "<label for='op%s'>\n" % ident
+        html += '<div style="float: left; display: table-cell; margin-left: 0.5em; width: 93%;">\n'
+        html += '<div id="%s">\n' % ansIdent
         if preview: 
             #special eXelearningPlus
             htmlpre = self.answerElement.renderPreview()
@@ -2182,15 +2184,15 @@ class SelectOptionElement(Element):
             htmlpre = self.answerElement.renderView()
         html += htmlpre.replace("position:relative\"><p>","position:relative;padding-top:0\"><p style=\"display:inline\">",1)
 #        html += "</div></td></tr><tr><td></td><td>\n"
-	html += "</div></div>\n</div>\n"
-	html += '<div style="display: table-row; clear: both;">'
-	html += '<div style="float: left; display: table-cell; margin-left: 2em;">\n'
+        html += "</div></div></label>\n</div>\n"
+        html += '<div style="display: table-row; clear: both;">'
+        html += '<div style="float: left; display: table-cell; margin-left: 2em;">\n'
         html += '<div id ="op%s" style="display:none;">\n' %(ident + '_1')
         html += "<strong>" + _("Correct") + "</strong></div>"
         html += '<div id ="op%s" style="display:none;">\n' %(ident + '_0')
         html +=  _("Incorrect") + "</div>"
 #        html += "</td></tr>"
-	html += "</div>\n</div>\n"
+        html += "</div>\n</div>\n"
         return html
 
 # JR: Devuelve la cadena xhtml para la etiqueta noscrip
@@ -2358,11 +2360,11 @@ class SelectquestionElement(Element):
             html  = self.questionElement.renderView()
 # JR Maquetamos con div en vez de con una tabla
 #        html += "<table>"
-	html += '<div style="display: table; overflow: auto; width:100%;">'
+	    html += '<div style="display: table; overflow: auto; width:100%;">'
         for element in self.options:
             html += element.renderView(preview)      
 #        html += "</table>"   
-	html += "</div>"
+        html += "</div>"
         html += '<input type="button" name="submitSelect"' 
         html += ' value="%s" ' % _("Show Feedback")
         html += 'onclick="showFeedback(%d,\'%s\')"/> ' %(len(self.field.options),self.field.id) 
