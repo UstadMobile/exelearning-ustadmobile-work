@@ -2558,16 +2558,17 @@ class QuizOptionElement(Element):
         length = len(self.field.question.options)
 # JR Maquetamos con div en vez de con una tabla
 #        html  = '<tr><td>'
-	html = '<div style="display: table-row; clear: both;" class="answer">\n'
-	html += '<div style="float: left; display: table-cell; margin-left: 0.2em;">\n'
+        html = '<div style="display: table-row; clear: both;" class="answer">\n'
+        html += '<div style="float: left; display: table-cell; margin-left: 0.2em;">\n'
         html += '<input type="radio" name="option%s" ' \
                             % self.field.question.id
         html += 'id="i%s" ' % self.id
         html += 'onclick="getFeedback(%d,%d,\'%s\',\'multi\')"/>' \
                             % (self.index, length, self.field.question.id)
 #        html += '</td><td>\n'
-	html += '</div>\n'
-	html += '<div style="float: left; display: table-cell; margin-left: 0.5em; width: 93%;">\n'
+        html += '</div>\n'
+        html += "<label for=\"i%s\">\n" % self.id
+        html += '<div style="float: left; display: table-cell; margin-left: 0.5em; width: 93%;">\n'
         if preview:
             #special eXelearningPlus
             htmlpre = self.answerElement.renderPreview()
@@ -2577,10 +2578,10 @@ class QuizOptionElement(Element):
             #html += self.answerElement.renderView()
             #end special eXelearningPlus
 #        html += "</td></tr>\n"
-	html += "</div>\n</div>"
+        html += "</label></div>\n</div>"
        
         return html
-    
+        
 
     def renderFeedbackView(self, preview=False):
         """
