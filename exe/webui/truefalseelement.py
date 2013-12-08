@@ -226,11 +226,18 @@ class TrueFalseElement(object):
         else: 
             html = self.question_question.renderView()
 
+        html += "<fieldset data-role='controlgroup' data-type='horizontal' >"
+        html += "<label for=\"true%s\">" % self.id 
         html += _("True") + " " 
         html += self.__option(0, 2, "true") + " \n"
+        html += "</label>"
+        
+        html += "<label for=\"false%s\">" % self.id
         html += _("False") + " " 
         html += self.__option(1, 2, "false") + "\n"
-       
+        html += "</label>"
+        html += "</fieldset>"
+        
         return html
     
     def __option(self, index, length, true):
