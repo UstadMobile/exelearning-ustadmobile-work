@@ -91,12 +91,13 @@ class ExportMediaConverter(object):
         return retVal
     
         
-    
+    #TODO: Fix this to be compatible with new style media converter
     def getProfileWidth(self):
-        return int(self.configParser.get("media", "maxwidth"))
+        return int(180)
     
+    #TODO: Fix this to be compatible with new style media converter
     def getProfileHeight(self):
-        return int(self.configParser.get("media", "maxheight"))
+        return int(180)
     
     """
     Calculate what the new dimensions should be
