@@ -63,7 +63,7 @@ class WTKPreviewThread(threading.Thread):
                     foundStorageRoot = True
                     destDir = line[len(storageHintString):].strip()
                     destDirPath = Path(destDir)/"filesystem"/"root1"/"exepreview"
-                    srcPathFiles = self.exportedPath/"nokia"
+                    srcPathFiles = self.exportedPath
                     
                     if not destDirPath.isdir():
                         destDirPath.makedirs()

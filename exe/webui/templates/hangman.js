@@ -49,6 +49,9 @@ function setupGame(gameId) {
         populateLetters(gameId);
         currentWord[gameId] = 0;
         startGame(gameId, 0);
+        $(document).on("pageshow", function(event, ui) {
+            checkHangmanWidth(gameId);
+        });
 }
 
 function populateLetters(gameId) {
@@ -57,6 +60,7 @@ function populateLetters(gameId) {
         for (var i = 0; i < hangman_alphabet[gameId].length; i++) {
                 var domId = gameId + "letter" + i;
                 letterAreaHTML += "<input type='button' "
+                        + " data-inline='true' data-mini='true' "
                         + " id='" + domId +  "' "
                         + " style='" + hangman_buttonStyles[gameId][HANGMAN_BEFORE_GUESS] + "' "
                         + " onclick=\"guess('" + gameId + "', '" + hangman_alphabet[gameId][i] + "', '" + domId + "')\""
@@ -174,6 +178,22 @@ function showAlert(gameId, msg, delayToShow) {
                 setTimeout('document.getElementById("' + gameId + 
                         '_alertarea").style.visibility = "hidden"', delayToShow);
         }
+}
+
+//responsive design to make sure we are fitting within the screen
+function checkHangmanWidth(gameId) {
+    var widthAvailable = $(".HangmanIdeviceInc .iDevice_header").width() - 60;
+    var chanceArr = hangman_chanceimgids[gameId];
+    for(var i = 0; i < chanceArr.length; i++) {
+        var thisImg = $("#"+chanceArr[i]);
+        var thisWidth = parseInt(thisImg.attr("width"));
+        if(thisWidth > widthAvailable) {
+            var scaleFactor = widthAvailable/thisWidth;
+            var newHeight = Math.round(scaleFactor * parseInt(thisImg.attr("height")));
+            thisImg.attr("width", widthAvailable);
+            thisImg.attr("height", newHeight);
+        }
+    }
 }
 
 function playLevelCompleteSound() {

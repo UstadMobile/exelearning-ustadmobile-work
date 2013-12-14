@@ -149,7 +149,7 @@ class XMLExport(WebsiteExport):
             thisPage = nextPage
         
         #the last page
-        thisPage.save(currentOutputDir, prevPage, nextPage, self.pages, \
+        thisPage.save(currentOutputDir, prevPage, None, self.pages, \
                       ustadMobileMode = True, skipNavLinks = True)
         
         #now make filelists
