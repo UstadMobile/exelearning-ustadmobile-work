@@ -47,16 +47,29 @@ If you need a commercial license to remove these restrictions please contact us 
 		
 		//var base64VarName = ["base64Testjs", "ustadmobilejs", "jquerymobilejs", "ustadmobilebooklistjs", "ustadmobilecommonjs", "ustadmobileconstantsjs", "ustadmobilegetpackagesjs", "ustadmobileloginjs", "ustadmobiletestjs"];
 		
-		var base64VarName = [base64Testjs, ustadmobilejs, jquerymobilejs, ustadmobilebooklistjs, ustadmobilecommonjs, ustadmobileconstantsjs, ustadmobilegetpackagesjs, ustadmobileloginjs, ustadmobiletestjs, touchswipejs];
-		
+		var base64VarName = [base64Testjs, ustadmobilejs, jquerymobilejs, ustadmobilebooklistjs, ustadmobilecommonjs, ustadmobileconstantsjs, ustadmobilegetpackagesjs, ustadmobileloginjs, ustadmobiletestjs, touchswipejs, modernizrjs];
+		//9Dec2013: added modernizrjs
+
 		var currentB64Index = 0;
 		var globalCurrentB64 = "";
-		var base64FileFolder = "ustadmobileContent/";
+
+        var base64FileFolder;
+        if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
+            console.log("Detected Blackberry 10 device in ustadmobile-base64tofile.js .. Continuing..");
+            blackberry.io.sandbox = false;
+            base64FileFolder = blackberry.io.SDCard + "/ustadmobileContent/";
+        }else{
+            base64FileFolder = "ustadmobileContent/";
+        }
+
+		//var base64FileFolder = "ustadmobileContent/";
+
         var base64ToFileCallback = null;
 		
 		function writeNextBase64ToFile(base64FileFol) {
             //alert("1: Starting base64 to file..");
-			base64FileFolder = "ustadmobileContent/" + base64FileFol + "/";
+			//base64FileFolder = "ustadmobileContent/" + base64FileFol + "/";
+            base64FileFolder = base64FileFolder + base64FileFol + "/";
 			debugLog("The base 64 File Folder is: " + base64FileFolder);
 			if (base64FileFol != ""){
                 //alert("2a");
@@ -100,11 +113,26 @@ If you need a commercial license to remove these restrictions please contact us 
             base64ToFileCallback = callback;			
             
 			try {
+                if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
+                    console.log("Detected Blackberry 10 device in ustadmobile-base64tofile.js .. Continuing to convert..");
+                    blackberry.io.sandbox = false;
+                    window.webkitRequestFileSystem(window.PERSISTENT, 0, function(fs){
+                                             fileSystem = fs;
+                                             fs.root.getFile(currentB64FilePath, {create: true, exclusive: false}, gotB64FileEntry, notB64FileEntry);
+                                             }, notB64FileSystem);
+                }else{
+                    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
+                                             fileSystem = fs;
+                                             fileSystem.root.getFile(currentB64FilePath, {create: true, exclusive: false}, gotB64FileEntry, notB64FileEntry);
+                                             }, notB64FileSystem);
+                }
+                /*
 				window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
 					fileSystem = fs;
 					fileSystem.root.getFile(currentB64FilePath, {create: true, exclusive: false}, gotB64FileEntry, notB64FileEntry);
-					
-				}, notB64FileSystem);
+                }, notB64FileSystem);
+                 */
+                    
 			} catch (e) {
 				debugLog("File System / File get exception.");
                 runb2fcallback(base64ToFileCallback, "base64ToFile fail");
@@ -118,15 +146,24 @@ If you need a commercial license to remove these restrictions please contact us 
 		
 		function gotB64FileWriter(writer){
 			debugLog("Writing the contents..");
+            writer.seek(writer.length);
 			writer.onwrite = function(evt) {
-				debugLog("Base64 file written to a new file. Going to next file..");
+				debugLog("Base64 file written to a new file. Going to next file(if any)..");
                 runb2fcallback(base64ToFileCallback, "base64ToFile success");
 				writeNextBase64();
 			};
 
 			var currentB64data = window.atob(globalCurrentB64[0]);
-			writer.write(currentB64data);
-			
+            if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){ // Blackberry 10 platform performs as expected when using BLOBS
+                console.log("Detected blackberry 10 device. Going to use BLOBs for File Writing in the course..");
+                var blob = new Blob([currentB64data], {type: 'text/plain'}); //creates the BLOB <such a cool name, BLOB. Hey BLOB, hows it going??
+                writer.write(blob);
+            }else{ // Other device platforms can use String to File.
+                writer.write(currentB64data);
+            }
+            
+			//writer.write(currentB64data);
+            
 		}
 		
 		function notB64FileSystem(){

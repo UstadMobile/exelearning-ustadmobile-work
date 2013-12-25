@@ -42,16 +42,18 @@ If you need a commercial license to remove these restrictions please contact us 
 
 */
 
-// Still developing..
+/* 
 
-//Do not change- will be regenerated
+This javascript jQuery init changes.
 
+*/
 
-ustadAppPath = "/blah/blah";
+//For jQuery mobile and Cordova/PhoneGap framework configurations.
+$( document ).bind( "mobileinit", function() {
+    // Make your jQuery Mobile framework configuration changes here!
+    $.mobile.allowCrossDomainPages = true;
+    $.support.cors = true;
+	console.log("Mobileinit changes set for jQuery mobile for PhoneGap");
 
-//ustadThemeDir = 
-
-//document.location.href
-
-
+}); //as per jQuery's documentation and Cordova/Phonegap
 

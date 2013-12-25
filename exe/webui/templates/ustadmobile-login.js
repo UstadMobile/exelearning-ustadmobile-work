@@ -48,15 +48,43 @@ If you need a commercial license to remove these restrictions please contact us 
 //alert("Starting login.js..");
 //var username="";
 //var password="";
-$.mobile.loading('show', {
-    text: 'Loading Ustad Mobile',
-    textVisible: true,
-    theme: 'b',
-    html: ""}
-); 
 
+//$.mobile.loading('show', {
+//    text: 'Loading Ustad Mobile',
+//    textVisible: true,
+//    theme: 'b',
+//    html: ""}
+//); 
+
+
+    // Wait for device API libraries to load
+    //
+  //document.addEventListener("deviceready", onLoginDeviceReady2, false);
+
+    // device APIs are available
+    //
+    function onLoginDeviceReady2() {
+        debugLog("Ustad Mobile Startup: In onLoginDeviceReady2()");
+        //navigator.splashscreen.show(); //Only to be uncommented when splashscreen support is enabled.
+        
+    }
+/*
+    document.addEventListener("deviceready", onLangDeviceReady, false);
+    function onLangDeviceReady(){
+        debugLog("in onLangDeviceReady()");
+        navigator.globalization.getPreferredLanguage(
+    
+    function langsuccess(language){
+       debugLog("Your device's language is: " +  language.value + "\n");
+    },
+    function errorCB(){
+        debugLog("Failed to get your device's language.");
+    }
+    );
+}
+*/
 function fail(evt) {
-    alert("something went wrong: " + evt.target.error.code);
+    alert( x_("something went wrong: ") + evt.target.error.code);
     console.log(evt.target.error.code);
 	debugLog("Something went wrong");
 }
@@ -72,16 +100,17 @@ function onLoginLoad() {
 //
 function onLoginDeviceReady() {
     $.mobile.loading('hide');
-    debugLog("Checking if user is already logged in..");
+    debugLog(" onLoginLoad: Checking if user is already logged in..");
     checkLoggedIn();
 }
 
 //The form in html calls this with the values. We seperate the form arguments with actual function of login for
 //testing and code-reuse purposes.
 function umloginFromForm() {
-
+    //var msg = messages['loggingintoserver'];
+    //alert(msg);
      $.mobile.loading('show', {
-        text: 'Logging in to umcloud..',
+        text: x_("Logging in to umcloud.."),
         textVisible: true,
         theme: 'b',
     html: ""});
@@ -101,9 +130,13 @@ function umloginredirect(statuscode) {
     if(statuscode == 200) {
         localStorage.setItem('username',username);
         localStorage.setItem('password',password);
-        openPage("ustadmobile_booklist.html");
+		var un = localStorage.getItem('username');
+		var pw = localStorage.getItem('password');
+		console.log("U/P: " + un + "/" + pw);
+        openPage("ustadmobile_booklist.html").trigger("create");
+		//openPage("//www/ustadmobile_booklist.html").trigger("create"); // Changes for Windows Phone. added //www/
     }else {
-        alert("Wrong username/password combination, or Please check that you are able to connect to the internet and your server.");
+        alert(x_("Wrong username/password combination, or Please check that you are able to connect to the internet and your server."));
     }
 }
 
@@ -126,7 +159,9 @@ function umlogin(username, password, url, callback){
 	if( username == "umdev" && password == "umdev" ){
 		localStorage.setItem('username',username);
         localStorage.setItem('password',password);
-        window.open("ustadmobile_developerPage.html").trigger("create");
+        window.open("ustadmobile_developerPage.html", '_self').trigger("create");
+        //BB10 specific changes.
+		////www/ustadmobile_developerPage.html
         //$.mobile.changePage( "ustadmobile_developerPage.html", { transition: "slideup" } );
 	}else{
 		$.ajax({
@@ -143,7 +178,7 @@ function umlogin(username, password, url, callback){
 				},
 			error: function (jqxhr,b,c){
 			
-				alert("Wrong username/password combination or server error. Status Code:" + jqxhr.status);
+				alert(x_("Wrong username/password combination or server error. Status Code:") + jqxhr.status);
 				debugLog("Wrong username/password combination or server error. Status Code:" + jqxhr.status);
                 $.mobile.loading('hide');
 				runcallback(callback, jqxhr.status);
@@ -154,6 +189,7 @@ function umlogin(username, password, url, callback){
 					debugLog("Login success on the server with statusCode 200.");
 					localStorage.setItem('username',username);
 					localStorage.setItem('password',password);
+					console.log("Username and Password set in statusCode");
 					},
 				0: function(){
 					debugLog("Status code 0, unable to connect to server or no internet/intranet access");
@@ -169,7 +205,7 @@ Checks if user logged in from earlier and re directs to book list.
 */
 function checkLoggedIn(){
     $.mobile.loading('show', {
-        text: 'Checking logged user..',
+        text: x_('Checking logged user..'),
         textVisible: true,
         theme: 'b',
         html: ""}
@@ -198,6 +234,7 @@ Simple Open page wrapper
 function openPage(openFile){
     debugLog("Going to page: " + openFile);
 	//window.open(openFile).trigger("create");
-    window.open(openFile);
+    //window.open(openFile);
+    window.open(openFile, '_self'); //BB10 specific changes.
 }
 

@@ -53,8 +53,18 @@ UI list that the user can open a chosen content entry.
 The file to look for in a sub directory to determine if it is EXE
 content or not
 */
+
+var exeLastPage = "../";
+var exeMenuPage = "ustadmobile_menuPage.html";
+var exeMenuPage2 = "ustadmobile_menuPage2.html";
+//localStorage.setItem('exeMenuPage',exeMenuP);
+var globalXMLListFolderName = "all";
+// BB10 specific changes.
+
+var currentBookPath="";
 var exeContentFileName = "index.html";
 var exeContentFileName = "exetoc.html";
+var jsLoaded = "false";
 
 /*
 Called when populateDir fails to get a reader for a given directory
@@ -70,12 +80,30 @@ var exeFileMarker = "exetoc.html";
 
 //not really used
 var currentPath = "/ext_card/ustadmobile";
+var umCLPlatform;
+var foldersToScan;
 
 //list of folder paths to scan for sub directories containing
 //exe content
 //var foldersToScan = ["/ext_card/ustadmobile", "/sdcard/ustadmobile", "/ustadmobileContent/umPackages/"];
 
-var foldersToScan = ["/ext_card/ustadmobile", "/sdcard/ustadmobile", "/sdcard/ustadmobileContent", "/ustadmobileContent/umPackages/", "/ustadmobileContent/"];
+/*
+if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
+    umCLPlatform = "bb10";
+    console.log("Detected Blackberry 10 device in Course List Scan.");
+    blackberry.io.sandbox = false;
+    var bbumfolder = blackberry.io.SDCard + "/ustadmobileContent";
+    console.log("Added: " + bbumfolder + " to UM Course List Folders To Scan.");
+    var foldersToScan = ["/ext_card/ustadmobile", "/sdcard/ustadmobile", "/sdcard/ustadmobileContent", "/ustadmobileContent/umPackages/", "/ustadmobileContent/", bbumfolder];
+
+}else{
+    var foldersToScan = ["/ext_card/ustadmobile", "/sdcard/ustadmobile", "/sdcard/ustadmobileContent", "/ustadmobileContent/umPackages/", "/ustadmobileContent/"];
+}
+ */
+
+foldersToScan = ["/ext_card/ustadmobile", "/sdcard/ustadmobile", "/sdcard/ustadmobileContent", "/ustadmobileContent/umPackages/", "/ustadmobileContent/"];
+
+//var foldersToScan = ["/ext_card/ustadmobile", "/sdcard/ustadmobile", "/sdcard/ustadmobileContent", "/ustadmobileContent/umPackages/", "/ustadmobileContent/"];
 
 //the index of foldersToScan which we are currently going through
 var currentFolderIndex = 0;
@@ -105,19 +133,31 @@ function onBookListLoad() {
 // PhoneGap is ready - scan the first directory
 //
 function onBLDeviceReady() {
+    if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
+        umCLPlatform = "bb10";
+        console.log("Detected Blackberry 10 device in Course List Scan.");
+        blackberry.io.sandbox = false;
+        var bbumfolder = blackberry.io.SDCard + "/ustadmobileContent";
+        console.log("Added: " + bbumfolder + " to UM Course List Folders To Scan.");
+        foldersToScan = ["/ext_card/ustadmobile", "/sdcard/ustadmobile", "/sdcard/ustadmobileContent", "/ustadmobileContent/umPackages/", "/ustadmobileContent/", bbumfolder];
+        
+    }else{
+        foldersToScan = ["/ext_card/ustadmobile", "/sdcard/ustadmobile", "/sdcard/ustadmobileContent", "/ustadmobileContent/umPackages/", "/ustadmobileContent/"];
+    }
+
     var usern= localStorage.getItem('username');
     var logome='';
     if (usern!=null)
     {
-        logome='Logout';
+        logome=x_('Logout');
     }
     else{
-        logome='Home';
-        usern='Guest';
+        logome=x_('Home');
+        usern=x_('Guest');
     }
 
     $.mobile.loading('show', {
-        text: 'Loading your books..',
+        text: x_('Loading your books..'),
         textVisible: true,
         theme: 'b',
     html: ""});
@@ -146,13 +186,14 @@ Log out function to set localStorage to null (remove) and redirect to login page
 */
 function umLogout(){
     $.mobile.loading('show', {
-    text: 'Loading Ustad Mobile',
+    text: x_('Loading Ustad Mobile'),
     textVisible: true,
     theme: 'b',
     html: ""});
     localStorage.removeItem('username');
     localStorage.removeItem('password');
-    window.open("ustadmobile_login.html");
+    //window.open("ustadmobile_login.html");
+    window.open("ustadmobile_login.html", '_self'); //BB10 specific changes.
 }  
 
 /*
@@ -167,6 +208,7 @@ function populateNextDir() {
     }else {
         $.mobile.loading('hide');
         debugLog("No more folders to scan for ustad mobile packages.");
+        $("#UMBookList").append("<p><i>Go to Menu > Download Courses to get more courses from the online library</i></p>").trigger("create");
         if(allBookFoundCallback != null) {
             if (typeof allBookFoundCallback === "function") {
                 allBookFoundCallback();
@@ -191,10 +233,26 @@ sub directory will look for the marker file.
 function populate(pathFrom){
     debugLog("attempting to populate from: " + pathFrom);
     try {
+        
+        if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){ //If blackberry 10 device
+            blackberry.io.sandbox = false;
+            window.webkitRequestFileSystem(window.PERSISTENT, 0, function(fs){
+                                     fileSystem = fs;
+                                     fs.root.getDirectory(pathFrom,{create: false, exclusive: false},dirReader,failbl);
+                                     }, failbl);
+        }else{  //If other platforms apart from blackberry 10
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
+                                     fileSystem = fs;
+                                     fs.root.getDirectory(pathFrom,{create: false, exclusive: false},dirReader,failbl);
+                                     }, failbl);
+        }
+        /*
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
             fileSystem = fs;
             fs.root.getDirectory(pathFrom,{create: false, exclusive: false},dirReader,failbl);
         }, failbl);
+         */
+        
     } catch (e) {
         //debugLog("populate exception: catch!: " + dump(e));
         debugLog("Populate exception.");
@@ -291,12 +349,46 @@ function failDirectoryReader(error) {
 }
 
 /*
-Simple Open page wrapper
+Simple Open page wrapper (+ sets language of the opened book ?)
 */
 function openBLPage(openFile){
-
-	window.open(openFile).trigger("create");
+    $.mobile.loading('show', {
+        text: x_('Ustad Mobile: Loading..'),
+        textVisible: true,
+        theme: 'b',
+        html: ""}
+    );
+    jsLoaded = false;
+    currentBookPath = openFile;
+    console.log("Book URL that UM is going to is: " + currentBookPath);
+    //eg: file:///sdcard/ustadmobileContent/measurementDemoV2AO/exetoc.html
+    //1. We need to create a file: ustadmobile-settings.js
+    //2. We need to put that file in that directory
+    //3. We need to open the file.
+    var bookpath = currentBookPath.substring(0, currentBookPath.lastIndexOf("/"));
+    var bookpathSplit = bookpath.split("//");
+    bookpath = bookpathSplit[bookpathSplit.length-1];
+    var userSetLanguage = localStorage.getItem('language');
+    console.log("The user selected language is : " + userSetLanguage + " and the current Book Path is: " + bookpath);
+    userSetLanguageString = "var ustadlocalelang = \"" + userSetLanguage + "\"; console.log(\"DAFT PUNK GET LUCKY\");";
+    localStorage.setItem('ustadmobile-settings.js', userSetLanguageString);
+    localStorageToFile(bookpath, "ustadmobile-settings.js", openFile);  //Also is the function that opens the book.
+    //window.open(openFile);
+    //wdotopen(openFile); //Don't worry, localStorageToFile is using window.open, so we are opening it from there after the checks/files are transfered.
 }
+    function wdotopen(openFile){
+        $.mobile.loading('hide');
+        //window.open(openFile);
+        //openFile = "" + openFile;
+        console.log("About to open course main file: " + openFile);
+        window.open(openFile, '_self');     //BB10 specific changes.
+        //window.open(openFile, '_blank'); //Android
+        //window.open(openFile, '_parent');     //BB10 specific changes.
+        //window.open(openFile, '_blank');     //BB10 specific changes.
+        //blackberry.io.file.open(openFile);
+        //window.open("file:///accounts/1000/removable/sdcard/ustadmobileContent/measurementDemoV2AOL/exetoc.html");
+    }
+
 
 
 //Function to write the header. This can be called from within the html and well, it writes the start. Currently this is implemented in eXe so this is kind of redundant , unless you want to use it.. go ahead.
