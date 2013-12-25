@@ -42,16 +42,46 @@ If you need a commercial license to remove these restrictions please contact us 
 
 */
 
-// Still developing..
+/* 
 
-//Do not change- will be regenerated
+This javascript gets Device's set language.
+
+*/
+console.log("IN USTADMOBILE-SETLANGUAGE.JS \n ");
+
+//Cordova device ready event handler
+document.addEventListener("deviceready", onSetLanguageDeviceReady, false);
 
 
-ustadAppPath = "/blah/blah";
+//Function called whenever Cordova is ready within the app's navigation.
+function onSetLanguageDeviceReady(){
+    console.log("Cordova device ready (onSetLanguageDeviceReady())");
+    
+    var baseURL = localStorage.getItem("baseURL");
+    console.log(" Startup: ustadmobile.js->onSetLanguageDeviceReady()->baseURL: " + baseURL);
 
-//ustadThemeDir = 
+    //var messageM = localStorage.getItem("testLS");
+    //console.log("WPTEST: ustadmobile.js->onAppDeviceReady-> Message: " + messageM);
 
-//document.location.href
-
-
+    
+    console.log(" in onSetLanguageDeviceReady()");
+    navigator.globalization.getPreferredLanguage(
+    
+    function langsuccess(language){
+       console.log(" Your device's language is: " +  language.value + "\n");
+        var langGlob = language.value;
+        if (langGlob == "English"){
+            langGlob = "en";
+        }
+        if (langGlob == "Arabic"){
+            langGlob = "ar";
+        }
+       localStorage.setItem('checklanguage', langGlob); 
+    },
+    function errorCB(){
+        console.log("Failed to get your device's language.");
+    }
+    );
+    console.log(" checklanguage set: " + localStorage.getItem('checklanguage'));
+}
 

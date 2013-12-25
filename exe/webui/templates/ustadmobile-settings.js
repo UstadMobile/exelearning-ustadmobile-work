@@ -42,16 +42,10 @@ If you need a commercial license to remove these restrictions please contact us 
 
 */
 
-// Still developing..
+/* 
 
-//Do not change- will be regenerated
+This has javascript settings.
 
-
-ustadAppPath = "/blah/blah";
-
-//ustadThemeDir = 
-
-//document.location.href
-
-
-
+*/
+var ustadlocale;
+console.log("Current value for ustadlocale is: " + ustadlocale);
