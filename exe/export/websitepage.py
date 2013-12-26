@@ -217,7 +217,9 @@ class WebsitePage(Page):
             html += self.getNavigationLink(prevPage, nextPage)
             html += "</"+sectionTag+">"+lb
         # writes the footer for each page 
-        html += self.renderLicense()
+        if ustadMobileMode is False:
+            html += self.renderLicense()
+        
         if not themeHasXML and ustadMobileMode is False:
         #if not style.hasValidConfig:
             html += self.renderFooter()
