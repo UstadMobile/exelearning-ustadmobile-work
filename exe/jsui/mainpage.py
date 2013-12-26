@@ -127,6 +127,14 @@ class MainPage(RenderableLivePage):
             self.exportWebSite(None, self.package.previewDir, stylesDir)
             self.previewPage = File(self.package.previewDir / self.package.name)
         return self.previewPage
+    
+    def child_previewmobile(self,ctx):
+        if not self.package.previewDir:
+            stylesDir = self.config.stylesDir / self.package.style
+            self.package.previewDir = TempDirPath()
+            self.exportXML(None, self.package.previewDir, stylesDir)
+            self.previewPage = File(self.package.previewDir / self.package.name)
+        return self.previewPage
 
     def child_taxon(self, ctx):
         """
@@ -975,10 +983,12 @@ class MainPage(RenderableLivePage):
         try:
             xmlExport = XMLExport(self.config, stylesDir, filename)
             xmlExport.export(self.package)
-            client.alert(_(u'Ustad Mobile version exported to %s') % filename)
-            self._startFileWTK(filename)        
+            if client is not None:
+                client.alert(_(u'Ustad Mobile version exported to %s') % filename)
+                self._startFileWTK(filename)        
         except Exception, e:
-            client.alert(_('EXPORT FAILED!\n%s') % str(e))
+            if client is not None: 
+                client.alert(_('EXPORT FAILED!\n%s') % str(e))
             raise
 
     def exportSinglePage(self, client, filename, webDir, stylesDir, \

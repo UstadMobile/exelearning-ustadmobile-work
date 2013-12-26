@@ -394,6 +394,11 @@ class XMLExport(WebsiteExport):
         styleFiles = self.stylesDir.files("icon_*.gif")
         self.stylesDir.copylist(styleFiles, outputDir)
         
+        
+        #copy 
+        self.templatesDir.copylist(["deviceframe.html", "mobiledevice.png"], outputDir)
+        
+        
         #JQuery Mobile theme files
         jqmImagesDirSrc = self.templatesDir/"ustad-jqmimages"
         jqmImagesDirDst = outputDir/"images"

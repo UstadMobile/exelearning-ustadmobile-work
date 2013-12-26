@@ -144,6 +144,9 @@ Ext.define('eXe.controller.Toolbar', {
             '#tools_preview': {
                 click: { fn: this.processBrowseEvent, url: location.href + '/preview' }
             },
+            '#tools_preview_smartphone': {
+                click: { fn: this.processBrowseEvent, url: location.href + '/previewmobile/deviceframe.html' }
+            },
             '#tools_refresh': {
                 click: this.toolsRefresh
             },

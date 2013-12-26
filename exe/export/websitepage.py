@@ -407,9 +407,6 @@ class WebsitePage(Page):
         html += """
         <div data-role="page" id="exemainpage">
         <div data-role="header" data-position="fixed" data-id="exeheader" data-tap-toggle="false">
-        <p style="background-image:url('res/umres/banne1.png'); background-repeat:repeat-x;margin-top:-8px;" >.</p>
-        <a id="UMUsername"></a>
-        <a id="UMLogout" data-role="button" data-icon="home" data-iconshadow="false" data-direction="reverse" onclick="umLogout()" class="ui-btn-right"></a> 
         <h3>%s</h3> <!-- Note the page title that needs to be replaced with the Page Tite -->
         </div>
         <div data-role="content">
