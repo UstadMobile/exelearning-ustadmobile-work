@@ -385,6 +385,12 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 text: _('Preview')
                             },
                             {
+                                xtype: 'accesskey_menuitem',
+                                itemId: 'tools_preview_smartphone',
+                                accesskey: 'm',
+                                text: _('Preview Smartphone')
+                            },
+                            {
                                 xtype: 'menuseparator'
                             },
                             {
