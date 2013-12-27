@@ -71,7 +71,7 @@ class WTKPreviewThread(threading.Thread):
         javaMePath = WTKPreviewThread.winGetJavaMEPath()
         emulatorPath = javaMePath + "\\bin\\emulator"
         print "Emualtor path = " + emulatorPath
-        jarPath = G.application.config.webDir/"templates"/"EXEMobile2.jar"
+        jarPath = G.application.config.webDir/"templates"/"UstadMobile.jar"
 
         phoneName = "JavaMEPhone1"
         storagePath = os.path.expanduser("~") + os.path.sep + "javame-sdk"  + os.path.sep + "3.4" \
@@ -87,7 +87,7 @@ class WTKPreviewThread(threading.Thread):
     Run using Sun WTK 2.5.2 - this is what we have on Linux...
     """
     def runWTK25(self):
-        jadPath = G.application.config.webDir/"templates"/"EXEMobile2.jad"
+        jadPath = G.application.config.webDir/"templates"/"UstadMobile.jad"
         
         
         cmd = [G.application.config.wtkemulatorpath, "-Xdescriptor:%s" % jadPath, "-Xdomain:manufacturer", "-Dcom.ustadmobile.packagedir=%s" % self.packageName]
