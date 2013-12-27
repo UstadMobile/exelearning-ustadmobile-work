@@ -33,6 +33,8 @@ import subprocess
 import os
 from exe                         import globals as G
 from exe.engine.path          import Path, TempDirPath
+import logging
+
 
 class WTKPreviewThread(threading.Thread):
     '''
@@ -63,8 +65,12 @@ class WTKPreviewThread(threading.Thread):
     Run using Sun WTK3.4
     """
     def runWTK3(self):
+        log = logging.getLogger(__name__)
+        log.info("Starting WTK3")
+        
         javaMePath = WTKPreviewThread.winGetJavaMEPath()
         emulatorPath = javaMePath + "\\bin\\emulator"
+        print "Emualtor path = " + emulatorPath
         jarPath = G.application.config.webDir/"templates"/"EXEMobile2.jar"
 
         phoneName = "JavaMEPhone1"
@@ -74,7 +80,7 @@ class WTKPreviewThread(threading.Thread):
         
         self.copyFilesToPhoneStorage(Path(storagePath))
         
-        cmd = [emulatorPath, "-Xdomain:manufacturer", "-Xdescriptor:%s" % jarPath]
+        cmd = [emulatorPath, "-Xdomain:manufacturer", "-Xdescriptor:%s" % jarPath, "-Dcom.ustadmobile.packagedir=%s" % self.packageName]
         subprocess.call(cmd) 
 
     """
@@ -84,7 +90,7 @@ class WTKPreviewThread(threading.Thread):
         jadPath = G.application.config.webDir/"templates"/"EXEMobile2.jad"
         
         
-        cmd = [G.application.config.wtkemulatorpath, "-Xdescriptor:%s" % jadPath, "-Xdomain:manufacturer"]
+        cmd = [G.application.config.wtkemulatorpath, "-Xdescriptor:%s" % jadPath, "-Xdomain:manufacturer", "-Dcom.ustadmobile.packagedir=%s" % self.packageName]
         wtkProcess = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         foundStorageRoot = False
         
@@ -114,7 +120,7 @@ class WTKPreviewThread(threading.Thread):
     def run(self):
         if os.name == "posix":
             self.runWTK25()
-        elif os.name[0:3] == "win":
+        elif os.name[0:3] == "win" or os.name == "nt":
             self.runWTK3()
     
     """
@@ -122,7 +128,7 @@ class WTKPreviewThread(threading.Thread):
     """
     @classmethod
     def canRunWTK(cls):
-        if os.name[0:3] == "win":
+        if os.name[0:3] == "win" or os.name == "nt":
             j2mePath = cls.winGetJavaMEPath()
             if j2mePath is None:
                 return False
@@ -152,3 +158,4 @@ class WTKPreviewThread(threading.Thread):
         except:
             print "Exception trying to find Java ME 3.4 here"
             return None
+    

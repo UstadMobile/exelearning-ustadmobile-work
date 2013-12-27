@@ -231,8 +231,15 @@ class MainPage(RenderableLivePage):
             self.webServer.monitoring = True
             self.webServer.monitor()
 
-    def previewFeaturePhone(self, arg):
-        self._startWTKPreview()
+    def previewFeaturePhone(self, client):
+        canRunWTK = WTKPreviewThread.canRunWTK() 
+        if canRunWTK:
+            self._startWTKPreview()
+        else:
+            client.alert(_("""
+            Sorry! It seems like your system is not setup for Feature Phone Preview.  
+            You need to install Java and Java 2 Micro Edition WTK.  For help go to
+            www.ustadmobile.com"""))
 
     def render_config(self, ctx, data):
         config = {'lastDir': G.application.config.lastDir,
