@@ -218,6 +218,9 @@ class MainPage(RenderableLivePage):
         setUpHandler(self.outlinePane.handleUp, 'UpNode')
         setUpHandler(self.outlinePane.handleDown, 'DownNode')
         setUpHandler(self.handleCreateDir, 'CreateDir')
+        
+        #for j2me preview with Ustad Mobile
+        setUpHandler(self.previewFeaturePhone, "previewFeaturePhone")
 
         self.idevicePane.client = client
         self.styleMenu.client = client
@@ -227,6 +230,9 @@ class MainPage(RenderableLivePage):
         if not self.webServer.monitoring:
             self.webServer.monitoring = True
             self.webServer.monitor()
+
+    def previewFeaturePhone(self, arg):
+        self._startWTKPreview()
 
     def render_config(self, ctx, data):
         config = {'lastDir': G.application.config.lastDir,
@@ -1227,10 +1233,19 @@ class MainPage(RenderableLivePage):
         else:
             filename /= 'index.html'
             G.application.config.browser.open('file://'+filename)
-            
+
+    def _startWTKPreview(self):
+        if not self.package.previewDir:
+            stylesDir = self.config.stylesDir / self.package.style
+            self.package.previewDir = TempDirPath()
+            self.exportXML(None, self.package.previewDir, stylesDir)
+            self.previewPage = File(self.package.previewDir / self.package.name)
+        
+        self._startFileWTK(Path(self.package.previewDir / self.package.name))
+                    
     # run the mobile emulator (j2me)
     def _startFileWTK(self, filename):
-        wtkPreviewThread = WTKPreviewThread(filename)
+        wtkPreviewThread = WTKPreviewThread(filename, self.package.name)
         wtkPreviewThread.start()
 
     def _loadPackage(self, client, filename, newLoad=True,

@@ -147,6 +147,9 @@ Ext.define('eXe.controller.Toolbar', {
             '#tools_preview_smartphone': {
                 click: { fn: this.processBrowseEvent, url: location.href + '/previewmobile/deviceframe.html' }
             },
+            '#tools_preview_featurephone': {
+                click: this.previewFeaturePhone 
+            },
             '#tools_refresh': {
                 click: this.toolsRefresh
             },
@@ -314,6 +317,10 @@ Ext.define('eXe.controller.Toolbar', {
     
     processBrowseEvent: function(menu, item, e, eOpts) {
         this.browseURL(e.url)
+    },
+    
+    previewFeaturePhone: function() {
+        nevow_clientToServerEvent('previewFeaturePhone');
     },
     
     fileOpenTutorial: function() {
