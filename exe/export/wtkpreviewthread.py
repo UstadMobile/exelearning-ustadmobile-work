@@ -31,6 +31,7 @@ storagepath/filesystem/root1/exepreview
 import threading
 import subprocess
 import os
+import sys
 from exe                         import globals as G
 from exe.engine.path          import Path, TempDirPath
 import logging
@@ -41,6 +42,8 @@ class WTKPreviewThread(threading.Thread):
     classdocs
     '''
 
+    """Constant - the path to the emulator on MAC - Sun WTK3.0"""
+    EmulatorPathMac = "/Applications/Java_ME_SDK_3.0.app/Contents/Resources/bin/emulator"
 
     """
     Where exportedPath is the directory it got exported to (e.g. /tmp/foo)
@@ -64,7 +67,7 @@ class WTKPreviewThread(threading.Thread):
     """
     Run using Sun WTK3.4
     """
-    def runWTK3(self):
+    def runWTK3Win(self):
         log = logging.getLogger(__name__)
         log.info("Starting WTK3")
         
@@ -116,12 +119,28 @@ class WTKPreviewThread(threading.Thread):
                 break
     
         print "Finished executing WTK Emulator"
+    
+    def runWTK3Mac(self):
+        """OSX J2ME Only installs here"""
+        storageDir = os.path.expanduser("~") + os.path.sep + "Library/Application Support/javame-sdk/3.0/work/3" \
+            + "/appdb/filesystem/root1"
+        self.copyFilesToPhoneStorage(Path(storageDir))
+        jarPath = G.application.config.webDir/"templates"/"UstadMobile.jar"
         
+        cmd = [WTKPreviewThread.EmulatorPathMac, "-Xdomain:manufacturer", "-Xdescriptor:%s" % jarPath, "-Dcom.ustadmobile.packagedir=%s" % self.packageName, \
+               "-Xdevice:DefaultCldcPhone1"]
+        subprocess.call(cmd)
+
+
+    
+    
     def run(self):
-        if os.name == "posix":
+        if sys.platform == "darwin":
+            self.runWTK3Mac()
+        elif os.name == "posix":
             self.runWTK25()
         elif os.name[0:3] == "win" or os.name == "nt":
-            self.runWTK3()
+            self.runWTK3Win()
     
     """
     See if this setup actually can run J2ME
@@ -134,6 +153,8 @@ class WTKPreviewThread(threading.Thread):
                 return False
             else:  
                 return True
+        elif sys.platform == "darwin":
+            return Path(WTKPreviewThread.EmulatorPathMac).exists()
         elif os.name == "posix":
             return True  
         else:
