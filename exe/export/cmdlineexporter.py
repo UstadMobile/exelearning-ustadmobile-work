@@ -17,6 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # ===========================================================================
+from exe.export.xmlexport import XMLExport
 '''
 @author: Pedro Peña Pérez
 '''
@@ -44,6 +45,7 @@ class CmdlineExporter(object):
                   'ims': '.zip',
                   'website': '',
                   'webzip': '.zip',
+                  'ustadmobile' : '',
                   'singlepage': '',
                   'xliff': '.xlf',
                   'epub3': '.epub',
@@ -152,3 +154,7 @@ with a different filename') % outputf
     def export_report(self, pkg, outputf):
         websiteExport = WebsiteExport(self.config, self.styles_dir, outputf, report=True)
         websiteExport.export(pkg)
+        
+    def export_ustadmobile(self, pkg, outputf):
+        exporter = XMLExport(self.config, self.styles_dir, outputf)
+        exporter.export(pkg)
