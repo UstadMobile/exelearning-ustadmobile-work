@@ -1705,6 +1705,11 @@ class FieldWithResources(Field):
 
                    new_content = new_content.replace(file_url_str, 
                                                      new_src_string)
+                   new_src_string = "window.open('"+resource_url
+                   file_url_str = "window.open('" + file_url_str[6:]
+
+                   new_content = new_content.replace(file_url_str, 
+                                                     new_src_string)
                    log.debug("ProcessPreviewedLinkResources: built resource: "\
                            + resource_url)
 
@@ -2388,6 +2393,10 @@ class FieldWithResources(Field):
         resources_url_src = "href=\"resources/"
         exported_src = "href=\""
         export_content = content.replace(resources_url_src,exported_src)
+
+        resources_url_src = "window.open('resources/"
+        exported_src = "window.open('"
+        export_content = export_content.replace(resources_url_src,exported_src)
 
         return export_content
 

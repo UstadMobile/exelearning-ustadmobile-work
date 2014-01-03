@@ -35,11 +35,14 @@ from xml.dom                   import minidom
 from exe.engine.path           import Path, TempDirPath, toUnicode
 from exe.engine.node           import Node
 from exe.engine.genericidevice import GenericIdevice
-from exe.engine.persist        import Persistable, encodeObject, \
-                                      decodeObject, decodeObjectRaw
+from exe.engine.multichoiceidevice import MultichoiceIdevice
+from exe.engine.quiztestidevice import QuizTestIdevice
+from exe.engine.truefalseidevice import TrueFalseIdevice
+from exe.engine.wikipediaidevice import WikipediaIdevice
+from exe.engine.persist        import Persistable, encodeObject, decodeObjectRaw
 from exe                       import globals as G
 from exe.engine.resource       import Resource
-from twisted.persisted.styles  import Versioned, doUpgrade
+from twisted.persisted.styles  import doUpgrade
 from twisted.spread.jelly      import Jellyable, Unjellyable
 from exe.engine.beautifulsoup  import BeautifulSoup
 from exe.engine.field          import Field
@@ -327,7 +330,8 @@ class Package(Persistable):
         self.dublinCore    = DublinCore()
         self.lomEs         = lomsubs.lomSub.factory()
         entry = str(uuid.uuid4())
-        self.lomEs.addChilds(self.lomDefaults(entry, 'LOM-ESv1.0'))
+        self._lang = G.application.config.locale.split('_')[0]
+        self.lomEs.addChilds(self.lomDefaults(entry, 'LOM-ESv1.0', True))
         self.lom           = lomsubs.lomSub.factory()
         self.lom.addChilds(self.lomDefaults(entry, 'LOMv1.0'))
         self.scolinks      = False
@@ -337,7 +341,6 @@ class Package(Persistable):
         self.exportMetadataType = "LOMES"
         self.license       = u''
         self.footer        = ""
-        self._lang = G.application.config.locale.split('_')[0]
         self._objectives = u''
         self._preknowledge = u''
         self._learningResourceType = u''
@@ -478,8 +481,8 @@ class Package(Persistable):
             dateTime.set_valueOf_(datetime.datetime.now().strftime('%Y-%m-%d'))
             dateTime.set_uniqueElementName('dateTime')
             lang_str = self.lang.encode('utf-8')
-            value_str = u'Metadata creation'.encode('utf-8')
-            dateDescription = lomsubs.LanguageStringSub([lomsubs.LangStringSub(lang_str, value_str)])
+            value_meta_str = _(u'Metadata creation date').encode('utf-8')
+            dateDescription = lomsubs.LanguageStringSub([lomsubs.LangStringSub(lang_str, value_meta_str)])
             date = lomsubs.dateSub(dateTime, dateDescription)
 
             lifeCycle = metadata.get_lifeCycle()
@@ -691,7 +694,7 @@ class Package(Persistable):
                 return 'yes'
 
     def set_license(self, value):
-        value_str = value.encode('utf-8')
+        value_str = value.rstrip(' 0123456789.').encode('utf-8')
         if self.dublinCore.rights == self.license:
             self.dublinCore.rights = value
         for metadata, source in [(self.lom, 'LOMv1.0'), (self.lomEs, 'LOM-ESv1.0')]:
@@ -1063,7 +1066,12 @@ class Package(Persistable):
             zippedFile.close()
         if self.compatibleWithVersion9:
             self.upgradeToVersion10()
-            Package.persistenceVersion = 10
+            Package.persistenceVersion = 12
+            MultichoiceIdevice.persistenceVersion = 8
+            GenericIdevice.persistenceVersion = 10
+            QuizTestIdevice.persistenceVersion = 9
+            TrueFalseIdevice.persistenceVersion = 10
+            WikipediaIdevice.persistenceVersion = 9
 
     def extractNode(self):
         """
@@ -1140,6 +1148,15 @@ class Package(Persistable):
             if not validxml:
                 toDecode   = zippedFile.read(u"content.data")
                 newPackage = decodeObjectRaw(toDecode)
+            try:
+                lomdata = zippedFile.read(u'imslrm.xml')
+                if 'LOM-ES' in lomdata:
+                    importType = 'lomEs'
+                else:
+                    importType = 'lom'
+                setattr(newPackage, importType, lomsubs.parseString(lomdata))
+            except:
+                pass
             G.application.afterUpgradeHandlers = []
             newPackage.resourceDir = resourceDir
             G.application.afterUpgradeZombies2Delete = []
@@ -1487,27 +1504,31 @@ class Package(Persistable):
             self.resources = {}
         G.application.afterUpgradeHandlers.append(self.cleanUpResources)
 
-    def lomDefaults(self, entry, schema):
-        return {'general': {'identifier': [{'catalog': _('My Catalog'), 'entry': entry}],
+    def lomDefaults(self, entry, schema, rights=False):
+        defaults = {'general': {'identifier': [{'catalog': _('My Catalog'), 'entry': entry}],
                               'aggregationLevel': {'source': schema, 'value': '3'}
                              },
                   'metaMetadata': {'metadataSchema': [schema]},
                  }
+        if rights:
+            defaults['rights'] = {'access': {'accessType': {'source': schema, 'value': 'universal'},
+                                             'description': {'string': [{'valueOf_': _('Default'), 'language': str(self.lang)}]}}}
+        return defaults
 
     oldLicenseMap = {"None": "None",
                   "GNU Free Documentation License": u"license GFDL",
-                  "Creative Commons Attribution 3.0 License": u"creative commons: attribution",
-                  "Creative Commons Attribution Share Alike 3.0 License": u"creative commons: attribution - share alike",
-                  "Creative Commons Attribution No Derivatives 3.0 License": u"creative commons: attribution - non derived work",
-                  "Creative Commons Attribution Non-commercial 3.0 License": u"creative commons: attribution - non commercial",
-                  "Creative Commons Attribution Non-commercial Share Alike 3.0 License": u"creative commons: attribution - non commercial - share alike",
-                  "Creative Commons Attribution Non-commercial No Derivatives 3.0 License": u"creative commons: attribution - non derived work - non commercial",
-                  "Creative Commons Attribution 2.5 License": u"creative commons: attribution",
-                  "Creative Commons Attribution-ShareAlike 2.5 License": u"creative commons: attribution - share alike",
-                  "Creative Commons Attribution-NoDerivs 2.5 License": u"creative commons: attribution - non derived work",
-                  "Creative Commons Attribution-NonCommercial 2.5 License": u"creative commons: attribution - non commercial",
-                  "Creative Commons Attribution-NonCommercial-ShareAlike 2.5 License": u"creative commons: attribution - non commercial - share alike",
-                  "Creative Commons Attribution-NonCommercial-NoDerivs 2.5 License": u"creative commons: attribution - non derived work - non commercial",
+                  "Creative Commons Attribution 3.0 License": u"creative commons: attribution 3.0",
+                  "Creative Commons Attribution Share Alike 3.0 License": u"creative commons: attribution - share alike 3.0",
+                  "Creative Commons Attribution No Derivatives 3.0 License": u"creative commons: attribution - non derived work 3.0",
+                  "Creative Commons Attribution Non-commercial 3.0 License": u"creative commons: attribution - non commercial 3.0",
+                  "Creative Commons Attribution Non-commercial Share Alike 3.0 License": u"creative commons: attribution - non commercial - share alike 3.0",
+                  "Creative Commons Attribution Non-commercial No Derivatives 3.0 License": u"creative commons: attribution - non derived work - non commercial 3.0",
+                  "Creative Commons Attribution 2.5 License": u"creative commons: attribution 2.5",
+                  "Creative Commons Attribution-ShareAlike 2.5 License": u"creative commons: attribution - share alike 2.5",
+                  "Creative Commons Attribution-NoDerivs 2.5 License": u"creative commons: attribution - non derived work 2.5",
+                  "Creative Commons Attribution-NonCommercial 2.5 License": u"creative commons: attribution - non commercial 2.5",
+                  "Creative Commons Attribution-NonCommercial-ShareAlike 2.5 License": u"creative commons: attribution - non commercial - share alike 2.5",
+                  "Creative Commons Attribution-NonCommercial-NoDerivs 2.5 License": u"creative commons: attribution - non derived work - non commercial 2.5",
                   "Developing Nations 2.0": u""
                  }
 
@@ -1515,10 +1536,12 @@ class Package(Persistable):
         """
         For version >= 2.0
         """
+        if not hasattr(self, 'lang'):
+            self._lang = G.application.config.locale.split('_')[0]
         entry = str(uuid.uuid4())
         if not hasattr(self, 'lomEs') or not isinstance(self.lomEs, lomsubs.lomSub):
             self.lomEs = lomsubs.lomSub.factory()
-            self.lomEs.addChilds(self.lomDefaults(entry, 'LOM-ESv1.0'))
+            self.lomEs.addChilds(self.lomDefaults(entry, 'LOM-ESv1.0', True))
         if not hasattr(self, 'lom') or not isinstance(self.lom, lomsubs.lomSub):
             self.lom = lomsubs.lomSub.factory()
             self.lom.addChilds(self.lomDefaults(entry, 'LOMv1.0'))
@@ -1530,8 +1553,6 @@ class Package(Persistable):
             self.exportSource = True
         if not hasattr(self, 'exportMetadataType'):
             self.exportMetadataType = "LOMES"
-        if not hasattr(self, 'lang'):
-            self._lang = G.application.config.locale.split('_')[0]
         if not hasattr(self, 'objectives'):
             self._objectives = u''
         if not hasattr(self, 'preknowledge'):
@@ -1587,6 +1608,11 @@ class Package(Persistable):
             if hasattr(self, attr):
                 delattr(self, attr)
         self.license = u''
+        MultichoiceIdevice.persistenceVersion = 7
+        GenericIdevice.persistenceVersion = 9
+        QuizTestIdevice.persistenceVersion = 8
+        TrueFalseIdevice.persistenceVersion = 9
+        WikipediaIdevice.persistenceVersion = 8
         Package.persistenceVersion = 9
 
     def delNotes(self, node):

@@ -101,7 +101,7 @@ class Config:
         'place the objects': [x_('Interactive Activities')],
         'memory match game': [x_('Interactive Activities')],
         'file attachments': [x_('Non-Textual Information')],
-        'sort items': [x_('Non-Textual Information')],
+        'sort items': [x_('Interactive Activities')],
         'scorm test cloze': [x_('Interactive Activities')],
         'scorm test cloze (multiple options)': [x_('Interactive Activities')],
         'scorm test dropdown': [x_('Interactive Activities')],
@@ -238,6 +238,7 @@ class Config:
         self.audioMediaConverter_wav = "/usr/bin/sox %(infile)s %(outfile)s"
         self.audioMediaConverter_mp3 = "/usr/bin/sox %(infile)s -t wav - | /usr/bin/lame -b 32 - %(outfile)s"
         self.ffmpegPath = "/usr/bin/ffmpeg"
+
 
     def _overrideDefaultVals(self):
         """
@@ -387,22 +388,19 @@ class Config:
         # new installation) create it
         if not self.configDir.exists():
             self.configDir.mkdir()
-		#FM: Copy styles
-        if not G.application.standalone:
-            if not self.stylesDir.exists():
-                #self.stylesDir.mkdir()
-                actstyle=self.webDir/'style'
-                if actstyle.exists():
-                    shutil.copytree(actstyle, self.stylesDir)
-            if not Path(self.stylesDir/self.defaultStyle).exists():
-                actstyle=self.webDir/'style'/self.defaultStyle
-                shutil.copytree(actstyle, self.stylesDir/self.defaultStyle)
+		
+        if not G.application.standalone: 
+             #FM: Copy styles         
+            if not os.path.exists(self.stylesDir) or not os.listdir(self.stylesDir):
+                self.copyStyles()                       
         else:
             if G.application.portable:
                 if os.name == 'posix': 
                     self.stylesDir      = Path(self.webDir/'..'/'..'/'..'/'style')
                 else: 
                     self.stylesDir      = Path(self.webDir/'..'/'style')
+                if not os.path.exists(self.stylesDir) or not os.listdir(self.stylesDir): 
+                    self.copyStyles()
             else:
                 self.stylesDir     = Path(self.webDir/'style').abspath()
             
@@ -520,7 +518,15 @@ class Config:
         for style in listStyles:
             self.styles.append(style)
             #print style
-
+            
+    def copyStyles(self):
+        bkstyle=self.webDir/'style'
+        dststyle=self.stylesDir
+        if os.path.exists(bkstyle):            
+            if os.path.exists(dststyle) and not os.listdir(self.stylesDir): shutil.rmtree(dststyle)                 
+            shutil.copytree(bkstyle,dststyle )
+                    
+                    
 
     def loadLocales(self):
         """
