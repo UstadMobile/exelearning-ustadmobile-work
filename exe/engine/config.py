@@ -221,25 +221,6 @@ class Config:
         self.ffmpegPath = "/usr/bin/ffmpeg"
 
 
-    #its here so it can be used in standalone and in linuxconfig
-    def _setDefaultMobilePathLinux(self):
-        self.wtkemulatorpath = "/opt/WTK2.5.2/bin/emulator"
-        
-    def _setDefaultMobilePathWin(self):
-        self.wtkemulatorpath = ""
-
-    def _setDefaultMediaPathLinux(self):
-        # Media converters - defaults for now
-        self.videoMediaConverter_ogv = ""
-        self.videoMediaConverter_3gp = '/usr/bin/ffmpeg -y -i %(infile)s -s qcif -vcodec h263 -acodec libvo_aacenc -ac 1 -ar 8000 -r 25 -ab 32 -y %(outfile)s'
-        self.videoMediaConverter_mpg = "/usr/bin/ffmpeg -y -i %(infile)s  %(outfile)s"
-        self.videoMediaConverter_mp4 = "/usr/bin/ffmpeg -y -i %(infile)s  %(outfile)s"
-        self.audioMediaConverter_au = "/usr/bin/sox %(infile)s %(outfile)s"
-        self.audioMediaConverter_wav = "/usr/bin/sox %(infile)s %(outfile)s"
-        self.audioMediaConverter_mp3 = "/usr/bin/sox %(infile)s -t wav - | /usr/bin/lame -b 32 - %(outfile)s"
-        self.ffmpegPath = "/usr/bin/ffmpeg"
-
-
     def _overrideDefaultVals(self):
         """
         Override this to override the

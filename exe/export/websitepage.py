@@ -175,6 +175,7 @@ class WebsitePage(Page):
             html += "<"+sectionTag+" id=\"emptyHeader\"></"+sectionTag+">"+lb
         
         # add left navigation html
+
         if skipNavLinks == False:
             html += u"<"+navTag+" id=\"siteNav\">"+lb
             html += self.leftNavigationBar(pages)
@@ -235,7 +236,7 @@ class WebsitePage(Page):
         html += u"</"+sectionTag+">"+lb # /content
         if themeHasXML and ustadMobileMode is False:
         #if style.hasValidConfig:
-            html += style.get_extra_body()  
+            html += style.get_extra_body()
             
         if ustadMobileMode == True:
             html += WebsitePage.makeUstadMobileFooter()
@@ -399,6 +400,7 @@ class WebsitePage(Page):
     def makeUstadMobileHeader(cls, title, nextPage, prevPage):
         html = u""
         
+
         #set the next and back links
         nextlink = ""
         prevlink = ""
@@ -414,8 +416,6 @@ class WebsitePage(Page):
             
         
         html += """
-        <div data-role="page" id="exemainpage">
-
         <div data-role="header" data-position="fixed" data-id="exeheader" data-tap-toggle="false">
         <h3>%s</h3> <!-- Note the page title that needs to be replaced with the Page Tite -->
         </div>
