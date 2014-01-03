@@ -57,7 +57,6 @@ class XMLExport(WebsiteExport):
         self.ustadMobileMode = True
         self.skipNavigation = True
         self.pkgNodeToPageDict = None
-
     
     @staticmethod
     def encodeEntities(html):
@@ -101,59 +100,6 @@ class XMLExport(WebsiteExport):
         mediaConverter = ExportMediaConverter()
         
 
-<<<<<<< HEAD
-        
-        mediaConverter.setCurrentPackage(package)
-        ExportMediaConverter.autoMediaOnly = package.mxmlforcemediaonly
-        
-        ExportMediaConverter.setWorkingDir(currentOutputDir)
-
-        
-        self.pages = [ XMLPage("index", 1, package.root) ]
-        
-        self.copyFilesXML(package, currentOutputDir)
-        
-        self.generatePagesXML(package.root, 1)
-        
-        
-        
-        uniquifyNames(self.pages)
-        
-    
-        prevPage = None
-        thisPage = self.pages[0]
-        
-
-        for nextPage in self.pages[1:]:
-            pageDevCount = thisPage.save(currentOutputDir, prevPage, \
-                                         nextPage, self.pages, nonDevices)
-            numDevicesByPage[thisPage.name] = pageDevCount
-            prevPage = thisPage
-            thisPage = nextPage
-             
-        pageDevCount = thisPage.save(currentOutputDir, prevPage, None, self.pages, nonDevices)
-        numDevicesByPage[thisPage.name] = pageDevCount
-        
-        self._writeTOCXML(currentOutputDir, numDevicesByPage, nonDevices, package)
-        
-        #now go through and make the HTML output
-        self.pages = [ WebsitePage(self.prefix + "index", 0, package.root) ]
-        self.generatePages(package.root, 1)
-        uniquifyNames(self.pages)
-        
-        prevPage = None
-        thisPage = self.pages[0]
-        
-        for nextPage in self.pages[1:]:
-            thisPage.save(currentOutputDir, prevPage, nextPage, self.pages, \
-                          ustadMobileMode = True, skipNavLinks = True)
-            prevPage = thisPage
-            thisPage = nextPage
-        
-        #the last page
-        thisPage.save(currentOutputDir, prevPage, nextPage, self.pages, \
-                      ustadMobileMode = True, skipNavLinks = True)
-=======
         
         mediaConverter.setCurrentPackage(package)
         ExportMediaConverter.autoMediaOnly = package.mxmlforcemediaonly
@@ -294,7 +240,6 @@ class XMLExport(WebsiteExport):
         
         for file in package.resourceDir.files():
             filelist.append(file)
->>>>>>> Update Ustad Mobile HTML5 export
         
         #go through styles and see if there is anything else to mop up
         #bad - this was copy/pasted but should go in a util function at sometime
@@ -429,10 +374,6 @@ class XMLExport(WebsiteExport):
             if not pageName:
                 pageName = "__"
 
-<<<<<<< HEAD
-            self.pages.append(XMLPage(pageName, depth, child))
-            self.generatePagesXML(child, depth + 1)
-=======
             newPage = XMLPage(pageName, depth, child)
             self.pages.append(newPage)
             nodeToPageDict[child] = newPage
@@ -440,7 +381,6 @@ class XMLExport(WebsiteExport):
             nodeToPageDict.update(childNodeToPageDict)
         
         return nodeToPageDict
->>>>>>> Update Ustad Mobile HTML5 export
             
     def copyFilesXML(self, package, outputDir):
         
