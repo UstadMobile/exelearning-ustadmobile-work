@@ -1,10 +1,12 @@
 from exe                     import globals
 from exe.engine.package          import Package
-import sys, os
+import sys
+import os
 from exe.engine.config import Config
 from exe.engine.path import Path
 from subprocess import call
 from exe                      import globals as G
+import urllib
 
 import ConfigParser
 try:
@@ -338,9 +340,47 @@ class ExportMediaConverter(object):
     
     
     def reprocessHTML(self, html):        
+        htmlContentMediaAdapted = self.handleExternalResources(html)
         htmlContentMediaAdapted = self.handleAudioVideoTags(html)
         htmlContentMediaAdapted = self.handleImageVersions(htmlContentMediaAdapted)
         return htmlContentMediaAdapted
+    
+    def url2ascii(self, url):
+        chars_to_replace = [':', '/', '&', '%']
+        for current_char in chars_to_replace:
+            url = url.replace(current_char, '_')
+        
+        return url
+    
+    """
+    Handles external resources by downloading them and converting filenames
+    
+    """
+    def handleExternalResources(self, html):
+        html_content_lower = html.lower()
+        start_index = 0
+        start_index = self._findNextTagStart(html_content_lower, start_index, ['img'])
+        while start_index != -1:
+            res_src = self._getSrcForTag(html, start_index)
+            if res_src is not None and res_src.startswith("http://"):
+                new_file_basename = self.url2ascii(res_src)
+                new_file_name = str(self.workingDir/new_file_basename)
+                new_file_path = Path(self.workingDir/new_file_basename)
+                if new_file_path.exists() is False: 
+                    urllib.urlretrieve(res_src, new_file_name)
+                
+                old_length = len(html)
+                html = html.replace(res_src, new_file_name)
+                html_content_lower = html.lower()
+                new_length = len(html)
+                length_difference = old_length - new_length
+                start_index += length_difference
+                
+                
+            end_tag_index = html_content_lower.find(">", start_index);
+            start_index = self._findNextTagStart(html_content_lower,end_tag_index , ['img'])
+        
+        return html
         
     
     def runConversionCmd(self, inFilePath, targetFormat, conversionCommandBase):
@@ -431,19 +471,6 @@ class ExportMediaConverter(object):
                 
                 
                 countAudio = countAudio + 1
-                """
-                This is obsolete
-                targetFormat = self.configParser.get("media", "audioformat")
-                
-                if targetFormat == "au":
-                    conversionCommandBase = ExportMediaConverter.appConfig.audioMediaConverter_au
-                elif targetFormat == "mp3":
-                    conversionCommandBase = ExportMediaConverter.appConfig.audioMediaConverter_mp3
-                elif targetFormat == "ogg":
-                    conversionCommandBase = ExportMediaConverter.appConfig.audioMediaConverter_ogg
-                elif targetFormat == "wav":
-                    conversionCommandBase = ExportMediaConverter.appConfig.audioMediaConverter_wav
-                """
             if tagName == "video":
                 #new way of doing things - we go through all the formats - and then convert
                 for formatName in ENGINE_VIDEO_FORMATS:
@@ -461,49 +488,8 @@ class ExportMediaConverter(object):
                         self.runConversionCmd(inFilePath, formatName.lower(), convertCmd)
                 
                 countVideo = countVideo + 1
-                """
-                
-                This part is obsolete
-                targetFormat = self.configParser.get("media", "videoformat")
-                
-                if targetFormat == "3gp":
-                    conversionCommandBase = ExportMediaConverter.appConfig.videoMediaConverter_3gp
-                elif targetFormat == "mpg":
-                    conversionCommandBase = ExportMediaConverter.appConfig.videoMediaConverter_mpg
-                elif targetFormat == "ogv":
-                    conversionCommandBase = ExportMediaConverter.appConfig.videoMediaConverter_ogv
-                elif targetFormat == "avi":
-                    conversionCommandBase = ExportMediaConverter.appConfig.videoMediaConverter_avi
-                """
             
-            """
-            This is obsolete
-            newFileName = mediaBaseName + "." + targetFormat
-            outFilePath = workingDir + "/" + newFileName
-            if tagName == "audio":
-                audioInFile = mediaName
-            elif tagName == "video":
-                videoInFile = mediaName
-                videoOutFile = newFileName
-            
-            workingDir = Path(inFilePath).parent
-            
-            cmdEnv = {'PATH' : os.environ['PATH'] }
-            
-            exeDir = globals.application.config.exePath.parent
-            mediaToolsDir = str(exeDir/"mediaconverters")
-            if sys.platform[:3] == "win":
-                cmdEnv['PATH'] = mediaToolsDir + os.pathsep + cmdEnv['PATH']
-                cmdEnv['SYSTEMROOT'] = os.environ['SYSTEMROOT']
-                
-            conversionCommand = conversionCommandBase  \
-                    % {"infile" : mediaName, "outfile" : newFileName}
-            print "Converting: run %s\n" % conversionCommand
-            call(conversionCommand, shell=True, cwd=workingDir, env=cmdEnv)
-            htmlContent = htmlContent.replace(mediaName, newFileName)
-                    
-            # go forward so we don't find the same one again
-            """
+            #increment so we dont find the same item again (infinite loop)
             startIndex = startIndex + 1
         
         #see if we have one audio and one video - in which case auto mix them

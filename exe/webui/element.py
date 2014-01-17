@@ -291,7 +291,8 @@ class TextAreaElement(ElementWithResources):
         htmlContentMediaAdapted = htmlContent
         
         if mediaConverter is not None:
-            htmlContentMediaAdapted = mediaConverter.handleAudioVideoTags(htmlContent, mediaParams)
+            htmlContentMediaAdapted = mediaConverter.handleExternalResources(htmlContent)
+            htmlContentMediaAdapted = mediaConverter.handleAudioVideoTags(htmlContentMediaAdapted, mediaParams)
             mediaConverter.handleImageVersions(htmlContentMediaAdapted, mediaParams)
         
         for strToRemove in self.dontCountStrs:
@@ -313,7 +314,8 @@ class TextAreaElement(ElementWithResources):
         mediaConverter = ExportMediaConverter.getInstance()
         
         if mediaConverter is not None:
-            htmlContentMediaAdapted = mediaConverter.handleAudioVideoTags(self.renderView())
+            htmlContentMediaAdapted = mediaConverter.handleExternalResources(self.renderView())
+            htmlContentMediaAdapted = mediaConverter.handleAudioVideoTags(htmlContentMediaAdapted)
             htmlContentMediaAdapted = mediaConverter.handleImageVersions(htmlContentMediaAdapted)
             return htmlContentMediaAdapted
         else:
