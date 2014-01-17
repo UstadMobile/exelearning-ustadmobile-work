@@ -20,7 +20,7 @@ class TestUstadMobileExport(unittest.TestCase):
         application = Application()
         application.standalone = True
         # application.exePathOverride = "/home/mike/workspace/exe-intef-merger/src/exe/"
-        sys.argv[0] = "/home/mike/workspace/exe-intef-merger/src/exe/exe"
+        sys.argv[0] = "/home/mike/workspace/exe-toughramobile/iteexe/exe/exe"
         application.loadConfiguration()
 
 
@@ -108,7 +108,9 @@ class TestUstadMobileExport(unittest.TestCase):
         # Delete the output dir
         outdir = TempDirPath()
         # Load a package
-        package = Package.load('ustad1.elp')
+        filePath = Path("testing/ustad1.elp")
+        
+        package = Package.load('testing/ustad1.elp')
         self.assertIsNotNone(package, "Failed to load package")
         
         styles_dir = G.application.config.stylesDir / package.style
