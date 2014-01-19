@@ -376,6 +376,9 @@ class WebsitePage(Page):
     """
     Make a header with all the needed scripts and stylesheets etc.
     make sure to get rid of main-wrapper extra padding
+    
+    To add JS/CSS files see getUstadMobileScriptList and getUstadMobileCSSList
+    respectively
     """
     @classmethod
     def makeUstadMobileHeadElement(cls, title):
@@ -385,17 +388,20 @@ class WebsitePage(Page):
                 </style>
             """
         for scriptName in WebsitePage.getUstadMobileScriptList():
-            html += "<script src=\"%s\" type=\"text/javascript\"></script>\n" % scriptName
+            html += "<script src=\"%s\" type=\"text/javascript\"></script>\n" \
+            % scriptName
         for cssName in WebsitePage.getUstadMobileCSSList():
-            html += "<link type=\"text/css\" rel=\"stylesheet\" href=\"%s\"/>\n" % cssName
+            html += "<link type=\"text/css\" rel=\"stylesheet\" href=\"%s\"/>\n" \
+             % cssName
         
-        html += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/> \n"
-        
-        
-        
+        html += """<meta name=\"viewport\" content=\"width=device-width, 
+            initial-scale=1\"/> \n"""
         
         return html
     
+    """
+    Genetates a JQuery Mobile style div (div data-role=content)
+    """
     @classmethod
     def makeUstadMobileHeader(cls, title, nextPage, prevPage):
         html = u""
@@ -421,31 +427,60 @@ class WebsitePage(Page):
         </div>
         <div data-role="content">
         """ % title
-        html += "<a href='%s' style='display: none' id='exeNextPage'>&nbsp;</a>" % nextlink
-        html += "<a href='%s' style='display: none' id='exePreviousPage'>&nbsp;</a>" % prevlink
+        
+        html += """
+        <a href='%s' style='display: none' " id='exeNextPage'>&nbsp;</a>
+        """ % nextlink
+        
+        html += """
+        <a href='%s' style='display: none' id='exePreviousPage'>&nbsp;</a>
+        """ % prevlink
         
         return html
     
+    """
+    Make the JQuery Mobile footer for the page
+    """
     @classmethod
     def makeUstadMobileFooter(cls):
         html = u""
         html += """
 
-        <div data-role="footer" data-position="fixed" style="text-align: center;" data-id="exefooter" data-tap-toggle="false">
-            <a id="umBack" data-role="button" data-icon="arrow-l" class="ui-btn-left" onclick="exePreviousPageOpen()"  data-theme="a" data-inline="true">Back</a>
-            <a onclick="exeMenuPageOpen()"   style="text-align: center;" data-transition="slideup" data-inline="true" data-icon="grid" data-theme="a">Menu</a>         
-            <a id="umForward" data-role="button" data-icon="arrow-r" class="ui-btn-right" data-direction="reverse" onclick="exeNextPageOpen()" data-theme="a" data-inline="true">Forward</a>
+        <div data-role="footer" data-position="fixed" 
+            style="text-align: center;" data-id="exefooter" 
+            data-tap-toggle="false">
+            
+            <a id="umBack" data-role="button" data-icon="arrow-l" 
+                class="ui-btn-left exeTranslated" 
+                onclick="exePreviousPageOpen()" data-exe-translation="Back"
+                data-theme="a" data-inline="true">Back</a>
+            
+            <a onclick="exeMenuPageOpen()"   style="text-align: center;" 
+                data-transition="slideup" data-inline="true" data-icon="grid" 
+                data-theme="a">Menu</a>
+                     
+            <a id="umForward" data-role="button" data-icon="arrow-r" 
+                class="ui-btn-right exeTranslated" data-direction="reverse"
+                data-exe-translation="Forward" 
+                onclick="exeNextPageOpen()" data-theme="a" 
+                data-inline="true">Forward</a>
         </div>
         </div>   """
         
         return html
     
+    """
+    List of .js files that are needed by UstadMobile pages
+    """
     @classmethod
     def getUstadMobileScriptList(cls):
         return ["jquery.mobile-1.3.2.min.js", "ustadmobile.js",\
                  "ustadmobile-common.js", "ustadmobile-constants.js",\
                  "ustadmobile-booklist.js", "jquery.touchSwipe.min.js"]
     
+    """
+    List of .css files that are needed by UstadMobile Pages
+    """
     @classmethod
     def getUstadMobileCSSList(cls):
         return ["jquery.mobile-1.3.2.css"]
