@@ -281,9 +281,9 @@ class Manifest(object):
 
         # finally, special resource with all the common files, as binded with de active style ones:    
         if self.scormType == "scorm1.2":
-            xmlStr += """  <resource identifier="COMMON_FILES" adlcp:scormtype="asset">\n"""
+            xmlStr += """  <resource identifier="COMMON_FILES" type="webcontent" adlcp:scormtype="asset">\n"""
         else:
-            xmlStr += """  <resource identifier="COMMON_FILES" adlcp:scormType="asset">\n"""
+            xmlStr += """  <resource identifier="COMMON_FILES" type="webcontent" adlcp:scormType="asset">\n"""
         directory = Path(self.config.webDir).joinpath('style', self.package.style.encode('utf-8'))
         liststylesfiles = os.listdir(directory)
         for x in liststylesfiles:
@@ -295,7 +295,14 @@ class Manifest(object):
         # now the javascript files:
         xmlStr += """    <file href="SCORM_API_wrapper.js"/>\n"""
         xmlStr += """    <file href="SCOFunctions.js"/>\n"""
-            
+        resources = page.node.getResources()
+        my_style = G.application.config.styleStore.getStyle(page.node.package.style)
+        if my_style.hasValidConfig:
+            if my_style.get_jquery() == True:
+                xmlStr += """    <file href="exe_jquery.js"/>\n"""
+        else:
+            xmlStr += """    <file href="exe_jquery.js"/>\n"""
+    
         xmlStr += "  </resource>\n"
        
         # no more resources:
@@ -408,12 +415,6 @@ class Manifest(object):
             self.resStr += '    <file href="exe_lightbox_loading.gif"/>\n'
             self.resStr += '    <file href="exe_lightbox_next.png"/>\n'
             self.resStr += '    <file href="exe_lightbox_prev.png"/>\n'
-
-        if my_style.hasValidConfig:
-            if my_style.get_jquery() == True:
-                self.resStr += '    <file href="exe_jquery.js"/>\n'
-        else:
-            self.resStr += '    <file href="exe_jquery.js"/>\n'
 
         for resource in resources:            
             fileStr += "    <file href=\""+escape(resource)+"\"/>\n"
