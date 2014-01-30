@@ -52,6 +52,8 @@ from exe.webui.clickinorderblock import ClickInOrderBlockInc
 from exe.webui.memorymatchblock import MemoryMatchBlockInc
 from exe.webui.placetheobjectsblock import PlaceTheObjectsBlockInc
 from exe.webui.fileattachblock import FileAttachBlockInc
+from exe.webui.imagemapblock import ImageMapBlock
+
 # JR
 # Necesarios para la FPD
 from exe.webui.clozefpdblock		import ClozefpdBlock

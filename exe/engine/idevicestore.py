@@ -300,6 +300,7 @@ class IdeviceStore:
         from exe.engine.memorymatchidevice import MemoryMatchIdeviceInc
         from exe.engine.placetheobjectsidevice import PlaceTheObjectsIdeviceInc
         from exe.engine.fileattachidevice import FileAttachIdeviceInc
+        from exe.engine.imagemapidevice import ImageMapIdevice
 
         # JR
         # Necesarios para la FPD
@@ -336,6 +337,7 @@ class IdeviceStore:
         factoryExtendedIdevices.append(MemoryMatchIdeviceInc())
         factoryExtendedIdevices.append(PlaceTheObjectsIdeviceInc())
         factoryExtendedIdevices.append(FileAttachIdeviceInc())
+        factoryExtendedIdevices.append(ImageMapIdevice())
         
         factoryExtendedIdevices.append(FreeTextIdevice())
         factoryExtendedIdevices.append(MultichoiceIdevice())

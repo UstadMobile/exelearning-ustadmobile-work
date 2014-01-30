@@ -63,14 +63,15 @@ function findAllMediaInElement(domElement) {
     var foundElements = new Array();
     for(var i = 0; i < domElement.childNodes.length; i++) {
         var currentChild = domElement.childNodes[i];
+        if(currentChild.nodeName == "AUDIO" | currentChild.nodeName == "VIDEO") {
+            foundElements[foundElements.length] = currentChild;
+        }
         if(currentChild.childNodes.length > 0) {
             var subMediaElements = findAllMediaInElement(currentChild);
             for(var j = 0; j < subMediaElements.length; j++) {
                 foundElements[foundElements.length] = subMediaElements[j];
             }
-            if(currentChild.nodeName == "AUDIO" | currentChild.nodeName == "VIDEO") {
-                foundElements[foundElements.length] = currentChild;
-            }
+            
         }
     }
 
