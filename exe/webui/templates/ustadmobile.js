@@ -81,7 +81,7 @@ if(navigator.userAgent.indexOf("Android") !== -1){
         platform = "android";
         console.log("You are using Android on ustadmobile.js.");
         
-    }else if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") == -1){
+    }else if(navigator.userAgent.indexOf("iPhone OS") !== -1 ){
         platform = "ios";
         debugLog("You are using ios on ustadmobile.js()");
 
@@ -101,7 +101,13 @@ if(navigator.userAgent.indexOf("Android") !== -1){
         platform = "bb10";
         //alert("Blackberry detected in ustadmobile.js()");
  
-    }else{
+    }else if(navigator.userAgent.indexOf("Firefox") !== -1){
+        platform = "firefox";
+        debugLog("You are using Firefox on ustadmobile.js()"); 
+    }else if(navigator.userAgent.indexOf("Chrome") !== -1){
+        platform = "chrome";
+        debugLog("You are using Chrome on ustadmobile.js()"); 
+    }else{          // More to add: IE10: MSIE 10, etc.
         //alert("Could not verify your device or platform. Your device isn't tested with our developers. Error. Contact an ustad mobile developer.");
     }
 
@@ -136,7 +142,7 @@ function callOnLanguageDeviceReady(){
         platform = "android";
         console.log("You are using Android on callOnLanguageDeviceReady().");
         onLanguageContentReady();
-    }else if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") == -1){
+    }else if(navigator.userAgent.indexOf("iPhone OS") !== -1 ){
         platform = "ios";
         debugLog("You are using ios on callOnLanguageDeviceReady()");
         onLanguageContentReady();
@@ -156,7 +162,13 @@ function callOnLanguageDeviceReady(){
         platform = "bb10";
         //alert("Blackberry detected in callOnLanguageDeviceReady()");
         onLanguageContentReady();
-    }else{
+    }else if(navigator.userAgent.indexOf("Firefox") !== -1){
+        console.log("Detected Mozilla Firefox Browser");
+        onLanguageContentReady();
+    }else if(navigator.userAgent.indexOf("Chrome") !== -1){
+        console.log("Detected Chrome/Chromium Browser");
+        onLanguageContentReady();
+    }else{              // More to add: IE10: MSIE 10, etc.
         //alert("Could not verify your device or platform. Your device isn't tested with our developers. Error. Contact an ustad mobile developer.");
     }
     
@@ -165,8 +177,11 @@ function callOnLanguageDeviceReady(){
 function onLanguageContentReady(){
     console.log("*****************************IN ONLANGUAGECONTENTREADY()!!*******************************");
     if (typeof ustadlocalelang === 'undefined') {
-        var ustadlocalelang = "default";
+        //var ustadlocalelang = "default";
+        ustadlocalelang = "default";
         //ustadlocalelang = "default";
+    }else{
+        console.log("Already set ustadlocalelang is: " + ustadlocalelang);
     }
 
     console.log("App set language is: " + ustadlocalelang );
@@ -183,25 +198,35 @@ function onLanguageContentReady(){
         }else if(navigator.userAgent.indexOf("Windows Phone OS 8.0") !== -1){
             console.log("Detected platform as : Windows Phone 8");
         var baseURL = "/www";
-        }else if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") == -1){
+        }else if(navigator.userAgent.indexOf("iPhone OS") !== -1){
             console.log("Detected platform as : iOS");
             var baseURL = localStorage.getItem("baseURL");
         }else if(navigator.userAgent.indexOf("BB10") !== -1){
             console.log("Detected platform as : BB10");
             var baseURL = localStorage.getItem("baseURL");
             //alert("BB10TEST: baseUrl: " + baseURL);
-        }else{
+        }else if(navigator.userAgent.indexOf("Firefox") !== -1){
+            console.log("Detected Mozilla Firefox Browser");
+            var baseURL = "";
+        }else if(navigator.userAgent.indexOf("Chrome") !== -1){
+            console.log("Detected Chrome/Chromium Browser");
+            var baseURL = "";
+        }else{                      // More to add: IE10: MSIE 10, etc.
             console.log("Unable to verify your device or platform. Error.");
             //alert("Your device/platform isn't recgnized by this device. So there will/might be errors. Contact an Ustad Mobile Developer.");
             var baseURL = localStorage.getItem("baseURL");
         }
-         //else, platform not set yet.
-        //backupfilename = baseURL + "/" + "en.js";
-      filename = baseURL + "/locale/" + ustadlocalelang + ".js";      
-      console.log("Loading language js: " + filename + " in course (dynamically)..");
-         //alert("BB10TEST: Loading language js: " + filename + " in course (dynamically)..");
-        //$('head').append($('<script>').attr('type', 'text/javascript').attr('src', backupfilename));
-      $('head').append($('<script>').attr('type', 'text/javascript').attr('src', filename));
+	
+	console.log("baseURL: " + baseURL);
+	if (baseURL == null || baseURL == ''){
+		baseURL='';
+	}else{
+		baseURL = baseURL + "/"; 
+	}
+      	filename = baseURL + "locale/" + ustadlocalelang + ".js";      
+      	console.log("Loading language js: " + filename + " in course (dynamically)..");
+     	 $('head').append($('<script>').attr('type', 'text/javascript').attr('src', filename));
+
      }
     console.log(" Content language javascript: " + filename + ".js Loading done.");
     localizePage();
@@ -397,7 +422,7 @@ function exeMenuPageOpen(){
 		debugLog('everything is OK with paths');
 	}
 	debugLog("Ustad Mobile Content: You will go into: exeMenuPage " + exeMenuPage2);
-
+    //alert("userAgent:" + navigator.userAgent);
     //if( platform == "android" ){
     if(navigator.userAgent.indexOf("Android") !== -1){
         var exeMenuLink2 = localStorage.getItem("baseURL") + "/" + exeMenuPage2;
@@ -405,19 +430,22 @@ function exeMenuPageOpen(){
     }else if(navigator.userAgent.indexOf("Windows Phone OS 8.0") !== -1){	//Currently only Windows Phone checks.
 	    var exeMenuLink2 = "/www/" + exeMenuPage2;
         debugLog("Ustad Mobile Content: WINDOWS PHONE 8: You will go into: exeMenuLink " + exeMenuLink2);
-    }else if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") == -1){
-        //Do nothing
-        console.log("Detected your device platform as: iOS!");
-        var exeMenuLink2 = localStorage.getItem("baseURL") + "/" + exeMenuPage2;
-	    debugLog("Ustad Mobile Content: iOS: You will go into: exeMenuLink " + exeMenuLink2);
     }else if(navigator.userAgent.indexOf("BB10") !== -1){
         //Do nothing
         console.log("Detected your device platform as: Blackberry 10!");
         var exeMenuLink2 = localStorage.getItem("baseURL") + "/" + exeMenuPage2;
 	    debugLog("Ustad Mobile Content: Blackberry 10: You will go into: exeMenuLink " + exeMenuLink2);
         //alert("BB10TEST: Ustad Mobile Content: Blackberry 10: You will go into: exeMenuLink " + exeMenuLink2);
+    }else if(navigator.userAgent.indexOf("iPhone OS") !== -1 ){
+        //Do nothing
+        console.log("Detected your device platform as: iOS!");
+	//alert("Detected iOS.");
+        var exeMenuLink2 = localStorage.getItem("baseURL") + "/" + exeMenuPage2;
+	    debugLog("Ustad Mobile Content: iOS: You will go into: exeMenuLink " + exeMenuLink2);
+	//alert("exeMenuLink: " + exeMenuLink2);
     }else{
         console.log("Unable to detect your device platform. Error.");	
+	//alert("Unable to get platform..");
     }
     $.mobile.changePage( exeMenuLink2, { transition: "slideup" } );
 }
@@ -441,7 +469,7 @@ function openMenuLink(linkToOpen, transitionMode){
 	    //if(device is windows phone){
 		    linkToOpen = "/" + linkToOpen; //x-wmapp0: will be appended.
 	    //}
-    }else if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") == -1){
+    }else if(navigator.userAgent.indexOf("iPhone OS") !== -1 ){
         console.log("Detected iOS platform.");
         //Do nothing
     }else if(navigator.userAgent.indexOf("BB10") !== -1){
@@ -470,7 +498,7 @@ function openPage2(openFile){
         //Do nothing, openFile = "ustadmobile_file.html";
     }else if(navigator.userAgent.indexOf("Windows Phone OS 8.0") !== -1){
         openFile = "//www/" + openFile;
-    }else if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") == -1){
+    }else if(navigator.userAgent.indexOf("iPhone OS") !== -1 ){
         //Do nothing.
         console.log("Detected your device is iOS");
     }else if(navigator.userAgent.indexOf("BB10") !== -1){
