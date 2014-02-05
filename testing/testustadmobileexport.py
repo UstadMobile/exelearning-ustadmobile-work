@@ -19,8 +19,9 @@ class TestUstadMobileExport(unittest.TestCase):
         from exe.application import Application
         application = Application()
         application.standalone = True
-        # application.exePathOverride = "/home/mike/workspace/exe-intef-merger/src/exe/"
-        sys.argv[0] = "/home/mike/workspace/exe-toughramobile/iteexe/exe/exe"
+        
+        fake_file_arg = str(Path(__file__).parent.parent/'exe'/'exe') 
+        sys.argv[0] = fake_file_arg
         application.loadConfiguration()
 
 

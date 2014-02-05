@@ -399,7 +399,12 @@ class XMLExport(WebsiteExport):
         self.templatesDir.copylist(["deviceframe.html", "mobiledevice.png"], outputDir)
         
         
+        self.copy_sub_dir("ustad-jqmimages", "images", ['png', 'gif'], \
+                          outputDir)
+        self.copy_sub_dir("ustad-locale", "locale", ['js'], outputDir)
+        
         #JQuery Mobile theme files
+        """
         jqmImagesDirSrc = self.templatesDir/"ustad-jqmimages"
         jqmImagesDirDst = outputDir/"images"
         if not jqmImagesDirDst.isdir():
@@ -407,11 +412,27 @@ class XMLExport(WebsiteExport):
             
         jqmImagesDirSrc.copylist(jqmImagesDirSrc.files("*.png"),jqmImagesDirDst)
         jqmImagesDirSrc.copylist(jqmImagesDirSrc.files("*.gif"),jqmImagesDirDst)
+        """
         
+        #
         
         # copy the package's resource files
         #package.resourceDir.copyfiles(outputDir)
         self.copyFiles(package, outputDir)
+        
+    """
+    Copy the contents of a subdirectory from templates into a sub directory
+    of the output directory
+    """
+    def copy_sub_dir(self, template_src_subdir, target_subdir, extensions, out_dir):
+        src_dir = self.templatesDir/template_src_subdir
+        dst_dir = out_dir/target_subdir
+        if not dst_dir.isdir():
+            dst_dir.mkdir()
+            
+        for extension in extensions:
+            src_dir.copylist(src_dir.files("*.%s" % extension), \
+                             dst_dir)
         
 
     
