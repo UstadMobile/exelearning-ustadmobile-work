@@ -422,11 +422,11 @@ class WebsitePage(Page):
             
         
         html += """
-        <div data-role="header" data-position="fixed" data-id="exeheader" data-tap-toggle="false">
+        <div data-role="header" data-position="fixed" data-id="exeheader" class= "exeTranslated" data-exe-translation = "%s" data-tap-toggle="false">
         <h3>%s</h3> <!-- Note the page title that needs to be replaced with the Page Tite -->
         </div>
         <div data-role="content">
-        """ % title
+        """ % (title, title)
         
         html += """
         <a href='%s' style='display: none' " id='exeNextPage'>&nbsp;</a>
@@ -456,6 +456,7 @@ class WebsitePage(Page):
                 data-theme="a" data-inline="true">Back</a>
             
             <a onclick="exeMenuPageOpen()"   style="text-align: center;" 
+                data-exe-translation="Menu" class="exeTranslated"
                 data-transition="slideup" data-inline="true" data-icon="grid" 
                 data-theme="a">Menu</a>
                      
@@ -474,7 +475,7 @@ class WebsitePage(Page):
     """
     @classmethod
     def getUstadMobileScriptList(cls):
-        return ["jquery.mobile-1.3.2.min.js", "ustadmobile.js",\
+        return ["ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile-1.3.2.min.js",\
                  "ustadmobile-common.js", "ustadmobile-constants.js",\
                  "ustadmobile-booklist.js", "jquery.touchSwipe.min.js"]
     
