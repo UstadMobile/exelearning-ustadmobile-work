@@ -32,6 +32,8 @@ from exe.engine.config       import Config
 from exe.engine.configparser import ConfigParser
 from exe.engine.package      import Package
 from exe.engine.path         import Path
+from exe                import globals as G
+
 
 # Choose which ConfigParser we'll use
 if sys.platform[:3] == "win":
@@ -82,7 +84,16 @@ class FakeRequest(object):
             self.args[key] = [value]
         self.method = method
         self.path = path
-
+        self._remembrances = None
+        self.locateHook = None
+        self.parent = None
+        self.isAttrib = None
+        self.inURL = None 
+        self.precompile = None
+    
+    #fake setHeader - its really fake
+    def setHeader(self, header_name, header_val):
+        pass
 
 class SuperTestCase(unittest.TestCase):
     """
@@ -105,7 +116,11 @@ class SuperTestCase(unittest.TestCase):
         self._setupConfigFile(confParser)
         confParser.write(logFileName)
         # Start up the app and friends
-        self.app = Application()
+        if G.application is None:
+            G.application = Application()
+            
+        self.app = G.application
+        G.application = self.app
         self.app.loadConfiguration()
         self.app.preLaunch()
         self.client = FakeClient()
@@ -123,6 +138,54 @@ class SuperTestCase(unittest.TestCase):
         globals.application = None
         shutil.rmtree('tmp')
 
+    @classmethod
+    def check_application_for_test(cls):
+        logFileName = Path('tmp/app data/test.conf')
+        sys.argv[0] = 'exe/exe'
+        Config._getConfigPathOptions = lambda s: [logFileName]
+        if not logFileName.dirname().exists():
+            logFileName.dirname().makedirs()
+        confParser = ConfigParser()
+        SuperTestCase.update_config_parser(confParser)
+        confParser.write(logFileName)
+        
+        if G.application is None:
+            G.application = Application()
+        
+            G.application.loadConfiguration()
+            SuperTestCase.update_config_parser(G.application.config.configParser)
+            G.application.config.loadSettings()
+            
+            G.application.preLaunch()
+
+    @classmethod
+    def update_config_parser(cls, configParser):
+        """
+        Override this to setup any customised config
+        settings
+        """
+        # Set up the system section
+        system = configParser.addSection('system')
+        system.exePath = 'exe/exe'
+        system.exeDir = 'exe'
+        system.webDir = 'exe/webui'
+        system.localeDir = 'exe/locale'
+        system.configDir = 'tmp'
+        system.port = 8081
+        # Make a temporary dir where we can save packages and exports etc
+        tmpDir = Path('tmp')
+        if not tmpDir.exists():
+            tmpDir.mkdir()
+        dataDir = tmpDir / 'data'
+        if not dataDir.exists():
+            dataDir.mkdir()
+        system.dataDir = dataDir
+        system.browserPath = 'not really used in tests so far'
+        # Setup the logging section
+        logging = configParser.addSection('logging')
+        logging.root = 'DEBUG'
+
+    
     def _setupConfigFile(self, configParser):
         """
         Override this to setup any customised config
