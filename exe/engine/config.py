@@ -53,15 +53,10 @@ class Config:
                    'videoMediaConverter_ogv', 'videoMediaConverter_3gp',
                    'videoMediaConverter_mpg', 'videoMediaConverter_mp4',
                    'videoMediaConverter_avi', 'audioMediaConverter_ogg',
-<<<<<<< HEAD
-                   'audioMediaConverter_au', 'audioMediaConverter_mp3',
-                   'audioMediaConverter_wav', 'ffmpegPath', 'wtkemulatorpath'),
-        'user': ('locale', 'lastDir', 'showPreferencesOnStart', 'showIdevicesGrouped'),
-=======
+
                    'audioMediaConverter_au', 'audioMediaConverter_mp3',
                    'audioMediaConverter_wav', 'ffmpegPath'),
         'user': ('locale', 'lastDir', 'showPreferencesOnStart','defaultStyle', 'showIdevicesGrouped'),
->>>>>>> master
     }
 
     idevicesCategories = {
