@@ -475,9 +475,9 @@ class WebsitePage(Page):
     """
     @classmethod
     def getUstadMobileScriptList(cls):
-        return ["ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile-1.3.2.min.js",\
+        return ["qunit-1.12.0.js", "ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile-1.3.2.min.js",\
                  "ustadmobile-common.js", "ustadmobile-constants.js",\
-                 "ustadmobile-booklist.js", "jquery.touchSwipe.min.js"]
+                 "ustadmobile-booklist.js", "ustadmobile-test.js", "jquery.touchSwipe.min.js"]
     
     """
     List of .css files that are needed by UstadMobile Pages

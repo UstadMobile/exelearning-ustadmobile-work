@@ -42,10 +42,10 @@ If you need a commercial license to remove these restrictions please contact us 
 
 */
 
-/* 
+/* This has the version for qunit test to get from build scrit */
 
-This has javascript settings.
+//var USTAD_VER = "0.0.86";
 
-*/
-//var ustadlocale;
-console.log("Current value for ustadlocale is: " + ustadlocale);
+
+
+

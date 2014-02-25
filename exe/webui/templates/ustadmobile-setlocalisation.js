@@ -28,23 +28,76 @@ function onLanguageDeviceReady(){
     var devicelanguage = localStorage.getItem('checklanguage');
     console.log("Local Storage set Language is: " + selectedlanguage);
     console.log("Local Storage set Device Language is: " + devicelanguage);
-    if (selectedlanguage == null && devicelanguage != null ){   // If this is the app's first run (device language is set on ustadmobile.js file)
+    console.log("In here out!");
+    if (typeof selectedlanguage === 'undefined' || selectedlanguage === 'undefined'){
+        selectedlanguage = null;
+        console.log("selectedlanguage is nulled because it is not defined");
+    }else{
+        console.log("selectedlanguage is NOT undefined.");
+    }
+    if (selectedlanguage == null && devicelanguage != null ){   // The app's first run (selectedlanguage is null) and detected a device language..
+    //if (typeof selectedlanguage === 'undefined' && devicelanguage != null ){   // The app's first run (selectedlanguage is null) and detected a device language..
+        console.log("In here you!");
+        var esp = 'espa' + '\u00f1' + 'ol';
+        var ara = '\u0627\u0644\u0639\u0631\u0628\u064A\u0629';
+        var hin = '\u0939\u093F\u0928\u094D\u0926\u0940';
+        console.log("hin: " + hin);
+        console.log("ara: " + ara);
         selectedlanguage = devicelanguage;
-        console.log("Setting the default language as device's language: " + selectedlanguage);
+        console.log("1The device lang is: |" + devicelanguage + "|");
+                            //To be replaced with filecheck logic.
+            //Language check. //español //العربية
+        if (devicelanguage == "English"){
+            selectedlanguage = "en";
+            console.log("Setting the language as device's language: " + selectedlanguage);
+        }else if(devicelanguage == ara){  // العربية
+            selectedlanguage = "ar";
+            console.log("Setting the language as device's language: " + selectedlanguage);
+        }else if(devicelanguage == esp){ //español
+            selectedlanguage = "es";
+            console.log("Setting the language as device's language: " + selectedlanguage);
+        }else if(devicelanguage == hin) { //हिन्दी
+            selectedlanguage = "hi";
+            console.log("Setting the language as device's language: " + selectedlanguage);  
+        }
+        else{
+            selectedlanguage = "default";   //We set it at default as we will need to check again.
+            console.log("Setting the default language as device's language: " + selectedlanguage);
+        }
         setLanguageAppStart(selectedlanguage);
-    }else if (selectedlanguage == "default" && devicelanguage != null){    //Second run..
-        //Check if device language file is available. 
-        
-        //if Not, set default as: en 
+    }else if (selectedlanguage == "default" && devicelanguage != null){    //If app didn't get language first time, check again. (this occurs sometimes)
         selectedlanguage = devicelanguage;
-        console.log("App second run: Setting language as device: " + devicelanguage);
+        var esp = 'espa' + '\u00f1' + 'ol';
+        var ara = '\u0627\u0644\u0639\u0631\u0628\u064A\u0629';
+        var hin = '\u0939\u093F\u0928\u094D\u0926\u0940';
+        console.log("ara: " + ara);
+        console.log("esp: " + esp);
+        console.log("hin: " + hin);
+        console.log("2The device lang is: |" + devicelanguage + "|");
+                            //To be replaced with filecheck logic.
+        if (devicelanguage == "English"){
+            selectedlanguage = "en";
+            console.log("Setting the language as device's language: " + selectedlanguage);
+        }else if(devicelanguage == ara){ //العربية
+            selectedlanguage = "ar";
+            console.log("Setting the language as device's language: " + selectedlanguage);
+        }else if(devicelanguage == esp){ //español
+            selectedlanguage = "es";
+            console.log("Setting the language as device's language: " + selectedlanguage);
+        }else if(devicelanguage == hin){ //हिन्दी
+            selectedlanguage = "hi";
+            console.log("Setting the language as device's language: " + selectedlanguage);        
+        }else{
+            selectedlanguage = "en";        //English is the default language and it is set here.
+            console.log("2Setting the language as default since language not configured in ustad mobile: " + selectedlanguage);
+        }
         setLanguageAppStart(selectedlanguage);
     }else if (selectedlanguage == null && devicelanguage == null){    //If ustadmobile.js fails to set the language / undestand the language of the device, default to English.
         selectedlanguage = "default";
-        console.log("App first run: Setting language as null.");
+        console.log("App first run: Setting language as default/english.");
         setLanguageAppStart(selectedlanguage);
-    }else if (selectedlanguage == null){    //First page load.
-        selectedlanguage = "en";
+    }else if (selectedlanguage == null){    //First page load. //Don't think this will ever be called..
+        selectedlanguage = "default";
         console.log("Setting the default language as English: " + selectedlanguage);
         setLanguageAppStart(selectedlanguage);
     }else{  // Second or more run of the App, ie: language has been already set by default or by the user.
@@ -68,7 +121,7 @@ function setlanguage(){
     console.log("The set language is: " + selectedlanguage); //selectedlanguage is set by whichever choice is selected in the Settings and Lanugages page.
     localStorage.setItem('language', selectedlanguage);
     var selectedlang = "locale/" + selectedlanguage + ".js";
-    loadjscssfile( selectedlang, "js") //dynamically load and add this .js file
+    loadjscssfile( selectedlang, "js"); //dynamically load and add this .js file
     alert("You language is now: " + selectedlanguage + ". Refreshing/You will now be taken back to your course list"); //Note: add refresh button or trigger refresh (window.open basically)
     //Then OK <-> Cancel logic.
 }
@@ -83,10 +136,39 @@ function loadjscssfile(filename, filetype){
 
 }
 
-//Test Function. Never used. You can delete it. 
-function testSetlanguage(){
-    console.log("Message: " + messages['test']);
+function runcallback2(callbackfunction, arg) {
+    if (callbackfunction != null && typeof callbackfunction === "function") {
+        //alert("here");
+        console.log("Within the call back function with arg: " + arg );
+        callbackfunction(arg);
+    }
 }
+
+//Test Function. //Might not work. May need page to reload. 
+function testSetlanguage(testlang, victim, suspect, callback){
+    //testlang = "es";
+    //suspect = "en";
+    console.log("testing language set as : " + testlang);
+    var originalLanguage;
+    originalLanguage = localStorage.getItem('language', originalLanguage);
+    localStorage.setItem('language', testlang);
+    var testLangPath = "locale/" + testlang + ".js";
+    loadjscssfile( testLangPath, "js");
+    var translatedtext = x_(victim);
+    
+    if (translatedtext == suspect){
+        console.log("Translation success");  
+            localStorage.setItem('language', originalLanguage);
+            //setlanguage();
+            
+            runcallback2(callback, "localisation language test success");
+            //return "localisation language test success";
+    }else{
+        return "fail";
+    }
+    //console.log("Message: " + messages['test']);
+}
+
 
 
 

@@ -43,6 +43,12 @@ If you need a commercial license to remove these restrictions please contact us 
    This is the javasript that accompanies the page where user requests for a list of ustad mobile packages available and is able to select and fetch all the files such that it will be available Over The Air on the device itself. 
 -->
 */
+
+    var buttonBOOLEAN = true;   //If true, then ability to click on the button and download / get course by id. If set to false, then something is waiting to get over.
+    var server = "svr2.ustadmobile.com:8010";
+    var serverEXeExport = "http://" + server + "/media/eXeExport/";
+    var serverGetCourse = "http://" + server + "/getcourse/?id=";
+    //"http://78.47.197.237:8010/getcourse/?id="
     var cowsdung; //BB10TEST: Testing purposes.
 
     var globalXMLListFolderName = "all";
@@ -70,7 +76,9 @@ If you need a commercial license to remove these restrictions please contact us 
     /* General, all purpose fail function.*/
     function fail2(){
       debugLog("Something went wrong");
-      alert("Something went wrong");//errorunknown (messages from en.js)
+      if(unitTestFlag == false){
+      	alert("Something went wrong");//errorunknown (messages from en.js)
+      }
       $.mobile.loading('hide');
     }
 
@@ -84,7 +92,9 @@ If you need a commercial license to remove these restrictions please contact us 
     /* Download fail function when one file (List xml or Package xml) file is unable to be downloaded. */
     function downloadfail(currentFileN){
         debugLog("!Couldn not download a file: " + currentFileN);        
-        alert("Could not download the file. Check if path is correct on the server list.");
+	if(unitTestFlag == false){
+        	alert("Could not download the file. Check if path is correct on the server list.");
+	}
     }
 
 
@@ -111,7 +121,12 @@ If you need a commercial license to remove these restrictions please contact us 
     // Check to see if Cordova is ready and following functions to get rootPath through file System.
     // Needed as this will be the first call to the server.
     function onPackageListTransfer(){
-        document.addEventListener('deviceready', beginPackageListTransfer, function(){alert("Something went wrong in checking Cordova ready."); debugLog("Something went wrong on deviceready at function: onPackageListTransfer()");});
+        document.addEventListener('deviceready', beginPackageListTransfer, function(){
+									if(unitTestFlag == false){
+										alert("Something went wrong in checking Cordova ready.");
+									} 
+									debugLog("Something went wrong on deviceready at function: onPackageListTransfer()");
+									});
     }
 
     function beginPackageListTransfer(){
@@ -125,16 +140,16 @@ If you need a commercial license to remove these restrictions please contact us 
             //requestFileSystem(LocalFileSystem.PERSISTENT, 1024 * 1024 * 1024, gotRootListDirPackage, function(){alert("Something went wrong in getting the fileSystem."); debugLog("Something went wrong in getting file system, beginPackageListTransfer()");});
             
             //default:
-            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotRootListDirPackage, function(){alert("Something went wrong in getting the fileSystem."); debugLog("Something went wrong in getting file system, beginPackageListTransfer()");});
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotRootListDirPackage, function(){if(unitTestFlag == false){alert("Something went wrong in getting the fileSystem.");} debugLog("Something went wrong in getting file system, beginPackageListTransfer()");});
             
             //BB10 specific (using webkit):
-            //window.webkitRequestFileSystem(window.PERSISTENT, 1024*1024*1024, gotRootListDirPackage, function(){alert("Something went wrong in getting the fileSystem."); debugLog("Something went wrong in getting file system, beginPackageListTransfer()");});
+            //window.webkitRequestFileSystem(window.PERSISTENT, 1024*1024*1024, gotRootListDirPackage, function(){if(unitTestFlag == false){alert("Something went wrong in getting the fileSystem.");} debugLog("Something went wrong in getting file system, beginPackageListTransfer()");});
             
 
         }else{
             umgpPlatform = "NOTbb10";
             console.log("NOT BB!");
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotRootListDirPackage, function(){alert("Something went wrong in getting the fileSystem."); debugLog("Something went wrong in getting file system, beginPackageListTransfer()");});
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotRootListDirPackage, function(){if(unitTestFlag==false){alert("Something went wrong in getting the fileSystem.");} debugLog("Something went wrong in getting file system, beginPackageListTransfer()");});
         }
     }
 
@@ -164,7 +179,9 @@ If you need a commercial license to remove these restrictions please contact us 
             startFileDownload(packageListString, packageListFolderName);
         }
         else{
-            alert("Unable to fetch list of available packages on the server. Check if path to list is correct:" + fileNameCheck);
+	    if(unitTestFlag == false){
+            	alert("Unable to fetch list of available packages on the server. Check if path to list is correct:" + fileNameCheck);
+	    }
             debugLog("Invalid package name. Not a package list xml or doesnt end with all_ustadpkg_html5..");
         }
     }
@@ -208,7 +225,6 @@ If you need a commercial license to remove these restrictions please contact us 
 
     // This function calls the file getting method of FileEntry.
     function getXMLListFile(fileSystem){
-        //alert("message: " + msg);
         debugLog("Got XML List FileSystem.");
             rootPath = fileSystem.root.fullPath;
         //var forxml = "ustadmobileContent/" + packageListFolderName + "/" + packageListFileName;
@@ -316,12 +332,12 @@ If you need a commercial license to remove these restrictions please contact us 
     
     //Cordova check if device is ready
     function onPackageTransfer(){
-        document.addEventListener('deviceready', beginPackageTransfer, function(){alert("Something went wrong in checking Cordova ready."); debugLog("Something went wrong on deviceready at function: onPackageTransfer()");});
+        document.addEventListener('deviceready', beginPackageTransfer, function(){ buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again.."); alert("Something went wrong in checking Cordova ready."); debugLog("Something went wrong on deviceready at function: onPackageTransfer()");});
     }
     
     //Cordova get File System
     function beginPackageTransfer(){
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotRootDirPackage, function(){alert("Something went wrong in getting File System of Package XML"); debugLog("Something went wrong in beginPackageTransfer()");});
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotRootDirPackage, function(){ buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again.."); alert("Something went wrong in getting File System of Package XML"); debugLog("Something went wrong in beginPackageTransfer()");});
     }
 
     /* Gets the root path and initiates packageString xml file to be downloaded (set previously) to calculated folder.*/
@@ -368,11 +384,12 @@ If you need a commercial license to remove these restrictions please contact us 
 						startFileDownload(packageString, packageFolderName);
 					}
 					else{
+                      buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again..");                    
 					  alert("Sorry, please input a valid ustadmobile xml, " + fileNameCheck);
 					  debugLog("Invalid package name. Not an xml or doesnt end with ustadpkg_html5..");
 					}
 					
-				}, function(){debugLog("Creating package XML Dir unsuccess.");$.mobile.loading('hide'); alert("Unable to download package to your device and file system.");});
+				}, function(){buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again.."); debugLog("Creating package XML Dir unsuccess.");$.mobile.loading('hide'); alert("Unable to download package to your device and file system.");});
 		
 		
 		
@@ -392,6 +409,8 @@ If you need a commercial license to remove these restrictions please contact us 
     function startFileDownload(fileToDownload, folderName, callback){
         console.log("TESTS1: folderName: " + folderName);
         console.log("TESTS1: packageFolderName: " + packageFolderName);
+        console.log("fileToDownload is : " + fileToDownload);
+        console.log("packageString: " + packageString);
         var uriSplit = fileToDownload.split("/");
         var lastPos = uriSplit.length - 1;
     
@@ -416,6 +435,8 @@ If you need a commercial license to remove these restrictions please contact us 
         debugLog(" Downloading the file: " + fileToDownload + " to folder: " + rootPath + "/ustadmobileContent/" + folderName);
         var filePathDownload = ""; //nullify the path for every download.
         uri = encodeURI(fileToDownload); //needed by fileTransfer Cordova API.
+
+
         if (folderName == ""){
             if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
                 blackberry.io.sandbox = false;
@@ -427,9 +448,22 @@ If you need a commercial license to remove these restrictions please contact us 
             //fileToDownload = "http://www.ustadmobile.com/books/" + currentFileName;
             //filePathDownload = rootPath + "/ustadmobileContent/" + currentFileName;
         }else{ //If downloading the actual course.
-            
+            //We need to check here if it is from the django server or public server
             if(typeof fileFolder === 'undefined'){   //09122013
-                fileToDownload = "http://www.ustadmobile.com/books/" + folderName + "/" + currentFileName;
+
+                //if(packageString.indexOf("78.47.197.237") !== -1){        
+                if(packageString.indexOf(server) !== -1){
+                    var djangoserverurlSplit = packageString.split("/");
+                    var courseuuid = djangoserverurlSplit[5];
+                    console.log("course unique id: " + courseuuid);
+                    console.log("Downloading from Django server");
+                    //fileToDownload = "http://78.47.197.237:8010/media/eXeExport/" + courseuuid + "/" + folderName + "/" + currentFileName;
+                    fileToDownload = serverEXeExport + courseuuid + "/" + folderName + "/" + currentFileName;
+                }else{
+                    console.log("Downloading from ustadmobile.com/books server");
+                    fileToDownload = "http://www.ustadmobile.com/books/" + folderName + "/" + currentFileName;
+                }
+                //fileToDownload = "http://www.ustadmobile.com/books/" + folderName + "/" + currentFileName;
                 
                 if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){ // Blackberry 10 platforms only.
                     blackberry.io.sandbox = false;
@@ -445,8 +479,8 @@ If you need a commercial license to remove these restrictions please contact us 
                 console.log("fileToDownload: " + fileToDownload + " filePathDownload: " + filePathDownload);
                 console.log("TESTS: folderName: " + folderName);
                 console.log("TESTS: packageFolderName: " + packageFolderName);
-            }else{  //09122013
-                if(fileFolder != "books" && currentFileName != "all_ustadpkg_html5.xml"){
+            }else{  //09122013 //20012014
+                if(fileFolder != "books" && currentFileName != "all_ustadpkg_html5.xml" && fileToDownload.indexOf(server) === -1){ //server = 78.47.197.237
 					//Windows Phone specific code to make that folder.
 					var getDir = fileFolder;
 					debugLog("Checking if Directory: " + fileFolder + " exists. If not, creating it.");
@@ -458,11 +492,34 @@ If you need a commercial license to remove these restrictions please contact us 
                         getDir = "ustadmobileContent/" + folderName + "/" + fileFolder;
                     }
 					//getDir = "ustadmobileContent/" + folderName + "/" + fileFolder;
-                        
-					fileSystem.root.getDirectory(getDir, {create:true, exclusive: false}, function(){
+                    console.log("getDir: " + getDir);
+
+                    //has its own fileSystem now because we are calling this to download from Django server. This fixes an issue with that.
+                    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem2){fileSystem2.root.getDirectory(getDir, {create:true, exclusive: false}, function(){
+						debugLog("Creation of folder: " + fileFolder + " in Course folder is a success.");}, function(){debugLog("Creation of folder: " + fileFolder + " in Course folder failed!");});}, function(){console.log("Unable to get fileSystem in course sub folder creation");});
+
+                    //original
+                    //fileSystem.root.getDirectory(getDir, {create:true, exclusive: false}, function(){
+					//	debugLog("Creation of folder: " + fileFolder + " in Course folder is a success.");}, function(){debugLog("Creation of folder: " + fileFolder + " in Course folder failed!");});
+
+					/*setTimeout(function(){fileSystem.root.getDirectory(getDir, {create:true, exclusive: false}, function(){
 						debugLog("Creation of folder: " + fileFolder + " in Course folder is a success.");}, function(){debugLog("Creation of folder: " + fileFolder + " in Course folder failed!");});
-			
-                    fileToDownload = "http://www.ustadmobile.com/books/" + folderName + "/" + fileFolder + "/" + currentFileName;
+                        },5000);*/ //Not ideal/useful because only the code inside runs after the set time, everything outside it runs immediately. 
+			    
+                    if(packageString.indexOf(server) !== -1){  //server = 78.47.197.237
+                        var djangoserverurlSplit = packageString.split("/");
+                        var courseuuid = djangoserverurlSplit[5];
+                        console.log("course unique id: " + courseuuid);
+                        console.log("Downloading from Django server");
+                        //fileToDownload = "http://78.47.197.237:8010/media/eXeExport/" + courseuuid + "/" + folderName + "/" + fileFolder + "/" + currentFileName;
+                        fileToDownload = serverEXeExport + courseuuid + "/" + folderName + "/" + fileFolder + "/" + currentFileName;
+                    }else{
+                        console.log("Downloading from ustadmobile.com/books server");
+                        fileToDownload = "http://www.ustadmobile.com/books/" + folderName + "/" + fileFolder + "/" + currentFileName;
+                    }
+            
+                    //fileToDownload = "http://www.ustadmobile.com/books/" + folderName + "/" + fileFolder + "/" + currentFileName;
+
                     debugLog("Saving file: " + currentFileName + " to course folder: " + fileFolder);
                     
                     if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){ // Platform is blackberry 10
@@ -497,16 +554,10 @@ If you need a commercial license to remove these restrictions please contact us 
         debugLog("File Path to Download: " + filePathDownload);
         debugLog("Downloading uri: " + uri);
         //blackberry.io.home = /accounts/1000/appdata/com.toughra.ustadmobile.testDev_ustadmobilea3b0f56a/data/"
-        var fileTransfer = new FileTransfer();
-        // Using fileTransfer Cordova plugin.
-        //fileTransfer.download(
-        //filePathDownload = blackberry.io.SDCard + "/BigBoobies.xml";
-        //filePathDownload = "/sdcard/external_sd/BigBoobies3.xml";
-        
+        var fileTransfer = new FileTransfer();   
         console.log("filePathDownload is: " + filePathDownload);
-        //if (umgpPlatform != "bb10"){
-        if(navigator.userAgent.indexOf("Safari") === -1 || navigator.userAgent.indexOf("BB10") === -1){
-        //blackberry.io.filetransfer.download(
+
+        if(navigator.userAgent.indexOf("Safari") === -1 || navigator.userAgent.indexOf("BB10") === -1){ //If platform is NOT blackberry
         fileTransfer.download(
             uri,
             filePathDownload,
@@ -540,16 +591,21 @@ If you need a commercial license to remove these restrictions please contact us 
 						    readPackageFile("hi"); // this function will be called that goes through the package xml file and download every file one by one.
 					    }else{
 						    debugLog("Download start cancelled by user. Nothing got downloaded.");
+                            buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again..");
 					    }
                     }
                 }else{
-                   
+                   /*setTimeout(function(){
+                        downloadNextFile();
+                        },800);//Just testing a few things..
+                    */
                     downloadNextFile();
                 }
                               
                 //alert("Download complete! Path: " + entry.fullPath); // If you ever want to notify the user that the file has finished downloading.
             },
             function(error){
+                buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again..");
                 debugLog("download error source " + error.source);
                 debugLog("download error target " + error.target);
                 debugLog("upload error code" + error.code);
@@ -617,6 +673,7 @@ If you need a commercial license to remove these restrictions please contact us 
                                    readPackageFile("hi"); // this function will be called that goes through the package xml file and download every file one by one.
                                    }else{
                                    debugLog("Download start cancelled by user. Nothing got downloaded.");
+                                    buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again..");
                                    }
                                    }
                                    }else{
@@ -628,6 +685,7 @@ If you need a commercial license to remove these restrictions please contact us 
                                   //alert("Download complete! Path: " + entry.fullPath); // If you ever want to notify the user that the file has finished downloading.
                                   },
                                   function(error){
+                                  buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again..");
                                   debugLog("download error source " + error.source);
                                   debugLog("download error target " + error.target);
                                   debugLog("upload error code" + error.code);
@@ -673,10 +731,10 @@ If you need a commercial license to remove these restrictions please contact us 
         
         if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){ //if blackberry 10 device.
             console.log("Detecting your device as a Blackberry 10 devie. Continuing with Course content downloads..");
-            window.webkitRequestFileSystem(window.PERSISTENT, 0, getXMLFile, function(){alert("Something went wrong in getting the file system of the package file. Internal Error."); debugLog("Something went wrong in readPackageFile(msg) ");}); // errorfilesystem (messages->en.js)
+            window.webkitRequestFileSystem(window.PERSISTENT, 0, getXMLFile, function(){buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again.."); alert("Something went wrong in getting the file system of the package file. Internal Error."); debugLog("Something went wrong in readPackageFile(msg) ");}); // errorfilesystem (messages->en.js)
             
         }else{ // Other devies (not blackberry 10)
-            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, getXMLFile, function(){alert("Something went wrong in getting the file system of the package file. Internal Error."); debugLog("Something went wrong in readPackageFile(msg) ");}); // errorfilesystem (messages->en.js)
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, getXMLFile, function(){buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again.."); alert("Something went wrong in getting the file system of the package file. Internal Error."); debugLog("Something went wrong in readPackageFile(msg) ");}); // errorfilesystem (messages->en.js)
         
         }
         //window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, getXMLFile, function(){alert("Something went wrong in getting the file system of the package file. Internal Error."); debugLog("Something went wrong in readPackageFile(msg) ");}); // errorfilesystem (messages->en.js)
@@ -711,12 +769,12 @@ If you need a commercial license to remove these restrictions please contact us 
             debugLog("forxml is: " + forxml);   
             debugLog("GETTING THE XML!");
             fileSystem.root.getFile(forxml, {create:false, exclusive:false}, gotXMLFile, function(){alert("Something went wrong in getting the file XML Package "); debugLog("Something went wrong in getXMLFile(fileSystem) ");});
-        }, function(){debugLog("Creating package Dir unsuccess.");$.mobile.loading('hide'); alert("Getting Package file on to your device failed.");});
+        }, function(){buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again.."); debugLog("Creating package Dir unsuccess.");$.mobile.loading('hide'); alert("Getting Package file on to your device failed.");});
     }
     /* function to get the file after finding it */    
     function gotXMLFile(fileEntry){
         debugLog("Got XML file.");
-        fileEntry.file(gotFile,function(){alert("Something went wrong in getting Package XML file"); debugLog("Something went wrong in gotXMLFile(fileEntry)");});
+        fileEntry.file(gotFile,function(){buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again.."); alert("Something went wrong in getting Package XML file"); debugLog("Something went wrong in gotXMLFile(fileEntry)");});
     }
     /* function to read the file. */
     function gotFile(file){
@@ -803,10 +861,24 @@ If you need a commercial license to remove these restrictions please contact us 
             debugLog("No more files left to scan in the package: " + fileName);          
             $.mobile.loading('hide');
             //if(fileXMLCallback != null && typeof fileXMLCallback === "function"){
-                alert("Download finished.");
+		if(unitTestFlag == false){
+                	alert("Download finished");
+		}
             //}
-			debugLog("Now transfering ustadmobile javascripts and logic to the package folder: " + packageFolderName);
-			writeNextBase64ToFile(packageFolderName);
+
+
+		    //debugLog("Now transfering ustadmobile javascripts and logic to the package folder: " + packageFolderName);
+		    //writeNextBase64ToFile(packageFolderName);
+
+
+            if(fileXMLCallback != null && typeof fileXMLCallback === "function"){
+                console.log("You are testing. Good job!");       
+            }else{
+                debugLog("Now transfering ustadmobile javascripts and logic to the package folder: " + packageFolderName);
+		        writeNextBase64ToFile(packageFolderName);
+                buttonBOOLEAN = true; console.log("buttonBOOLEAN is set to true because of failure. Can try again..");
+            }       
+            
             
             // For tests..
             if( allFileDownloadCallback != null) {
@@ -827,4 +899,92 @@ If you need a commercial license to remove these restrictions please contact us 
         }   
     }
 
+    
+    function checkCourseID(){
+        
+      console.log("BUTTON PRESSED: Checking if previous task is over..");
+      if (buttonBOOLEAN == true){
 
+        $.mobile.loading('show', {
+            text: x_('Checking..'),
+            textVisible: true,
+            theme: 'b',
+            html: ""});
+    
+        console.log("BUTTON PRESSED: Okay to proceed, setting flag as busy..");
+        //ButtonBoolean FALSE : Cannot press button again.
+        buttonBOOLEAN = false;
+        
+        var courseid = $("#courseid").val();
+        courseid = courseid.trim();
+        console.log("Starting check for course id: " + courseid);
+        //courseidURL = "http://78.47.197.237:8010/getcourse/?id=" + courseid;
+        courseidURL = serverGetCourse + courseid;
+
+        $.ajax({
+            type:"GET",
+            url: courseidURL,
+            dataType:"text",
+            success: function(data, textStatus, jqxhr){
+				//alert("Checking course a success with code:" + jqxhr.status);
+                //var courseURL = "http://78.47.197.237:8010/media/eXeExport/" + jqxhr.getResponseHeader('xmlDownload');
+                var courseURL = serverEXeExport + jqxhr.getResponseHeader('xmlDownload');
+                console.log("The xml download url is: " + courseURL);
+                //call the download
+                someThing(courseURL);
+				
+				},
+			complete: function (jqxhr, txt_status) {
+				console.log("Ajax call completed to server. Status: " + jqxhr.status);
+                    switch (jqxhr.status) {
+                        case 0:
+                            //alert;
+                            break;
+                        case 200:
+                            //alert("200 received! yay!");
+                            break;
+                        case 404:
+                            //alert("404 received! boo!");
+                            break;
+                        case 500:
+                            //something;
+                            break;
+                        default:
+                            //alert("I don't know what I just got but it ain't good!");
+                            alert("Could not find course / connect to server. Please check your internet connection and course ID.");
+                    }
+				},
+			error: function (jqxhr,b,c){
+				//alert("Couldn't complete request. Status:" + jqxhr.status);
+                //alert("Couldn't connect to server:" + jqxhr.status); //disable this kind of error message.
+                //alert("Could not find course / connect to server. Please check your internet connection and course ID.");
+                console.log("ERROR: Couldn't complete connection to server. Status: " + jqxhr.status);
+                //Corse not found or server error.
+                //ButtonBoolean TRUE
+                buttonBOOLEAN = true;
+                $.mobile.loading('hide');
+				},
+			statusCode: {
+				200: function(){
+					console.log("Status code: 200 which is a success.");            
+					},
+				0: function(){
+                    alert("Couldn't connect to server. Check connectivity or server status [0]");
+			        console.log("Status code 0, unable to connect to server or no internet/intranet access");
+                    //ButtonBoolean TRUE
+                    buttonBOOLEAN = true;
+						},
+                500: function(){
+                    alert("Could not find a course with that ID.");
+			        console.log("Status code 0, unable to connect get a success response from server or no internet/intranet access. Course probably doesn't exists or server error.");
+                    //ButtonBoolean TRUE
+                    buttonBOOLEAN = true;
+                    $.mobile.loading('hide');
+						}
+				}
+            });
+      }else{
+        console.log("BUTTON PRESSED: Still waiting for previous task to get over...");
+        console.log("BUTTON PRESSED: Try again?");
+      }
+    }

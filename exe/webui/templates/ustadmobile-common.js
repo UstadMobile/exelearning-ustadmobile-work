@@ -53,15 +53,21 @@ var exeMenuPage2 = "ustadmobile_menuPage2.html";
 //localStorage.setItem('exeMenuPage',exeMenuP);
 var globalXMLListFolderName = "all";
 
+console.log("HERE IN COMMON!");
 
 document.addEventListener('deviceready', function(){
                           if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
+                          console.log("Cordova ready for Blackberry 10 platform (detected in common js");
                             platformCommon = "bb10";
-                          }
+                          //window.webkitRequestFileSystem(window.PERSISTENT, 0, gotFSumc, commonfail);
+
+                          //}else{
                           window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
                           window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFSumc, commonfail);
-                          },
-                          false);
+                          //}
+                            }
+                          }
+                          ,commonfail);
 
 function _(msgid) {
     if (msgid in messages) {
