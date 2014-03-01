@@ -251,6 +251,7 @@
             var authorName = getVal("authorname");
             var authorNameLink = getVal("authornamelink");
             var captionLicense = getVal("captionlicense");
+            var imageAlignment = getVal("align");
             
             if (imageHeader!="" || imageTitle!="" || imageTitleLink!="" || authorName!="" || authorNameLink!="" || captionLicense!="") {
                 var hText = "";
@@ -320,7 +321,12 @@
                     }
                 }
                 
-                var cssClass = "exe-figure exe-media position-center";
+                var defaultPos = "position-center";
+                if (imageAlignment=="left" || imageAlignment=="right") {
+                    defaultPos = "float-"+imageAlignment;
+                    c = c.replace(' align="'+imageAlignment+'"','');
+                }              
+                var cssClass = "exe-figure exe-media "+defaultPos;
                 
                 if (captionLicense!="") cssClass += " license-"+captionLicense;
 				
@@ -333,8 +339,10 @@
 				}
                 
                 var extraStyle="width:"+_w+"px;";
+                var fText = "";
+                if (cText!="" || license!="") fText = "<div class='figcaption'>"+cText+license+"</div>";
 
-                c = "<div class='"+cssClass+"' style='"+extraStyle+"'>"+hText+c+"<div class='figcaption'>"+cText+license+"</div></div>";
+                c = "<div class='"+cssClass+"' style='"+extraStyle+"'>"+hText+c+fText+"</div><br />";
             }
             
             tinyMCEPopup.editor.execCommand('mceInsertContent', false, c);
@@ -499,8 +507,15 @@
             }
             if (data.type == 'video' || data.type == 'audio') {
                 get('use_mediaelement').style.display = 'table-row';
-            }else {
+            } else {
                 get('use_mediaelement').style.display = 'none';
+            }
+            if (data.type == 'iframe') {
+                get('filebrowser_link').style.display = 'none';
+                get('src').style.width = '250px';
+            } else {
+                get('filebrowser_link').style.display = '';
+                get('src').style.width = '230px';
             }
             // /The New eXeLearning         
 

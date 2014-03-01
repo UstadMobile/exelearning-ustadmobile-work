@@ -2,10 +2,12 @@ var myTheme = {
     init : function(){
 		var ie_v = $exe.isIE();
 		if (ie_v && ie_v<8) return false;		
-        $(window).resize(function() {
-            myTheme.reset();
-        });    
-        var l = $('<p id="nav-toggler"><a href="#" onclick="myTheme.toggleMenu()" class="hide-nav" id="toggle-nav" title="'+$exe_i18n.hide+'"><span>'+$exe_i18n.menu+'</span></a></p>');
+        setTimeout(function(){
+            $(window).resize(function() {
+                myTheme.reset();
+            });
+        },1000);
+        var l = $('<p id="nav-toggler"><a href="#" onclick="myTheme.toggleMenu(this)" class="hide-nav" id="toggle-nav" title="'+$exe_i18n.hide+'"><span>'+$exe_i18n.menu+'</span></a></p>');
         $("#siteNav").before(l);
         var url = window.location.href;
         url = url.split("?");
@@ -21,18 +23,30 @@ var myTheme = {
         myTheme.params("add");
         $("#toggle-nav").attr("class","show-nav").attr("title",$exe_i18n.show);
     },
-    toggleMenu : function(){
+    toggleMenu : function(e){
+        if (typeof(myTheme.isToggling)=='undefined') myTheme.isToggling = false;
+        if (myTheme.isToggling) return false;
+        
         var l = $("#toggle-nav");
+        
+        if (!e && $(window).width()<900 && l.css("display")!='none') return false; // No reset in mobile view
+        if (!e) l.attr("class","show-nav").attr("title",$exe_i18n.show); // Reset
+        
+        myTheme.isToggling = true;
+        
         if (l.attr("class")=='hide-nav') {       
             l.attr("class","show-nav").attr("title",$exe_i18n.show);
             $("#siteNav").slideUp(400,function(){
                 $(document.body).addClass("no-nav");
+                myTheme.isToggling = false;
             }); 
             myTheme.params("add");
         } else {
             l.attr("class","hide-nav").attr("title",$exe_i18n.hide);
             $(document.body).removeClass("no-nav");
-            $("#siteNav").slideDown();
+			$("#siteNav").slideDown(400,function(){
+                myTheme.isToggling = false;
+            });
             myTheme.params("delete");            
         }
     },
@@ -59,7 +73,6 @@ var myTheme = {
         });
     },
     reset : function() {
-        $("#toggle-nav").attr("class","show-nav").attr("title",$exe_i18n.show);
         myTheme.toggleMenu();        
     }    
 }

@@ -48,6 +48,7 @@ class WebsiteExport(object):
         'outputDir' is the directory that will be [over]written
         with the website
         """
+
         self.config       = config
         self.imagesDir    = config.webDir/"images"
         self.scriptsDir   = config.webDir/"scripts"
@@ -60,6 +61,19 @@ class WebsiteExport(object):
         self.report       = report
         self.skipNavigation = skipNavigation
         self.ustadMobileMode = ustadMobileMode
+        self.styleSecureMode = config.styleSecureMode
+
+        self.config          = config
+        self.imagesDir       = config.webDir/"images"
+        self.scriptsDir      = config.webDir/"scripts"
+        self.cssDir          = config.webDir/"css"
+        self.templatesDir    = config.webDir/"templates"
+        self.stylesDir       = Path(styleDir)
+        self.filename        = Path(filename)
+        self.pages           = []
+        self.prefix          = prefix
+        self.report          = report
+        
 
     def exportZip(self, package):
         """ 
@@ -69,13 +83,14 @@ class WebsiteExport(object):
         
         outputDir = TempDirPath()
 
-        # Import the Website Page class.  If the style has it's own page class
+        # Import the Website Page class , if the secure mode is off.  If the style has it's own page class
         # use that, else use the default one.
-        if (self.stylesDir/"websitepage.py").exists():
-            global WebsitePage
-            module = imp.load_source("websitepage", 
-                                     self.stylesDir/"websitepage.py")
-            WebsitePage = module.WebsitePage
+        if self.styleSecureMode=="0":
+            if (self.stylesDir/"websitepage.py").exists():
+                global WebsitePage
+                module = imp.load_source("websitepage", 
+                                         self.stylesDir/"websitepage.py")
+                WebsitePage = module.WebsitePage
 
         self.pages = [ WebsitePage("index", 0, package.root) ]
         self.generatePages(package.root, 1)
@@ -197,8 +212,6 @@ class WebsiteExport(object):
             
         jsFile = (self.scriptsDir/'common.js')
         jsFile.copyfile(outputDir/'common.js')
-        jsFile = (self.scriptsDir/'lernmodule_net.js')
-        jsFile.copyfile(outputDir/'lernmodule_net.js')
         
         tinCanFiles = [self.scriptsDir/'tincan.js', \
                        self.scriptsDir/'exe_tincan.js']

@@ -88,8 +88,10 @@ function askUserForImage(multiple, fn, filter) {
         }
     });
     fp.appendFilters([
-        filter? filter : { "typename": parent._("Image Files (.jpg, .jpeg, .png, .gif)"), "extension": "*.png", "regex": /.*\.(jpg|jpeg|png|gif)$/i },
-        { "typename": parent._("All Files"), "extension": "*.*", "regex": /.*$/ }
+        filter
+        ? filter
+        : { "typename": parent._("Image Files (.jpg, .jpeg, .png, .gif, .svg)"), "extension": "*.png", "regex": /.*\.(jpg|jpeg|png|gif|svg)$/i },
+          { "typename": parent._("All Files"), "extension": "*.*", "regex": /.*$/ }
     ]);
     parent.window.focus();
     fp.show();
@@ -444,8 +446,9 @@ function submitLink(action, object, changed, currentNode)
 {
     // Close full screen
     if(action=='changeNode') {
-        var ed = tinyMCE.activeEditor
-        if (ed && ed.id=="mce_fullscreen") {
+        var ed = "";
+        if (typeof(tinyMCE)!='undefined' && tinyMCE.activeEditor) ed = tinyMCE.activeEditor;
+        if (ed!="" && ed.id=="mce_fullscreen") {
             ed.execCommand('mceFullScreen');
             setTimeout(function(){
                 execute_submitLink(action, object, changed, currentNode) 
@@ -719,10 +722,28 @@ var $exeAuthoring = {
             }
         }        
     },
+    setYoutubeWmode : function(){
+        var v = document.getElementsByTagName("IFRAME");
+        for (i=0;i<v.length;i++) {
+            var s = v[i].src;
+            if (s.indexOf("http://www.youtube.com")==0 && s.indexOf("wmode=")==-1) {
+                var c = "?";
+                if (s.indexOf("?")!=-1) c = "&";
+                s += c+"wmode=transparent";
+                v[i].src = s;
+            }
+        }
+    },
+    disableSVGInMediaElement : function(){
+        $(document.body).addClass("no-svg");
+    },
     ready : function(){
         if (top.Ext) {
-            if (top.Ext.isIE)
+            $exeAuthoring.disableSVGInMediaElement();
+            $exeAuthoring.setYoutubeWmode();
+            if (top.Ext.isIE) {
                 $exeAuthoring.changeFlowPlayerPathInIE();
+            }
         }
     }
 }

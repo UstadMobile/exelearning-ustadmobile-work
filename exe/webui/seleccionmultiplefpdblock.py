@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # ===========================================================================
 # eXe 
@@ -20,7 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # ===========================================================================
 """
-MultiSelectBlock can render and process MultiSelectIdevices as XHTML
+MultiSelectfpdBlock can render and process MultiSelectIdevices as XHTML
 """
 
 import logging
@@ -34,7 +34,7 @@ log = logging.getLogger(__name__)
 # ===========================================================================
 class SeleccionmultiplefpdBlock(Block):
     """
-    MultiSelectBlock can render and process MultiSelectIdevices as XHTML
+    MultiSelectfpdBlock can render and process MultiSelectIdevices as XHTML
     """
     def __init__(self, parent, idevice):
         """
@@ -84,8 +84,9 @@ class SeleccionmultiplefpdBlock(Block):
         """
         html  = "<div class=\"iDevice\">\n"
 
-        # JR
+        # JRJ
         # Quitamos el prefijo "FPD -"
+        # (let's remove the "FPD -" prefix)
         if self.idevice.title.find("FPD - ") == 0:
             self.idevice.title = x_(u"Now it's your turn")
 

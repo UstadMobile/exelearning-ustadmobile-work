@@ -103,11 +103,7 @@ class Config:
         'place the objects': [x_('Interactive Activities')],
         'memory match game': [x_('Interactive Activities')],
         'file attachments': [x_('Non-Textual Information')],
-        'sort items': [x_('Interactive Activities')],
-        'scorm test cloze': [x_('Interactive Activities')],
-        'scorm test cloze (multiple options)': [x_('Interactive Activities')],
-        'scorm test dropdown': [x_('Interactive Activities')],
-        'scorm test multiple choice': [x_('Interactive Activities')]
+        'sort items': [x_('Interactive Activities')]
     }
 
     def __init__(self):
@@ -152,6 +148,9 @@ class Config:
         self.lastDir = None
         self.showPreferencesOnStart = "1"
         self.showIdevicesGrouped = "1"
+        # styleSecureMode : if this [user] key is = 0  , exelearning can run python files in styles
+        # as websitepage.py , ... ( deactivate secure mode )
+        self.styleSecureMode="1"
         # styles is the list of style names available for loading
         self.styles      = []
         # The documents that we've recently looked at
@@ -392,7 +391,12 @@ class Config:
         self.recentProjects = []
         if self.configParser.has_section('recent_projects'):
             recentProjectsSection = self.configParser.recent_projects
-            for key, path in recentProjectsSection.items():
+            # recentProjectsSection.items() is in the wrong order, keys are alright.
+            # Sorting list by key before adding to self.recentProjects, to avoid wrong ordering
+            # in Recent Projects menu list
+            recentProjectsItems = recentProjectsSection.items();
+            recentProjectsItems.sort()
+            for key, path in recentProjectsItems:
                 self.recentProjects.append(path)
                 
         # Load the list of "hidden" iDevices
@@ -422,6 +426,8 @@ class Config:
         if self.configParser.has_section('user'):
             if self.configParser.user.has_option('defaultStyle'):
                 self.defaultStyle= self.configParser.user.defaultStyle
+            if self.configParser.user.has_option('styleSecureMode'):
+                self.styleSecureMode= self.configParser.user.styleSecureMode
             if self.configParser.user.has_option('internalAnchors'):
                 self.internalAnchors = self.configParser.user.internalAnchors
             if self.configParser.user.has_option('lastDir'):

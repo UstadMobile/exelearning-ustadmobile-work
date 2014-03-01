@@ -793,7 +793,7 @@ Ext.define('eXe.controller.Toolbar', {
     		this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + item.text[0] + "');")
     },
 	
-    stylesClick: function(item) {
+    executeStylesClick: function(item) {
 		for (var i = item.parentMenu.items.length-1; i >= 0; i--) {
 			if (item.parentMenu.items.getAt(i) != item)
 				item.parentMenu.items.getAt(i).setChecked(false);
@@ -807,6 +807,16 @@ Ext.define('eXe.controller.Toolbar', {
         var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
         if (authoring)
             authoring.submitLink("ChangeStyle", item.itemId, 1);
+    },
+    
+    stylesClick: function(item) {
+        var ed = this.getTinyMCEFullScreen();
+        if(ed!="") {
+            ed.execCommand('mceFullScreen');
+            setTimeout(function(){
+                eXe.controller.Toolbar.prototype.executeStylesClick(item);
+            },500);
+        } else this.executeStylesClick(item);
     },
     
 	fileOpenRecent2: function(number) {
@@ -863,11 +873,34 @@ Ext.define('eXe.controller.Toolbar', {
 			}
 		});
 	},
-	
-	fileSave: function(onProceed) {
+    
+    getTinyMCEFullScreen: function(){
+        var ifs = document.getElementsByTagName("IFRAME");
+        if (ifs.length==1) {
+            var d = ifs[0].contentWindow;
+            var ed = "";
+            if (typeof(d.tinyMCE)!='undefined' && d.tinyMCE.activeEditor) ed = d.tinyMCE.activeEditor;
+            if (ed!="" && ed.id=="mce_fullscreen") {
+                return ed;
+            }
+        }
+        return "";
+    },
+    
+    executeFileSave: function(onProceed) {
 	    if (!onProceed || (onProceed && typeof(onProceed) != "string"))
 	        var onProceed = '';
 	    nevow_clientToServerEvent('getPackageFileName', this, '', 'eXe.app.getController("Toolbar").fileSave2', onProceed);
+    },
+	
+	fileSave: function(onProceed) {
+        var ed = this.getTinyMCEFullScreen();
+        if(ed!="") {
+            ed.execCommand('mceFullScreen');
+            setTimeout(function(){
+                eXe.controller.Toolbar.prototype.executeFileSave(onProceed);
+            },500);
+        } else this.executeFileSave(onProceed);
 	},
 	
 	fileSave2: function(filename, onDone) {
@@ -888,7 +921,7 @@ Ext.define('eXe.controller.Toolbar', {
 	    }
 	},
 	// Called by the user when they want to save their package
-	fileSaveAs: function(onDone) {
+	executeFileSaveAs: function(onDone) {
 		var f = Ext.create("eXe.view.filepicker.FilePicker", {
 			type: eXe.view.filepicker.FilePicker.modeSave,
 			title: _("Save file"),
@@ -917,6 +950,16 @@ Ext.define('eXe.controller.Toolbar', {
 		);
 		f.show();
 	},
+    
+    fileSaveAs: function(onDone) {
+        var ed = this.getTinyMCEFullScreen();
+        if(ed!="") {
+            ed.execCommand('mceFullScreen');
+            setTimeout(function(){
+                eXe.controller.Toolbar.prototype.executeFileSaveAs(onDone);
+            },500);
+        } else this.executeFileSaveAs(onDone);
+    },
 	
 	// Submit any open iDevices
 	saveWorkInProgress: function() {

@@ -124,7 +124,6 @@ class WebsitePage(Page):
             html += u'<script type="text/javascript" src="exe_lightbox.js"></script>'+lb
         html += common.getJavaScriptStrings()+lb
         html += u'<script type="text/javascript" src="common.js"></script>'+lb
-        html += u'<script type="text/javascript" src="lernmodule_net.js"></script>'+lb
         if common.hasMagnifier(self.node):
             html += u'<script type="text/javascript" src="mojomagnify.js"></script>'+lb
         
@@ -224,7 +223,6 @@ class WebsitePage(Page):
         if not themeHasXML and ustadMobileMode is False:
         #if not style.hasValidConfig:
             html += self.renderFooter()
-        html += "<"+sectionTag+" id=\"lmsubmit\"></"+sectionTag+"><script type=\"text/javascript\" language=\"javascript\">doStart();</script>"+lb
         html += u"</"+sectionTag+">"+lb # /main
         html += u"</"+sectionTag+">"+lb # /main-wrapper
         if themeHasXML and ustadMobileMode is False:
