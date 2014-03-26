@@ -145,9 +145,9 @@ class WebsitePage(Page):
         if ustadMobileMode == True:
             onLoadFunction = " onload='_onLoadFunction();' "
         
-        html += u"""<body class="exe-web-site">
+        html += u"""<body class="exe-web-site" %s>
             <script type="text/javascript">
-            document.body.className+=" js" %s
+            document.body.className+=" js" 
             </script>""" % onLoadFunction
         html += lb
         
