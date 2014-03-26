@@ -59,12 +59,13 @@ class ExportMediaConverter(object):
     @classmethod
     def setWorkingDir(cls, newWorkingDir):
         ExportMediaConverter.workingDir = newWorkingDir
-    """
-    This will remove the html tags in the list.  Takes a list
-    of tags to remove, builds a regex, then does re.sub
-    """
+    
     @classmethod
     def removeHTMLTags(cls, html, tags):
+        """
+        Takes a list
+        of tags to remove, builds a regex, then does re.sub
+        """
         #myRegex == re.sub('<[/]?(dir|d)[^>]*>', '', text)
         myRegex = '<[/]?('
         for i in range(len(tags)):

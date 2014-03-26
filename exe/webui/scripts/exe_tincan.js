@@ -1,128 +1,191 @@
-//
-// eXeLearning TIN CAN support 
-// Copyright 2014 Michael Dawson.
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-// ===========================================================================
-
-var tinCanStatementQueue = new Array();
-var tinCanObj = null;
-var tinCanLRS = null;
-var tinCanActor = null;
-
-function exeTinCanQueueStatement(stmt) {
-
-}
-
-
-
 /*
- Should use config parameters to get LRS object
-*/
-function exeTinCanLRS(exeTinCanSettings) {
-    var newLRS = new TinCan.LRS({
-        "endpoint" : exeTinCanSettings['endpoint'],
-        "version" : "1.0.0",
-        "user" : exeTinCanSettings['user'],
-        'auth' : "Basic " + Base64.encode(exeTinCanSettings['user'] + ":" + exeTinCanSettings['password'])
-    }); 
-    return newLRS;
-}
+    EXE Tin Can Support - enables EXE to talk tin can 
 
-function getTinCanActor(exeTinCanSettings) {
-    var newActor = new TinCan.Agent(
-        {"name" : exeTinCanSettings['actor']['name'], 
-        "mbox" : exeTinCanSettings['actor']['mbox']
-        });
-    
-    return newActor;
-}
+    Copyright (C) 2014 Michael Dawson mike@mike-dawson.net
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
 
 /**
-Return Tin Can object
-*/
-function getTinCanObj() {
-    return new TinCan();
-}
+Provides the base TinCanQueue
 
-function sendTinCanStatements() {
-    if(tinCanObj == null) {
-        tinCanObj = getTinCanObj();
-    }
-    
-    if(tinCanLRS == null) {
-        tinCanLRS = getTinCanLRS(exeTinCanDefaults);
-    }
-    
-    if(tinCanActor == null) {
-        tinCanActor = getTinCanActor(exeTinCanDefaults);
-    }
-    
-    tinCanObj.recordStores[0] = tinCanLRS;
-}
+@module EXETinCan
+**/
 
-function runTestStatement() {
-    var myVerb = new TinCan.Verb({
-		id : "http://activitystrea.ms/specs/json/schema/activity-schema.html#read",
-		display : {
-			"en-US":"read", 
-			"en-GB":"read"
-		}
-	});
-	
-	var myActivityDefinition = new TinCan.ActivityDefinition({
-		name : {
-			"en-US":"Hello World", 
-			"en-GB":"Hello World"
-		},
-		description : {
-			"en-US":"the meaning of life is 42",
-			"en-GB":"the meaning of life is 42"
-		}
-	});
+var EXETinCan;
+
+var exeTinCanInstance;
+
+
+/**
+  Helps exe to talk tin can
  
-	var myActivity = new TinCan.Activity({
-		id : "http://www.ustadmobile.com/looking_at_things",
-		definition : myActivityDefinition
-	});
+  https://github.com/RusticiSoftware/TinCanJS
+ 
+ @class EXETinCan
+ @constructor
+*/
+EXETinCan = function() {
+    this.tinCanQueue = new TinCanQueue();
+    this.tinCan = new TinCan();
+    
+    this.actor = null;
+    
+    //TODO: Fix this
+    this.idActivityPrefix = "http://www.ustadmobile.com/tincan/";
+};
+
+/**
+ * @method getInstance
+ * 
+ * @return {Object|EXETinCan} EXETinCan Object
+ */
+function getEXETinCanInstance() {
+	if(exeTinCanInstance == null) {
+		exeTinCanInstance = new EXETinCan();
+	}
 	
-	var stmt = new TinCan.Statement({
-		actor : getTinCanActor(exeTinCanDefaults),
-		verb : myVerb,
-		target : myActivity
-	},false);
+	return exeTinCanInstance;
+};
 
-    if(tinCanObj == null) {
-        tinCanObj = getTinCanObj();
-    }
+EXETinCan.prototype = {
     
-    if(tinCanLRS == null) {
-        tinCanLRS = getTinCanLRS(exeTinCanDefaults);
-    }
+	/**
+	 * 
+	 * @method setActor
+	 */
+	setActor : function(actor) {
+		this.actor = actor;
+	},
 
-    tinCanObj.recordStores[0] = tinCanLRS;
+	/**
+	 * 
+	 * @method getActor
+	 */
+	getActor : function() {
+		return this.actor;
+	}, 
+		
+
+    /**
+     * @method setLRSParamsFromLaunchURL
+     */
+    setLRSParamsFromLaunchURL : function() {
+    	var queryVars = this.getQueryVariables();
+    	if(queryVars['actor']) {
+	    	var queryActorStr = queryVars['actor'];
+	    	
+	    	var ourActor = new TinCan.Agent(JSON.parse(queryActorStr));
+	    	
+	    	var newLRS = new TinCan.LRS({
+	            "endpoint" : queryVars['endpoint'],
+	            "version" : "1.0.0",
+	            "user" : ourActor,
+	            'auth' : queryVars['auth']
+	        }); 
+	    	
+	    	this.setActor(ourActor);
+	        
+	        this.tinCan.recordStores[0] = newLRS;
+    	}
+    },
     
-    tinCanObj.sendStatement(stmt, function() {
-        alert("Tin Can statement sent")
-    });
+    makeLRSQueryParams : function(endpoint, actorName, actorMbox, user, password) {
+    	var queryStr = "endpoint=" + encodeURI(endpoint) + "&";
+    	var actorStr = JSON.stringify({
+    		"name" : [actorName],
+    		"mbox" : ["mailto:" + actorMbox]
+    	});
+    	queryStr += "actor=" + encodeURI(actorStr) + "&";
+    	
+    	var authStr = "Basic " + Base64.encode(user, + ":" + password);
+    	queryStr += "auth=" + encodeURI(authStr);
+    	
+    	return queryStr;
+    },
+
+    /**
+     * Turns search query variables into a dictionary - adapted from
+     * http://css-tricks.com/snippets/javascript/get-url-variables/
+     * 
+     * @method getQueryVariable
+     */
+	getQueryVariables : function() {
+		var retVal = {};
+		if(window.location.search.length > 2) {
+			var query = window.location.search.substring(1);
+	        var vars = query.split("&");
+	        for (var i=0;i<vars.length;i++) {
+	        	var pair = vars[i].split("=");
+	            retVal[pair[0]] = decodeURI(pair[1]);
+	        }
+		}
+        return retVal;
+	},
+	
+	/**
+	 * Register activity definition for a given ideviceid
+	 * 
+	 * @method 
+	 * 
+	 */
+	
     
+    //Methods that will handle core EXE idevice tin can work
+    
+	/**
+	 * Make a tin can statement for a multi choice item
+	 * 
+	 * @param activityDefinition {TinCan.ActivityDefinition} definition of MCQ question ativity
+	 * @param responseId {String} ID of response chosen
+	 * @param responseIsCorrect {Boolean} is this a correct answer?
+	 * 
+	 * @method makeMCQTinCanStatement
+	 * @return {TinCan.Statement} Statement for MCQ given arguments
+	 */
+	makeMCQTinCanStatement: function(activityDefinition, questionId, responseId, responseIsCorrect) {
+		var myVerb = new TinCan.Verb({
+			id : "http://adlnet.gov/expapi/verbs/answered",
+			display: {
+	            "en-US": "answered"
+	        }
+		});
+		
+		var myActivity = new TinCan.Activity({
+			id : this.idActivityPrefix+ "/" + questionId,
+			definition : activityDefinition
+			
+		});
+		
+		var myResult = new TinCan.Result({
+			success : responseIsCorrect,
+			response : responseId
+		});
+		
+		var myStmt = new TinCan.Statement({
+			actor : this.getActor(),
+			verb : myVerb,
+			result : myResult,
+			target : myActivity,
+			},{'storeOriginal' : true});
+		
+		this.tinCanQueue.queueStatement(myStmt)
+		
+	}
+	
+	
 }
 
-
-
-
-
-
-
+//check and see if we should take TINCAN parameters from the URL
+getEXETinCanInstance().setLRSParamsFromLaunchURL()

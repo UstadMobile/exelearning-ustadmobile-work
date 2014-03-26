@@ -95,6 +95,8 @@ class MultichoiceBlock(Block):
                         _("Please select a correct answer for each question.")
                     break
  
+    
+    
         
     def renderEdit(self, style):
         """

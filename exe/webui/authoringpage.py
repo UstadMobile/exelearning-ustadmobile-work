@@ -176,6 +176,7 @@ class AuthoringPage(RenderableResource):
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/exe.css\" />"
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/style/base.css\" />"
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/exe_wikipedia.css\" />"
+        html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/imgAreaSelect/imgareaselect-default.css\" />"
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/style/%s/content.css\" />" % self.package.style
         if G.application.config.assumeMediaPlugins: 
             html += u"<script type=\"text/javascript\">var exe_assume_media_plugins = true;</script>\n"
@@ -189,6 +190,8 @@ class AuthoringPage(RenderableResource):
         html += u'<script type="text/javascript" src="/scripts/exe_jquery.js"></script>\n'
         html += u'<script type="text/javascript" src="/scripts/exe_lightbox.js"></script>\n'
         html += u'<script type="text/javascript" src="/scripts/common.js"></script>\n'
+        html += u'<script type="text/javascript" src="/scripts/jquery.imgareaselect.js"></script>\n'
+        html += u'<script type="text/javascript" src="/scripts/exe_imgmaparea.js"></script>\n'
         html += '<script type="text/javascript">document.write(unescape("%3Cscript src=\'" + eXeLearning_settings.wysiwyg_path + "\' type=\'text/javascript\'%3E%3C/script%3E"));</script>';
         html += '<script type="text/javascript">document.write(unescape("%3Cscript src=\'" + eXeLearning_settings.wysiwyg_settings_path + "\' type=\'text/javascript\'%3E%3C/script%3E"));</script>';
         html += u'<title>"+_("eXe : elearning XHTML editor")+"</title>\n'

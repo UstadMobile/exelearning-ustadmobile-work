@@ -24,9 +24,11 @@ import logging
 import re
 import urllib
 from exe.webui       import common
+from exe.engine import exetincan
 from exe.engine.path import Path
 from exe             import globals as G
 from urllib import quote
+import json
 
 log = logging.getLogger(__name__)
 
@@ -2727,14 +2729,44 @@ class QuizQuestionElement(Element):
         html += common.submitButton("addOption"+unicode(self.id), value)
 
         return html
+    
+    def render_tincan_definition(self, desc_max_length):
+        """Return TINCAN Definition JSON for this question
+        
+        """
+        
+        #TODO: Change this to package language
+        lang = "en-US"
+        
+        choices_obj = []
+        correct_option = ""
+        for element in self.options:
+            el_id = element.answerId
+            desc = exetincan.summarize_str_tincan(element.answerElement.renderView())
+            choices_obj.append({"id" : el_id, \
+                                "description" : {lang : desc}})
+            if element.field.isCorrect:
+                correct_option = el_id
+        
+        
+        json_obj = {\
+            "name" : exetincan.summarize_str_tincan(self.questionElement.renderView()),\
+            "type" : "http://adlnet.gov/expapi/activities/cmi.interaction",\
+            "interactionType": "choice",\
+            "correctResponsesPattern" : "[%s]" % correct_option,\
+            "choices" : choices_obj
+                    } 
+        
+        json_str = json.dumps(json_obj)
+        return json_str
 
     def renderView(self, img1=None, img2=None):
         """ 
         Returns an XHTML string for viewing this question element 
         """ 
-# JR
-#        html = '<div class=\"question\"  style="margin-bottom: 1em;">\n'
-	html = '<div class=\"question\">\n'
+        # JR
+        #        html = '<div class=\"question\"  style="margin-bottom: 1em;">\n'
+        html = '<div class=\"question\">\n'
         html += self.doRender(img1, img2, preview=False)
         html += "</div>\n" 
         return html
@@ -2773,12 +2805,12 @@ class QuizQuestionElement(Element):
         """ 
         Returns an XHTML string for viewing this question element 
         """ 
-# JR
-#        html = '<div class=\"question\"  style="margin-bottom: 1em;">\n'
-	html = '<div class=\"question\">\n'
+        # JR
+        #        html = '<div class=\"question\"  style="margin-bottom: 1em;">\n'
+        html = '<div class=\"question\">\n'
         html += self.doRender(img1, img2, preview=True)
         html += "</div>\n" 
-	return html
+        return html
     
     def doRender(self, img1, img2, preview=False):
         """
@@ -2816,28 +2848,66 @@ class QuizQuestionElement(Element):
                 html  += self.hintElement.renderView()
 
             html += "</div>\n"
-# JR Maquetamos con div en vez de con tablas
-#        html += "<table>\n"
-#        html += "<tbody>\n"
-	html += '<div style="display: table; overflow: auto; width: 100%;">\n'
+        # JR Maquetamos con div en vez de con tablas
+        #        html += "<table>\n"
+        #        html += "<tbody>\n"
+        html += '<div style="display: table; overflow: auto; width: 100%;">\n'
 
         for element in self.options:
             html += element.renderAnswerView(preview)
             
-#        html += "</tbody>\n"
-#        html += "</table>\n"
-	html += "</div>\n"
+        #        html += "</tbody>\n"
+        #        html += "</table>\n"
+        html += "</div>\n"
             
         for element in self.options:
             html += element.renderFeedbackView(preview)
+            # JR: Generamos el contenido que ira dentro de la etiqueta noscript
 
-# JR: Generamos el contenido que ira dentro de la etiqueta noscript
-	html += '<noscript><br/><div class="feedback">\n'
-	html += "<p><strong>" + _("Solution") + ": </strong></p>\n"
-	html += "<ol>"
-	for element in self.options:
-		html += element.renderNoscript(preview)
-	html += "</ol>\n"
-	html += "</div></noscript>"
+        html += '<noscript><br/><div class="feedback">\n'
+        html += "<p><strong>" + _("Solution") + ": </strong></p>\n"
+        html += "<ol>"
+        for element in self.options:
+            html += element.renderNoscript(preview)
+        html += "</ol>\n"
+        html += "</div></noscript>"
+        
+        #TODO: undisable me
+        
+        html += "<script type='text/javascript'>"
+        
+        html += "var multiTinCanAnsMap%s = [];\n" % self.id
+        
+        html += exetincan.tincan_enclosure_header()
+        
+        #generate a mapping of answer index to id and if the answer is correct
+        question_text = exetincan.summarize_str_tincan(self.questionElement.renderView())
+        question_text = question_text.replace("\n", " ")
+        question_text = question_text.replace("\r", "")
+        question_text = question_text.replace("\"", "")
+        
+        
+        for element in self.options:
+            is_correct_str = "false"
+            answer_text = exetincan.summarize_str_tincan(element.answerElement.renderView())
+            answer_text = answer_text.replace("\n", " ")
+            if element.field.isCorrect:
+                is_correct_str = "true"
+            html += """multiTinCanAnsMap%(blockid)s[multiTinCanAnsMap%(blockid)s.length] =
+                    {'id' : "%(id)s", 'iscorrect' : %(iscorrect)s};\n
+                    """ % {"id" : element.id, \
+                           "iscorrect" : is_correct_str, "blockid" : self.id, }
+        
+        
+        html += "var multiTinCanDefinition%s = new TinCan.ActivityDefinition(" \
+            % self.id
+        html += self.render_tincan_definition(64)
+        html += ");\n"
+        
+        
+        html += exetincan.tincan_enclosure_footer()
+        html += "</script>"
+        
+        
 
         return html

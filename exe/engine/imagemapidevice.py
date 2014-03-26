@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 # ===========================================================================
 class ImageMapIdevice(Idevice):
     
-    persistenceVersion = 1
+    persistenceVersion = 2
     
     def __init__(self, content=""):
         Idevice.__init__(self, x_(u"Image Map"), 
@@ -61,6 +61,17 @@ class ImageMapIdevice(Idevice):
         
     def add_map_area(self):
         self.map_areas.append(ImageMapAreaField(self))
+        
+    def get_img_filename(self):
+        """Return the filename of the image we use for area map, None if no image loaded
+        """
+        if self.mainFieldSet.fields['mapImg'].imageResource:
+            return self.mainFieldSet.fields['mapImg'].imageResource.storageName
+        else:
+            return None
+        
+    def upgradeToVersion2(self):
+        pass
    
    
 class ImageMapAreaField(Field):

@@ -127,16 +127,18 @@ class WebsitePage(Page):
         if common.hasMagnifier(self.node):
             html += u'<script type="text/javascript" src="mojomagnify.js"></script>'+lb
         
-        if ustadMobileMode == True:
-            html += WebsitePage.makeUstadMobileHeadElement(escape(self.node.titleLong))
         
         # Some styles might have their own JavaScript files (see their config.xml file)
+        
+        html += WebsitePage.make_tincan_js_elements()
         
         if ustadMobileMode == True:
             html += WebsitePage.makeUstadMobileHeadElement(escape(self.node.titleLong))
         
         if style.hasValidConfig:
-            html += style.get_extra_head()
+            #html += style.get_extra_head()
+            #experiment
+            pass
         html += u"</head>"+lb
         
         onLoadFunction = ""
@@ -371,6 +373,22 @@ class WebsitePage(Page):
         """
         return common.renderInternalLinkNodeFilenames(package, html)
     
+    @classmethod
+    def make_tincan_js_elements(cls):
+        """"Make string of HTML script elements for needed tincan javascript
+        """
+        # tin can javascript files
+        tin_can_scripts = ['tincan.js', 'tincan_queue.js', 'exe_tincan.js']
+        html = u""
+        
+        for tc_script in tin_can_scripts:
+            html += u'<script type="text/javascript" src="%s">' % tc_script
+            html += u'</script>\n'
+        
+            
+        return html
+        
+    
     """
     Make a header with all the needed scripts and stylesheets etc.
     make sure to get rid of main-wrapper extra padding
@@ -427,7 +445,7 @@ class WebsitePage(Page):
         """ % (title, title)
         
         html += """
-        <a href='%s' style='display: none' " id='exeNextPage'>&nbsp;</a>
+        <a href='%s' style='display: none' id='exeNextPage'>&nbsp;</a>
         """ % nextlink
         
         html += """
@@ -473,9 +491,10 @@ class WebsitePage(Page):
     """
     @classmethod
     def getUstadMobileScriptList(cls):
-        return ["qunit-1.12.0.js", "ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile-1.3.2.min.js",\
+        #Temp: Qunit removed due to conflict with imagemapster - "qunit-1.12.0.js",  "ustadmobile-test.js", 
+        return ["ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile-1.3.2.min.js",\
                  "ustadmobile-common.js", "ustadmobile-constants.js",\
-                 "ustadmobile-booklist.js", "ustadmobile-test.js", "jquery.touchSwipe.min.js"]
+                 "ustadmobile-booklist.js", "jquery.touchSwipe.min.js"]
     
     """
     List of .css files that are needed by UstadMobile Pages

@@ -5,8 +5,10 @@
     var imageMap_${ideviceid} = new ImageMapIdevice("${ideviceid}");
 </script>
         
-<img id='imagemapidevice_img_${ideviceid}' src="${mapImg_imgsrc}" width="${mapImg_imgwidth}" height="${mapImg_imgheight}" 
-     usemap="#imagemapidevice_map_${ideviceid}"/>
+<img id='imagemapidevice_img_${ideviceid}' src="${mapImg_imgsrc}"
+    width="${mapImg_imgwidth}" height="${mapImg_imgheight}"
+    style="width: ${mapImg_imgwidth}px; height: ${mapImg_imgheight}px;" 
+    usemap="#imagemapidevice_map_${ideviceid}"/>
     
 <map name="imagemapidevice_map_${ideviceid}" id="imagemapidevice_map_${ideviceid}">
     ${area_html}
@@ -18,9 +20,25 @@
         
 <script type='text/javascript'>
     
+    var imgMapIdeviceOptions${ideviceid} = {
+   		width : ${mapImg_imgwidth},
+   		height : ${mapImg_imgheight},
+   		growToFit : true
+    };
+        
     $(document).ready(function() {
-        imageMap_${ideviceid}.initMapIdevice();
+    	//This is the width available
+    	var parentWidth = 
+   		  $("#id${ideviceid} DIV.iDevice_content_wrapper").width();
+    	
+        imageMap_${ideviceid}.initMapIdevice(imgMapIdeviceOptions${ideviceid});
     });
+    
+    function updateMapsterSize() {
+    	var newWidth = $("#id${ideviceid}").width();
+    	
+    }
+    
     
 </script>
 

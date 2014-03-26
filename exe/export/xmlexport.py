@@ -172,13 +172,12 @@ class XMLExport(WebsiteExport):
         
         #add the Javascript from EXE
         output += """
-        <script src='exe_jquery.js' type="text/javascript"></script>
+        <script type="text/javascript" src="exe_jquery.js"></script>
         <script type="text/javascript">$exe_i18n={show:"Show",hide:"Hide",menu:"Menu"}</script>
-        <script src="common.js" type="text/javascript"></script>
-        <script src="my_js.js" type="text/javascript"></script>
-        <script src="lernmodule_net.js" type="text/javascript"></script>
+        <script type="text/javascript" src="common.js"></script>
         """
 
+        output += WebsitePage.make_tincan_js_elements()
         output += WebsitePage.makeUstadMobileHeadElement(tocTitle)
         #this has to come after ustadmobile.js scripts load
         output += """

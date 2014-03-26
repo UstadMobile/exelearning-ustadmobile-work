@@ -214,7 +214,8 @@ class WebsiteExport(object):
         jsFile.copyfile(outputDir/'common.js')
         
         tinCanFiles = [self.scriptsDir/'tincan.js', \
-                       self.scriptsDir/'exe_tincan.js']
+               self.scriptsDir/'exe_tincan.js', \
+               self.scriptsDir/'tincan_queue.js']
         self.scriptsDir.copylist(tinCanFiles, outputDir)
         
         dT = common.getExportDocType()

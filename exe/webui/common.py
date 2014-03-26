@@ -849,3 +849,13 @@ def nodeHasMediaelement(node):
         if ideviceHasMediaelement(idevice):
             return True
     return False
+
+def strip_html_to_plaintext(html):
+    """Remove html tags
+    
+    
+    """
+    myRegex = '<[^>]*>'
+    import re
+    return re.sub(myRegex, '', html, 0, re.MULTILINE | re.IGNORECASE)
+

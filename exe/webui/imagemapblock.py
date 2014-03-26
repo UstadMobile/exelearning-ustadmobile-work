@@ -21,7 +21,7 @@ class ImageMapBlock(Block):
         self.map_area_elements = []
         
         for area_field in self.idevice.map_areas:
-            self.map_area_elements.append(ImageMapAreaElement(area_field))
+            self.map_area_elements.append(ImageMapAreaElement(area_field, self))
         
     def process(self, request):
         """
@@ -126,16 +126,66 @@ class ImageMapAreaElement(Element):
     
     persistenceVersion = 1
     
-    def __init__(self, field):
+    def __init__(self, field, image_map_block):
         Element.__init__(self, field)
         self.field = field
         self.elements = field.main_fields.makeElementDict()
+        self.image_map_block = image_map_block
         
     def process(self, request):
         field_engine_process_all_elements(self.elements, request)
+    
+    def make_crop_selector(self):
+        html = ""
+        img_name = self.field.idevice.get_img_filename()
+        
+        if img_name:
+            img_path = img_name
+            img_path = "resources/%s" % img_name
+            img_elid = "mapselect%s" % self.id
+            selection_blockid = self.elements['coords'].id
+            current_selection = self.elements['coords'].renderView()
+            selection_el_str = ""
+            try:
+                if current_selection != "":
+                    current_selection_pts = current_selection.split(",")
+                    selection_el_str = """,x1 : %s, y1 : %s, x2 : %s, y2 : %s""" \
+                        % tuple(current_selection_pts)
+                    #selection_el_str = ""
+            except:
+                pass
+            
+            
+            html += 'select here:<br/>'
+            html += """<img data-for-mapselect-field='%(selblockid)s'
+                id='%(id)s' src='%(img_path)s'/>""" % \
+                {'id' : img_elid, 'img_path' : img_path, \
+                 'selblockid' : selection_blockid}
+                
+            html += """
+            <script type="text/javascript">
+            $(document).ready(function () {
+                $('img#%(id)s').on("load", function() {
+                    setTimeout(
+                        "$('img#%(id)s').imgAreaSelect({handles: true,onSelectEnd: exeHandleImgAreaSelectFinish%(selection_el)s});",
+                        3000);
+                }).each(function() {
+                    if(this.complete) {
+                        $(this).load();
+                    }
+                });
+            });
+            </script>""" % {"id" : img_elid, "ideviceid" : self.image_map_block.id,
+                            "selection_el" : selection_el_str}
+                
+        return html
+            
+    
         
     def renderEdit(self):
         html = u""
+        
+        html += self.make_crop_selector()
         html += self.field.main_fields.renderEditInOrder(self.elements)
         
         return html

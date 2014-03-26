@@ -21,6 +21,7 @@ var ImageMapIdevice;
  */
 ImageMapIdevice = function(ideviceIdArg) {
     this.ideviceId = ideviceIdArg;
+    
 };
 
 ImageMapIdevice.prototype = {
@@ -56,8 +57,10 @@ ImageMapIdevice.prototype = {
      * 
      * @method initMapIdevice
      */
-    initMapIdevice : function() {
+    initMapIdevice : function(cfg) {
         
+    	this.cfg = cfg;
+    	
         //build areas
         var areasArg = [];
         
@@ -86,7 +89,14 @@ ImageMapIdevice.prototype = {
                fillColor: 'ff0000',
                fillOpacity: 0.0,
                onClick: this.handleClick,
+               
                areas : areasArg
             });
+        var parentWidth = 
+     		  $("#id" + this.ideviceId +" DIV.iDevice_content_wrapper").width();
+        var ratio = parentWidth / this.cfg['width'];
+        var newHeight = Math.round(this.cfg['height'] * ratio);
+        $("#imagemapidevice_img_" + this.ideviceId).mapster("resize",
+        		parentWidth, newHeight, 0);
     }
 };
