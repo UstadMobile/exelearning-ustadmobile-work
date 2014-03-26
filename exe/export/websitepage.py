@@ -147,7 +147,7 @@ class WebsitePage(Page):
         
         html += u"""<body class="exe-web-site">
             <script type="text/javascript">
-            document.body.className+=" js"
+            document.body.className+=" js" %s
             </script>""" % onLoadFunction
         html += lb
         
