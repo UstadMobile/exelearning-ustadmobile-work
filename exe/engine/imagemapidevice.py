@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 # ===========================================================================
 class ImageMapIdevice(Idevice):
     
-    persistenceVersion = 2
+    persistenceVersion = 3
     
     def __init__(self, content=""):
         Idevice.__init__(self, x_(u"Image Map"), 
@@ -51,12 +51,19 @@ class ImageMapIdevice(Idevice):
     def uploadNeededScripts(self):
         from exe import globals
         import os,sys
-        scriptFileNames = ['imagemapidevice.js', 'jquery.imagemapster.js']
+        scriptFileNames = ['imagemapidevice-0.1.js', 'jquery.imagemapster.js']
+        
+        #if this is the case... aint gonna work
+        if self.parentNode is None or self.parentNode.package is None:
+            return
+        
         for scriptName in scriptFileNames:
             from exe import globals 
-            scriptSrcFilename = globals.application.config.webDir/"templates"/scriptName
+            scriptSrcFilename = \
+                globals.application.config.webDir/"templates"/scriptName
             gameScriptFile = Path(scriptSrcFilename)
-            if gameScriptFile.isfile():
+            if gameScriptFile.isfile() and \
+            (gameScriptFile.md5 not in self.parentNode.package.resources):
                 Resource(self, gameScriptFile)
         
     def add_map_area(self):
@@ -72,6 +79,10 @@ class ImageMapIdevice(Idevice):
         
     def upgradeToVersion2(self):
         pass
+    
+    def upgradeToVersion3(self):
+        """V3: Updated script and rendering here"""
+        self.uploadNeededScripts()
    
    
 class ImageMapAreaField(Field):

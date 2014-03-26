@@ -13,6 +13,12 @@ Provides the base ImageMapIdevice
 
 var ImageMapIdevice;
 
+
+/*
+
+*/
+var imageMapIdevices = {};
+
 /**
  * Handles creation of ImageMapIdevice
  * @class ImageMapIdevice
@@ -23,6 +29,8 @@ ImageMapIdevice = function(ideviceIdArg) {
     this.ideviceId = ideviceIdArg;
     
 };
+
+var imageMapIdeviceIdPrefix = "imagemapidevice_img_";
 
 ImageMapIdevice.prototype = {
     
@@ -98,5 +106,56 @@ ImageMapIdevice.prototype = {
         var newHeight = Math.round(this.cfg['height'] * ratio);
         $("#imagemapidevice_img_" + this.ideviceId).mapster("resize",
         		parentWidth, newHeight, 0);
-    }
+    },
+    
+    /**
+     * Initiate this using ImageMapster JQuery plugin
+     * 
+     * @method calcMapsterSize
+     */
+    calcMapsterSize: function() {
+    	var newWidth = $("#id"  + this.ideviceId).width();
+    	var setWidth = parseInt($("#imagemapidevice_img_" + 
+    	    this.ideviceId).attr("width"));
+	    var setHeight = parseInt($("#imagemapidevice_img_" + 
+    	    this.ideviceId).attr("height"));
+    	    
+    	var ratio = newWidth / setWidth;
+    	var newHeight = Math.round(setHeight * ratio);
+    	//alert(newWidth + "," + newHeight);
+    	return [newWidth, newHeight];
+    }    
 };
+
+function imageMapIdevicePageInit() {
+    $(".imagemapidevice_img").each(function() {
+        var elId = this.id;
+        if(elId != null && elId.length > 1) {
+            var realId = elId.substring(imageMapIdeviceIdPrefix.length);
+            if(!imageMapIdevices[realId]) {
+                imageMapIdevices[realId] = new ImageMapIdevice(realId);
+                var sizes = imageMapIdevices[realId].calcMapsterSize();
+                if(sizes[0] > 0) {
+                    imageMapIdevices[realId].initMapIdevice({
+                        width : sizes[0],
+                        height: sizes[1],
+                        growToFit : true
+                    }); 
+                }else {
+                    imageMapIdevices[realId] = null;
+                    $(document).on("pageshow", function() {
+                        imageMapIdevicePageInit();
+                    });
+                }
+            }
+        }
+    });
+}
+
+
+/*
+Init - lets get going
+*/
+$(function() {
+    imageMapIdevicePageInit();
+});
