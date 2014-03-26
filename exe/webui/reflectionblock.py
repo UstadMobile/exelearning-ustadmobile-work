@@ -105,30 +105,15 @@ class ReflectionBlock(Block):
         """
         Returns an XHTML string for this block
         """
-        html = u''
-    
         if self.previewing: 
-            html += self.activityElement.renderPreview()
+            html = self.activityElement.renderPreview()
+            feedback = self.answerElement.renderPreview()
         else:
-            html += self.activityElement.renderView()
+            html = self.activityElement.renderView()
+            feedback = self.answerElement.renderView()
 
-        html += '<div id="view%s" style="display:block;">' % self.id
-        html += common.feedbackButton("btnshow"+self.id, _(u"Click here"),
-                    onclick="showAnswer('%s',1)" % self.id)
-        html += '</div>\n' 
-        html += '<div id="hide%s" style="display:none;">' % self.id
-        html += common.feedbackButton("btnshow"+self.id, _(u"Hide"),
-                    onclick="showAnswer('%s',0)" % self.id)
-        html += '</div>\n'
-        html += '<div id="s%s" class="feedback" style=" ' % self.id
-        html += 'display: none;">'
+        html += common.feedbackBlock(self.id,feedback)
 
-        if self.previewing: 
-            html += self.answerElement.renderPreview()
-        else:
-            html += self.answerElement.renderView()
-
-        html += "</div>\n"
         return html
     
 

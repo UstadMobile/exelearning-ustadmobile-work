@@ -144,12 +144,17 @@ class WebsitePage(Page):
         onLoadFunction = ""
         if ustadMobileMode == True:
             onLoadFunction = " onload='_onLoadFunction();' "
-        html += u'<body class="exe-web-site" %s>' % onLoadFunction
+        
+        html += u"""<body class="exe-web-site">
+            <script type="text/javascript">
+            document.body.className+=" js"
+            </script>""" % onLoadFunction
         html += lb
         
         if ustadMobileMode == True:
             #do the header another way
             html += WebsitePage.makeUstadMobileHeader(escape(self.node.titleLong), nextPage, prevPage)
+        
         
         
         html += u"<"+sectionTag+" id=\"content\">"+lb

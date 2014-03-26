@@ -14,6 +14,7 @@ li{list-style-position:inside}
 div#nodeDecoration{padding:0.1em;border-bottom:0em;text-align:right}
 .block,.feedback{display:block;padding-top:0.25em;padding-bottom:0.25em}
 .feedback{font-family:times,serif;font-size:120%}
+.feedback-button p{margin:0}
 /* iDevice */
 .emphasis0{padding-left:0;margin:0}
 .iDeviceTitle{font-weight:bold;position:relative;top:-18px;/* aligns title up with middle of icon */}
@@ -57,9 +58,18 @@ input.feedbackbutton{margin-top:10px;margin-bottom:10px}
 .toggle-idevice{display:none}
 /* Autoclear */
 .exe-clear{overflow:auto}
+/* JavaScript on/offf */
+.js-required{display:none}
+.js .js-required{display:block}
+.js .js-hidden{display:none}
+/* Hints */
+.js #main .iDevice_hint_title{font-size:1em;margin-top:0;font-weight:normal}
+.iDevice_hint_title a{background-repeat:no-repeat;background-position:0 50%;padding-left:23px;text-decoration:none}
+.iDevice_hint_content{padding:0 23px 1em 23px}
 /* To review */
 .question .answer p{margin:0 0 .7em 0}
 .hidden-idevice .image_text{display:none} /* iDevice Toggler : Required for Magnifier */
 #skipNav{margin:0;position:absolute;width:100%}
-#skipNav a{position:absolute;overflow:hidden;clip:rect(0 0 0 0);clip:rect(0,0,0,0);height:0;background:#333;color:#fff;padding:.4em .85em} /* clip:rect(0 0 0 0) is for IE6 & 7 */
+.accessibility-help,#skipNav a{position:absolute;overflow:hidden;clip:rect(0 0 0 0);clip:rect(0,0,0,0);height:0}
+#skipNav a{background:#333;color:#fff;padding:.4em .85em} /* clip:rect(0 0 0 0) is for IE6 & 7 */
 #skipNav a:active,#skipNav a:focus{position:static;overflow:visible;clip:auto;height:auto}

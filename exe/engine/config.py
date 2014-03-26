@@ -56,7 +56,7 @@ class Config:
 
                    'audioMediaConverter_au', 'audioMediaConverter_mp3',
                    'audioMediaConverter_wav', 'ffmpegPath'),
-        'user': ('locale', 'lastDir', 'showPreferencesOnStart','defaultStyle', 'showIdevicesGrouped'),
+        'user': ('locale', 'lastDir', 'showPreferencesOnStart','defaultStyle', 'showIdevicesGrouped','docType'),
     }
 
     idevicesCategories = {
@@ -140,6 +140,8 @@ class Config:
         # browser is the name of a predefined browser specified at http://docs.python.org/library/webbrowser.html.
         # None for system default
         self.browser = None
+        # docType  is the HTML export format
+        self.docType = 'XHTML' 
         # locale is the language of the user
         self.locale = chooseDefaultLocale(self.localeDir)
         # internalAnchors indicate which exe_tmp_anchor tags to generate for each tinyMCE field
@@ -424,6 +426,8 @@ class Config:
 
         # Load the "user" section
         if self.configParser.has_section('user'):
+            if self.configParser.user.has_option('docType'):
+                self.docType = self.configParser.user.docType
             if self.configParser.user.has_option('defaultStyle'):
                 self.defaultStyle= self.configParser.user.defaultStyle
             if self.configParser.user.has_option('styleSecureMode'):

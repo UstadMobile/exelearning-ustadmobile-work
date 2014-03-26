@@ -29,9 +29,10 @@ from exe                       import globals as G
 from exe.engine.path           import Path
 from exe.webui.blockfactory    import g_blockFactory
 from exe.engine.error          import Error
+
 import re
 
-
+htmlDocType=''
 lastId = 0
 
 def newId():
@@ -49,13 +50,16 @@ def copyFileIfNotInStyle(file, e, outputDir):
     f = (e.imagesDir/file)
     if not (outputDir/file).exists():
         f.copyfile(outputDir/file)
-        
+def setExportDocType(value):
+    global htmlDocType
+    htmlDocType=value
+    
 def getExportDocType():
     # If HTML5 webui/scripts/exe_html5.js has to be in the package resources list
-    return "XHTML"
+    return htmlDocType
 
 def docType():
-    dT = getExportDocType()
+    dT = htmlDocType #getExportDocType()
     lb = "\n" #Line breaks
     """Generates the documentation type string"""
     if dT == "HTML5":
@@ -70,6 +74,9 @@ def themeHasConfigXML(style):
     if themeXMLFile.exists():
         themeHasXML = True
     return themeHasXML
+    
+def javaScriptIsRequired():
+    return '<span class="js-hidden js-warning">'+_("Enable JavaScript")+'</span>'
             
 def ideviceHeader(e, style, mode):
     dT = getExportDocType()
@@ -186,6 +193,8 @@ def getJavaScriptStrings():
     s = '<script type="text/javascript">$exe_i18n={'
     s += 'show:"'+_("Show")+'",'
     s += 'hide:"'+_("Hide")+'",'
+    s += 'showFeedback:"'+_("Show Feedback")+'",'
+    s += 'hideFeedback:"'+_("Hide Feedback")+'",'
     s += 'menu:"'+_("Menu")+'"'
     s += '}</script>'
     
@@ -365,27 +374,45 @@ def flashMovie(movie, width, height, resourcesDir='', autoplay='false'):
 
 def submitButton(name, value, enabled=True, **kwargs):
     """Adds a submit button to a form"""
-    html  = u'<input class="button" type="submit" name="%s" ' % name
-    html += u'value="%s" ' % value
+    html  = '<input class="button" type="submit" name="%s" ' % name
+    html += 'value="%s" ' % value
     if not enabled:
-        html += u' disabled'
+        html += ' disabled="disabled"'
     for key, val in kwargs.items():
-        html += u' %s="%s"' % (key.replace('_', ''), val.replace('"', '\\"'))
-    html += u'/>\n'
+        html += ' %s="%s"' % (key.replace('_', ''), val.replace('"', '\\"'))
+    html += '/>\n'
     return html
 
 
 def button(name, value, enabled=True, **kwargs):
     """Adds a NON-submit button to a form"""
-    html  = u'<input type="button" name="%s"' % name
-    html += u' value="%s"' % value
+    html  = '<input type="button" name="%s"' % name
+    html += ' value="%s"' % value
     if not enabled:
-        html += u' disabled'
+        html += ' disabled="disabled"'
     for key, val in kwargs.items():
         html += u' %s="%s"' % (key.replace('_', ''), val.replace('"', '\\"'))
-    html += u'/>\n'
+    html += '/>\n'
     return html
 
+def feedbackBlock(id,feedback):
+    lb = "\n" #Line breaks
+    html = '<form name="feedback-form-'+id+'" action="#" onsubmit="return false" class="feedback-form">'
+    html += lb
+    html += '<div class="block iDevice_buttons feedback-button js-required">'+lb
+    html += '<p>'
+    html += '<input type="button" name="toggle-feedback-'+id+'" value="'+_('Show Feedback')+'" class="feedbackbutton" onclick="$exe.toggleFeedback(this);return false" />'
+    html += '</p>'+lb
+    html += '</div>'+lb
+    html += '<h3 class="js-hidden">'+_('Feedback')+'</h3>'+lb
+    html += '<div id="feedback-'+id+'" class="feedback js-hidden">'
+    html += lb
+    html += feedback
+    html += "</div>"+lb
+    html += "</form>"+lb
+    return html
+    
+    
 def feedbackButton(name, value=None, enabled=True, **kwparams):
     """Adds a feedback button"""
     if value is None:
