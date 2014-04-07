@@ -107,7 +107,8 @@ class QuestionElement(object):
 
         html += "</td><td>\n"
         html += common.submitImage(self.id, self.idevice.id, 
-                                   "/images/stock-cancel.png",
+                                   #"/images/stock-cancel.png",    #Commented
+                                   '/images/edit-delete.png', #Added
                                    _("Delete question"))
         html += "</td></tr>\n"
         return html

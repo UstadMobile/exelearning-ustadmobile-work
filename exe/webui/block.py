@@ -345,12 +345,16 @@ class Block(Renderable):
         """
         html = '<p class="exe-controls idevice-edition-buttons">'
         html  += common.submitImage(u"edit", self.id, 
-                                   u"/images/stock-edit.png", 
+                                   #u"/images/stock-edit.png",
+                                    u"/images/edit-4.png",  #Added
                                    _(u"Edit"), self.package.isChanged, True)
+        
+      
         html += common.confirmThenSubmitImage(
             _(u"This will delete this iDevice. Do you really want to do this?"),
             u"delete",
-            self.id, u"/images/stock-cancel.png", 
+            #self.id, u"/images/stock-cancel.png", 
+            self.id, u"/images/dialog-cancel-3.png", #Added
             _(u"Delete"), 1)
         html += '</p>'
         return html
