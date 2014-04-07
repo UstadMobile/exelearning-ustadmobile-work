@@ -56,7 +56,8 @@ class Config:
 
                    'audioMediaConverter_au', 'audioMediaConverter_mp3',
                    'audioMediaConverter_wav', 'ffmpegPath'),
-        'user': ('locale', 'lastDir', 'showPreferencesOnStart','defaultStyle', 'showIdevicesGrouped','docType'),
+        'user': ('locale', 'lastDir', 'showWizardOnStart', 'showPreferencesOnStart','defaultStyle', 'showIdevicesGrouped','docType'),
+        #Added showWizardOnStart
     }
 
     idevicesCategories = {
@@ -137,6 +138,7 @@ class Config:
         self.stylesDir =Path(self.configDir/'style').abspath()
         #FM: Default Style name
         self.defaultStyle= u"INTEF"
+        #self.defaultStyle= u"EducaMadrid" #Added
         # browser is the name of a predefined browser specified at http://docs.python.org/library/webbrowser.html.
         # None for system default
         self.browser = None
@@ -148,7 +150,8 @@ class Config:
         # available values = "enable_all", "disable_autotop", or "disable_all"
         self.internalAnchors = "enable_all"
         self.lastDir = None
-        self.showPreferencesOnStart = "1"
+        self.showPreferencesOnStart = "1" #Commented for testing
+        self.showWizardOnStart = "1"    #Added
         self.showIdevicesGrouped = "1"
         # styleSecureMode : if this [user] key is = 0  , exelearning can run python files in styles
         # as websitepage.py , ... ( deactivate secure mode )
@@ -437,7 +440,9 @@ class Config:
             if self.configParser.user.has_option('lastDir'):
                 self.lastDir = self.configParser.user.lastDir
             if self.configParser.user.has_option('showPreferencesOnStart'):
-                self.showPreferencesOnStart = self.configParser.user.showPreferencesOnStart
+                self.showPreferencesOnStart = self.configParser.user.showPreferencesOnStart #Commented for testing..
+            if self.configParser.user.has_option('showWizardOnStart'):              #Added
+                self.showWizardOnStart = self.configParser.user.showWizardOnStart   #Added
             if self.configParser.user.has_option('showIdevicesGrouped'):
                 self.showIdevicesGrouped = self.configParser.user.showIdevicesGrouped
             if self.configParser.user.has_option('locale'):

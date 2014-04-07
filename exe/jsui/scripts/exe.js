@@ -166,6 +166,9 @@ Ext.application({
         if (eXe.app.config.showPreferences)
         	eXe.app.getController('Toolbar').toolsPreferences();
         
+        if (eXe.app.config.showWizard)	//Added
+        	eXe.app.getController('Toolbar').toolsWizard();
+        
         if (!eXe.app.config.showIdevicesGrouped) {
         	var panel = Ext.ComponentQuery.query('#idevice_panel')[0],
         		button = panel.down('button');

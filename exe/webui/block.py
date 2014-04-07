@@ -216,40 +216,56 @@ class Block(Renderable):
         """
         Returns an XHTML string for the edit buttons
         """
-        
-        html  = common.submitImage(u"done", self.id, 
-                                   u"/images/stock-apply.png", 
+        html = "<br></br>"  #Added this so there is space between end of Idevice page and the icons at the botton when authoring
+        html  += common.submitImage(u"done", self.id, 
+                                   #u"/images/stock-apply.png", 
+                                   u"/images/dialog-ok-apply-2.png",
                                    _(u"Done"),1)
+        html +="&nbsp;" #Added
 
         if undo:
             html  += common.submitImage(u"cancel", self.id, 
-                                   u"/images/stock-undo.png", 
+                                   #u"/images/stock-undo.png", 
+                                   u"/images/edit-undo-5.png",
                                    _(u"Undo Edits"),1)
+            html +="&nbsp;" #Added
         else:
             html  += common.submitImage(u"no_cancel", self.id, 
-                                   u"/images/stock-undoNOT.png", 
+                                   u"/images/stock-undoNOT.png",
                                    _(u"Can NOT Undo Edits"),1)
+            html +="&nbsp;" #Added
 
         html += common.confirmThenSubmitImage(
             _(u"This will delete this iDevice. Do you really want to do this?"),
             u"delete",
-            self.id, u"/images/stock-cancel.png", 
+            #self.id, u"/images/stock-cancel.png", 
+            self.id, u"/images/dialog-cancel-3.png",
             _(u"Delete"), 1)
+        html +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" #Added
 
         if self.idevice.isFirst():
-            html += common.image(u"movePrev", u"/images/stock-go-up-off.png")
+            #html += common.image(u"movePrev", u"/images/stock-go-up-off.png")
+            html += common.image(u"movePrev", u"/images/draw-arrow-up-off.png")
+            html +="&nbsp;" #Added
         else:
             html += common.submitImage(u"movePrev", self.id, 
-                                       u"/images/stock-go-up.png", 
+                                       #u"/images/stock-go-up.png", 
+                                       u"/images/draw-arrow-up.png",
                                        _(u"Move Up"),1)
+            html +="&nbsp;" #Added
 
         if self.idevice.isLast():
-            html += common.image(u"moveNext", u"/images/stock-go-down-off.png")
+            #html += common.image(u"moveNext", u"/images/stock-go-down-off.png")
+            html += common.image(u"moveNext", u"/images/draw-arrow-down-off.png")
+            html +="&nbsp;" #Added
         else:
             html += common.submitImage(u"moveNext", self.id, 
-                                       u"/images/stock-go-down.png", 
+                                       #u"/images/stock-go-down.png", 
+                                       u"/images/draw-arrow-down.png",
                                        _(u"Move Down"),1)
-
+            html +="&nbsp;" #Added
+            
+        html += "<br></br>" #There is no space, line between the finish icons in page and Move To option.    
         options  = [(_(u"---Move To---"), "")]
         options += self.__getNodeOptions(self.package.root, 0)
         html += common.select(u"move", self.id, options)

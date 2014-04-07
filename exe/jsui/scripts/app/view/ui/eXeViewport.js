@@ -21,6 +21,7 @@ Ext.define('eXe.view.ui.eXeViewport', {
     extend: 'Ext.container.Viewport',
     requires: [
         'eXe.view.ui.eXeToolbar',
+        'eXe.view.ui.editToolbar', //Added
         'eXe.view.ui.MainTabPanel',
         'eXe.view.ui.LeftPanel'
     ],
@@ -37,6 +38,11 @@ Ext.define('eXe.view.ui.eXeViewport', {
                 {
                     xtype: 'exetoolbar',
                     region: 'north'
+                },
+                {	//Added
+                    xtype: 'edittoolbar',
+                    region: 'north',
+                    //height: 40
                 },
                 {
                     xtype: 'maintabpanel',

@@ -17,16 +17,30 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //===========================================================================
 
+/*var p = Ext.create('Ext.panel.Panel', {
+        width: 200,
+        height: 200,
+        renderTo: document.body,
+        title: 'A Panel',
+        buttons: [{
+            text: 'B1'
+        }]
+    });
+*/
+
 Ext.define('eXe.controller.Toolbar', {
     extend: 'Ext.app.Controller',
-    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel'],
+    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel', 'eXe.view.forms.WizardPanel', 'eXe.view.forms.IDevicePanel'], //Added WizardPanel and IDevicePanel
 	refs: [{
         ref: 'recentMenu',
         selector: '#file_recent_menu'
     },{
     	ref: 'stylesMenu',
     	selector: '#styles_menu'
-    }
+    },{
+    	ref: 'wizardStylesMenu',
+    	selector: '#wizard_styles_menu'
+    },
     ],    
     init: function() {
         this.control({
@@ -34,6 +48,9 @@ Ext.define('eXe.controller.Toolbar', {
                 click: this.focusMenu
             },
             '#tools': {
+                click: this.focusMenu
+            },
+            '#wizard_styles_button': {	//Added
                 click: this.focusMenu
             },
             '#styles_button': {
@@ -54,8 +71,16 @@ Ext.define('eXe.controller.Toolbar', {
         	'#file_recent_menu': {
         		beforerender: this.recentRender
         	},
+        	//wizard_show_recent
+        	'#wizard_show_recent': {
+        		beforerender: this.updateRecent
+        	},
+     
         	'#styles_button': {
         		beforerender: this.stylesRender
+        	},
+        	'#wizard_styles_button': {	//Added
+        		beforerender: this.wizardStylesRender
         	},
         	'#file_recent_menu > menuitem': {
         		click: this.recentClick
@@ -63,6 +88,10 @@ Ext.define('eXe.controller.Toolbar', {
         	'#styles_menu > menuitem': {
         		click: this.stylesClick
         	},
+        	'#wizard_styles_menu > menuitem': {
+        		click: this.wizardStylesClick
+        	},
+ 
         	'#file_save': {
         		click: this.fileSave
         	},
@@ -137,6 +166,13 @@ Ext.define('eXe.controller.Toolbar', {
             },
             '#tools_preferences': {
                 click: this.toolsPreferences
+            },
+            '#tools_wizard': {	//Added
+                click: this.toolsWizard
+            },
+            //tools_idevicep
+            '#tools_idevicep': {	//Added
+                click: this.toolsIDeviceP
             },
             '#tools_resourcesreport': {
             	click: { fn: this.processExportEvent, exportType: "csvReport" }
@@ -335,6 +371,42 @@ Ext.define('eXe.controller.Toolbar', {
         eXe.app.quitWarningEnabled = false;
         window.location = window.location;
     },
+    //toolsIDeviceP
+    toolsIDeviceP: function() {	//added for Wizard test
+    	//alert("testWizard01");
+        var idevicep = new Ext.Window ({
+	          height: 450, 
+	          width: 550, 
+	          modal: true,
+	          id: 'idevicepwin',
+	          title: _("IDevices"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'idevicep'
+              }]
+	        }),
+            formpanel = idevicep.down('form');
+        formpanel.load({url: 'idevicep', method: 'GET'});
+        idevicep.show();        
+	},
+    
+    toolsWizard: function() {	//added for Wizard test
+    	//alert("testWizard01");
+        var wizard = new Ext.Window ({
+	          height: 400, 
+	          width: 550, 
+	          modal: true,
+	          id: 'wizardwin',
+	          title: _("Wizard"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'wizard'
+              }]
+	        }),
+            formpanel = wizard.down('form');
+        formpanel.load({url: 'wizard', method: 'GET'});
+        wizard.show();        
+	},
 
     toolsPreferences: function() {
         var preferences = new Ext.Window ({
@@ -430,7 +502,7 @@ Ext.define('eXe.controller.Toolbar', {
             }
         });
         f.appendFilters([
-            { "typename": _("eXe Package Files"), "extension": "*.elp", "regex": /.*\.elp$/ },
+            { "typename": _("eXe Package Files (.elp)"), "extension": "*.elp", "regex": /.*\.elp$/ }, //Added //Edited
             { "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
             ]
         );
@@ -451,7 +523,7 @@ Ext.define('eXe.controller.Toolbar', {
             }
         });
         f.appendFilters([
-            { "typename": _("eXe Package Files"), "extension": "*.elp", "regex": /.*\.elp$/ },
+            { "typename": _("eXe Package Files (.elp)"), "extension": "*.elp", "regex": /.*\.elp$/ }, //Added //Edited
             { "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
             ]
         );
@@ -745,15 +817,84 @@ Ext.define('eXe.controller.Toolbar', {
 				var rm = Ext.JSON.decode(response.responseText),
 					menu = this.getRecentMenu(), text, item, previtem;
     			for (i in rm) {
+    				
+    				//alert("rm is: " + rm);
+    				
     				text = rm[i].num + ". " + rm[i].path
     				previtem = menu.items.getAt(rm[i].num - 1);
+    				
     				if (previtem && previtem.text[1] == ".") {
     					previtem.text = text
     				}
     				else {
 	    				item = Ext.create('Ext.menu.Item', { text: text });
+	    				//alert("text is: " + text);
 	    				menu.insert(rm[i].num - 1, item);
     				}
+    				
+    			}
+    		}
+    	})
+    	return true;
+    },
+  
+    //wizardStylesRender
+    wizardStylesRender: function() {	//Added
+    	Ext.Ajax.request({
+    		url: location.pathname + '/styleMenu',
+    		scope: this,
+    		success: function(response) {
+    			
+				var styles = Ext.JSON.decode(response.responseText),
+					menu = this.getWizardStylesMenu(), i, item;
+					//JR: Primero los borro
+					menu.removeAll();
+					
+				/*
+				 * { //Sample button
+        	        	xtype: 'button',
+        	        	text: _('Button text'),
+        	        	margin: 10,
+        	        	handler: function(button) {
+            	        	//Something?
+        	        	},
+        	        	width : 128,
+        	            height : 64,
+        	            cls: 'customclassforbuttontype',
+        	            //We have to make a new class in css: .opennewproject to add background images, etc
+        	            	//.opennewproject
+        	            	// {
+        	            	//	background-image: url(/images/opennewproject-wizard.png) !important;
+        	            	// }
+        	            itemId: 'execution_property_id'
+    	        	}
+				 * 
+				 */
+    			for (i = styles.length-1; i >= 0; i--) {
+                    item = Ext.create('Ext.menu.CheckItem', { text: styles[i].label, itemId: styles[i].style, checked: styles[i].selected });
+                    
+    				/*
+    				item = Ext.create('Ext.Button',{
+                    	xtype: 'button',
+        	        	text: _(styles[i].label),
+        	        	margin: 10,
+        	        	handler: function(button) {
+            	        	//Something?
+        	        	},
+        	        	width : 128,
+        	            height : 64,
+        	            cls: 'customclassforbuttontype',
+        	            //We have to make a new class in css: .opennewproject to add background images, etc
+        	            	//.opennewproject
+        	            	// {
+        	            	//	background-image: url(/images/opennewproject-wizard.png) !important;
+        	            	// }
+        	            //itemId: 'execution_property_id'
+                    	
+                    })
+                    */
+    				menu.insert(0, item);
+              
     			}
     		}
     	})
@@ -792,8 +933,31 @@ Ext.define('eXe.controller.Toolbar', {
     	else
     		this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + item.text[0] + "');")
     },
+    
+    stylesClick: function(item) { //Function triggered when style is selected to change the style.
+        var ed = this.getTinyMCEFullScreen();
+        if(ed!="") {
+            ed.execCommand('mceFullScreen');
+            setTimeout(function(){
+                eXe.controller.Toolbar.prototype.executeStylesClick(item);
+            },500);
+        } else this.executeStylesClick(item);
+    },
+    
+    //wizardStylesClick
+    wizardStylesClick: function(item) { //Function triggered when style is selected to change the style in the Wizard
+    	//alert("You clicked wizardStylesClick");
+    	
+        var ed = this.getTinyMCEFullScreen();
+        if(ed!="") {
+            ed.execCommand('mceFullScreen');
+            setTimeout(function(){
+                eXe.controller.Toolbar.prototype.executeStylesClick(item);
+            },500);
+        } else this.executeWizardStylesClick(item);
+    },
 	
-    executeStylesClick: function(item) {
+    executeStylesClick: function(item) { //Function triggered when style is selected to change the style.
 		for (var i = item.parentMenu.items.length-1; i >= 0; i--) {
 			if (item.parentMenu.items.getAt(i) != item)
 				item.parentMenu.items.getAt(i).setChecked(false);
@@ -806,17 +970,35 @@ Ext.define('eXe.controller.Toolbar', {
 		//
         var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
         if (authoring)
-            authoring.submitLink("ChangeStyle", item.itemId, 1);
+            authoring.submitLink("ChangeStyle", item.itemId, 1); 	//Doesn't go here until you change style.
     },
     
-    stylesClick: function(item) {
-        var ed = this.getTinyMCEFullScreen();
-        if(ed!="") {
-            ed.execCommand('mceFullScreen');
-            setTimeout(function(){
-                eXe.controller.Toolbar.prototype.executeStylesClick(item);
-            },500);
-        } else this.executeStylesClick(item);
+    //executeWizardStylesClick
+    executeWizardStylesClick: function(item) { //Function triggered when style is selected to change the style in the wizard
+		for (var i = item.parentMenu.items.length-1; i >= 0; i--) {
+			if (item.parentMenu.items.getAt(i) != item)
+				item.parentMenu.items.getAt(i).setChecked(false);
+		}
+		item.setChecked(true);
+		item.parentMenu.hide();
+		//provisional
+		//item.parentMenu.parentMenu.hide();
+		item.parentMenu.hide();
+		//
+		
+	
+		//wizz.closeit();
+		//wizz.destroy();
+		
+        var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+        if (authoring)
+            authoring.submitLink("ChangeStyle", item.itemId, 1); 	//Doesn't go here until you change style.
+        //var wizardPanel = Ext.getCmp('wizardpanel'); //showrecentprojectspanel
+        //wizardPanel.hide();
+        //this.askDirty("eXe.app.gotoUrl('/')");
+        //this.wizard.destroy();
+        //wizard.destroy();
+        
     },
     
 	fileOpenRecent2: function(number) {
@@ -847,7 +1029,7 @@ Ext.define('eXe.controller.Toolbar', {
 		    }
 		});
 		f.appendFilters([
-			{ "typename": _("eXe Package Files"), "extension": "*.elp", "regex": /.*\.elp$/ },
+			{ "typename": _("eXe Package Files (.elp)"), "extension": "*.elp", "regex": /.*\.elp$/ }, //Added
 			{ "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
 			]
 		);
@@ -974,5 +1156,49 @@ Ext.define('eXe.controller.Toolbar', {
 	
     askDirty: function(nextStep) {
     	this.checkDirty(nextStep, 'eXe.app.getController("Toolbar").askSave("'+nextStep+'")');
+    },
+    
+    updateRecent: function(){	//For updating the recent projects list
+    	console.log("in update recent");
+    	var recpanel = Ext.getCmp('showrecentprojectspanel'); //showrecentprojectspanel
+    	recpanel.removeAll();
+    	//alert("updateRecent01");
+    	Ext.Ajax.request({
+    		url: location.pathname + '/recentMenu',
+    		scope: this,
+    		success: function(response) {
+    			var rm = Ext.JSON.decode(response.responseText),
+    					menu, text, item, pre
+    			recpanel.add(
+        		 {	//For intendation purposes.
+    	        	xtype: 'component',
+    	        	flex: 1
+    	        })
+    			for (i in rm) {				
+    				textButton = rm[i].num + ". " + rm[i].path;
+    				recpanel.add({
+            			xtype: 'button',
+        	        	text: _(textButton),
+        	        	margin: 10,
+        	        	textButton: textButton,
+        	        	handler: function(cow){
+    						console.log("You clicked: " + cow.textButton[0] + "!");
+    						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
+    						//fileOpenRecent2(cow.textButton[0]);
+    						 Ext.Msg.wait(_('Loading package...'));
+    						nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
+    					},
+
+        	        	//width : 128,
+        	            //height : 34,
+        	            //itemid: 'recent_project_button'
+            		},
+            		 {	//For intendation purposes.
+        	        	xtype: 'component',
+        	        	flex: 1
+        	        })
+    			}
+    		}
+    	});
     }
 });

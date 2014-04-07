@@ -144,9 +144,11 @@ Ext.define('eXe.controller.Outline', {
 		  items: [
             {
 			    text: _('Insert Package'),
+			    icon: '/images/package-add.png', //Added
 			    handler: this.getController('Toolbar').insertPackage
 		    },{
 			    text: _('Extract Package'),
+			    icon: '/images/package-go.png', //Added
 			    handler: this.getController('Toolbar').extractPackage
             }
           ]
