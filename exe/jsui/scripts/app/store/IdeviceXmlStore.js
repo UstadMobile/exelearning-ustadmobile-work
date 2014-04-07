@@ -48,6 +48,9 @@ Ext.define('eXe.store.IdeviceXmlStore', {
                     name: 'label'
                 },
                 {
+                	name: 'titlewithicon' //icon, etc 
+                },
+                {
                     name: 'id'
                 },
                 {

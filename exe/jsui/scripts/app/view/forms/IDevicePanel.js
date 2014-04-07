@@ -209,8 +209,9 @@ var wizz = Ext.define('eXe.view.forms.IDevicePanel', {
                                          itemId: 'idevice_panel',
                                          height: 300,
                                          autoScroll: true,
-                                         store: 'IdeviceXmlStore',
+                                         store: 'IdeviceXmlStore', //file: IdeviceXmlStore.js
                                          flex: 1,
+                                         
                                          plugins: [{ptype: 'cellediting', clicksToEdit: 1}],
                                          features: [{
                                             ftype: 'grouping',
@@ -287,13 +288,12 @@ var wizz = Ext.define('eXe.view.forms.IDevicePanel', {
                      					},
                                          region: 'south',
                                          split: true,
-                                         
                                          columns: [
                                                    
                                              {	//For edit iDevices section column: iDevices
                                                  xtype: 'gridcolumn',
                                                  sortable: false,
-                                                 dataIndex: 'label',
+                                                 dataIndex: 'titlewithicon', 
                                                  fixed: true,
                                                  flex: 1,
                                                  hideable: false,
@@ -309,7 +309,8 @@ var wizz = Ext.define('eXe.view.forms.IDevicePanel', {
                                                  flex: 1,
                                                  hideable: false,
                                                  menuDisabled: true,
-                                                 text: _('Category')
+                                                 text: _('Category'),
+                                                
                                              },
                                              {	//For edit iDevices section Column: Visible
                                                  xtype: 'checkcolumn',

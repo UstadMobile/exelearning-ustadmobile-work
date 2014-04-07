@@ -183,6 +183,13 @@ class IdevicePane(Renderable, Resource):
         xml += u"   <id>" + prototype.id + "</id>\n"
         xml += u"   <category>" + _(category) + "</category>\n"
         xml += u"   <visible>" + str(visible).lower() + "</visible>\n"
+        #To merge icon and title for idevice panel (new) -07042014 ^VS
+        title_with_icon = """<![CDATA[ 
+            <img src='/images/ideviceicons/icon_%(classname)s.png'/>
+            <h2>%(title)s</h2>]]>
+        """ % {"classname" : str(prototype.__class__.__name__).lower() , \
+               "title" : prototype.title }
+        xml += u"   <titlewithicon>" + title_with_icon + "</titlewithicon>\n"
         xml += u"  </idevice>\n"
         return xml
         

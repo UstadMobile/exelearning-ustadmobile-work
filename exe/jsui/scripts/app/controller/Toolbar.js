@@ -372,7 +372,7 @@ Ext.define('eXe.controller.Toolbar', {
         window.location = window.location;
     },
     //toolsIDeviceP
-    toolsIDeviceP: function() {	//added for Wizard test
+    toolsIDeviceP: function() {	//added for IDevice
     	//alert("testWizard01");
         var idevicep = new Ext.Window ({
 	          height: 450, 

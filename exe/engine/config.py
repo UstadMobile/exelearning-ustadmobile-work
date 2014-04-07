@@ -440,7 +440,7 @@ class Config:
             if self.configParser.user.has_option('lastDir'):
                 self.lastDir = self.configParser.user.lastDir
             if self.configParser.user.has_option('showPreferencesOnStart'):
-                self.showPreferencesOnStart = self.configParser.user.showPreferencesOnStart #Commented for testing..
+                self.showPreferencesOnStart = self.configParser.user.showPreferencesOnStart 
             if self.configParser.user.has_option('showWizardOnStart'):              #Added
                 self.showWizardOnStart = self.configParser.user.showWizardOnStart   #Added
             if self.configParser.user.has_option('showIdevicesGrouped'):
