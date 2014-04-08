@@ -124,10 +124,11 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 accesskey: 'r',
                                 menu: {
                                     xtype: 'menu',
+                                    
 	                                itemId: 'file_recent_menu',
                                     items: [
                                         {
-                                            xtype: 'menuseparator'
+                                            xtype: 'menuseparator',
                                         },
                                         {
                                             xtype: 'accesskey_menuitem',

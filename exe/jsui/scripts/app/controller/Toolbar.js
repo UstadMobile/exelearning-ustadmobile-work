@@ -880,7 +880,7 @@ Ext.define('eXe.controller.Toolbar', {
     					previtem.text = text
     				}
     				else {
-	    				item = Ext.create('Ext.menu.Item', { text: text });
+	    				item = Ext.create('Ext.menu.Item', { text: text, icon: '/images/package-green.png', });
 	    				//alert("text is: " + text);
 	    				menu.insert(rm[i].num - 1, item);
     				}
@@ -1313,6 +1313,7 @@ Ext.define('eXe.controller.Toolbar', {
             			xtype: 'button',
         	        	text: _(textButton),
         	        	margin: 10,
+        	        	icon: '/images/package-green.png',
         	        	textButton: textButton,
         	        	handler: function(cow){
     						console.log("You clicked: " + cow.textButton[0] + "!");
