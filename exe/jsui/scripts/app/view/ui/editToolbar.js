@@ -108,12 +108,28 @@ Ext.define('eXe.view.ui.editToolbar', {
                         accesskey: 'm',
                         text: _('Preview Smartphone')
                     },
+                    /*
 					{
                         xtype: 'button',
-                        text: _('Export to Ustad Mobile'),
+                        text: _('Export to Ustad Mobile (Disk)'),
                         accesskey: 'x',
                         icon: '/images/icon-16-vldpi.png', //Added
                         itemId: 'file_export_mxml'
+                    },
+                    */
+                    {
+                        xtype: 'button',
+                        text: _('Export to Ustad Mobile'),
+                        //accesskey: 'x',
+                        icon: '/images/icon-16-vldpi.png', //Added
+                        itemId: 'export_ustadmobile'
+                    },
+                    {
+                        xtype: 'button',
+                        text: _('Wizard'),
+                        //accesskey: 'x',
+                        icon: '/images/tools-wizard-2.png', //Added
+                        itemId: 'tools_wizard'
                     },
 		            {
 		                xtype: 'accesskey_button',
@@ -184,6 +200,13 @@ Ext.define('eXe.view.ui.editToolbar', {
 		                text: _('Add IDevices'),
 		                height: 30	//30 is default
 		            },
+		            {
+                        xtype: 'button',
+                        text: _('UMCloud'),
+                        //accesskey: 'x',
+                        icon: '/images/weather-clouds-2.png', //Added
+                        itemId: 'tools_umcloud'
+                    },
                
             ]
         });

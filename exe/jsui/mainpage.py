@@ -783,6 +783,8 @@ class MainPage(RenderableLivePage):
         Resources.cancelImport()
         
     def handleExport(self, client, exportType, filename):
+        #print("client is: " + client);
+        #print("filename is: " + filename);
         """
         Called by js. 
         Exports the current package to one of the above formats

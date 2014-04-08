@@ -17,20 +17,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //===========================================================================
 
-/*var p = Ext.create('Ext.panel.Panel', {
-        width: 200,
-        height: 200,
-        renderTo: document.body,
-        title: 'A Panel',
-        buttons: [{
-            text: 'B1'
-        }]
-    });
-*/
-
 Ext.define('eXe.controller.Toolbar', {
     extend: 'Ext.app.Controller',
-    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel', 'eXe.view.forms.WizardPanel', 'eXe.view.forms.IDevicePanel'], //Added WizardPanel and IDevicePanel
+    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel', 'eXe.view.forms.WizardPanel', 'eXe.view.forms.IDevicePanel', 'eXe.view.forms.ExportUstadMobilePanel', 'eXe.view.forms.LoginUMCloudPanel'], //Added WizardPanel and IDevicePanel and ExportUstadMobilePanel
 	refs: [{
         ref: 'recentMenu',
         selector: '#file_recent_menu'
@@ -75,7 +64,10 @@ Ext.define('eXe.controller.Toolbar', {
         	'#wizard_show_recent': {
         		beforerender: this.updateRecent
         	},
-     
+        	//export_ustadmobile_show_usb_list
+        	'#export_ustadmobile_show_usb_list': {
+        		beforerender: this.updateUSBDevicesList
+        	},
         	'#styles_button': {
         		beforerender: this.stylesRender
         	},
@@ -173,6 +165,18 @@ Ext.define('eXe.controller.Toolbar', {
             //tools_idevicep
             '#tools_idevicep': {	//Added
                 click: this.toolsIDeviceP
+            },
+            //export_ustadmobile
+            '#export_ustadmobile': {	//Added
+                click: this.exportUstadMobileP
+            },
+            //tools_umcloud
+            '#tools_umcloud': {	//Added
+                click: this.umCloudP
+            },
+            //uncloud_login
+            '#uncloud_login': {	//Added
+                click: this.umCloudLogin
             },
             '#tools_resourcesreport': {
             	click: { fn: this.processExportEvent, exportType: "csvReport" }
@@ -371,6 +375,55 @@ Ext.define('eXe.controller.Toolbar', {
         eXe.app.quitWarningEnabled = false;
         window.location = window.location;
     },
+    //umCloudP
+    umCloudP: function() {	//added for IDevice
+    	//alert("testWizard01");
+        var loginumcloudp = new Ext.Window ({
+	          height: 460, 
+	          width: 550, 
+	          modal: true,
+	          id: 'loginumcloudpwin',
+	          title: _("Ustad Mobile Cloud Portal"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'loginumcloudp'
+              }]
+	        }),
+            formpanel = loginumcloudp.down('form');
+        formpanel.load({url: 'loginumcloudp', method: 'GET'});
+        loginumcloudp.show();        
+	},
+	//umCloudLogin
+	umCloudLogin: function() {	//added for Login functionality
+        //Code goes here..
+		//console.log("In umCloudLogin..");
+		var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+		//console.log(authoring);
+		//console.log(Ext.ComponentQuery.query('#authoring')[0]['src']);
+		nevow_clientToServerEvent('getPackageFileName', this, '', 'eXe.app.getController("Toolbar").getFileName', '');
+		//getPackageFileName is called and this is triggered:
+		//alert(unicode(this.package.filename));
+		//def handlePackageFileName(self, client, onDone, onDoneParam):
+	},
+    //exportUstadMobileP
+    exportUstadMobileP: function() {	//added for IDevice
+    	//alert("testWizard01");
+        var exportustadmobilep = new Ext.Window ({
+	          height: 450, 
+	          width: 550, 
+	          modal: true,
+	          id: 'exportustadmobilepwin',
+	          title: _("Export to Ustad Mobile"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'exportustadmobilep'
+              }]
+	        }),
+            formpanel = exportustadmobilep.down('form');
+        formpanel.load({url: 'exportustadmobilep', method: 'GET'});
+        exportustadmobilep.show();        
+	},
+    
     //toolsIDeviceP
     toolsIDeviceP: function() {	//added for IDevice
     	//alert("testWizard01");
@@ -1084,8 +1137,34 @@ Ext.define('eXe.controller.Toolbar', {
             },500);
         } else this.executeFileSave(onProceed);
 	},
+	getFileName: function(filename, onDone) {			//Added
+		//console.log("filename/onDone: " + filename+"/"+onDone);
+		//alert(filename);
+		var userName = Ext.getCmp('umcloudusernameinput').getValue();
+  		var pswd = Ext.getCmp('umcloudpasswordinput').getValue();
+  		var url = Ext.getCmp('umcloudserverurlinput').getValue();
+  		alert("Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]" + "and filepath is: " + filename);
+		//filename is the complete path of the file to be saved including the name. //onDone isn't anything much.
+	    if (filename) {
+	        this.saveWorkInProgress();	//We need to save it! This just starts the save process. This alone does NOT save the elp file.
+	        // If the package has been previously saved/loaded
+	        // Just save it over the old file
+            //Ext.Msg.wait(new Ext.Template(_('Saving package to: {filename}')).apply({filename: filename}));
+	        if (onDone) {	//this actually saves the elp file.. //insert file upload logic here.
+	            //nevow_clientToServerEvent('savePackage', this, '', '', onDone);
+	        } else {
+	            //nevow_clientToServerEvent('savePackage', this, '');
+	        }
+	    } else {
+	        // If the package is new (never saved/loaded) show a
+	        // fileSaveAs dialog
+	        this.fileSaveAs(onDone)
+	    }
+	},
 	
 	fileSave2: function(filename, onDone) {
+		//alert("filename/onDone: " + filename+"/"+onDone);
+		//filename is the complete path of the file to be saved including the name. //onDone isn't anything much.
 	    if (filename) {
 	        this.saveWorkInProgress();
 	        // If the package has been previously saved/loaded
@@ -1158,8 +1237,62 @@ Ext.define('eXe.controller.Toolbar', {
     	this.checkDirty(nextStep, 'eXe.app.getController("Toolbar").askSave("'+nextStep+'")');
     },
     
+    updateUSBDevicesList: function() {
+    	var recpanel = Ext.getCmp('showremovabledevices'); //showrecentprojectspanel
+    	recpanel.removeAll();
+    	
+       	Ext.Ajax.request({
+    		//url: location.pathname + '/exportustadmobilep',
+       		url: 'exportustadmobilep',
+    		scope: this,
+    		success: function(response) {
+				var rm = Ext.JSON.decode(response.responseText),
+					menu, text, item, previtem;
+				//var rm = Ext.JSON.decode(response.responseText),
+				//	menu = this.getRecentMenu(), text, item, previtem;
+				
+				recpanel.add(
+		        		 {	//For intendation purposes.
+		    	        	xtype: 'component',
+		    	        	flex: 1
+		    	        })
+		    	        
+    			for (i in rm) {
+    				//alert("rm is: " + rm[i]['removabledrivepath']);
+    				textButton = rm[i]['removabledrivevendor'] + " " + rm[i]['removabledrivesize'] + " [" + rm[i]['removabledrivepath'] + "]";
+    				recpanel.add({
+            			xtype: 'button',
+        	        	text: _(textButton),
+        	        	margin: 10,
+        	        	height:30,
+                        width:450,
+        	        	textButton: textButton,
+        	        	handler: function(cow){
+    						console.log("You clicked: " + cow.textButton + "!");
+    						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
+    						//fileOpenRecent2(cow.textButton[0]);
+    						Ext.Msg.wait(_('Saving package to ' + cow.textButton + ' ...'));
+    						//nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
+    						
+    						//self.package.name needs to be changed to the user's input
+    						nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.textButton);
+    					},
+
+	        	        	//width : 128,
+	        	            //height : 34,
+	        	            //itemid: 'recent_project_button'
+	            		},
+	            		 {	//For intendation purposes.
+	        	        	xtype: 'component',
+	        	        	flex: 1
+	        	        })
+    				
+    				}
+    		}
+    	});
+    },
+    
     updateRecent: function(){	//For updating the recent projects list
-    	console.log("in update recent");
     	var recpanel = Ext.getCmp('showrecentprojectspanel'); //showrecentprojectspanel
     	recpanel.removeAll();
     	//alert("updateRecent01");
