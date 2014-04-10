@@ -19,8 +19,8 @@
 
 //To Create the ExportUstadMobile Panel.
 
-
-function updateUSBDevicesList(){
+/*
+function updateUSBDevicesList(){		//This  might not even  be called. Its the function in Toolbar.js that is going to be called.
 	var recpanel = Ext.getCmp('showremovabledevices'); //showrecentprojectspanel
 	recpanel.removeAll();
 	
@@ -43,6 +43,7 @@ function updateUSBDevicesList(){
 			for (i in rm) {
 				//alert("rm is: " + rm[i]['removabledrivepath']);
 				textButton = rm[i]['removabledrivevendor'] + " " + rm[i]['removabledrivesize'] + " [" + rm[i]['removabledrivepath'] + "]";
+				usbPath = rm[i]['removabledrivepath'];
 				recpanel.add({
         			xtype: 'button',
     	        	text: _(textButton),
@@ -50,15 +51,18 @@ function updateUSBDevicesList(){
     	        	height:30,
                     width:450,
     	        	textButton: textButton,
+    	        	usbPath: usbPath,
     	        	handler: function(cow){
 						console.log("You clicked: " + cow.textButton + "!");
+						//We have to save the file. 
+						nevow_clientToServerEvent('savePackage', this, '');
 						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
 						//fileOpenRecent2(cow.textButton[0]);
 						Ext.Msg.wait(_('Saving package to ' + cow.textButton + ' ...'));
 						//nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
 						
 						//self.package.name needs to be changed to the user's input
-						nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.textButton);
+						nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
 					},
 
         	        	//width : 128,
@@ -74,6 +78,8 @@ function updateUSBDevicesList(){
 		}
 	});
 }
+*/
+
 var exportump = Ext.define('eXe.view.forms.ExportUstadMobilePanel', {
     extend: 'Ext.form.Panel',
     id: 'exportustadmobilep',	//Doesnt do much..
@@ -95,7 +101,7 @@ var exportump = Ext.define('eXe.view.forms.ExportUstadMobilePanel', {
                     	
             	{
                     xtype:            'label',
-                    html:       '<br></br><img src="/images/UstadMobile/UstadMobile01.png" /><h3><i>Your Options:</i></h3>',
+                    html:       '<br></br><img src="/images/UstadMobile/UstadMobile01.png" hspace="90" /><h3><i>Your Options:</i></h3>',
                 	width: 100,
                 	height: 10,	//Doesnt really do much.
             	},

@@ -131,11 +131,19 @@ var loginumcloudpanel = Ext.define('eXe.view.forms.LoginUMCloudPanel', {
                                        width:480,
                                        id: 'umcloudserverurlinput',
                                        allowBlank: false,
-                                       value: 'http://svr2.ustadmobile.com:8001/xAPI/statements?limit=1',
+                                       value: 'http://127.0.0.1:8000/sendelpfile/',
                                        blankText: _('You need to enter a servername to log in'),
                                        //minLength:3,
                                        //maxLength:400,
                       	         },
+                      	       {
+                       	          xtype: 'button',
+                       	          text: _('Go to UMCloud'),
+                       	          icon: '/images/weather-clouds-2.png',
+                       	          handler: function(){
+                       	        	 window.open('http://127.0.0.1:8000');
+                       	         }
+                       	       }
               	        ]
                       },
                   ]
@@ -162,7 +170,7 @@ var loginumcloudpanel = Ext.define('eXe.view.forms.LoginUMCloudPanel', {
                             	{
                                 	xtype:            'button',
                                     //html:       '',
-                                	text: _('Login'),
+                                	text: _('Login and Upload'),
                                 	width: 100,
                                 	height: 50 ,
                                     icon: '/images/key.png',
@@ -172,10 +180,11 @@ var loginumcloudpanel = Ext.define('eXe.view.forms.LoginUMCloudPanel', {
                             	  		var userName = Ext.getCmp('umcloudusernameinput').getValue();
                             	  		var pswd = Ext.getCmp('umcloudpasswordinput').getValue();
                             	  		var url = Ext.getCmp('umcloudserverurlinput').getValue();
-                            	  		console.log("Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]");
+                            	  		console.log(" Button handler: Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]");
                                 		},
-                            		itemId: 'uncloud_login' ,  
+                            		itemId: 'uncloud_login_upload' ,  
                                 },
+                                
                     ]
                 },
                 	/*

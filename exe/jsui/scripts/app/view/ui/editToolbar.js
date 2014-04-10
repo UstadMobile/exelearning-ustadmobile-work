@@ -200,12 +200,21 @@ Ext.define('eXe.view.ui.editToolbar', {
 		                text: _('Add IDevices'),
 		                height: 30	//30 is default
 		            },
+		            /*
 		            {
                         xtype: 'button',
                         text: _('UMCloud'),
                         //accesskey: 'x',
                         icon: '/images/weather-clouds-2.png', //Added
                         itemId: 'tools_umcloud'
+                    },
+                    */
+                    {
+                        xtype: 'button',
+                        text: _('UMCloud'),
+                        //accesskey: 'x',
+                        icon: '/images/weather-clouds-2.png', //Added
+                        itemId: 'toolbar_umcloud_login'
                     },
                
             ]

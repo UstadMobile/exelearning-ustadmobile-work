@@ -87,7 +87,7 @@ class LoginUMCloudPage(RenderableResource):
         """Render the exportustadmobilep"""
         
         log.debug("render_GET")
-        print("render_GET");
+        print("render_GET (loginumcloudpage)");
         data={}
         data['test'] = "testing"
         #current_filename = unicode(self.package.filename)
@@ -140,4 +140,7 @@ class LoginUMCloudPage(RenderableResource):
     
     def checkLogin(self):
         
+        
+        #r = requests.post('http://httpbin.org/post', files={'report.xls': open('report.xls', 'rb')})
+        #print (r.text)
         return "test"

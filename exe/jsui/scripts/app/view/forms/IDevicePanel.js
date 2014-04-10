@@ -157,7 +157,7 @@ function updateTemplate(){	//For updating the Styles list
 }
 
 //To Create the IDevice Panel.
-var wizz = Ext.define('eXe.view.forms.IDevicePanel', {
+var idevicep = Ext.define('eXe.view.forms.IDevicePanel', {
     extend: 'Ext.form.Panel',
     id: 'idevicepanel',
     alias: 'widget.idevicep',
@@ -206,7 +206,7 @@ var wizz = Ext.define('eXe.view.forms.IDevicePanel', {
                         	items: [ //This is the box's items within the panel
                         	         {
                                          xtype: 'gridpanel',
-                                         itemId: 'idevice_panel',
+                                         itemId: 'toolbar_idevice_panel',
                                          height: 300,
                                          autoScroll: true,
                                          store: 'IdeviceXmlStore', //file: IdeviceXmlStore.js

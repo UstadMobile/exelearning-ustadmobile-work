@@ -19,7 +19,7 @@
 
 Ext.define('eXe.controller.Toolbar', {
     extend: 'Ext.app.Controller',
-    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel', 'eXe.view.forms.WizardPanel', 'eXe.view.forms.IDevicePanel', 'eXe.view.forms.ExportUstadMobilePanel', 'eXe.view.forms.LoginUMCloudPanel'], //Added WizardPanel and IDevicePanel and ExportUstadMobilePanel
+    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel', 'eXe.view.forms.WizardPanel', 'eXe.view.forms.IDevicePanel', 'eXe.view.forms.ExportUstadMobilePanel', 'eXe.view.forms.LoginUMCloudPanel', 'eXe.view.forms.LoginCloudPanel'], //Added WizardPanel and IDevicePanel and ExportUstadMobilePanel
 	refs: [{
         ref: 'recentMenu',
         selector: '#file_recent_menu'
@@ -174,8 +174,16 @@ Ext.define('eXe.controller.Toolbar', {
             '#tools_umcloud': {	//Added
                 click: this.umCloudP
             },
-            //uncloud_login
-            '#uncloud_login': {	//Added
+            //toolbar_umcloud_login
+            '#toolbar_umcloud_login': {	//Added
+                click: this.login_umcloud_toolbar
+            },
+            //uncloud_login_upload
+            '#uncloud_login_upload': {	//Added
+                click: this.umCloudLoginUpload
+            },
+            //umcloud_login
+            '#umcloud_login': {	//Added
                 click: this.umCloudLogin
             },
             '#tools_resourcesreport': {
@@ -375,6 +383,24 @@ Ext.define('eXe.controller.Toolbar', {
         eXe.app.quitWarningEnabled = false;
         window.location = window.location;
     },
+    //login_umcloud_toolbar
+    login_umcloud_toolbar: function() {	//added for IDevice
+    	//alert("testWizard01");
+        var loginumcloudt = new Ext.Window ({
+	          height: 460, 
+	          width: 550, 
+	          modal: true,
+	          id: 'loginumcloudtwin',
+	          title: _("Log in to Ustad Mobile Cloud Portal"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'loginumcloudt'
+              }]
+	        }),
+            formpanel = loginumcloudt.down('form');
+        //formpanel.load({url: 'loginumcloudt', method: 'GET'});	//Disable calling a python file because there is no file currently associated with it. This just checks the user can logs in, thats all. Doesn't even save the credentials yet. 
+        loginumcloudt.show();        
+	},
     //umCloudP
     umCloudP: function() {	//added for IDevice
     	//alert("testWizard01");
@@ -395,6 +421,18 @@ Ext.define('eXe.controller.Toolbar', {
 	},
 	//umCloudLogin
 	umCloudLogin: function() {	//added for Login functionality
+        //Code goes here..
+		//console.log("In umCloudLogin..");
+		var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+		//console.log(authoring);
+		//console.log(Ext.ComponentQuery.query('#authoring')[0]['src']);
+		nevow_clientToServerEvent('getPackageFileName', this, '', 'eXe.app.getController("Toolbar").getFileNameAndLogin', '');
+		//getPackageFileName is called and this is triggered:
+		//alert(unicode(this.package.filename));
+		//def handlePackageFileName(self, client, onDone, onDoneParam):
+	},
+	//umCloudLoginUpload
+	umCloudLoginUpload: function() {	//added for Login functionality
         //Code goes here..
 		//console.log("In umCloudLogin..");
 		var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
@@ -669,7 +707,6 @@ Ext.define('eXe.controller.Toolbar', {
             }
         });        
     },
-    
     closeImportProgressWindow: function() {
         this.importProgress.destroy();
     },
@@ -1051,6 +1088,7 @@ Ext.define('eXe.controller.Toolbar', {
         //this.askDirty("eXe.app.gotoUrl('/')");
         //this.wizard.destroy();
         //wizard.destroy();
+        Ext.getCmp('wizardwin').close()
         
     },
     
@@ -1137,29 +1175,56 @@ Ext.define('eXe.controller.Toolbar', {
             },500);
         } else this.executeFileSave(onProceed);
 	},
-	getFileName: function(filename, onDone) {			//Added
-		//console.log("filename/onDone: " + filename+"/"+onDone);
-		//alert(filename);
+	getFileNameAndLogin: function(filename, onDone) {			//Added
 		var userName = Ext.getCmp('umcloudusernameinput').getValue();
   		var pswd = Ext.getCmp('umcloudpasswordinput').getValue();
   		var url = Ext.getCmp('umcloudserverurlinput').getValue();
-  		alert("Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]" + "and filepath is: " + filename);
+  		console.log("Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]" + "and filepath is: " + filename);
+  		
+  		
 		//filename is the complete path of the file to be saved including the name. //onDone isn't anything much.
-	    if (filename) {
-	        this.saveWorkInProgress();	//We need to save it! This just starts the save process. This alone does NOT save the elp file.
-	        // If the package has been previously saved/loaded
-	        // Just save it over the old file
-            //Ext.Msg.wait(new Ext.Template(_('Saving package to: {filename}')).apply({filename: filename}));
-	        if (onDone) {	//this actually saves the elp file.. //insert file upload logic here.
-	            //nevow_clientToServerEvent('savePackage', this, '', '', onDone);
-	        } else {
-	            //nevow_clientToServerEvent('savePackage', this, '');
-	        }
-	    } else {
-	        // If the package is new (never saved/loaded) show a
-	        // fileSaveAs dialog
-	        this.fileSaveAs(onDone)
-	    }
+  		//nevow_clientToServerEvent('EVENT', this, 'client', 'onDONE', 'onDoneParam', filename);
+  		Ext.Msg.wait(_('Uploading package:') + filename + _(" to server.."));
+  		var umupload_retmsg = nevow_clientToServerEvent('checkUMCloudLogin', this, '', '', '', filename, userName, pswd, url);
+  		//Ext.Msg.alert(umupload_retmsg);
+	   
+	},
+	
+	
+	getFileName: function(filename, onDone) {			//Added
+		var userName = Ext.getCmp('umcloudusernameinput').getValue();
+  		var pswd = Ext.getCmp('umcloudpasswordinput').getValue();
+  		var url = Ext.getCmp('umcloudserverurlinput').getValue();
+  		console.log("Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]" + "and filepath is: " + filename);
+  		
+  		
+  		//We need to save the ELP file first! 
+  		//code here..
+  		
+  		 if (filename) {
+ 	        this.saveWorkInProgress();	//We need to save it! This just starts the save process. This alone does NOT save the elp file.
+ 	        // If the package has been previously saved/loaded
+ 	        // Just save it over the old file
+            Ext.Msg.wait(new Ext.Template(_('Saving package to: {filename}')).apply({filename: filename}));
+ 	        if (onDone) {	//this actually saves the elp file.. //insert file upload logic here.
+ 	            nevow_clientToServerEvent('savePackage', this, '', '', onDone);
+ 	        } else {
+ 	            nevow_clientToServerEvent('savePackage', this, '');
+ 	        }
+ 	    } else {
+ 	        // If the package is new (never saved/loaded) show a
+ 	        // fileSaveAs dialog
+ 	        this.fileSaveAs(onDone)
+ 	    }
+  		
+  		
+  		
+		//filename is the complete path of the file to be saved including the name. //onDone isn't anything much.
+  		//nevow_clientToServerEvent('EVENT', this, 'client', 'onDONE', 'onDoneParam', filename);
+  		Ext.Msg.wait(_('Uploading package:') + filename + _(" to server.."));
+  		var umupload_retmsg = nevow_clientToServerEvent('startUMUploadFileName', this, '', '', '', filename, userName, pswd, url);
+  		//Ext.Msg.alert(umupload_retmsg);
+	    
 	},
 	
 	fileSave2: function(filename, onDone) {
@@ -1260,6 +1325,7 @@ Ext.define('eXe.controller.Toolbar', {
     			for (i in rm) {
     				//alert("rm is: " + rm[i]['removabledrivepath']);
     				textButton = rm[i]['removabledrivevendor'] + " " + rm[i]['removabledrivesize'] + " [" + rm[i]['removabledrivepath'] + "]";
+					usbPath = rm[i]['removabledrivepath'];
     				recpanel.add({
             			xtype: 'button',
         	        	text: _(textButton),
@@ -1267,7 +1333,12 @@ Ext.define('eXe.controller.Toolbar', {
         	        	height:30,
                         width:450,
         	        	textButton: textButton,
+        	        	usbPath: usbPath,
         	        	handler: function(cow){
+    					
+	    					//We have to save the file. 
+							nevow_clientToServerEvent('autoSavePackage', this, '');	
+							
     						console.log("You clicked: " + cow.textButton + "!");
     						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
     						//fileOpenRecent2(cow.textButton[0]);
@@ -1275,7 +1346,9 @@ Ext.define('eXe.controller.Toolbar', {
     						//nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
     						
     						//self.package.name needs to be changed to the user's input
-    						nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.textButton);
+    						nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
+    						
+    						//Works well, but we need to stop the J2ME emulator from popping up all the time.
     					},
 
 	        	        	//width : 128,

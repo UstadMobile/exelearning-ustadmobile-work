@@ -29,6 +29,10 @@ import logging
 import traceback
 import shutil
 import tempfile
+import ntpath #Added for basename 
+import requests #Added for umcloudupload
+import base64 #Added for umlogin
+import time #Added for testing 
 from exe.engine.version import release, revision
 from twisted.internet            import threads, reactor
 from exe.webui.livepage          import RenderableLivePage,\
@@ -181,7 +185,10 @@ class MainPage(RenderableLivePage):
             hndlr(ctx, client) # Stores it
         setUpHandler(self.handleIsPackageDirty,  'isPackageDirty')
         setUpHandler(self.handlePackageFileName, 'getPackageFileName')
+        setUpHandler(self.handleUMUploadFileName, 'startUMUploadFileName')  #Added
+        setUpHandler(self.handleCheckUMCloudLogin, 'checkUMCloudLogin')  #Added
         setUpHandler(self.handleSavePackage,     'savePackage')
+        setUpHandler(self.handleAutoSavePackage,     'autoSavePackage') #Added
         setUpHandler(self.handleLoadPackage,     'loadPackage')
         setUpHandler(self.recentMenu.handleLoadRecent,      'loadRecent')
         setUpHandler(self.handleLoadTutorial,    'loadTutorial')
@@ -301,6 +308,124 @@ class MainPage(RenderableLivePage):
         filename
         """
         client.call(onDone, unicode(self.package.filename), onDoneParam)
+        
+    #handleCheckUMCloudLogin    
+    def handleCheckUMCloudLogin (self, client, onDone, onDoneParam, filepath, username, password, url):   #Added
+        """
+        Testing file upload in Python..
+        """
+        
+        print username
+        print url
+        credentials = {'username': username, 'password': password} #Can be used in params=credentials in the request.
+
+        #Login for TINCAN Login
+        cred = username + ":" + password
+        encode = base64.b64encode(cred)
+        encoded = "Basic " + encode
+        headers = {'X-Experience-API-Version': '1.0.1', 'Authorization': encoded}
+        #End of logic
+        
+  
+        response = requests.post(url, data=credentials) #UMCloudDj
+        print ("-----This is it. What is the response-----")
+        print response.text
+        #client.call(onDone, unicode(self.package.filename), onDoneParam)
+        print ("------Status Code------")
+        print response.status_code
+        print ("------Headers ------")
+        print response.headers
+        print ("------END------")
+        if (response.status_code == 403):
+            client.alert("Error: Wrong username and password combination. Try again")
+            #return "Error: Wrong username and password combination. Try again"
+        elif (response.status_code == 200):
+            client.alert("Your login was a success.")
+            client.sendScript("Ext.getCmp('loginumcloudtwin').close()")
+        elif (response.status_code == 500):
+            client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+            #Trigger something on the client..
+            #I think nothing needs to be triggered.
+        else:
+            client.alert("Something went wrong. could not identify.")
+            #Trigger something on the client..
+            
+    
+    def handleUMUploadFileName (self, client, onDone, onDoneParam, filepath, username, password, url):   #Added
+        """
+        Testing file upload in Python..
+        """
+        print("FileNAME is: ")
+        print filepath
+        print username
+        print password
+        print url
+        filename = ntpath.basename(filepath)
+        print filename
+        testfilepath = "/home/varuna/test/test.txt"
+        credentials = {'username': username, 'password': password} #Can be used in params=credentials in the request.
+
+        #Login for TINCAN Login
+        cred = username + ":" + password
+        encode = base64.b64encode(cred)
+        encoded = "Basic " + encode
+        headers = {'X-Experience-API-Version': '1.0.1', 'Authorization': encoded}
+        #End of logic
+        
+        
+        #r = requests.post('http://httpbin.org/post', files={filepath: open(filepath, 'rb')})    #Testing original
+        #r = requests.post('http://httpbin.org/post', files={testfilepath: open(testfilepath, 'rb')}, headers=headers) #Testing..
+        #r = requests.post(url, files={testfilepath: open(testfilepath, 'rb')}, headers=headers) #TinCAN login
+        #Ideally should be:
+        #r = requests.post(url, files={filepath: open(filepath, 'rb')}, params=credentials)
+        
+        
+        files={'exeuploadelp': (filepath, open(filepath, 'rb'))}
+        #files={'file': ('report.xls', open('report.xls', 'rb'))} #From documentation
+        #original stackoverflow: files={testfilepath: open(testfilepath, 'rb')}
+
+        response = requests.post(url, files=files, data=credentials) #UMCloudDj
+        
+        print ("-----This is it. What is the response-----")
+        print response.text
+        #client.call(onDone, unicode(self.package.filename), onDoneParam)
+        print ("------Status Code------")
+        print response.status_code
+        print ("------Headers ------")
+        print response.headers
+        print ("------END------")
+        if (response.status_code == 403):
+            client.alert("Error: Wrong username and password combination. Try again")
+            
+            #return "Error: Wrong username and password combination. Try again"
+        elif (response.status_code == 200):
+            courseid = response.headers['courseid']
+            coursename = response.headers['coursename']
+            client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
+            #Trigger something on the client..
+            client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
+            client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
+        elif (response.status_code == 500):
+            error = response.headers['error']
+            if (error == "Grunt test failed"):
+                client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
+            elif (error == "Exe export failed"):
+                client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
+            elif (error == "Exe export failed to start"):
+                client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
+            elif (error == "Request is not POST"):
+                client.alert("eXe error: eXe failed to connect with the server by POST request")
+            else:
+                client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+            #Trigger something on the client..
+            #I think nothing needs to be triggered.
+        else:
+            client.alert("Something went wrong. could not identify.")
+            #Trigger something on the client..
+            
+        #If response.status_code is 403, show error message: Error: Wrong username and password. Try again.
+        #If response.status_code is 500, show error message: Error: Cannot connect to the server. Make sure the server is active and you have network access.
+        #If response.status_code is 200, show message: File upload complete. Your course id is: response.header['courseid']
 
     def b4save(self, client, inputFilename, ext, msg):
         """
@@ -319,6 +444,53 @@ class MainPage(RenderableLivePage):
                 raise Exception(msg)
         return inputFilename
 
+    #handleAutoSavePackage
+    def handleAutoSavePackage(self, client, filename=None, onDone=None):    #Added
+        """
+        Save the current package
+        'filename' is the filename to save the package to
+        'onDone' will be evaled after saving instead or redirecting
+        to the new location (in cases of package name changes).
+        (This is used where the user goes file|open when their 
+        package is changed and needs saving)
+        """
+        filename = Path(filename, 'utf-8')
+        saveDir  = filename.dirname()
+        if saveDir and not saveDir.isdir():
+            client.alert(_(u'Cannot access directory named ') + unicode(saveDir) + _(u'. Please use ASCII names.'))
+            return
+        oldName = self.package.name
+        # If the script is not passing a filename to us,
+        # Then use the last filename that the package was loaded from/saved to
+        if not filename:
+            filename = self.package.filename
+            assert filename, 'Somehow save was called without a filename on a package that has no default filename.'
+        # Add the extension if its not already there and give message if not saved
+        filename = self.b4save(client, filename, '.elp', _(u'SAVE FAILED!'))
+        try:
+            self.package.save(filename) # This can change the package name
+        except Exception, e:
+            client.alert(_('SAVE FAILED!\n%s') % str(e))
+            raise
+        # Tell the user and continue
+        if onDone:
+            buffer="blah" #Random
+            #client.alert(_(u'Package saved to: %s') % filename, onDone)
+            #Basically dont alert the customer of anything -VS
+        elif self.package.name != oldName:
+            # Redirect the client if the package name has changed
+            self.webServer.root.putChild(self.package.name, self)
+            log.info('Package saved, redirecting client to /%s' % self.package.name)
+            #client.alert(_(u'Package saved to: %s') % filename, 'eXe.app.gotoUrl("/%s")' % self.package.name.encode('utf8'), \
+            #            filter_func=otherSessionPackageClients)
+            #Basically don't alert the customer of anything while auto saving -VS
+        else:
+            buffer="blah2"
+            #client.alert(_(u'Package saved to: %s') % filename, filter_func=otherSessionPackageClients)
+            #Basically don't alert the customer of anything while auto saving -VS
+
+
+    
     def handleSavePackage(self, client, filename=None, onDone=None):
         """
         Save the current package
