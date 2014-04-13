@@ -2074,7 +2074,8 @@ class SelectOptionElement(Element):
                               self.field.isCorrect, self.index)
         html += "<br><br><br><br>\n"
         html += common.submitImage("del"+self.id, self.field.idevice.id, 
-                                   "/images/stock-cancel.png",
+                                   #"/images/stock-cancel.png",  #Commented
+                                   "/images/edit-delete.png",   #Added
                                    _(u"Delete option"))
         html += "</td></tr>\n"
 
@@ -2207,7 +2208,8 @@ class SelectquestionElement(Element):
         html += common.elementInstruc(self.field.questionInstruc)
         html += u" " + common.submitImage("del" + self.id, 
                                    self.field.idevice.id, 
-                                   "/images/stock-cancel.png",
+                                   #"/images/stock-cancel.png", #Commented
+                                   "/images/edit-delete.png",   #Added
                                    _("Delete question"))
         # rather than using questionElement.renderEdit(),
         # access the appropriate content_w_resourcePaths attribute directly,
@@ -2430,7 +2432,8 @@ class QuizOptionElement(Element):
                               self.field.isCorrect, self.index)   
         html += "<br><br><br><br>\n"
         html += common.submitImage("del"+self.id, self.field.idevice.id, 
-                                   "/images/stock-cancel.png",
+                                   #"/images/stock-cancel.png",  #Commented
+                                   "/images/edit-delete.png",   #Added
                                    _(u"Delete option"))
         html += "</td></tr>\n"
 
@@ -2637,7 +2640,8 @@ class QuizQuestionElement(Element):
         Returns an XHTML string with the form element for editing this element
         """
         html = u" "+common.submitImage("del"+self.id, self.field.idevice.id,  
-                "/images/stock-cancel.png", 
+                #"/images/stock-cancel.png", #Commented
+                "/images/edit-delete.png", #Added
                 _("Delete question")) 
 
         html += self.questionElement.renderEdit()

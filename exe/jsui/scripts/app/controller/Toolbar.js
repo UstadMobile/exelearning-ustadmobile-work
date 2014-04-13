@@ -19,14 +19,17 @@
 
 Ext.define('eXe.controller.Toolbar', {
     extend: 'Ext.app.Controller',
-    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel'],
+    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel', 'eXe.view.forms.WizardPanel', 'eXe.view.forms.IDevicePanel', 'eXe.view.forms.ExportUstadMobilePanel', 'eXe.view.forms.LoginUMCloudPanel', 'eXe.view.forms.LoginCloudPanel'], //Added WizardPanel and IDevicePanel and ExportUstadMobilePanel
 	refs: [{
         ref: 'recentMenu',
         selector: '#file_recent_menu'
     },{
     	ref: 'stylesMenu',
     	selector: '#styles_menu'
-    }
+    },{
+    	ref: 'wizardStylesMenu',
+    	selector: '#wizard_styles_menu'
+    },
     ],    
     init: function() {
         this.control({
@@ -34,6 +37,9 @@ Ext.define('eXe.controller.Toolbar', {
                 click: this.focusMenu
             },
             '#tools': {
+                click: this.focusMenu
+            },
+            '#wizard_styles_button': {	//Added
                 click: this.focusMenu
             },
             '#styles_button': {
@@ -54,8 +60,19 @@ Ext.define('eXe.controller.Toolbar', {
         	'#file_recent_menu': {
         		beforerender: this.recentRender
         	},
+        	//wizard_show_recent
+        	'#wizard_show_recent': {
+        		beforerender: this.updateRecent
+        	},
+        	//export_ustadmobile_show_usb_list
+        	'#export_ustadmobile_show_usb_list': {
+        		beforerender: this.updateUSBDevicesList
+        	},
         	'#styles_button': {
         		beforerender: this.stylesRender
+        	},
+        	'#wizard_styles_button': {	//Added
+        		beforerender: this.wizardStylesRender
         	},
         	'#file_recent_menu > menuitem': {
         		click: this.recentClick
@@ -63,6 +80,10 @@ Ext.define('eXe.controller.Toolbar', {
         	'#styles_menu > menuitem': {
         		click: this.stylesClick
         	},
+        	'#wizard_styles_menu > menuitem': {
+        		click: this.wizardStylesClick
+        	},
+ 
         	'#file_save': {
         		click: this.fileSave
         	},
@@ -137,6 +158,33 @@ Ext.define('eXe.controller.Toolbar', {
             },
             '#tools_preferences': {
                 click: this.toolsPreferences
+            },
+            '#tools_wizard': {	//Added
+                click: this.toolsWizard
+            },
+            //tools_idevicep
+            '#tools_idevicep': {	//Added
+                click: this.toolsIDeviceP
+            },
+            //export_ustadmobile
+            '#export_ustadmobile': {	//Added
+                click: this.exportUstadMobileP
+            },
+            //tools_umcloud
+            '#tools_umcloud': {	//Added
+                click: this.umCloudP
+            },
+            //toolbar_umcloud_login
+            '#toolbar_umcloud_login': {	//Added
+                click: this.login_umcloud_toolbar
+            },
+            //uncloud_login_upload
+            '#uncloud_login_upload': {	//Added
+                click: this.umCloudLoginUpload
+            },
+            //umcloud_login
+            '#umcloud_login': {	//Added
+                click: this.umCloudLogin
             },
             '#tools_resourcesreport': {
             	click: { fn: this.processExportEvent, exportType: "csvReport" }
@@ -335,6 +383,121 @@ Ext.define('eXe.controller.Toolbar', {
         eXe.app.quitWarningEnabled = false;
         window.location = window.location;
     },
+    //login_umcloud_toolbar
+    login_umcloud_toolbar: function() {	//added for IDevice
+    	//alert("testWizard01");
+        var loginumcloudt = new Ext.Window ({
+	          height: 460, 
+	          width: 550, 
+	          modal: true,
+	          id: 'loginumcloudtwin',
+	          title: _("Log in to Ustad Mobile Cloud Portal"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'loginumcloudt'
+              }]
+	        }),
+            formpanel = loginumcloudt.down('form');
+        //formpanel.load({url: 'loginumcloudt', method: 'GET'});	//Disable calling a python file because there is no file currently associated with it. This just checks the user can logs in, thats all. Doesn't even save the credentials yet. 
+        loginumcloudt.show();        
+	},
+    //umCloudP
+    umCloudP: function() {	//added for IDevice
+    	//alert("testWizard01");
+        var loginumcloudp = new Ext.Window ({
+	          height: 460, 
+	          width: 550, 
+	          modal: true,
+	          id: 'loginumcloudpwin',
+	          title: _("Ustad Mobile Cloud Portal"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'loginumcloudp'
+              }]
+	        }),
+            formpanel = loginumcloudp.down('form');
+        formpanel.load({url: 'loginumcloudp', method: 'GET'});
+        loginumcloudp.show();        
+	},
+	//umCloudLogin
+	umCloudLogin: function() {	//added for Login functionality
+        //Code goes here..
+		//console.log("In umCloudLogin..");
+		var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+		//console.log(authoring);
+		//console.log(Ext.ComponentQuery.query('#authoring')[0]['src']);
+		nevow_clientToServerEvent('getPackageFileName', this, '', 'eXe.app.getController("Toolbar").getFileNameAndLogin', '');
+		//getPackageFileName is called and this is triggered:
+		//alert(unicode(this.package.filename));
+		//def handlePackageFileName(self, client, onDone, onDoneParam):
+	},
+	//umCloudLoginUpload
+	umCloudLoginUpload: function() {	//added for Login functionality
+        //Code goes here..
+		//console.log("In umCloudLogin..");
+		var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+		//console.log(authoring);
+		//console.log(Ext.ComponentQuery.query('#authoring')[0]['src']);
+		nevow_clientToServerEvent('getPackageFileName', this, '', 'eXe.app.getController("Toolbar").getFileName', '');
+		//getPackageFileName is called and this is triggered:
+		//alert(unicode(this.package.filename));
+		//def handlePackageFileName(self, client, onDone, onDoneParam):
+	},
+    //exportUstadMobileP
+    exportUstadMobileP: function() {	//added for IDevice
+    	//alert("testWizard01");
+        var exportustadmobilep = new Ext.Window ({
+	          height: 450, 
+	          width: 550, 
+	          modal: true,
+	          id: 'exportustadmobilepwin',
+	          title: _("Export to Ustad Mobile"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'exportustadmobilep'
+              }]
+	        }),
+            formpanel = exportustadmobilep.down('form');
+        formpanel.load({url: 'exportustadmobilep', method: 'GET'});
+        exportustadmobilep.show();        
+	},
+    
+    //toolsIDeviceP
+    toolsIDeviceP: function() {	//added for IDevice
+    	//alert("testWizard01");
+        var idevicep = new Ext.Window ({
+	          height: 450, 
+	          width: 550, 
+	          modal: true,
+	          id: 'idevicepwin',
+	          title: _("IDevices"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'idevicep'
+              }]
+	        }),
+            formpanel = idevicep.down('form');
+        formpanel.load({url: 'idevicep', method: 'GET'});
+        idevicep.show();        
+	},
+    
+    toolsWizard: function() {	//added for Wizard test
+    	//alert("testWizard01");
+        var wizard = new Ext.Window ({
+	          height: 400, 
+	          width: 550, 
+	          modal: true,
+	          id: 'wizardwin',
+	          title: _("Wizard"),
+	          layout: 'fit',
+	          items: [{
+                xtype: 'wizard'
+              }]
+	        }),
+            formpanel = wizard.down('form');
+        formpanel.load({url: 'wizard', method: 'GET'});
+        wizard.show();        
+	},
 
     toolsPreferences: function() {
         var preferences = new Ext.Window ({
@@ -430,7 +593,7 @@ Ext.define('eXe.controller.Toolbar', {
             }
         });
         f.appendFilters([
-            { "typename": _("eXe Package Files"), "extension": "*.elp", "regex": /.*\.elp$/ },
+            { "typename": _("eXe Package Files (.elp)"), "extension": "*.elp", "regex": /.*\.elp$/ }, //Added //Edited
             { "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
             ]
         );
@@ -451,7 +614,7 @@ Ext.define('eXe.controller.Toolbar', {
             }
         });
         f.appendFilters([
-            { "typename": _("eXe Package Files"), "extension": "*.elp", "regex": /.*\.elp$/ },
+            { "typename": _("eXe Package Files (.elp)"), "extension": "*.elp", "regex": /.*\.elp$/ }, //Added //Edited
             { "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
             ]
         );
@@ -544,7 +707,6 @@ Ext.define('eXe.controller.Toolbar', {
             }
         });        
     },
-    
     closeImportProgressWindow: function() {
         this.importProgress.destroy();
     },
@@ -745,15 +907,84 @@ Ext.define('eXe.controller.Toolbar', {
 				var rm = Ext.JSON.decode(response.responseText),
 					menu = this.getRecentMenu(), text, item, previtem;
     			for (i in rm) {
+    				
+    				//alert("rm is: " + rm);
+    				
     				text = rm[i].num + ". " + rm[i].path
     				previtem = menu.items.getAt(rm[i].num - 1);
+    				
     				if (previtem && previtem.text[1] == ".") {
     					previtem.text = text
     				}
     				else {
-	    				item = Ext.create('Ext.menu.Item', { text: text });
+	    				item = Ext.create('Ext.menu.Item', { text: text, icon: '/images/package-green.png', });
+	    				//alert("text is: " + text);
 	    				menu.insert(rm[i].num - 1, item);
     				}
+    				
+    			}
+    		}
+    	})
+    	return true;
+    },
+  
+    //wizardStylesRender
+    wizardStylesRender: function() {	//Added
+    	Ext.Ajax.request({
+    		url: location.pathname + '/styleMenu',
+    		scope: this,
+    		success: function(response) {
+    			
+				var styles = Ext.JSON.decode(response.responseText),
+					menu = this.getWizardStylesMenu(), i, item;
+					//JR: Primero los borro
+					menu.removeAll();
+					
+				/*
+				 * { //Sample button
+        	        	xtype: 'button',
+        	        	text: _('Button text'),
+        	        	margin: 10,
+        	        	handler: function(button) {
+            	        	//Something?
+        	        	},
+        	        	width : 128,
+        	            height : 64,
+        	            cls: 'customclassforbuttontype',
+        	            //We have to make a new class in css: .opennewproject to add background images, etc
+        	            	//.opennewproject
+        	            	// {
+        	            	//	background-image: url(/images/opennewproject-wizard.png) !important;
+        	            	// }
+        	            itemId: 'execution_property_id'
+    	        	}
+				 * 
+				 */
+    			for (i = styles.length-1; i >= 0; i--) {
+                    item = Ext.create('Ext.menu.CheckItem', { text: styles[i].label, itemId: styles[i].style, checked: styles[i].selected });
+                    
+    				/*
+    				item = Ext.create('Ext.Button',{
+                    	xtype: 'button',
+        	        	text: _(styles[i].label),
+        	        	margin: 10,
+        	        	handler: function(button) {
+            	        	//Something?
+        	        	},
+        	        	width : 128,
+        	            height : 64,
+        	            cls: 'customclassforbuttontype',
+        	            //We have to make a new class in css: .opennewproject to add background images, etc
+        	            	//.opennewproject
+        	            	// {
+        	            	//	background-image: url(/images/opennewproject-wizard.png) !important;
+        	            	// }
+        	            //itemId: 'execution_property_id'
+                    	
+                    })
+                    */
+    				menu.insert(0, item);
+              
     			}
     		}
     	})
@@ -792,8 +1023,31 @@ Ext.define('eXe.controller.Toolbar', {
     	else
     		this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + item.text[0] + "');")
     },
+    
+    stylesClick: function(item) { //Function triggered when style is selected to change the style.
+        var ed = this.getTinyMCEFullScreen();
+        if(ed!="") {
+            ed.execCommand('mceFullScreen');
+            setTimeout(function(){
+                eXe.controller.Toolbar.prototype.executeStylesClick(item);
+            },500);
+        } else this.executeStylesClick(item);
+    },
+    
+    //wizardStylesClick
+    wizardStylesClick: function(item) { //Function triggered when style is selected to change the style in the Wizard
+    	//alert("You clicked wizardStylesClick");
+    	
+        var ed = this.getTinyMCEFullScreen();
+        if(ed!="") {
+            ed.execCommand('mceFullScreen');
+            setTimeout(function(){
+                eXe.controller.Toolbar.prototype.executeStylesClick(item);
+            },500);
+        } else this.executeWizardStylesClick(item);
+    },
 	
-    executeStylesClick: function(item) {
+    executeStylesClick: function(item) { //Function triggered when style is selected to change the style.
 		for (var i = item.parentMenu.items.length-1; i >= 0; i--) {
 			if (item.parentMenu.items.getAt(i) != item)
 				item.parentMenu.items.getAt(i).setChecked(false);
@@ -806,17 +1060,36 @@ Ext.define('eXe.controller.Toolbar', {
 		//
         var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
         if (authoring)
-            authoring.submitLink("ChangeStyle", item.itemId, 1);
+            authoring.submitLink("ChangeStyle", item.itemId, 1); 	//Doesn't go here until you change style.
     },
     
-    stylesClick: function(item) {
-        var ed = this.getTinyMCEFullScreen();
-        if(ed!="") {
-            ed.execCommand('mceFullScreen');
-            setTimeout(function(){
-                eXe.controller.Toolbar.prototype.executeStylesClick(item);
-            },500);
-        } else this.executeStylesClick(item);
+    //executeWizardStylesClick
+    executeWizardStylesClick: function(item) { //Function triggered when style is selected to change the style in the wizard
+		for (var i = item.parentMenu.items.length-1; i >= 0; i--) {
+			if (item.parentMenu.items.getAt(i) != item)
+				item.parentMenu.items.getAt(i).setChecked(false);
+		}
+		item.setChecked(true);
+		item.parentMenu.hide();
+		//provisional
+		//item.parentMenu.parentMenu.hide();
+		item.parentMenu.hide();
+		//
+		
+	
+		//wizz.closeit();
+		//wizz.destroy();
+		
+        var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+        if (authoring)
+            authoring.submitLink("ChangeStyle", item.itemId, 1); 	//Doesn't go here until you change style.
+        //var wizardPanel = Ext.getCmp('wizardpanel'); //showrecentprojectspanel
+        //wizardPanel.hide();
+        //this.askDirty("eXe.app.gotoUrl('/')");
+        //this.wizard.destroy();
+        //wizard.destroy();
+        Ext.getCmp('wizardwin').close()
+        
     },
     
 	fileOpenRecent2: function(number) {
@@ -847,7 +1120,7 @@ Ext.define('eXe.controller.Toolbar', {
 		    }
 		});
 		f.appendFilters([
-			{ "typename": _("eXe Package Files"), "extension": "*.elp", "regex": /.*\.elp$/ },
+			{ "typename": _("eXe Package Files (.elp)"), "extension": "*.elp", "regex": /.*\.elp$/ }, //Added
 			{ "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
 			]
 		);
@@ -902,8 +1175,61 @@ Ext.define('eXe.controller.Toolbar', {
             },500);
         } else this.executeFileSave(onProceed);
 	},
+	getFileNameAndLogin: function(filename, onDone) {			//Added
+		var userName = Ext.getCmp('umcloudusernameinput').getValue();
+  		var pswd = Ext.getCmp('umcloudpasswordinput').getValue();
+  		var url = Ext.getCmp('umcloudserverurlinput').getValue();
+  		console.log("Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]" + "and filepath is: " + filename);
+  		
+  		
+		//filename is the complete path of the file to be saved including the name. //onDone isn't anything much.
+  		//nevow_clientToServerEvent('EVENT', this, 'client', 'onDONE', 'onDoneParam', filename);
+  		Ext.Msg.wait(_('Uploading package:') + filename + _(" to server.."));
+  		var umupload_retmsg = nevow_clientToServerEvent('checkUMCloudLogin', this, '', '', '', filename, userName, pswd, url);
+  		//Ext.Msg.alert(umupload_retmsg);
+	   
+	},
+	
+	
+	getFileName: function(filename, onDone) {			//Added
+		var userName = Ext.getCmp('umcloudusernameinput').getValue();
+  		var pswd = Ext.getCmp('umcloudpasswordinput').getValue();
+  		var url = Ext.getCmp('umcloudserverurlinput').getValue();
+  		console.log("Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]" + "and filepath is: " + filename);
+  		
+  		
+  		//We need to save the ELP file first! 
+  		//code here..
+  		
+  		 if (filename) {
+ 	        this.saveWorkInProgress();	//We need to save it! This just starts the save process. This alone does NOT save the elp file.
+ 	        // If the package has been previously saved/loaded
+ 	        // Just save it over the old file
+            Ext.Msg.wait(new Ext.Template(_('Saving package to: {filename}')).apply({filename: filename}));
+ 	        if (onDone) {	//this actually saves the elp file.. //insert file upload logic here.
+ 	            nevow_clientToServerEvent('savePackage', this, '', '', onDone);
+ 	        } else {
+ 	            nevow_clientToServerEvent('savePackage', this, '');
+ 	        }
+ 	    } else {
+ 	        // If the package is new (never saved/loaded) show a
+ 	        // fileSaveAs dialog
+ 	        this.fileSaveAs(onDone)
+ 	    }
+  		
+  		
+  		
+		//filename is the complete path of the file to be saved including the name. //onDone isn't anything much.
+  		//nevow_clientToServerEvent('EVENT', this, 'client', 'onDONE', 'onDoneParam', filename);
+  		Ext.Msg.wait(_('Uploading package:') + filename + _(" to server.."));
+  		var umupload_retmsg = nevow_clientToServerEvent('startUMUploadFileName', this, '', '', '', filename, userName, pswd, url);
+  		//Ext.Msg.alert(umupload_retmsg);
+	    
+	},
 	
 	fileSave2: function(filename, onDone) {
+		//alert("filename/onDone: " + filename+"/"+onDone);
+		//filename is the complete path of the file to be saved including the name. //onDone isn't anything much.
 	    if (filename) {
 	        this.saveWorkInProgress();
 	        // If the package has been previously saved/loaded
@@ -974,5 +1300,112 @@ Ext.define('eXe.controller.Toolbar', {
 	
     askDirty: function(nextStep) {
     	this.checkDirty(nextStep, 'eXe.app.getController("Toolbar").askSave("'+nextStep+'")');
+    },
+    
+    updateUSBDevicesList: function() {
+    	var recpanel = Ext.getCmp('showremovabledevices'); //showrecentprojectspanel
+    	recpanel.removeAll();
+    	
+       	Ext.Ajax.request({
+    		//url: location.pathname + '/exportustadmobilep',
+       		url: 'exportustadmobilep',
+    		scope: this,
+    		success: function(response) {
+				var rm = Ext.JSON.decode(response.responseText),
+					menu, text, item, previtem;
+				//var rm = Ext.JSON.decode(response.responseText),
+				//	menu = this.getRecentMenu(), text, item, previtem;
+				
+				recpanel.add(
+		        		 {	//For intendation purposes.
+		    	        	xtype: 'component',
+		    	        	flex: 1
+		    	        })
+		    	        
+    			for (i in rm) {
+    				//alert("rm is: " + rm[i]['removabledrivepath']);
+    				textButton = rm[i]['removabledrivevendor'] + " " + rm[i]['removabledrivesize'] + " [" + rm[i]['removabledrivepath'] + "]";
+					usbPath = rm[i]['removabledrivepath'];
+    				recpanel.add({
+            			xtype: 'button',
+        	        	text: _(textButton),
+        	        	margin: 10,
+        	        	height:30,
+                        width:450,
+        	        	textButton: textButton,
+        	        	usbPath: usbPath,
+        	        	handler: function(cow){
+    					
+	    					//We have to save the file. 
+							nevow_clientToServerEvent('autoSavePackage', this, '');	
+							
+    						console.log("You clicked: " + cow.textButton + "!");
+    						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
+    						//fileOpenRecent2(cow.textButton[0]);
+    						Ext.Msg.wait(_('Saving package to ' + cow.textButton + ' ...'));
+    						//nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
+    						
+    						//self.package.name needs to be changed to the user's input
+    						nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
+    						
+    						//Works well, but we need to stop the J2ME emulator from popping up all the time.
+    					},
+
+	        	        	//width : 128,
+	        	            //height : 34,
+	        	            //itemid: 'recent_project_button'
+	            		},
+	            		 {	//For intendation purposes.
+	        	        	xtype: 'component',
+	        	        	flex: 1
+	        	        })
+    				
+    				}
+    		}
+    	});
+    },
+    
+    updateRecent: function(){	//For updating the recent projects list
+    	var recpanel = Ext.getCmp('showrecentprojectspanel'); //showrecentprojectspanel
+    	recpanel.removeAll();
+    	//alert("updateRecent01");
+    	Ext.Ajax.request({
+    		url: location.pathname + '/recentMenu',
+    		scope: this,
+    		success: function(response) {
+    			var rm = Ext.JSON.decode(response.responseText),
+    					menu, text, item, pre
+    			recpanel.add(
+        		 {	//For intendation purposes.
+    	        	xtype: 'component',
+    	        	flex: 1
+    	        })
+    			for (i in rm) {				
+    				textButton = rm[i].num + ". " + rm[i].path;
+    				recpanel.add({
+            			xtype: 'button',
+        	        	text: _(textButton),
+        	        	margin: 10,
+        	        	icon: '/images/package-green.png',
+        	        	textButton: textButton,
+        	        	handler: function(cow){
+    						console.log("You clicked: " + cow.textButton[0] + "!");
+    						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
+    						//fileOpenRecent2(cow.textButton[0]);
+    						 Ext.Msg.wait(_('Loading package...'));
+    						nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
+    					},
+
+        	        	//width : 128,
+        	            //height : 34,
+        	            //itemid: 'recent_project_button'
+            		},
+            		 {	//For intendation purposes.
+        	        	xtype: 'component',
+        	        	flex: 1
+        	        })
+    			}
+    		}
+    	});
     }
 });

@@ -40,6 +40,10 @@ finally:
 from exe.webui.editorpage          import EditorPage
 from exe.webui.stylemanagerpage    import StyleManagerPage
 from exe.webui.preferencespage     import PreferencesPage
+from exe.webui.wizardpage          import WizardPage #Added
+from exe.webui.idevicepage          import IDevicePage #Added
+from exe.webui.exportustadmobilepage    import ExportUstadMobilePage #Added
+from exe.webui.loginumcloudpage import LoginUMCloudPage #Added
 from exe.webui.aboutpage           import AboutPage 
 from exe.webui.quitpage            import QuitPage
 from exe.webui.iecmwarning         import IECMWarningPage
@@ -70,6 +74,10 @@ class WebServer:
         self.editor      = EditorPage(self.root)
         self.stylemanager = StyleManagerPage(self.root)
         self.preferences = PreferencesPage(self.root)
+        self.wizard      = WizardPage(self.root) #Added so wizard will be included in the webserver startup (doesn't mean it will show but it will get run)
+        self.exportustadmobilep = ExportUstadMobilePage(self.root)#Added
+        self.loginumcloudp = LoginUMCloudPage(self.root) #Added
+        self.idevicep      = IDevicePage(self.root)#Added
         self.xliffexportpreferences = XliffExportPreferencesPage(self.root)
         self.xliffimportpreferences = XliffImportPreferencesPage(self.root)
         self.dirtree     = DirTreePage(self.root)

@@ -37,13 +37,21 @@ class LocationButtons(object):
             self.names_map = {'DESKTOP': x_('Desktop'),
                          'DOCUMENTS': x_('Documents'),
                          'HOME': x_('Home Folder')}
+            
+            self.icon_map = {'DESKTOP':'/images/stock-open.png',    #Added
+                         'DOCUMENTS': '/images/stock-panel-drawer.png',
+                         'HOME': '/images/stock-open.png'}
         self.compute()
 
     def compute(self):
         self.buttons = []
         for key, value in self.names_map.items():
+            #key is HOME DOCUMENTS DESKTOP
             try:
                 button = {'xtype': 'button', 'text': _(value),
+                          'icon': '/images/stock-open.png', #Added
+                          #Ideally it should be:
+                          #'icon': ,
                           'location': self.MapDir(key)}
                 self.buttons.append(button)
             except:
@@ -52,6 +60,7 @@ class LocationButtons(object):
     def updateText(self):
         i = 0
         for value in self.names_map.values():
+            
             button = self.buttons[i]
             button['text'] = _(value)
             i = i + 1

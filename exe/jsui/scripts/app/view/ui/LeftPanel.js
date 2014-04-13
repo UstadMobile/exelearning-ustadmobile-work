@@ -75,10 +75,11 @@ Ext.define('eXe.view.ui.LeftPanel', {
                     plugins: [{ptype: 'cellediting', clicksToEdit: 1}],
                     features: [{
                        ftype: 'grouping',
-                	   startCollapsed: true,
+                	   startCollapsed: false,
                 	   groupHeaderTpl: '{name}',
                 	   
                     }],
+                    
              	    tbar: [
              	        {
              	        	xtype: 'button',
@@ -95,7 +96,8 @@ Ext.define('eXe.view.ui.LeftPanel', {
              	        		}
              	        	}
              	        },
-             	        {
+             	        
+             	        {	//This is the edit button on the iDevices panel on the left.
              	        	xtype: 'button',
              	        	text: _('Edit iDevices'),
              	        	handler: function(button) {
@@ -136,15 +138,19 @@ Ext.define('eXe.view.ui.LeftPanel', {
              	        			}
              	        		}
              	        	}
-             	        }
+             	        }	//End of edit iDevices.
+             	        
+             	        
              	    ],
 					selModel: {
 					    selType: 'cellmodel'
 					},
                     region: 'south',
                     split: true,
+                    
                     columns: [
-                        {
+                              
+                        {	//For edit iDevices section column: iDevices
                             xtype: 'gridcolumn',
                             sortable: false,
                             dataIndex: 'label',
@@ -154,7 +160,7 @@ Ext.define('eXe.view.ui.LeftPanel', {
                             menuDisabled: true,
                             text: _('iDevices')
                         },
-                        {
+                        {	//For edit iDevices section coloumn: Category
                             xtype: 'gridcolumn',
                             hidden: true,
                             sortable: false,
@@ -165,7 +171,7 @@ Ext.define('eXe.view.ui.LeftPanel', {
                             menuDisabled: true,
                             text: _('Category')
                         },
-                        {
+                        {	//For edit iDevices section Column: Visible
                             xtype: 'checkcolumn',
                             width: 50,
                             hidden: true,
@@ -180,7 +186,9 @@ Ext.define('eXe.view.ui.LeftPanel', {
                                 xtype: 'checkbox'
                             }
                         }
+                        
                     ]
+                    
                 }
             ]
         });

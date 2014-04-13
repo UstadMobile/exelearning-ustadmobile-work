@@ -98,6 +98,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 text: _('New'),
                                 accesskey: 'n',
                                 tooltip: 'Ctrl+Alt+N',
+                                icon: '/images/stock-new.png', //Added
                                 itemId: 'file_new'
                             },
                             {
@@ -105,6 +106,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 text: _('New Window'),
                                 accesskey: 'w',
                                 tooltip: 'Ctrl+Alt+W',
+                                icon: '/images/stock-new-tab.png', //Added
                                 itemId: 'file_new_window'
                             },
                             {
@@ -112,22 +114,26 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 text: _('Open'),
                                 accesskey: 'o',
                                 tooltip: 'Ctrl+O',
+                                icon: '/images/stock-open.png', //Added
                                 itemId: 'file_open'
                             },
                             {
                                 xtype: 'accesskey_menuitem',
                                 text: _('Recent Projects...'),
+                                icon: '/images/stock-dnd.png', //Added
                                 accesskey: 'r',
                                 menu: {
                                     xtype: 'menu',
+                                    
 	                                itemId: 'file_recent_menu',
                                     items: [
                                         {
-                                            xtype: 'menuseparator'
+                                            xtype: 'menuseparator',
                                         },
                                         {
                                             xtype: 'accesskey_menuitem',
                                             itemId: 'file_clear_recent',
+                                            icon: '/images/stock-delete.png', //Added
                                             text: _('Clear Recent Projects List')
                                         }
                                     ]
@@ -141,12 +147,14 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 text: _('Save'),
                                 accesskey: 's',
                                 tooltip: 'Ctrl+S',
+                                icon: '/images/stock-save.png', //Added
                                 itemId: 'file_save'
                             },
                             {
                                 xtype: 'accesskey_menuitem',
                                 text: _('Save As...'),
                                 accesskey: 'a',
+                                icon: '/images/stock-save-as.png', //Added
                                 itemId: 'file_save_as'
                             },
                             {
@@ -157,6 +165,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 text: _('Print'),
                                 accesskey: 'p',
                                 tooltip: 'Ctrl+P',
+                                icon: '/images/stock-print.png', //Added
                                 itemId: 'file_print'
                             },
                             {
@@ -166,6 +175,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 xtype: 'accesskey_menuitem',
                                 text: _('Import'),
                                 accesskey: 'i',
+                                icon: '/images/stock-import.png', //Added
                                 menu: {
                                     xtype: 'menu',
                                     items: [
@@ -213,6 +223,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 xtype: 'accesskey_menuitem',
                                 text: _('Export'),
                                 accesskey: 'e',
+                                icon: '/images/stock-export.png', //Added
                                 menu: {
                                     xtype: 'menu',
                                     items: [
@@ -288,6 +299,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                             xtype: 'accesskey_menuitem',
                                             text: _('Ustad Mobile'),
                                             accesskey: 'x',
+                                            icon: '/images/icon-16-vldpi.png', //Added
                                             itemId: 'file_export_mxml'
                                         },
                                         {
@@ -316,12 +328,14 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                             xtype: 'accesskey_menuitem',
                                             itemId: 'file_insert',
                                             accesskey: 'i',
+                                            icon: '/images/package-add.png', //Added
                                             text: _('Insert Package')
                                         },
                                         {
                                             xtype: 'accesskey_menuitem',
                                             itemId: 'file_extract',
                                             accesskey: 'e',
+                                            icon: '/images/package-go.png', //Added
                                             text: _('Extract Package')
                                         }
                                     ]
@@ -335,6 +349,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 itemId: 'file_quit',
                                 accesskey: 'q',
                                 tooltip: 'Ctrl+Q',
+                                icon: '/images/stock-quit.png', //Added
                                 text: _('Quit')
                             }
                         ]
@@ -360,6 +375,18 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 accesskey: 's',
                                 text: _('Style Manager')
                             },
+                            { //Added for Wizard test
+                                xtype: 'accesskey_menuitem',
+                                itemId: 'tools_wizard',
+                                accesskey: 'w',
+                                text: _('Wizard')
+                            },
+                            { //Added for Wizard test
+                                xtype: 'accesskey_menuitem',
+                                itemId: 'tools_idevicep',
+                                accesskey: 'w',
+                                text: _('IDevices')
+                            },
                             {
                                 xtype: 'accesskey_menuitem',
                                 itemId: 'tools_preferences',
@@ -381,12 +408,14 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                             {
                                 xtype: 'accesskey_menuitem',
                                 itemId: 'tools_preview_smartphone',
+                                icon: '/images/smartphone.png',
                                 accesskey: 'm',
                                 text: _('Preview Smartphone')
                             },
                             {
                                 xtype: 'accesskey_menuitem',
                                 itemId: 'tools_preview_featurephone',
+                                icon: '/images/featurephone.png',
                                 accesskey: 'm',
                                 text: _('Preview Feature Phone')
                             },
@@ -406,7 +435,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                 {
                     xtype: 'accesskey_button',
                     text: _('Styles'),
-                    accesskey: 's',
+                    //accesskey: 's',
                     itemId: 'styles_button',
                     menu: {
                         xtype: 'menu',
