@@ -100,6 +100,7 @@ class Config:
         'click in order game': [x_('Interactive Activities')],
         'hangman game': [x_('Interactive Activities')],
         'image map' : [x_('Interactive Activities')],
+        'drag and drop' : [x_('Interactive Activities')],
         'place the objects': [x_('Interactive Activities')],
         'memory match game': [x_('Interactive Activities')],
         'file attachments': [x_('Non-Textual Information')],

@@ -1,0 +1,53 @@
+
+<h3>Area ${fieldnum}</h3>
+<div style='height: 200px;'>
+    <div class='exednd_area_tabdiv'>
+        <ul>
+            <li style='margin-bottom: 0px; list-style-image: none;'><a href='#exednd_area_content_tab_${fieldid}'>Content</a>
+            <li style='margin-bottom: 0px; list-style-image: none;'><a href='#exednd_area_feedback_tab_${fieldid}'>Feedback</a>
+            <li style='margin-bottom: 0px; list-style-image: none;'><a href='#exednd_area_advanced_tab_${fieldid}'>Advanced</a>
+        </ul>
+
+        <div id='exednd_area_content_tab_${fieldid}'>
+		    
+		    ${draggable}
+		    		    
+		    ${exetarget}
+		    
+		    ${ondropinvalid}
+		    
+		    ${type}
+		    
+		    ${image}
+		    
+		    ${richtext}
+		    
+		    ${plaintext}
+	    </div>
+	    
+	    <div id='exednd_area_feedback_tab_${fieldid}'>
+	       ${feedbacktype}
+	       
+	       <div class='exednd_area_feedbacktabs' id='exednd_feedbacktabs'>
+		       <ul>
+		           <li style='margin-bottom: 0px; list-style-image: none;'><a href='#exednd_area_feedbackpositive_${fieldid}'>Correct</a></li>
+		           <li style='margin-bottom: 0px; list-style-image: none;'><a href='#exednd_area_feedbacknegative_${fieldid}'>Wrong</a></li>
+		       </ul>
+		       
+		       <div id='exednd_area_feedbackpositive_${fieldid}'>
+		           ${positivefeedback}
+	           </div>
+		       
+		       <div id='exednd_area_feedbacknegative_${fieldid}'>
+		           ${negativefeedback}
+	           </div>
+           </div>
+	    </div>
+	    
+	    <div id='exednd_area_advanced_tab_${fieldid}'>
+	       ${coords}
+	    </div>
+	    
+    </div>
+
+</div>

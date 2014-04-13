@@ -124,9 +124,9 @@ class ExtendedFieldSet(Field):
         
         return html
 
-    def getRenderDictionary(self, elementDict, keyPrefix, previewMode):
+    def getRenderDictionary(self, elementDict, keyPrefix, previewMode, editMode = False):
         ourDict = make_dictionary_from_element_dict(keyPrefix, elementDict, \
-                self.fieldInfoDict, self, previewMode)
+                self.fieldInfoDict, self, previewMode, editMode)
         return ourDict
     
         
@@ -149,14 +149,19 @@ Field for storing dropdown selection text
 """        
 class ChoiceField(Field): 
     
-    persistenceVersion = 3
+    persistenceVersion = 4
 
     #options should be a 2 dimensional list [index][val, desc]
-    def __init__(self, idevice, options, name, helptext, defaultText=""):
+    def __init__(self, idevice, options, name, helptext, defaultText="", css_class=None):
         Field.__init__(self, name, helptext)
         self.idevice = idevice
         self.options = options
         self.content = defaultText
+        self.css_class = css_class
+        
+    def upgradeToVersion4(self):
+        self.css_class = None
+        
         
 """
 Element for dropdown choice items
@@ -176,7 +181,18 @@ class ChoiceElement(Element):
     def renderEdit(self):
         html = ""
         html += "<b>" + self.field.name + "</b><br/>"
-        html += "<select id='%(elementid)s' name='%(elementid)s'>\"" % {'elementid' : str(self.id) }
+        
+        css_class = ""
+        if self.field.css_class is not None:
+            css_class = " class='%s' " % self.field.css_class
+        
+        current_val = self.field.content
+        
+        html += """<select id='%(elementid)s' 
+            name='%(elementid)s' %(css_class)s 
+            data-currentval='%(current_val)s'>""" \
+            % {'elementid' : str(self.id), "css_class" : css_class,\
+               'current_val' : current_val }
         for currentOption in self.field.options:
             selectStr = ""
             if self.field.content == currentOption[0]:
@@ -417,7 +433,11 @@ def field_engine_check_field(fieldId, fieldInfoDict, fieldDict, idevice):
     elif fieldTypeName == 'textarea':
         newField = TextAreaField(fieldInfoDict[fieldId][EXEFIELDINFO_DESC], fieldInfoDict[fieldId][EXEFIELDINFO_HELP])
     elif fieldTypeName == 'choice':
-        newField = ChoiceField(idevice, fieldInfoDict[fieldId][EXEFIELDINFO_EXTRAINFODICT]['choices'], fieldInfoDict[fieldId][EXEFIELDINFO_DESC], fieldInfoDict[fieldId][EXEFIELDINFO_HELP])
+        newField = ChoiceField(idevice, \
+                       fieldInfoDict[fieldId][EXEFIELDINFO_EXTRAINFODICT]['choices'], \
+                       fieldInfoDict[fieldId][EXEFIELDINFO_DESC], \
+                       fieldInfoDict[fieldId][EXEFIELDINFO_HELP],\
+                       "", fieldId)
 
     newField.idevice = idevice
     
@@ -428,15 +448,17 @@ def field_engine_check_field(fieldId, fieldInfoDict, fieldDict, idevice):
             
 """
 Turns an array of elements into a dictionary mapped prefix.id = element.renderView 
-or element.renderPreview if previewMode = true
+or element.renderPreview if previewMode = true, or if editMode = true then edit mode 
 """
-def make_dictionary_from_element_dict(dictkeyPrefix, elementDict, fieldInfoDict, extendedFieldSet, previewMode):
+def make_dictionary_from_element_dict(dictkeyPrefix, elementDict, fieldInfoDict, extendedFieldSet, previewMode, editMode = False):
     ourDict = {}
  
     if previewMode == True:
         ourDict['RESPATH'] = 'resources/'
+        ourDict['SYS_SCRIPT_PATH'] = '/scripts/'
     else:
         ourDict['RESPATH'] = ''
+        ourDict['SYS_SCRIPT_PATH'] = ''
 
     for fieldId, element in elementDict.items():
         dictKeyName = ""
@@ -444,14 +466,18 @@ def make_dictionary_from_element_dict(dictkeyPrefix, elementDict, fieldInfoDict,
             dictKeyName = dictkeyPrefix + "_"
         dictKeyName += str(fieldId)
         dictEntryVal = ""
-        if fieldInfoDict[fieldId][EXEFIELDINFO_TYPE] == 'image' and element.field.imageResource is None:
+        if fieldInfoDict[fieldId][EXEFIELDINFO_TYPE] == 'image' and \
+            element.field.imageResource is None and editMode == False:
             #catch this to make sure that we dont have that nasty crash if no image yet selected
             dictEntryVal = "<img src='' alt='' width='0' height='0' />"
         else:
-            if previewMode == True:
+            if previewMode == True and editMode == False:
                 dictEntryVal = element.renderPreview()
-            else:
+            elif previewMode == False and editMode == False:
                 dictEntryVal = element.renderView()
+            else:
+                dictEntryVal = element.renderEdit()
+            
 
         #special kinds of fields - set extra keys for more info
         if fieldInfoDict[fieldId][EXEFIELDINFO_TYPE] == 'image':
@@ -467,6 +493,7 @@ def make_dictionary_from_element_dict(dictkeyPrefix, elementDict, fieldInfoDict,
 
         ourDict[dictKeyName] = dictEntryVal
         ourDict[dictKeyName + "_elementid"] = str(element.id)
+        ourDict[dictKeyName + "_fieldid"] = str(element.field.id)
     
     mainElementKey = "elementid"
     if dictkeyPrefix != "":

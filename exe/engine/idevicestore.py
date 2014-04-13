@@ -316,6 +316,7 @@ class IdeviceStore:
         from exe.engine.placetheobjectsidevice import PlaceTheObjectsIdeviceInc
         from exe.engine.fileattachidevice import FileAttachIdeviceInc
         from exe.engine.imagemapidevice import ImageMapIdevice
+        from exe.engine.dragndropidevice import DragNDropIdevice
 
         # JRJ
         # Necesarios para la FPD
@@ -349,6 +350,7 @@ class IdeviceStore:
         factoryExtendedIdevices.append(PlaceTheObjectsIdeviceInc())
         factoryExtendedIdevices.append(FileAttachIdeviceInc())
         factoryExtendedIdevices.append(ImageMapIdevice())
+        factoryExtendedIdevices.append(DragNDropIdevice())
         
         factoryExtendedIdevices.append(FreeTextIdevice())
         factoryExtendedIdevices.append(MultichoiceIdevice())

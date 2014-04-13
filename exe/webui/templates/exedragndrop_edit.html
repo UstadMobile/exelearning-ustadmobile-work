@@ -1,0 +1,36 @@
+
+${title}
+
+${instructions}
+
+${scale}
+
+<div class='exednd_imgholder' id='exednd_imgholder_${ideviceid}'>
+    ${mainImg}
+</div>
+
+${positivefeedback}
+
+${negativefeedback}
+
+<div id='exednd_edit_mastercontainer_${ideviceid}' 
+    style='width: ${mainImg_imgwidth}px;height: ${mainImg_imgheight}px; border: 1px solid red;'>
+    <div class="exednd_edit_container" 
+         id='exednd_edit_container_${ideviceid}' 
+         data-exedndid='${ideviceid}' data-exednd-imgfieldid='${mainImg_fieldid}'
+         style='position: relative; width: ${mainImg_imgwidth}px;height: ${mainImg_imgheight}px;'>
+         
+         <img src="${mainImg_imgsrc}" id='exednd_mainimg_${ideviceid}' 
+            style='position: absolute; z-index -1; width: ${mainImg_imgwidth}px; height: ${mainImg_imgheight}px'/> 
+            
+    </div>
+</div>
+
+<div style='display: none'>
+    ${areas_html}
+</div>
+
+
+<div class='exednd_editor_accordion'>
+    ${areas_html_edit}
+</div>

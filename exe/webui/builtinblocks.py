@@ -53,6 +53,7 @@ from exe.webui.memorymatchblock import MemoryMatchBlockInc
 from exe.webui.placetheobjectsblock import PlaceTheObjectsBlockInc
 from exe.webui.fileattachblock import FileAttachBlockInc
 from exe.webui.imagemapblock import ImageMapBlock
+from exe.webui.dragndropblock import DragNDropBlock
 
 # JR
 # Necesarios para la FPD

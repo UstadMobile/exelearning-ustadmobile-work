@@ -242,13 +242,21 @@ class WebsiteExport(object):
         hasInstructions   = False
         hasMediaelement   = False
         
+        system_scripts = []
+        
         for page in self.pages:
             if isBreak:
                 break
             for idevice in page.node.idevices:
                 if (hasFlowplayer and hasMagnifier and hasXspfplayer and hasGallery and hasWikipedia and hasInstructions and hasMediaelement):
                     isBreak = True
-                    break
+                    #Mike Dawson: don't break anymore.. looking for system scripts
+                    #break
+                if hasattr(idevice, "system_scripts"):
+                    for system_script in idevice.system_scripts:
+                        if system_script not in system_scripts:
+                            system_scripts.append(system_script)    
+                
                 if not hasFlowplayer:
                     if 'flowPlayer.swf' in idevice.systemResources:
                         hasFlowplayer = True
@@ -299,7 +307,12 @@ class WebsiteExport(object):
             if dT != "HTML5":
                 jsFile = (self.scriptsDir/'exe_html5.js')
                 jsFile.copyfile(outputDir/'exe_html5.js')
-
+                
+        #handle copying system scripts
+        for system_script in system_scripts:
+            system_script_file = (self.scriptsDir/system_script)
+            system_script_file.copyfile(outputDir/system_script)
+            
         if self.ustadMobileMode:
             self.templatesDir.copylist(WebsitePage.getUstadMobileScriptList(), outputDir)
             self.templatesDir.copylist(WebsitePage.getUstadMobileCSSList(), outputDir)
