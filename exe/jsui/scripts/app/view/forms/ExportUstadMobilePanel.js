@@ -1,6 +1,6 @@
 // ===========================================================================
 // eXe
-// Copyright 2013, Pedro Peña Pérez, Open Phoenix IT
+// Copyright 2014, Varuna Singh, Ustad Mobile
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,66 +19,6 @@
 
 //To Create the ExportUstadMobile Panel.
 
-/*
-function updateUSBDevicesList(){		//This  might not even  be called. Its the function in Toolbar.js that is going to be called.
-	var recpanel = Ext.getCmp('showremovabledevices'); //showrecentprojectspanel
-	recpanel.removeAll();
-	
-   	Ext.Ajax.request({
-		//url: location.pathname + '/exportustadmobilep',
-   		url: 'exportustadmobilep',
-		scope: this,
-		success: function(response) {
-			var rm = Ext.JSON.decode(response.responseText),
-				menu, text, item, previtem;
-			//var rm = Ext.JSON.decode(response.responseText),
-			//	menu = this.getRecentMenu(), text, item, previtem;
-			
-			recpanel.add(
-	        		 {	//For intendation purposes.
-	    	        	xtype: 'component',
-	    	        	flex: 1
-	    	        })
-	    	        
-			for (i in rm) {
-				//alert("rm is: " + rm[i]['removabledrivepath']);
-				textButton = rm[i]['removabledrivevendor'] + " " + rm[i]['removabledrivesize'] + " [" + rm[i]['removabledrivepath'] + "]";
-				usbPath = rm[i]['removabledrivepath'];
-				recpanel.add({
-        			xtype: 'button',
-    	        	text: _(textButton),
-    	        	margin: 10,
-    	        	height:30,
-                    width:450,
-    	        	textButton: textButton,
-    	        	usbPath: usbPath,
-    	        	handler: function(cow){
-						console.log("You clicked: " + cow.textButton + "!");
-						//We have to save the file. 
-						nevow_clientToServerEvent('savePackage', this, '');
-						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
-						//fileOpenRecent2(cow.textButton[0]);
-						Ext.Msg.wait(_('Saving package to ' + cow.textButton + ' ...'));
-						//nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
-						
-						//self.package.name needs to be changed to the user's input
-						nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
-					},
-
-        	        	//width : 128,
-        	            //height : 34,
-        	            //itemid: 'recent_project_button'
-            		},
-            		 {	//For intendation purposes.
-        	        	xtype: 'component',
-        	        	flex: 1
-        	        })
-				
-				}
-		}
-	});
-}
-*/
 
 var exportump = Ext.define('eXe.view.forms.ExportUstadMobilePanel', {
     extend: 'Ext.form.Panel',

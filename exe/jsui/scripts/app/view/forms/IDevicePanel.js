@@ -1,6 +1,6 @@
 // ===========================================================================
 // eXe
-// Copyright 2013, Pedro Peña Pérez, Open Phoenix IT
+// Copyright 2014, Varuna Singh, Ustad Mobile
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //===========================================================================
 
+/*
+This panel makes a big idevice list with graphical icons to help the
+author decide what idevice they want to use.
+*/
 
 
 function getRecent(){	 	//If needed. Used for testing.
@@ -69,46 +73,6 @@ function testgetRecent(){
 	}
 }
 
-//This is NOT used at all.. 06/04/2014 -Varuna Singh
-function updateRecent2(){	//For updating the recent projects list
-	var recpanel = Ext.getCmp('showrecentprojectspanel'); //showrecentprojectspanel
-	recpanel.removeAll();
-	//alert("updateRecent01");
-	Ext.Ajax.request({
-		url: location.pathname + '/recentMenu',
-		scope: this,
-		success: function(response) {
-			var rm = Ext.JSON.decode(response.responseText),
-					menu, text, item, pre
-			recpanel.add(
-    		 {	//For intendation purposes.
-	        	xtype: 'component',
-	        	flex: 1
-	        })
-			for (i in rm) {				
-				textButton = rm[i].num + ". " + rm[i].path;
-				recpanel.add({
-        			xtype: 'button',
-    	        	text: _(textButton),
-    	        	margin: 10,
-    	        	textButton: textButton,
-    	        	handler: function(cow){
-						console.log("You clicked: " + cow.textButton + "!");
-						askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
-					},
-
-    	        	//width : 128,
-    	            //height : 34,
-    	            //itemid: 'recent_project_button'
-        		},
-        		 {	//For intendation purposes.
-    	        	xtype: 'component',
-    	        	flex: 1
-    	        })
-			}
-		}
-	});
-}
 
 function updateTemplate(){	//For updating the Styles list
 	var stylepanel = Ext.getCmp('showstylepanel'); //showstylepanel
@@ -221,7 +185,7 @@ var idevicep = Ext.define('eXe.view.forms.IDevicePanel', {
                                          }],
                                          
                                   	    tbar: [
-                                  	           /*
+                                  	           /* Not used anymore
                                   	        {
                                   	        	xtype: 'button',
                                   	        	text: _('Ungroup iDevices'),
