@@ -1195,7 +1195,7 @@ Ext.define('eXe.controller.Toolbar', {
 		var userName = Ext.getCmp('umcloudusernameinput').getValue();
   		var pswd = Ext.getCmp('umcloudpasswordinput').getValue();
   		var url = Ext.getCmp('umcloudserverurlinput').getValue();
-  		console.log("Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]" + "and filepath is: " + filename);
+  		console.log("Username provided against url: " + userName + ":" + " [" +url+ "]" + "and filepath is: " + filename);
   		
   		
   		//We need to save the ELP file first! 
