@@ -33,7 +33,7 @@ from exe.engine.path import Path
 import os.path
 import re
 import subprocess
-import dbus
+import sys
 
 #import win32api #For usb detection in windows.
 
@@ -88,54 +88,104 @@ class ExportUstadMobilePage(RenderableResource):
         
         log.debug("render_GET")
         #print("render_GET");
-        #If Linux
-        bus = dbus.SystemBus()
-        ud_manager_obj = bus.get_object("org.freedesktop.UDisks", "/org/freedesktop/UDisks")
-        ud_manager = dbus.Interface(ud_manager_obj, 'org.freedesktop.UDisks')
-        #print("Printing all the usb devices found, one by one:")
-        new_data = []
-        for dev in ud_manager.EnumerateDevices():
-                    device_obj = bus.get_object("org.freedesktop.UDisks", dev)
-                    device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
-                    current_vendor = device_props.Get('org.freedesktop.UDisks.Device', "DriveVendor")
-                    current_path = device_props.Get('org.freedesktop.UDisks.Device', "DeviceMountPaths")
-                    #print device_props.Get('org.freedesktop.UDisks.Device', "DriveSerial")
-                    current_size = device_props.Get('org.freedesktop.UDisks.Device', "PartitionSize")
-                        
+        
+        
+        if sys.platform[:3] == "win":
+            #WINDOWS
+            print("YOU ARE USING WINDOWS")
+            from win32api import GetLogicalDriveStrings, GetVolumeInformation
+            from win32file import DRIVE_REMOVABLE, GetDriveType, GetDiskFreeSpace, GetVolumeNameForVolumeMountPoint
+            alldrives = GetLogicalDriveStrings()
+            alldrives = alldrives.split('\000')[:-1]
+            removabledrives =[]
+            new_data = []
+            for drive in alldrives:
+                drivetype = GetDriveType(drive)
+                if drivetype == DRIVE_REMOVABLE:
                     try:
-                        current_path_string = current_path[0]
-                        if(len(current_path_string) > 3):
-                            #print current_path_string
-                            #print current_vendor
-                            #print current_size
-                            #Add these values to the JSON
-                            #current_capacity = convert_bytes(self, current_size)
-                            Filebytes = float(current_size)
-                            if Filebytes >= 1099511627776:
-                                terabytes = Filebytes / 1099511627776
-                                size = '%.2fTB' % terabytes
-                            elif Filebytes >= 1073741824:
-                                gigabytes = Filebytes / 1073741824
-                                size = '%.2fGB' % gigabytes
-                            elif Filebytes >= 1048576:
-                                megabytes = Filebytes / 1048576
-                                size = '%.2fMB' % megabytes
-                            elif Filebytes >= 1024:
-                                kilobytes = Filebytes / 1024
-                                size = '%.2fKB' % kilobytes
-                            else:
-                                size = '%.2fb' % bytes
-                            new_data.append({'removabledrivepath': current_path_string, 'removabledrivevendor' : current_vendor, 'removabledrivesize' : size})
-                            #print json.dumps(new_data)
-                    except IndexError:
-                        a="x"
+                        drivefreespace = GetDiskFreeSpace(drive)
+                        removabledrives.append(drive)
+                        current_vendor = GetVolumeInformation(drive)[0]
+                        if current_vendor == "":
+                            current_vendor = "NONAME:" + str(GetVolumeInformation(drive)[1])
+                        sectPerCluster, bytesPerSector, freeClusters, totalClusters = \
+                        GetDiskFreeSpace(drive)
+                        total_space = totalClusters*sectPerCluster*bytesPerSector
+                        free_space = freeClusters*sectPerCluster*bytesPerSector
 
-        return json.dumps(new_data) 
-        
-        #If OSX
-        
-        #If Win32
-        
+                        Filebytes = float(total_space)
+                        if Filebytes >= 1099511627776:
+                            terabytes = Filebytes / 1099511627776
+                            size = '%.2fTB' % terabytes
+                        elif Filebytes >= 1073741824:
+                            gigabytes = Filebytes / 1073741824
+                            size = '%.2fGB' % gigabytes
+                        elif Filebytes >= 1048576:
+                            megabytes = Filebytes / 1048576
+                            size = '%.2fMB' % megabytes
+                        elif Filebytes >= 1024:
+                            kilobytes = Filebytes / 1024
+                            size = '%.2fKB' % kilobytes
+                        else:
+                            size = '%.2fb' % bytes
+                        
+                        new_data.append({'removabledrivepath': drive, 'removabledrivevendor' : current_vendor, 'removabledrivesize' : size})
+                    except:
+                        pass
+            return json.dumps(new_data)  
+                         
+             
+        elif sys.platform[:6] == "darwin":
+            print ("You are using MAC OSX")
+        else:
+            print("YOU ARE USING LINUX or other")
+            from dbus import SystemBus, Interface, PROPERTIES_IFACE
+            #If Linux
+            #bus = dbus.SystemBus()
+            bus = SystemBus()
+            ud_manager_obj = bus.get_object("org.freedesktop.UDisks", "/org/freedesktop/UDisks")
+            #ud_manager = dbus.Interface(ud_manager_obj, 'org.freedesktop.UDisks')
+            ud_manager = Interface(ud_manager_obj, 'org.freedesktop.UDisks')
+            #print("Printing all the usb devices found, one by one:")
+            new_data = []
+            for dev in ud_manager.EnumerateDevices():
+                        device_obj = bus.get_object("org.freedesktop.UDisks", dev)
+                        #device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
+                        device_props = Interface(device_obj, PROPERTIES_IFACE)
+                        current_vendor = device_props.Get('org.freedesktop.UDisks.Device', "DriveVendor")
+                        current_path = device_props.Get('org.freedesktop.UDisks.Device', "DeviceMountPaths")
+                        #print device_props.Get('org.freedesktop.UDisks.Device', "DriveSerial")
+                        current_size = device_props.Get('org.freedesktop.UDisks.Device', "PartitionSize")
+                            
+                        try:
+                            current_path_string = current_path[0]
+                            if(len(current_path_string) > 3):
+                                #print current_path_string
+                                #print current_vendor
+                                #print current_size
+                                #Add these values to the JSON
+                                #current_capacity = convert_bytes(self, current_size)
+                                Filebytes = float(current_size)
+                                if Filebytes >= 1099511627776:
+                                    terabytes = Filebytes / 1099511627776
+                                    size = '%.2fTB' % terabytes
+                                elif Filebytes >= 1073741824:
+                                    gigabytes = Filebytes / 1073741824
+                                    size = '%.2fGB' % gigabytes
+                                elif Filebytes >= 1048576:
+                                    megabytes = Filebytes / 1048576
+                                    size = '%.2fMB' % megabytes
+                                elif Filebytes >= 1024:
+                                    kilobytes = Filebytes / 1024
+                                    size = '%.2fKB' % kilobytes
+                                else:
+                                    size = '%.2fb' % bytes
+                                new_data.append({'removabledrivepath': current_path_string, 'removabledrivevendor' : current_vendor, 'removabledrivesize' : size})
+                                #print json.dumps(new_data)
+                        except IndexError:
+                            a="x"
+    
+            return json.dumps(new_data)
         
     def render_POST(self, request):
         """
