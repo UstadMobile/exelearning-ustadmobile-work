@@ -137,6 +137,35 @@ class ExportUstadMobilePage(RenderableResource):
              
         elif sys.platform[:6] == "darwin":
             print ("You are using MAC OSX")
+	    new_data=[]
+	    for dir in os.listdir('/Volumes'):
+			#print dir, os.path.ismount(os.path.join('/Volumes', dir))
+			ismounted =  os.path.ismount(os.path.join('/Volumes', dir))
+			if ismounted == True:
+				current_path_string = '/Volumes/' + dir
+				current_vendor = str(dir)
+				dirstat = os.statvfs(current_path_string)
+				dirstat_total = (dirstat.f_blocks * dirstat.f_frsize )
+				Filebytes = float(dirstat_total)
+				if Filebytes >= 1099511627776:
+                            		terabytes = Filebytes / 1099511627776
+                            		size = '%.2fTB' % terabytes
+                        	elif Filebytes >= 1073741824:
+                            		gigabytes = Filebytes / 1073741824
+                            		size = '%.2fGB' % gigabytes
+                        	elif Filebytes >= 1048576:
+                            		megabytes = Filebytes / 1048576
+                            		size = '%.2fMB' % megabytes
+                        	elif Filebytes >= 1024:
+                            		kilobytes = Filebytes / 1024
+                            		size = '%.2fKB' % kilobytes
+                        	else:
+                            		size = '%.2fb' % bytes
+
+				new_data.append({'removabledrivepath': current_path_string, 'removabledrivevendor' : current_vendor, 'removabledrivesize' : size})
+			
+	    return json.dumps(new_data)
+				
         else:
             print("YOU ARE USING LINUX or other")
             from dbus import SystemBus, Interface, PROPERTIES_IFACE
