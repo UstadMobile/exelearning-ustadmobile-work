@@ -42,7 +42,7 @@ function updateUSBDevicesList(){	//Added for refreshing of USB devices.
     			for (i in rm) {
     				//alert("rm is: " + rm[i]['removabledrivepath']);
     				textButton = rm[i]['removabledrivevendor'] + " " + rm[i]['removabledrivesize'] + " [" + rm[i]['removabledrivepath'] + "]";
-					usbPath = rm[i]['removabledrivepath'];
+					usbPath = rm[i]['removabledrivepath'] + '/ustadmobileContent/';
     				recpanel.add({
             			xtype: 'button',
         	        	text: _(textButton),
@@ -63,7 +63,9 @@ function updateUSBDevicesList(){	//Added for refreshing of USB devices.
     						//nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
     						
     						//self.package.name needs to be changed to the user's input
-    						nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
+    						//nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
+    						nevow_clientToServerEvent('exportPackageToUSB', this, '', "mxml", cow.usbPath);
+    						
     						
     						//Works well, but we need to stop the J2ME emulator from popping up all the time.
     					},

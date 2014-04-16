@@ -196,6 +196,7 @@ class MainPage(RenderableLivePage):
         setUpHandler(self.handleImport,          'importPackage')
         setUpHandler(self.handleCancelImport,    'cancelImportPackage')
         setUpHandler(self.handleExport,          'exportPackage')
+        setUpHandler(self.startUSBExport,        'exportPackageToUSB')
         setUpHandler(self.handleXliffExport,     'exportXliffPackage')
         setUpHandler(self.handleQuit,            'quit')
         setUpHandler(self.handleBrowseURL,       'browseURL')
@@ -954,7 +955,14 @@ class MainPage(RenderableLivePage):
         log.info('Cancel import')
         Resources.cancelImport()
         
+    def startUSBExport(self, client, exportType, filename):
+        if not os.path.exists(filename):
+            os.makedirs(filename)
+            print("Made directory: " + filename)
+        self.handleExport(client, exportType, filename)
+        
     def handleExport(self, client, exportType, filename):
+
         #print("client is: " + client);
         #print("filename is: " + filename);
         """
