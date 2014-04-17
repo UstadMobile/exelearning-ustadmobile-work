@@ -171,11 +171,12 @@ class XMLExport(WebsiteExport):
         """
         
         #add the Javascript from EXE
+        jsSettings = common.getJavaScriptStrings()
         output += """
         <script type="text/javascript" src="exe_jquery.js"></script>
-        <script type="text/javascript">$exe_i18n={show:"Show",hide:"Hide",menu:"Menu"}</script>
+        %s
         <script type="text/javascript" src="common.js"></script>
-        """
+        """ % jsSettings
 
         output += WebsitePage.make_tincan_js_elements()
         output += WebsitePage.makeUstadMobileHeadElement(tocTitle)

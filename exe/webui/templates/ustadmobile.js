@@ -183,7 +183,15 @@ $(document).on("pagebeforecreate", function(event, ui) {
         var answerFor = $(this).attr("for");
         //ID of radio button is going to be iELEMENTID
         //eg i0_100 idevice=0, field=100
-        var answerId = answerFor.substring(1);
+        var answerId = "";
+        if(answerFor.substring(0, 1) == 'i') {
+            //mcq radio button
+            answerId = answerFor.substring(1);
+        }else {
+            //multi select checkbox
+            answerId = $(this).children("A").first().attr("href");
+            answerId = answerId.split("-")[1];
+        }
         
         var ideviceAnswerContainer = $(this).closest(".iDevice_answer-field");
         ideviceAnswerContainer.css("width", "auto").css("float", "none");
