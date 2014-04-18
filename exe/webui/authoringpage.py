@@ -149,6 +149,20 @@ class AuthoringPage(RenderableResource):
         html += u'</h1>\n'
         html += u'</div>\n'
 
+        if len(self.blocks) == 0:
+            html += _("""
+                
+                <i>Hmmm... Looks like this page is blank now.  
+                Why not click </i>
+                <span style='background-color: #e8e8e8; border: 1px solid black; font-size: 8pt; display: inline-block; height: 16px; padding: 3px; '
+                onclick='alert("Click the button up on the toolbar. This is only for show")'
+                >
+                <img src='/images/plusbutton.png'/>
+                Add IDevices</span>
+                 <i>up there on the toolbar?</i>
+                 <img src='/images/curve_arrow.png'/>
+                 """)
+        
         for block in self.blocks:
             html += block.render(self.package.style)
 
