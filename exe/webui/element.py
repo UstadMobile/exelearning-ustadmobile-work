@@ -24,9 +24,11 @@ import logging
 import re
 import urllib
 from exe.webui       import common
+from exe.engine import exetincan
 from exe.engine.path import Path
 from exe             import globals as G
 from urllib import quote
+import json
 
 log = logging.getLogger(__name__)
 
@@ -2647,6 +2649,76 @@ class QuizQuestionElement(Element):
 
         return html
 
+    def render_tincan_definition(self, desc_max_length):
+        """Return TINCAN Definition JSON for this question
+     
+         """
+     
+        #TODO: Change this to package language
+        lang = "en-US"
+     
+        choices_obj = []
+        correct_option = ""
+        for element in self.options:
+            el_id = element.answerId
+            desc = exetincan.summarize_str_tincan(element.answerElement.renderView())
+            choices_obj.append({"id" : el_id, \
+                             "description" : {lang : desc}})
+            if element.field.isCorrect:
+                correct_option = el_id
+     
+     
+        json_obj = {\
+             "name" : exetincan.summarize_str_tincan(self.questionElement.renderView()),\
+             "type" : "http://adlnet.gov/expapi/activities/cmi.interaction",\
+             "interactionType": "choice",\
+             "correctResponsesPattern" : "[%s]" % correct_option,\
+             "choices" : choices_obj
+                 } 
+     
+        json_str = json.dumps(json_obj)
+        return json_str
+    
+    
+    def _render_tincan_all(self, desc_max_length=64):
+        html = ""
+        html += "<div id='tc_ansmap_%s' class='tcdiv'>" % self.id
+        html += "{ answerMap : ["
+        
+        #generate a mapping of answer index to id and if the answer is correct
+        question_text = exetincan.summarize_str_tincan(self.questionElement.renderView())
+        question_text = question_text.replace("\n", " ")
+        question_text = question_text.replace("\r", "")
+        question_text = question_text.replace("\"", "")
+        
+        for i in range(0, len(self.options)):
+            element = self.options[i]
+            
+            is_correct_str = "false"
+            answer_text = exetincan.summarize_str_tincan(element.answerElement.renderView())
+            answer_text = answer_text.replace("\n", " ")
+            if element.field.isCorrect:
+                is_correct_str = "true"
+            
+            comma_str = ","
+            if i == len(self.options)-1:
+                comma_str = ""
+            
+            html += """ 
+                    {"id" : "%(id)s", "iscorrect" : %(iscorrect)s}%(comma)s\n
+                    """ % {"id" : element.id, \
+                           "iscorrect" : is_correct_str,\
+                            "blockid" : self.id, "comma" : comma_str}
+        
+        html += "] }</div>"
+        
+        html += "<div id='tcdef_%s' class='tcdiv'>" % self.id
+        html += self.render_tincan_definition(64)
+        html += "</div>"
+        
+        return html
+
+    
     def renderView(self, img1=None, img2=None):
         """ 
         Returns an XHTML string for viewing this question element 
@@ -2745,5 +2817,7 @@ class QuizQuestionElement(Element):
             html += element.renderNoscript(preview)
         html += "</ol>"+lb
         html += "</div>"+lb
+        
+        html += self._render_tincan_all()
 
         return html

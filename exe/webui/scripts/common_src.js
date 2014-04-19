@@ -323,20 +323,19 @@ function getFeedback(optionId, optionsNum, ideviceId, mode) {
     }    
     
     //try and send TINCAN statement
-    /* MD: 4/17 Enshallah tomorrow
+    
     if(EXETinCan) {
     	
     	if(mode == 'multi') {
-    		var tinCanDefinition = eval("multiTinCanDefinition" 
-    				+ ideviceId);
-    		var tinCanAnsMap = eval("multiTinCanAnsMap" + ideviceId);
+    		var tinCanDefinition = JSON.parse($("#tcdef_"+ideviceId).text()); 
+    		var tinCanAnsMap = JSON.parse($("#tc_ansmap_"+ideviceId).text()); 
     		getEXETinCanInstance().makeMCQTinCanStatement(
-    				tinCanDefinition,ideviceId, tinCanAnsMap['id'], 
-    				tinCanAnsMap['iscorrect']);
+    				tinCanDefinition,ideviceId, tinCanAnsMap[optionId]['id'], 
+    				tinCanAnsMap[optionId]['iscorrect']);
     	}
     	
     }
-    */
+    
 }
 
 // Cloze Field Stuff /////////////////////////////////////////////////
