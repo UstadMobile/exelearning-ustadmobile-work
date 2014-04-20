@@ -323,7 +323,9 @@ function getFeedback(optionId, optionsNum, ideviceId, mode) {
     }    
     
     //try and send TINCAN statement
+    /* MD: 4/17 Enshallah tomorrow
     if(EXETinCan) {
+    	
     	if(mode == 'multi') {
     		var tinCanDefinition = eval("multiTinCanDefinition" 
     				+ ideviceId);
@@ -332,8 +334,9 @@ function getFeedback(optionId, optionsNum, ideviceId, mode) {
     				tinCanDefinition,ideviceId, tinCanAnsMap['id'], 
     				tinCanAnsMap['iscorrect']);
     	}
+    	
     }
-    
+    */
 }
 
 // Cloze Field Stuff /////////////////////////////////////////////////
