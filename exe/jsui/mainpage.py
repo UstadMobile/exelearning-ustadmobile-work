@@ -29,8 +29,18 @@ import logging
 import traceback
 import shutil
 import tempfile
-import ntpath #Added for basename 
-import requests #Added for umcloudupload
+import ntpath #Added for basename
+ 
+##import requests #Added for umcloudupload
+#from twisted.internet import reactor
+#from twisted.web.client import Agent
+#from twisted.web.http_headers import Headers
+
+import urllib
+import urllib2
+import cookielib
+from multipartposthandler import MultipartPostHandler
+
 import base64 #Added for umlogin
 import time #Added for testing 
 from exe.engine.version import release, revision
@@ -327,30 +337,41 @@ class MainPage(RenderableLivePage):
         headers = {'X-Experience-API-Version': '1.0.1', 'Authorization': encoded}
         #End of logic
         
-  
-        response = requests.post(url, data=credentials) #UMCloudDj
-        print ("-----This is it. What is the response-----")
-        print response.text
-        #client.call(onDone, unicode(self.package.filename), onDoneParam)
-        print ("------Status Code------")
-        print response.status_code
-        print ("------Headers ------")
-        print response.headers
-        print ("------END------")
-        if (response.status_code == 403):
-            client.alert("Error: Wrong username and password combination. Try again")
-            #return "Error: Wrong username and password combination. Try again"
-        elif (response.status_code == 200):
-            client.alert("Your login was a success.")
-            client.sendScript("Ext.getCmp('loginumcloudtwin').close()")
-        elif (response.status_code == 500):
-            client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
-            #Trigger something on the client..
-            #I think nothing needs to be triggered.
-        else:
-            client.alert("Something went wrong. could not identify.")
-            #Trigger something on the client..
-            
+        c = urllib.urlencode(credentials)
+        
+        req2 = urllib2.Request(url, c)
+        try:
+            response = urllib2.urlopen(req2)
+        
+            if (response.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                #return "Error: Wrong username and password combination. Try again"
+            elif (response.code == 200):
+                client.alert("Your login was a success.")
+                client.sendScript("Ext.getCmp('loginumcloudtwin').close()")
+            elif (response.code == 500):
+                client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+        except urllib2.HTTPError, e:
+            print (e.code)
+            if (e.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                #return "Error: Wrong username and password combination. Try again"
+            elif (e.code == 200):
+                client.alert("Your login was a success.")
+                client.sendScript("Ext.getCmp('loginumcloudtwin').close()")
+            elif (e.code == 500):
+                client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+     
     
     def handleUMUploadFileName (self, client, onDone, onDoneParam, filepath, username, password, url):   #Added
         """
@@ -374,17 +395,178 @@ class MainPage(RenderableLivePage):
         #End of logic
         
         
-        #r = requests.post('http://httpbin.org/post', files={filepath: open(filepath, 'rb')})    #Testing original
-        #r = requests.post('http://httpbin.org/post', files={testfilepath: open(testfilepath, 'rb')}, headers=headers) #Testing..
-        #r = requests.post(url, files={testfilepath: open(testfilepath, 'rb')}, headers=headers) #TinCAN login
-        #Ideally should be:
-        #r = requests.post(url, files={filepath: open(filepath, 'rb')}, params=credentials)
-        
-        
         files={'exeuploadelp': (filepath, open(filepath, 'rb'))}
-        #files={'file': ('report.xls', open('report.xls', 'rb'))} #From documentation
-        #original stackoverflow: files={testfilepath: open(testfilepath, 'rb')}
+        
+        fields = [('username', username), ('password', password)]
+        files2 = [('exeuploadelp', filepath, open(filepath, 'rb'))]
+        
+        
+        """
+        Example:
+          import MultipartPostHandler, urllib2, cookielib
+        
+          cookies = cookielib.CookieJar()
+          opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies),
+                                        MultipartPostHandler.MultipartPostHandler)
+          params = { "username" : "bob", "password" : "riviera",
+                     "file" : open("filename", "rb") }
+          opener.open("http://wwww.bobsite.com/upload/", params)
 
+        """
+        
+        cookies = cookielib.CookieJar()
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies), 
+                                      MultipartPostHandler.MultipartPostHandler)
+        params = { 'username': username, 'password': password, 'exeuploadelp': open(filepath, 'rb')}
+        
+        
+        
+        try:
+            response = opener.open(url, params)
+
+            if (response.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                
+                #return "Error: Wrong username and password combination. Try again"
+            elif (response.code == 200):
+                courseid = response.info().getheader('courseid')
+                coursename = response.info().getheader('coursename')
+                
+                #Trigger something on the client..
+                client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
+                client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
+                
+                client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
+            elif (response.code == 500):
+                error = response.info().getheader('error')
+                if (error == "Grunt test failed"):
+                    client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
+                elif (error == "Exe export failed"):
+                    client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
+                elif (error == "Exe export failed to start"):
+                    client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
+                elif (error == "Request is not POST"):
+                    client.alert("eXe error: eXe failed to connect with the server by POST request")
+                else:
+                    client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+            
+            
+        except urllib2.HTTPError, response:
+            if (response.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                
+                #return "Error: Wrong username and password combination. Try again"
+            elif (response.code == 200):
+                courseid = response.info().getheader('courseid')
+                coursename = response.info().getheader('coursename')
+                client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
+                #Trigger something on the client..
+                client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
+                client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
+            elif (response.code == 500):
+                error = response.info().getheader('error')
+                if (error == "Grunt test failed"):
+                    client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
+                elif (error == "Exe export failed"):
+                    client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
+                elif (error == "Exe export failed to start"):
+                    client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
+                elif (error == "Request is not POST"):
+                    client.alert("eXe error: eXe failed to connect with the server by POST request")
+                else:
+                    client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+        
+        
+        
+        """
+        content_type, body = MultipartFormdataEncoder().encode(fields, files2)
+        print(content_type)
+        print(body)
+        """
+        
+        """
+        register_openers()
+        datagen, headers = multipart_encode({'exeuploadelp': open(filepath),'username': username, 'password': password})
+        request = urllib2.Request(url, datagen, headers)
+        
+        try:
+            response = urllib2.urlopen(request)
+            print (response.read())
+            print (response.code)
+
+            if (response.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                
+                #return "Error: Wrong username and password combination. Try again"
+            elif (response.code == 200):
+                courseid = response.info().getheader('courseid')
+                coursename = response.info().getheader('coursename')
+                client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
+                #Trigger something on the client..
+                client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
+                client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
+            elif (response.code == 500):
+                error = response.info().getheader('error')
+                if (error == "Grunt test failed"):
+                    client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
+                elif (error == "Exe export failed"):
+                    client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
+                elif (error == "Exe export failed to start"):
+                    client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
+                elif (error == "Request is not POST"):
+                    client.alert("eXe error: eXe failed to connect with the server by POST request")
+                else:
+                    client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+            
+            
+        except urllib2.HTTPError, response:
+            if (response.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                
+                #return "Error: Wrong username and password combination. Try again"
+            elif (response.code == 200):
+                courseid = response.info().getheader('courseid')
+                coursename = response.info().getheader('coursename')
+                client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
+                #Trigger something on the client..
+                client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
+                client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
+            elif (response.code == 500):
+                error = response.info().getheader('error')
+                if (error == "Grunt test failed"):
+                    client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
+                elif (error == "Exe export failed"):
+                    client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
+                elif (error == "Exe export failed to start"):
+                    client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
+                elif (error == "Request is not POST"):
+                    client.alert("eXe error: eXe failed to connect with the server by POST request")
+                else:
+                    client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+            
+        """
+        
+        """
         response = requests.post(url, files=files, data=credentials) #UMCloudDj
         
         print ("-----This is it. What is the response-----")
@@ -423,7 +605,9 @@ class MainPage(RenderableLivePage):
         else:
             client.alert("Something went wrong. could not identify.")
             #Trigger something on the client..
-            
+        
+        """
+        
         #If response.status_code is 403, show error message: Error: Wrong username and password. Try again.
         #If response.status_code is 500, show error message: Error: Cannot connect to the server. Make sure the server is active and you have network access.
         #If response.status_code is 200, show message: File upload complete. Your course id is: response.header['courseid']
