@@ -65,12 +65,14 @@ class WebsitePage(Page):
         themeHasXML = common.themeHasConfigXML(self.node.package.style)
         lb = "\n" #Line breaks
         sectionTag = "div"
+        articleTag = "div"
         headerTag = "div"
         navTag = "div"
         if dT == "HTML5":
             html = '<!doctype html>'+lb
             html += '<html lang="'+lenguaje+'">'+lb
             sectionTag = "section"
+            articleTag = "article"
             headerTag = "header"
             navTag = "nav"
         else:
@@ -140,7 +142,7 @@ class WebsitePage(Page):
             #experiment
             pass
         html += u"</head>"+lb
-        
+
         onLoadFunction = ""
         if ustadMobileMode == True:
             onLoadFunction = " onload='_onLoadFunction();' "
@@ -150,14 +152,10 @@ class WebsitePage(Page):
             document.body.className+=" js" 
             </script>""" % onLoadFunction
         html += lb
-        
         if ustadMobileMode == True:
             #do the header another way
             html += WebsitePage.makeUstadMobileHeader(escape(self.node.titleLong), nextPage, prevPage)
-        
-        
-        
-        html += u"<"+sectionTag+" id=\"content\">"+lb
+        html += u"<div id=\"content\">"+lb
         html += '<p id="skipNav"><a href="#main" class="sr-av">'+_('Skip navigation')+'</a></p>'+lb
 
         if self.node.package.backgroundImg or self.node.package.title:
@@ -186,14 +184,16 @@ class WebsitePage(Page):
             html += u"<"+navTag+" id=\"siteNav\">"+lb
             html += self.leftNavigationBar(pages)
             html += u"</"+navTag+">"+lb
-            html += "<"+sectionTag+" id='topPagination'>"+lb
+            html += "<div id='topPagination'>"+lb
             html += self.getNavigationLink(prevPage, nextPage)
-            html += "</"+sectionTag+">"+lb
-            
-        html += u"<"+sectionTag+" id=\"main-wrapper\">"+lb
-        html += u"<"+sectionTag+" id=\"main\"><a name=\"main\"></a>"+lb
+            html += "</div>"+lb
         
-        
+        html += u"<div id=\"main-wrapper\">"+lb
+        html += u"<"+sectionTag+" id=\"main\">"
+        if dT != "HTML5":
+            html += "<a name=\"main\"></a>"
+        html += lb
+
         if ustadMobileMode == False:
             html += '<'+headerTag+' id=\"nodeDecoration\">'
             html += '<h1 id=\"nodeTitle\">'
@@ -206,7 +206,7 @@ class WebsitePage(Page):
                 e=" em_iDevice"
                 if unicode(idevice.emphasis)=='0':
                     e=""
-                html += u'<'+sectionTag+' class="iDevice_wrapper %s%s" id="id%s">%s' %  (idevice.klass, e, idevice.id, lb)
+                html += u'<'+articleTag+' class="iDevice_wrapper %s%s" id="id%s">%s' %  (idevice.klass, e, idevice.id, lb)
                 block = g_blockFactory.createBlock(None, idevice)
                 if not block:
                     log.critical("Unable to render iDevice.")
@@ -216,13 +216,13 @@ class WebsitePage(Page):
                 if idevice.title != "Forum Discussion":
                     html += self.processInternalLinks(self.node.package,
                         block.renderView(self.node.package.style))
-                html += u'</'+sectionTag+'>'+lb # iDevice div
+                html += u'</'+articleTag+'>'+lb # iDevice div
 
 
         if not themeHasXML and ustadMobileMode is False:
-            html += "<"+sectionTag+" id='bottomPagination'>"+lb
+            html += "<div id='bottomPagination'>"+lb
             html += self.getNavigationLink(prevPage, nextPage)
-            html += "</"+sectionTag+">"+lb
+            html += "</div>"+lb
         # writes the footer for each page 
         if ustadMobileMode is False:
             html += self.renderLicense()
@@ -231,14 +231,16 @@ class WebsitePage(Page):
         #if not style.hasValidConfig:
             html += self.renderFooter()
         html += u"</"+sectionTag+">"+lb # /main
-        html += u"</"+sectionTag+">"+lb # /main-wrapper
+
+        html += u"</div>"+lb # /main-wrapper
         if themeHasXML and ustadMobileMode is False:
         #if style.hasValidConfig:
-            html += "<"+sectionTag+" id='bottomPagination'>"+lb
+            html += "<div id='bottomPagination'>"+lb
             html += self.getNavigationLink(prevPage, nextPage)
-            html += "</"+sectionTag+">"+lb        
+            html += "</div>"+lb        
             html += self.renderFooter()
-        html += u"</"+sectionTag+">"+lb # /content
+
+        html += u"</div>"+lb # /content
         if themeHasXML and ustadMobileMode is False:
         #if style.hasValidConfig:
             html += style.get_extra_body()
@@ -349,10 +351,10 @@ class WebsitePage(Page):
         """
         dT = common.getExportDocType()
         lb = "\n" #Line breaks
-        sectionTag = "div"
+        navTag = "div"
         if dT == "HTML5":
-            sectionTag = "section"
-        html = "<"+sectionTag+" class=\"pagination noprt\">"+lb
+            navTag = "nav"
+        html = "<"+navTag+" class=\"pagination noprt\">"+lb
 
         if prevPage:
             html += "<a href=\""+quote(prevPage.name)+".html\" class=\"prev\">"
@@ -364,7 +366,7 @@ class WebsitePage(Page):
             html += "<a href=\""+quote(nextPage.name)+".html\" class=\"next\">"
             html += " %s<span> &raquo;</span></a>" % _('Next')
             
-        html += lb+"</"+sectionTag+">"+lb
+        html += lb+"</"+navTag+">"+lb
         return html
 
 

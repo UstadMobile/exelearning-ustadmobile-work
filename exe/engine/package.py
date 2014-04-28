@@ -707,7 +707,7 @@ class Package(Persistable):
                 metadata.set_rights(lomsubs.rightsSub())
             copyrightAndOtherRestrictions = metadata.get_rights().get_copyrightAndOtherRestrictions()
             if copyrightAndOtherRestrictions:
-                if copyrightAndOtherRestrictions.get_value().get_valueOf_() == self.license_map(source, self.license.encode('utf-8')):
+                if copyrightAndOtherRestrictions.get_value().get_valueOf_() == self.license_map(source, self.license.encode('utf-8').rstrip(' 0123456789.')):
                     if value:
                         copyrightAndOtherRestrictions.get_value().set_valueOf_(self.license_map(source, value_str))
                     else:
@@ -1515,7 +1515,7 @@ class Package(Persistable):
 
     def lomDefaults(self, entry, schema, rights=False):
         defaults = {'general': {'identifier': [{'catalog': _('My Catalog'), 'entry': entry}],
-                              'aggregationLevel': {'source': schema, 'value': '3'}
+                              'aggregationLevel': {'source': schema, 'value': '2'}
                              },
                   'metaMetadata': {'metadataSchema': [schema]},
                  }
@@ -1596,6 +1596,9 @@ class Package(Persistable):
             self.mxmlwidth = ""
         if not hasattr(self, 'compatibleWithVersion9'):
             self.compatibleWithVersion9 = False
+        self.set_title(self._title)
+        self.set_author(self._author)
+        self.set_description(self._description)
 
     def upgradeToVersion11(self):
         pass
