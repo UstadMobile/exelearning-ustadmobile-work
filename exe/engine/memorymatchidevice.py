@@ -45,6 +45,7 @@ class MemoryMatchIdeviceInc(Idevice):
                          x_(u"Toughra Technologies FZ LLC."),
                          x_(u"""Memory Match Game Maker."""), "", "")
         self.message = ""
+        self.short_desc = x_("Game of matching pairs; student can click to reveal two at a time; after which they are re-hidden.  Student has to remember locations to match up all pairs. ")
         
         mainFieldOrder = ['title', 'instructions', 'rows', 'cols', 'splitPairs', 'feedbackpositive', 'feedbacknegative', 'feedbackstyle',  \
                             'hidetime', 'coverImg', 'cellbackImg', 'revealedBackground', 'positivefeedbackeffect', \

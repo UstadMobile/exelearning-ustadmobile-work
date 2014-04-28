@@ -45,6 +45,7 @@ class NotaIdevice(Idevice):
                          x_(u"exelearning.net"), 
                          u"", u"Note", "")
         self.emphasis         = Idevice.SomeEmphasis
+        self.short_desc = x_("Post-it style note that student can click on the heading to reveal the note's contents")
         self._commentInstruc   = u""
         self.systemResources += ["common.js"]
         

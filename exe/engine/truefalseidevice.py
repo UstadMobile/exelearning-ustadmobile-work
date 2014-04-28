@@ -147,6 +147,7 @@ class TrueFalseIdevice(Idevice):
 the learner must decide if the statement is true. This type of question works 
 well for factual information and information that lends itself to either/or 
 responses."""), u"", u"question")
+        self.short_desc = x_("Question that can be either true or false")
         self.emphasis         = Idevice.SomeEmphasis
         self._hintInstruc     = x_(u"""A hint may be provided to assist the 
 learner in answering the question.""")

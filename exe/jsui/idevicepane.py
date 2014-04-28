@@ -183,12 +183,20 @@ class IdevicePane(Renderable, Resource):
         xml += u"   <id>" + prototype.id + "</id>\n"
         xml += u"   <category>" + _(category) + "</category>\n"
         xml += u"   <visible>" + str(visible).lower() + "</visible>\n"
+        short_desc = ""
+        if hasattr(prototype, "short_desc"):
+            short_desc = prototype.short_desc
+        
         #To merge icon and title for idevice panel (new) -07042014 ^VS
-        title_with_icon = """<![CDATA[ 
-            <img src='/images/ideviceicons/icon_%(classname)s.png'/>
-            <h2>%(title)s</h2>]]>
+        title_with_icon = """<![CDATA[
+            <h2>%(title)s</h2> 
+            <p style='white-space: normal; margin-top: 4px'>
+                <img src='/images/ideviceicons/icon_%(classname)s.png' align='left' style='margin-right: 4px'/>
+                %(short_desc)s
+            </p>
+            ]]>
         """ % {"classname" : str(prototype.__class__.__name__).lower() , \
-               "title" : prototype.title }
+               "title" : prototype.title, "short_desc" : short_desc }
         xml += u"   <titlewithicon>" + title_with_icon + "</titlewithicon>\n"
         xml += u"  </idevice>\n"
         return xml

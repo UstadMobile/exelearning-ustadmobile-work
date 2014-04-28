@@ -44,8 +44,16 @@ class GenericIdevice(Idevice):
         """
         Initialize 
         """
+        generic_short_desc = {\
+                  "objectives" : "Rich text with heading and icon 'objectives'",\
+                  "activity" : "Rich text with heading and icon 'activity'",\
+                  "reading" : "Rich text with heading and icon 'reading'",\
+                  "preknowledge" : "Rich text with heading and icon 'preknowledge'"\
+              }
+        self.short_desc = ""
         if class_ in ("objectives", "activity", "reading", "preknowledge"):
             icon = class_
+            self.short_desc = generic_short_desc[class_]
         else:
             icon = None
         Idevice.__init__(self, title, author, purpose, tip, icon)

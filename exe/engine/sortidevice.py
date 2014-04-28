@@ -45,6 +45,7 @@ class SortIdeviceInc(Idevice):
         Idevice.__init__(self, x_(u"Sort Items"), 
                          x_(u"Toughra Technologies FZ LLC."), 
                          x_(u"""Sortable list of items."""), "", "")
+        self.short_desc = x_("Learner has to sort items which are shuffled randomly into their correct order")
         mainFieldOrder = ['title', 'instructions', 'sortorder', 'correctoverlay', 'wrongoverlay', 'correcteffect', 'wrongeffect', 'checkbuttontext', \
                          'itemwidth', 'itemheight', 'checkbuttonstyle', 'sortableitemstyle' ]
         

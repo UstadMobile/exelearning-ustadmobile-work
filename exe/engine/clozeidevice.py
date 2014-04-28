@@ -115,6 +115,7 @@ class ClozeIdevice(Idevice):
                              "</dl>"),
                             u"question",
                              parentNode)
+        self.short_desc = x_("Simple fill in the blank exercise - blank spaces shown as textboxes")
         self.instructionsForLearners = TextAreaField(
             x_(u'Instructions'),
             x_(u"""Provide instruction on how the cloze activity should be 

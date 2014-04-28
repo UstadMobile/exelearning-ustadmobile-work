@@ -18,6 +18,7 @@ class DragNDropIdevice(Idevice):
                          x_(u"Ustad Mobile."), 
                          x_(u"""Drag/Drop items to correct locations."""), "", "")
         self.emphasis = Idevice.SomeEmphasis
+        self.short_desc = "Learner has to drag and drop items into correct places"
         self.message = ""
         
         main_field_order = ["title", "instructions", "positivefeedback",\

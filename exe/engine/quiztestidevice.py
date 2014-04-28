@@ -44,7 +44,7 @@ class AnswerOption(Persistable):
         """
         self.question = question
         self.idevice = idevice
-
+        
         self.answerTextArea  = TextAreaField(x_(u'Option'),
                                    self.question._optionInstruc,
                                    answer)
@@ -248,6 +248,8 @@ the learners knowledge on a topic without providing the learner with feedback
 to the correct answer. The quiz will often be given once the learner has had 
 time to learn and practice using the information or skill.
  """), u"", "question")
+        self.short_desc = "Multiple Choice quiz compatible with SCORM compliant learning management systems (e.g. Moodle)"
+
         self.isQuiz     = True
         self.emphasis   = Idevice.SomeEmphasis
         self.score      = -1 

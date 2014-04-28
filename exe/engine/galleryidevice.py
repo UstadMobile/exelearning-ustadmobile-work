@@ -465,6 +465,7 @@ these in a gallery context rather then individually.</p>"""),
                              "gallery",
                              parentNode)
         self.emphasis          = Idevice.SomeEmphasis
+        self.short_desc = x_("Make a gallery of images; will generate thumbnails and learner can select each individually")
         self.nextImageId       = 0
         self.images            = GalleryImages(self)
         self.currentImageIndex = 0

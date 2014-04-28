@@ -74,6 +74,7 @@ class AppletIdevice(Idevice):
                          u"",
                              parentNode)
         self.emphasis          = Idevice.NoEmphasis
+        self.short_desc = x_("Include a Java Applet with this project")
         self.appletCode        = u""
         self.type              = u"other"
         self._fileInstruc      = x_(u"""Add all the files provided for the applet

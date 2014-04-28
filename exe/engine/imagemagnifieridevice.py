@@ -45,6 +45,7 @@ class ImageMagnifierIdevice(Idevice):
 magnifying glass over the image allows larger detail to be studied."""), 
                          u"", u"")
         self.emphasis                    = Idevice.NoEmphasis
+        self.short_desc = x_("Allow learners to magnify a given view of an image")
         self.imageMagnifier              = MagnifierField(
                                            x_(u"Choose an Image"), x_(u"""Click 
 on the picture below or the "Add Image" button to select an image file to be 

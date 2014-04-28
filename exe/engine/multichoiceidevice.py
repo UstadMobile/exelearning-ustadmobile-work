@@ -85,6 +85,7 @@ distractors </li>
 </ul>
 """), u"question")
         self.emphasis         = Idevice.SomeEmphasis
+        self.short_desc = x_("Multiple choice question with one right answer per question")
         self.questions        = []
         self.options          = []
 

@@ -49,6 +49,7 @@ class PlaceTheObjectsIdeviceInc(Idevice):
                          x_(u"Mike Dawson / PAIWASTOON Networking Services Ltd."), 
                          x_(u"""User has to place various objects in the correct place."""), "", "")
         self.emphasis = Idevice.SomeEmphasis
+        self.short_desc = x_("Student has to place objects in their correct place on a diagram")
         self.content  = TextAreaField(x_(u"Instructions"), 
                                       x_(u"This is a free text field."), 
                                       content)

@@ -125,6 +125,7 @@ class ListaIdevice(Idevice):
                              "</dl>"),
                             u"question",
                              parentNode)
+        self.short_desc = x_("Fill in the blank exercise - blanks are shown as a dropdown menu that student uses to make selection for missing word.")
         self.instructionsForLearners = TextAreaField(
             x_(u'Instructions'),
             x_(u"""Provide instruction on how the dropdown activity should be completed."""),

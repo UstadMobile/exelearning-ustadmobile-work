@@ -44,6 +44,7 @@ to provide new content to an individual users machine. Using this
 iDevice you can provide links from a feed you select for learners to view."""), 
                          u"",
                          u"")
+        self.short_desc = x_("Show an RSS newsfeed on the page")
         self.emphasis         = Idevice.NoEmphasis
         self.rss              = TextAreaField(x_(u"RSS"))
         self.rss.idevice      = self

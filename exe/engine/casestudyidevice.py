@@ -212,6 +212,7 @@ of the case and if so how are ideas feed back to the class</li></ul>"""),
                          "",
                          u"casestudy")
         self.emphasis     = Idevice.SomeEmphasis
+        self.short_desc = x_("Template for providing a case study text, activity and feedback")
         
         self._storyInstruc = x_(u"""Create the case story. A good case is one 
 that describes a controversy or sets the scene by describing the characters 

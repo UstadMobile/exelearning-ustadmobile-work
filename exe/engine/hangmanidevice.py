@@ -52,6 +52,7 @@ class HangmanIdeviceInc(Idevice):
                          x_(u"Mike Dawson, Toughra Technologies FZ LLC"), 
                          x_(u"""Hangman style word game with customizable images."""), "", "")
         self.emphasis = Idevice.SomeEmphasis
+        self.short_desc = x_("Student has to guess letters from alphabet from a hint to complete word.  Each wrong letter guessed gets the student closer to losing a life")
         self.message = ""
         
         self.titleField = TextField(x_("Title"), x_("Title"))

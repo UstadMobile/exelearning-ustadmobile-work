@@ -43,6 +43,7 @@ This means learners are not having to juggle windows.
 This iDevice should only be used if your content 
 will be viewed by learners online."""), "", "")
         self.emphasis = Idevice.NoEmphasis
+        self.short_desc = x_("Frame an external website inside your content (uses iframe)")
         self.url      = ""
         self.height   = "300"
        

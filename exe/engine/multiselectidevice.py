@@ -68,6 +68,7 @@ distractors </li>
 </ul>
 """), u"question")
         self.emphasis   = Idevice.SomeEmphasis
+        self.short_desc = "Multiple choice question with potentially multiple right answers for each question"
         self.questions  = []
         self.addQuestion()
         self.systemResources += ["common.js"]

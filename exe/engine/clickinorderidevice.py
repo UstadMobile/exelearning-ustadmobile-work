@@ -51,6 +51,7 @@ class ClickInOrderIdeviceInc(Idevice):
                          x_(u"""Click in Order according to the hint on the map."""), "", "")
         self.emphasis = Idevice.SomeEmphasis
         self.message = ""
+        self.short_desc = x_("Student sees a hint and has to click on a location on a map or diagram accordingly.")
         
         self.titleField = TextField(x_("Title"), x_("Title"))
         

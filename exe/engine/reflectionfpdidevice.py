@@ -54,6 +54,7 @@ are useful tools for collecting observation data. Rubrics and guides can be
 effective feedback tools."""), u"", u"reflexionfpd")
 #        self.emphasis         = Idevice.SomeEmphasis
         self.emphasis         = "_reflexionfpd"
+        self.short_desc     = x_("Rich text with a button below, which when clicked, will reveal another rich text area for feedback")
         self._activityInstruc = x_(u"""Enter a question for learners 
 to reflect upon.""")
         self._answerInstruc   = x_(u"""Describe how learners will assess how 

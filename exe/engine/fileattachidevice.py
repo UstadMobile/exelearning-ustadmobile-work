@@ -38,7 +38,7 @@ class FileAttachIdeviceInc(Idevice):
                          x_(u"Toughra Technologies FZ LLC."), 
                          x_(u"""File Attachments Idevice."""), "", "")
         self.emphasis = Idevice.SomeEmphasis
-        
+        self.short_desc = x_("Save files inside the project and provide a link to them allowing learners to downlad them.  Useful for handouts etc.")
         self.fileAttachmentFields = []
         self.fileAttachmentsDesc = []
         

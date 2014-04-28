@@ -41,6 +41,7 @@ class FreeTextIdevice(Idevice):
 establishing context, delivering instructions and providing general information.
 This provides the framework within which the learning activities are built and 
 delivered."""), "", "")
+        self.short_desc = x_("Add rich text without any specific heading - include images, audio, video, tables, etc.")
         self.emphasis = Idevice.NoEmphasis
         self.content  = TextAreaField(x_(u"Free Text"), 
                                       x_(u"""Use this field to enter text. This 
