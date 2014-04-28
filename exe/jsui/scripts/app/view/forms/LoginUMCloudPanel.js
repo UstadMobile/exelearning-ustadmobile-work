@@ -131,7 +131,7 @@ var loginumcloudpanel = Ext.define('eXe.view.forms.LoginUMCloudPanel', {
                                        width:480,
                                        id: 'umcloudserverurlinput',
                                        allowBlank: false,
-                                       value: 'http://127.0.0.1:8000/sendelpfile/',
+                                       value: 'http://svr2.ustadmobile.com:8010/sendelpfile/',
                                        blankText: _('You need to enter a servername to log in'),
                                        //minLength:3,
                                        //maxLength:400,
@@ -141,7 +141,7 @@ var loginumcloudpanel = Ext.define('eXe.view.forms.LoginUMCloudPanel', {
                        	          text: _('Go to UMCloud'),
                        	          icon: '/images/weather-clouds-2.png',
                        	          handler: function(){
-                       	        	 window.open('http://127.0.0.1:8000');
+                       	        	 window.open('http://svr2.ustadmobile.com:8010/');
                        	         }
                        	       }
               	        ]

@@ -33,7 +33,6 @@ from exe.engine.path import Path
 import os.path
 import re
 import subprocess
-import dbus
 
 #import win32api #For usb detection in windows.
 

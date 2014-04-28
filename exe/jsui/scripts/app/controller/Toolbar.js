@@ -1195,7 +1195,7 @@ Ext.define('eXe.controller.Toolbar', {
 		var userName = Ext.getCmp('umcloudusernameinput').getValue();
   		var pswd = Ext.getCmp('umcloudpasswordinput').getValue();
   		var url = Ext.getCmp('umcloudserverurlinput').getValue();
-  		console.log("Username and Password provided against url: " + userName+"/"+pswd+" ["+url+"]" + "and filepath is: " + filename);
+  		console.log("Username provided against url: " + userName + ":" + " [" +url+ "]" + "and filepath is: " + filename);
   		
   		
   		//We need to save the ELP file first! 
@@ -1325,7 +1325,7 @@ Ext.define('eXe.controller.Toolbar', {
     			for (i in rm) {
     				//alert("rm is: " + rm[i]['removabledrivepath']);
     				textButton = rm[i]['removabledrivevendor'] + " " + rm[i]['removabledrivesize'] + " [" + rm[i]['removabledrivepath'] + "]";
-					usbPath = rm[i]['removabledrivepath'];
+					usbPath = rm[i]['removabledrivepath'] + '/ustadmobileContent/';
     				recpanel.add({
             			xtype: 'button',
         	        	text: _(textButton),
@@ -1338,7 +1338,6 @@ Ext.define('eXe.controller.Toolbar', {
     					
 	    					//We have to save the file. 
 							nevow_clientToServerEvent('autoSavePackage', this, '');	
-							
     						console.log("You clicked: " + cow.textButton + "!");
     						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
     						//fileOpenRecent2(cow.textButton[0]);
@@ -1346,7 +1345,9 @@ Ext.define('eXe.controller.Toolbar', {
     						//nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
     						
     						//self.package.name needs to be changed to the user's input
-    						nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
+    						
+    						//nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
+    						nevow_clientToServerEvent('exportPackageToUSB', this, '', "mxml", cow.usbPath);
     						
     						//Works well, but we need to stop the J2ME emulator from popping up all the time.
     					},

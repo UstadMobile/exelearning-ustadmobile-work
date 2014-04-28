@@ -1,1 +1,1 @@
-git push github toughramobile:master
+git push origin master

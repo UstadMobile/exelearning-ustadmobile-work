@@ -19,6 +19,70 @@
 
 //To Create the ExportUstadMobile Panel.
 
+function updateUSBDevicesList(){	//Added for refreshing of USB devices.
+    	var recpanel = Ext.getCmp('showremovabledevices'); //showrecentprojectspanel
+    	recpanel.removeAll();
+    	
+       	Ext.Ajax.request({
+    		//url: location.pathname + '/exportustadmobilep',
+       		url: 'exportustadmobilep',
+    		scope: this,
+    		success: function(response) {
+				var rm = Ext.JSON.decode(response.responseText),
+					menu, text, item, previtem;
+				//var rm = Ext.JSON.decode(response.responseText),
+				//	menu = this.getRecentMenu(), text, item, previtem;
+				
+				recpanel.add(
+		        		 {	//For intendation purposes.
+		    	        	xtype: 'component',
+		    	        	flex: 1
+		    	        })
+		    	        
+    			for (i in rm) {
+    				//alert("rm is: " + rm[i]['removabledrivepath']);
+    				textButton = rm[i]['removabledrivevendor'] + " " + rm[i]['removabledrivesize'] + " [" + rm[i]['removabledrivepath'] + "]";
+					usbPath = rm[i]['removabledrivepath'] + '/ustadmobileContent/';
+    				recpanel.add({
+            			xtype: 'button',
+        	        	text: _(textButton),
+        	        	margin: 10,
+        	        	height:30,
+                        width:450,
+        	        	textButton: textButton,
+        	        	usbPath: usbPath,
+        	        	handler: function(cow){
+    					
+	    					//We have to save the file. 
+							nevow_clientToServerEvent('autoSavePackage', this, '');	
+							
+    						console.log("You clicked: " + cow.textButton + "!");
+    						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
+    						//fileOpenRecent2(cow.textButton[0]);
+    						Ext.Msg.wait(_('Saving package to ' + cow.textButton + ' ...'));
+    						//nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
+    						
+    						//self.package.name needs to be changed to the user's input
+    						//nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
+    						nevow_clientToServerEvent('exportPackageToUSB', this, '', "mxml", cow.usbPath);
+    						
+    						
+    						//Works well, but we need to stop the J2ME emulator from popping up all the time.
+    					},
+
+	        	        	//width : 128,
+	        	            //height : 34,
+	        	            //itemid: 'recent_project_button'
+	            		},
+	            		 {	//For intendation purposes.
+	        	        	xtype: 'component',
+	        	        	flex: 1
+	        	        })
+    				
+    				}
+    		}
+    	});
+    }
 
 var exportump = Ext.define('eXe.view.forms.ExportUstadMobilePanel', {
     extend: 'Ext.form.Panel',
