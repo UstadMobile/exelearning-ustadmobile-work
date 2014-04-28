@@ -206,6 +206,9 @@ class IdeviceStore:
         """
         log.debug("load iDevices")
         idevicesDir = self.config.configDir / 'idevices'
+        if idevicesDir.exists():
+            idevicesDir.rmtree()
+        
         if not idevicesDir.exists():
             idevicesDir.mkdir()
         self.__loadExtended()
