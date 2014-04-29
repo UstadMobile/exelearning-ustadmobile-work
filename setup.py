@@ -59,7 +59,7 @@ dataFiles(["exe/locale", "exe/mediaprofiles"])
 
 g_oldBase = ""
 g_newBase = "/usr/share/exe"
-dataFiles(["twisted", "nevow", "formless"])
+dataFiles(["twisted", "nevow", "formless", "multipartpost"])
 
 g_oldBase = "exe/jsui"
 g_newBase = "/usr/share/exe"
