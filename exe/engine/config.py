@@ -376,11 +376,13 @@ class Config:
         # new installation) create it
         if not self.configDir.exists():
             self.configDir.mkdir()
-		
+        
         if not G.application.standalone: 
              #FM: Copy styles         
             if not os.path.exists(self.stylesDir) or not os.listdir(self.stylesDir):
-                self.copyStyles()                       
+                self.copyStyles()
+            else:
+                self.updateStyles()                       
         else:
             if G.application.portable:
                 if os.name == 'posix': 
@@ -389,6 +391,8 @@ class Config:
                     self.stylesDir      = Path(self.webDir/'..'/'style')
                 if not os.path.exists(self.stylesDir) or not os.listdir(self.stylesDir): 
                     self.copyStyles()
+                else:
+                    self.updateStyles()
             else:
                 self.stylesDir     = Path(self.webDir/'style').abspath()
             
@@ -519,6 +523,20 @@ class Config:
         for style in listStyles:
             self.styles.append(style)
             #print style
+    
+    def updateStyles(self):
+        bkstyle=self.webDir/'style'
+        dststyle=self.stylesDir
+        for dir, subdirs, files in os.walk(bkstyle):
+            reldirpath = dir.relpathto(bkstyle)
+            for file in files:
+                dst_file = dststyle/reldirpath/file
+                src_file = Path(dir/file)
+                src_mtime = src_file.mtime
+                if not dst_file.exists() or src_mtime > dst_file.mtime:
+                    src_file.copy(dst_file)
+                
+        
             
     def copyStyles(self):
         bkstyle=self.webDir/'style'
