@@ -27,24 +27,42 @@ from exe.engine.path          import Path, TempDirPath
 from exe                      import globals as G
 from exe.export.xmlexport     import XMLExport
 from exe.export.exportmediaconverter import ENGINE_IMAGE_SIZES, ENGINE_AUDIO_FORMATS, ENGINE_VIDEO_FORMATS
-
+import shutil
 import sys
 
 class TestUstadMobileExport(unittest.TestCase):
 
 
     def setUp(self):
+        
+        # Delete the output dir
+        self.outdir = TempDirPath()
+        
         from exe.application import Application
-        application = Application()
-        application.standalone = True
+        G.application = None
+        
+        G.application = Application()
         
         fake_file_arg = str(Path(__file__).parent.parent/'exe'/'exe') 
         sys.argv[0] = fake_file_arg
-        application.loadConfiguration()
+        
+        G.application.standalone = True
+        G.application.loadConfiguration()
+        G.application.preLaunch()
+        
+        #from exe.application import Application
+        #application = Application()
+        #application.standalone = True
+        
+        
+        #application.loadConfiguration()
 
 
     def tearDown(self):
-        pass
+        from exe import globals
+        globals.application = None
+        shutil.rmtree(self.outdir)
+
     
     def runChecksOnMediaSlide(self, mediaSlideEl):
         pass
@@ -125,7 +143,7 @@ class TestUstadMobileExport(unittest.TestCase):
 
     def testUstadMobileExport(self):
         # Delete the output dir
-        outdir = TempDirPath()
+        outdir = self.outdir
         # Load a package
         filePath = Path("testing/ustad1.elp")
         

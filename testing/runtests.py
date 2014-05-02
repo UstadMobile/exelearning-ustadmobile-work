@@ -39,6 +39,7 @@ from testexport        import TestWebsiteExport
 #from testforumscache   import TestForumsCache
 from testresources  import TestResources
 from testblockfactory import TestBlockFactory
+from testustadmobileexport import TestUstadMobileExport
 
 # ===========================================================================
 
@@ -59,6 +60,8 @@ if __name__ == "__main__":
 #    suite.addTest(unittest.makeSuite(TestIdeviceStore))
 #    suite.addTest(unittest.makeSuite(TestPersist))
     suite.addTest(unittest.makeSuite(TestWebsiteExport))
+    suite.addTest(unittest.makeSuite(TestUstadMobileExport))
+    
 ##    suite.addTest(unittest.makeSuite(TestScormMetaExport))
 ##    suite.addTest(unittest.makeSuite(TestScormNoMetaExport))
 #    suite.addTest(unittest.makeSuite(TestResource))

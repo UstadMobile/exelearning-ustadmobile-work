@@ -31,6 +31,7 @@ from zipfile                  import ZipFile
 from sets                     import Set
 from exe                import globals as G
 from exe.application import Application
+import shutil
 
 
 class TestWebsiteExport(unittest.TestCase):
@@ -89,6 +90,10 @@ class TestWebsiteExport(unittest.TestCase):
         assert (node.title in html,
                 'Node title (%s) not found in "%s"' % (node.title, pageName))
 
+    def tearDown(self):
+        from exe import globals
+        globals.application = None
+        shutil.rmtree('tmp')
 
 class BaseTestScormExport(utils.SuperTestCase):
     
