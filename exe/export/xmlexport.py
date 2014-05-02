@@ -1,7 +1,11 @@
 # ===========================================================================
 # eXe 
-# Copyright 2004-2005, University of Auckland
-# Copyright 2004-2007 eXe Project, New Zealand Tertiary Education Commission
+#
+# XMLExport for Ustad Mobile, part of eXeLearning
+#
+# Copyright Michael Dawson, Ustad Mobile 2012-2014
+#
+# mike@mike-dawson.net
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -264,12 +268,8 @@ class XMLExport(WebsiteExport):
         filelist += styleFiles
         
         #now make it into strings
-        fileStrList = []
-        for currentFile in filelist:
-            filename = currentFile.name
-            if not filename in fileStrList:
-                fileStrList.append(str(filename))
-
+        fileStrList = self._file_list_to_strs(filelist)
+        
         html5ListFile = open(outputDir  + "/ustadpkg_html5.xml", "w")
         html5Content = u"<?xml version='1.0' encoding='UTF-8'?>\n"
         html5Content += "<ustadpackage>\n"
@@ -294,13 +294,28 @@ class XMLExport(WebsiteExport):
         for file in package.resourceDir.files():
             filelist.append(file)
         
+        file_str_list = self._file_list_to_strs(filelist)
         
+        #content - micro Edition
+        content_me = "<ustadpackage_micro>\n"
+        for filename in file_str_list:
+            content_me += "<file>%s</file>\n" % filename
+        content_me += "</ustadpackage_micro>"
         
         
         pass
         
         
-    
+    def _file_list_to_strs(self, filelist):
+        """Turn array of file objects into strings for xml lists"""
+        fileStrList = []
+        for currentFile in filelist:
+            filename = currentFile.name
+            if not filename in fileStrList:
+                fileStrList.append(str(filename))
+                
+        return fileStrList
+
 
     """
     Makes the table of contents XML file

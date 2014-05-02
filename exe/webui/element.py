@@ -298,7 +298,7 @@ class TextAreaElement(ElementWithResources):
         for strToRemove in self.dontCountStrs:
             htmlContentMediaAdapted = htmlContentMediaAdapted.replace(strToRemove, "")
         
-        htmlContentMediaAdapted = re.sub(re.compile('<div(.)*?>', re.MULTILINE), '\1', htmlContentMediaAdapted)
+        htmlContentMediaAdapted = re.sub(re.compile('<div(.)*?>', re.MULTILINE), '', htmlContentMediaAdapted)
         
         htmlContentMediaAdapted = htmlContentMediaAdapted.replace("\n", "")
         htmlContentMediaAdapted = htmlContentMediaAdapted.replace("\r", "")
