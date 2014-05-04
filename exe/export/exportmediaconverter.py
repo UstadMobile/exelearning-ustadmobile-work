@@ -42,6 +42,7 @@ except:
 ENGINE_IMAGE_SIZES = [ "100x100", "240x320", "320x240", "480x640", "640x480"]
 ENGINE_AUDIO_FORMATS = ["WAV", "MP3", "OGG"]
 ENGINE_VIDEO_FORMATS = ["MP4", "3GP", "OGV", "MPG"]
+ENGINE_IMAGE_FORMATS = ["JPG", "PNG", "GIF", "BMP"]
 
 '''
 This class is designed to go over through a given exported object
@@ -86,6 +87,11 @@ class ExportMediaConverter(object):
     @classmethod
     def setWorkingDir(cls, newWorkingDir):
         ExportMediaConverter.workingDir = newWorkingDir
+    
+    @classmethod
+    def get_imgname_for_resolutionprofile(cls, img_path, profilename):
+        """Get the correct filename for the image and resolution profile"""
+        return img_path.namebase + "-" + profilename + img_path.ext
     
     @classmethod
     def removeHTMLTags(cls, html, tags):
@@ -183,6 +189,7 @@ class ExportMediaConverter(object):
         #go through all sizes
         for profileName in ENGINE_IMAGE_SIZES:
             xPos = profileName.find('x')
+            #TODO: check if this resolution is enabled or not
             enabled = getattr(self.currentPackage, "ustadMobileIncRes"+profileName)
             profWidth = int(profileName[:xPos])
             profHeight = int(profileName[xPos+1:])
@@ -199,7 +206,7 @@ class ExportMediaConverter(object):
                 scale = eval(strToEval)
                 newDimension = [int(origWidth * scale), int(origHeight * scale)]
                 
-            newFileName = imgPath.namebase + "-" + profileName + imgPath.ext
+            newFileName = ExportMediaConverter.get_imgname_for_resolutionprofile(imgPath, profileName)
             newPath = imgPath.parent/newFileName
             sizeResults[profileName] = newDimension
             try:

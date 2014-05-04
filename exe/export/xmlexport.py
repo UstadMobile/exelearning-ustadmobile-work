@@ -287,24 +287,101 @@ class XMLExport(WebsiteExport):
         
         #now make the J2ME version
         filelist = []
+        
+        #map the form of filename => {"resolutions", "audioformats", "videoformats"}
+        j2me_extra_versions = {}
         incAllExtensions = ["xml"]
         for extension in incAllExtensions:
             filelist += outputDir.files("*.%s" % extension)
         
         for file in package.resourceDir.files():
+            #see if there are multiple versions of this file
             filelist.append(file)
+            file_ext = file.ext
+            if len(file_ext) > 2:
+                #cut the . off it
+                file_ext = file_ext[1:].upper()
+                if file_ext in ENGINE_IMAGE_FORMATS:
+                    #is image file - check for sizes
+                    for resolution in ENGINE_IMAGE_SIZES:
+                        new_filename = ExportMediaConverter.get_imgname_for_resolutionprofile(file, resolution)
+                        new_file = Path(outputDir/new_filename)
+                        if new_file.exists():
+                            self._check_version_into_j2me_list(j2me_extra_versions, \
+                                  file.name, "resolutions", resolution)
+                self._check_audiovideo_versions(j2me_extra_versions, \
+                        file, ENGINE_AUDIO_FORMATS, "audioformats", \
+                        outputDir)
+                self._check_audiovideo_versions(j2me_extra_versions, \
+                        file, ENGINE_VIDEO_FORMATS, "videoformats", \
+                        outputDir)
+            x = 0
         
         file_str_list = self._file_list_to_strs(filelist)
         
         #content - micro Edition
         content_me = "<ustadpackage_micro>\n"
         for filename in file_str_list:
-            content_me += "<file>%s</file>\n" % filename
+            versions_attr = ""
+            if filename in j2me_extra_versions.keys():
+                for version_type in j2me_extra_versions[filename]:
+                    this_attr = ""
+                    num_versions = len(\
+                        j2me_extra_versions[filename][version_type])
+                    for i in range(0, num_versions):
+                        this_attr += \
+                            j2me_extra_versions[filename][version_type][i]
+                        if i < (num_versions -1):
+                            this_attr += ","
+                    versions_attr += " %(v)s='%(f)s' " \
+                       % {"v" : version_type, "f" : this_attr}
+                       
+            content_me += "<file%(versions)s>%(filename)s</file>\n" \
+                % {"filename" : filename, "versions" : versions_attr} 
         content_me += "</ustadpackage_micro>"
         
+        micro_ed_file  = open(outputDir  + "/ustadpkg_me.xml", "w")
+        micro_ed_file.write(content_me)
+        micro_ed_file.close()
         
-        pass
         
+    def _check_audiovideo_versions(self, versions_info_dict, file, formatlist, formattype, outputDir):
+        """Looks to see what other audio / video formats are available
+        Arguments:
+        versions_info_dict - dict file we are saving info to
+        file - file object for original file format
+        formatlist - array of file extensions to search through (upper case)
+        formattype - 'audioformats' or 'videoformats' 
+        outputDir - Dir to look for other versions of this file
+        """
+        file_ext = file.ext
+        #check if we need to trim the . from extension
+        if len(file_ext) > 2:
+            file_ext = file_ext[1:].upper()
+        if file_ext in formatlist:
+            for formatname in formatlist:
+                #see if the original extension was upper or lower case
+                if str(file.ext).lower() == file.ext:
+                    file_ext = file_ext.lower()
+                new_filename = file.namebase + "." + file_ext
+                new_file = Path(outputDir/new_filename)
+                if new_file.exists():
+                    self._check_version_into_j2me_list(versions_info_dict, \
+                       file.name, formattype, formatname)
+        
+    def _check_version_into_j2me_list(self, mydict, file_name, type_name, version_name):
+        """make sure there is an entry for dict[filename][type_name]version"""
+        self._check_key_into_dict(mydict, file_name, init_val = {})
+        self._check_key_into_dict(mydict[file_name], type_name, \
+                                  init_val = [])
+        if not version_name in mydict[file_name][type_name]:
+            mydict[file_name][type_name].append(version_name)
+    
+    def _check_key_into_dict(self, mydict, key_name, init_val = {}):
+        """Make sure the given key is in an array
+        If not, create it as new value as per init_val"""
+        if not key_name in mydict.keys():
+            mydict[key_name] = init_val
         
     def _file_list_to_strs(self, filelist):
         """Turn array of file objects into strings for xml lists"""
