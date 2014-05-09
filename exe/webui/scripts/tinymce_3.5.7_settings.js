@@ -35,6 +35,39 @@ tinyMCE.init({
     template_external_list_url : "/scripts/tinymce_templates/lang/"+tinyMCE_language+".js",
 	// No new base64 images
 	setup : function(ed) {
+		//check if this is the default text, clear if so on click
+		ed.onInit.add(function(ed){
+			console.log("Editor " + ed.id + " does init");
+			var edObj = $("#" + ed.id);
+			if(edObj.hasClass("defaultprompt")) {
+				var defaultPrompt = edObj.attr('data-defaultprompt');
+				var heightSet = "250";//eXe's default
+				if(ed.settings.height) {
+					heightSet = ed.settings.height;
+				}
+				heightSet = parseInt(heightSet);
+				var margin = Math.round(heightSet/2);
+				var width = $("#" + ed.id)
+				
+				$('#' + ed.id).after(
+					"<div id='" + ed.id + "_defaultprompt' "  
+					+ "style='z-index: 10; position: absolute; width: 900px; "
+					+ "text-align: center; margin-top : " + margin + "px;'>"
+					+ defaultPrompt + "</div>");
+				
+			}
+		});
+		 ed.onEvent.add(function(ed, e) {
+	         console.log('Editor event ' + ed.id + ' occured on: ' + e.target.nodeName + " : " + e.type);
+	         var textArea = $("#" + ed.id);
+	         if(e.type && (e.type == "keypress" || e.type == "click")) {
+		         if(textArea.hasClass("defaultpromptactive")) {
+		        	 $("#" + ed.id + "_defaultprompt").css("display", "none");
+		        	 textArea.removeClass("defaultpromptactive");
+		         }
+	         }
+	      });	
+		
 		ed.onInit.add(function(ed, e) {
 			$exeAuthoring.countBase64(ed);
 		});	

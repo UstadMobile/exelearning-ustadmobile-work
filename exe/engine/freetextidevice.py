@@ -47,7 +47,8 @@ delivered."""), "", "")
                                       x_(u"""Use this field to enter text. This 
 iDevice has no emphasis applied although limited formatting can be applied to 
 text through the text editing buttons associated with the field."""),
-                                      content)
+                                      content, 
+                                      default_prompt = "Type anything you like")
         self.content.idevice = self
         if content:
             self.edit = False

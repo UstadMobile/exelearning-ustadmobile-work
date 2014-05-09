@@ -398,9 +398,14 @@ def field_engine_process_all_elements(elementDict, request):
         element.process(request)
 
 def getFieldDefaultVal(fieldId, fieldInfoDict):
+    """Return the default val if there is one for this field, otherwise None"""
+    return getFieldExtraInfoVal(fieldId, fieldInfoDict, "defaultval")
+
+
+def getFieldExtraInfoVal(fieldId, fieldInfoDict, fieldName):
     if len(fieldInfoDict[fieldId]) > EXEFIELDINFO_EXTRAINFODICT:
-        if "defaultval" in fieldInfoDict[fieldId][EXEFIELDINFO_EXTRAINFODICT]:
-            return fieldInfoDict[fieldId][EXEFIELDINFO_EXTRAINFODICT]['defaultval']
+        if fieldName in fieldInfoDict[fieldId][EXEFIELDINFO_EXTRAINFODICT]:
+            return fieldInfoDict[fieldId][EXEFIELDINFO_EXTRAINFODICT][fieldName]
         
     return None
 
@@ -414,6 +419,10 @@ def field_engine_check_field(fieldId, fieldInfoDict, fieldDict, idevice):
 
     fieldTypeName = fieldInfoDict[fieldId][EXEFIELDINFO_TYPE]
     defaultVal = getFieldDefaultVal(fieldId, fieldInfoDict)
+    default_prompt = getFieldExtraInfoVal(fieldId, fieldInfoDict, "default_prompt")
+    if default_prompt is None:
+        default_prompt = ""
+        
     
     newField = 0
     if fieldTypeName == 'image':
@@ -426,7 +435,9 @@ def field_engine_check_field(fieldId, fieldInfoDict, fieldDict, idevice):
             pass
         
     elif fieldTypeName == 'text':
-        newField = TextField(fieldInfoDict[fieldId][EXEFIELDINFO_DESC], fieldInfoDict[fieldId][EXEFIELDINFO_HELP])
+        newField = TextField(fieldInfoDict[fieldId][EXEFIELDINFO_DESC],\
+                             fieldInfoDict[fieldId][EXEFIELDINFO_HELP],\
+                             content="", default_prompt = default_prompt)
         if defaultVal is not None:
             newField.content = defaultVal
         
@@ -444,6 +455,7 @@ def field_engine_check_field(fieldId, fieldInfoDict, fieldDict, idevice):
     
 
     if newField != 0:
+        
         fieldDict[fieldId] = newField   
             
 """

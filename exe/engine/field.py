@@ -153,13 +153,19 @@ class TextField(Field):
     A Generic iDevice is built up of these fields.  Each field can be
     rendered as an XHTML element
     """
-    def __init__(self, name, instruc="", content=""):
+    
+    persistenceVersion = 2
+    
+    def __init__(self, name, instruc="", content="", default_prompt = ""):
         """
         Initialize 
         """
         Field.__init__(self, name, instruc)
         self.content = content
-
+        self.default_prompt = default_prompt
+    
+    def upgradeToVersion2(self):
+        self.default_prompt = ""
 
 # ===========================================================================
 class FieldWithResources(Field):
@@ -2596,16 +2602,17 @@ class TextAreaField(FieldWithResources):
     Note that TextAreaFields can now hold any number of image resources,
     which will typically be inserted by way of tinyMCE.
     """
-    persistenceVersion = 1
+    persistenceVersion = 3
 
     # these will be recreated in FieldWithResources' TwistedRePersist:
     nonpersistant      = ['content', 'content_wo_resourcePaths']
 
-    def __init__(self, name, instruc="", content=""):
+    def __init__(self, name, instruc="", content="", default_prompt = ""):
         """
         Initialize 
         """
         FieldWithResources.__init__(self, name, instruc, content)
+        self.default_prompt = default_prompt
 
     def upgradeToVersion1(self):
         """
@@ -2617,6 +2624,9 @@ class TextAreaField(FieldWithResources):
         self.content_wo_resourcePaths = self.content
         # NOTE: we don't need to actually process any of those contents for 
         # image paths, either, since this is an upgrade from pre-images!
+        
+    def upgradeToVersion2(self):
+        self.default_prompt = ""
 
 # ===========================================================================
 class FeedbackField(FieldWithResources):

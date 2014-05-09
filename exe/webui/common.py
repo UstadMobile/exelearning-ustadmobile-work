@@ -255,14 +255,20 @@ def hiddenField(name, value=u""):
     return html
 
 
-def textInput(name, value=u"", size=40, disabled=u"", **kwargs):
+def textInput(name, value=u"", size=40, disabled=u"", default_prompt=u"", **kwargs):
     """Adds a text input to a form"""
     html  = u"<input type=\"text\" "
     html += u"name=\"%s\" " % name
     html += u"id=\"%s\" " % name
     html += u"value=\"%s\" " % value
     html += u"size=\"%s\" " % size
+    html += u"data-defaultprompt=\"%s\" " % default_prompt
+    if default_prompt != "":
+        html += u" class='defaultprompt' "
+    
     for key, val in kwargs.items():
+        if key == 'default_prompt':
+            continue
         html += u' %s="%s"' % (key.replace('_', ''), val.replace('"', '\\"'))
     html += disabled+u" />\n"
     return html
@@ -282,7 +288,7 @@ def textArea(name, value="", disabled="", cols="80", rows="8"):
     return html
 
 
-def richTextArea(name, value="", width="100%", height=100, package=None): #Original width="100%"
+def richTextArea(name, value="", width="100%", height=100, package=None, default_prompt = None): #Original width="100%"
     """Adds a editor to a form"""
     log.debug(u"richTextArea %s, height=%s" % (value, height))
     # to counter TinyMCE's ampersand-processing:
@@ -296,7 +302,14 @@ def richTextArea(name, value="", width="100%", height=100, package=None): #Origi
     width = "75%" #Changed
     html += u'style=\"width:' + width + '; height:' + str(height) + 'px;" '  
     #print("The width is: " + width) #Testing..
-    html += u'class="mceEditor" '
+    default_prompt_class = ""
+    default_prompt_attr = ""
+    if default_prompt is not None and default_prompt != "" and value == "":
+        default_prompt_class = " defaultprompt defaultpromptactive"
+        default_prompt_attr = "data-defaultprompt='%s' " \
+            % default_prompt
+    html += u'class="mceEditor %s" %s ' % (default_prompt_class, \
+                                           default_prompt_attr)
     html += u'cols="52" rows="8">'
     ########
     # add exe_tmp_anchor tags 

@@ -50,7 +50,7 @@ class SortIdeviceInc(Idevice):
                          'itemwidth', 'itemheight', 'checkbuttonstyle', 'sortableitemstyle' ]
         
         mainFieldInfo = { \
-                 'title' : ['text', x_('Title'), x_('Title to show')], \
+                 'title' : ['text', x_('Title'), x_('Title to show'), {"default_prompt" : "Type your title here"}], \
                 'instructions' : ['textarea', x_('Instructions'), x_('Instructions before sortable list')], \
                 'correctoverlay' : ['textarea', x_('Correctly Sorted Overlay'), x_('Shown when check is clicked and correct')], \
                 'wrongoverlay' : ['textarea', x_('Wrongly Sorted Overlay'), x_('Shown when check is clicked and wrong')], \

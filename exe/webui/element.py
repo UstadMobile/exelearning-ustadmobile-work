@@ -151,7 +151,8 @@ class TextElement(Element):
         # package not needed for the TextElement, only for rich-text fields:
         this_package = None
         html = common.formField('textInput', this_package, self.field.name, '',
-                                self.id, '', self.field.content)
+                                self.id, '', self.field.content, 
+                                default_prompt=self.field.default_prompt)
        
         return html
 
@@ -249,7 +250,8 @@ class TextAreaElement(ElementWithResources):
                                 self.field.name,'',
                                 self.id, self.field.instruc,
                                 self.field.content,
-                                str(self.width), str(self.height))
+                                str(self.width), str(self.height),
+                                default_prompt = self.field.default_prompt)
         return html
 
     def renderPreview(self, visible=True, class_="block"):
