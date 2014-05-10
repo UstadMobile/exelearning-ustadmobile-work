@@ -90,13 +90,17 @@ class SortIdeviceInc(Idevice):
         
         #array of TextAreaFields that are to be sorted (script will randomize it)
         self.itemsToSort = []
-        self.addItemToSort()
+        for count in range(0,3):
+            self.addItemToSort()
 
         self.emphasis = Idevice.SomeEmphasis
         self.message = ""
 
     def addItemToSort(self):
-        newTextAreaField = TextAreaField(x_("Sortable Item"), x_("Text / Content of sortable item"))
+        item_num = len(self.itemsToSort) + 1
+        newTextAreaField = TextAreaField(x_("Sortable Item"), 
+                                 x_("Text / Content of sortable item"),
+                                 default_prompt = x_("Put an item to be sorted in here - you can put in text, images, and media.<br/>E.g. Item %s")  % str(item_num))
         newTextAreaField.idevice = self
         self.itemsToSort.append(newTextAreaField)
         

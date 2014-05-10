@@ -24,3 +24,10 @@ function setupTextPrompts() {
 	});
 }
 
+/*
+ * Hide the overlay for a tinyMCE field based on the id
+ */
+function hideTinyMCEOverlay(edId) {
+	$("#" + edId + "_defaultprompt").css("display", "none");
+	 textArea.removeClass("defaultpromptactive");
+}

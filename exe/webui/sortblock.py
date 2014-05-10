@@ -83,14 +83,31 @@ class SortBlockInc(Block):
         html  = u"<div>\n"
         html += common.ideviceShowEditMessage(self)
         
-        html += self.idevice.mainFieldSet.renderEditInOrder(self.mainElements)
+        html += self.idevice.mainFieldSet.renderEditInOrder(
+                    self.mainElements, to_field = "correctoverlay")
+        
+        html += _("""<p class='edit_inline_hint'>Put each item you want to be sorted into
+             its own <b>sortable item</b> box below in the correct order.  It will be
+             automatically shuffled when the student sees it
+             </p>""")
+        
         for sortableElement in self.sortableItemElements:
+            html += "<table><tr><td valign='top'>"
             html += sortableElement.renderEdit()
+            html += "</td><td valign='top'>"
             html += field_engine_make_delete_button(sortableElement)
-            html += "<br/>"
+            html += "</td></table>"
+            #html += "<br/>"
             
-        html += common.submitButton("addSortableItem"+unicode(self.id), _("Add Another Item to be Sorted"))
-        html += "<br/>"
+        html += common.submitButton(
+                        "addSortableItem"+unicode(self.id),
+                         _("Add Another Item to be Sorted"),
+                         extra_classes = "add_item_button")
+        html += "<br/>&nbsp;<br/>"
+        
+        html += self.idevice.mainFieldSet.renderEditInOrder(
+                    self.mainElements, from_field="correctoverlay")
+        
         html += self.renderEditButtons()
         html += u"</div>\n"
         return html

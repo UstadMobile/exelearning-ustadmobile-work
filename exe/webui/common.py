@@ -410,10 +410,12 @@ def flashMovie(movie, width, height, resourcesDir='', autoplay='false'):
     return flash(src, width, height, id="flowPlayer", params=params)
 
 
-def submitButton(name, value, enabled=True, **kwargs):
+def submitButton(name, value, enabled=True, extra_classes = "", **kwargs):
     """Adds a submit button to a form"""
     lb = "\n" #Line breaks
-    html  = '<input class="button" type="submit" name="%s" ' % name
+    css_classes = "button %s" % extra_classes
+    html  = '<input class="button %s" type="submit" name="%s" ' \
+        % (css_classes, name)
     html += 'value="%s" ' % value
     if not enabled:
         html += ' disabled="disabled"'

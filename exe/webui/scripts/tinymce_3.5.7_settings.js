@@ -53,7 +53,9 @@ tinyMCE.init({
 				var width = $("#" + ed.id)
 				
 				$('#' + ed.id).after(
-					"<div id='" + ed.id + "_defaultprompt' "  
+					"<div id='" + ed.id + "_defaultprompt' "
+					+ " class='default_prompt_mceoverlay' "
+					+ " onclick='hideTinyMCEOverlay(\"" + ed.id + "\")' "
 					+ "style='z-index: 10; position: absolute; width: 900px; "
 					+ "text-align: center; margin-top : " + margin + "px;'>"
 					+ defaultPrompt + "</div>");
@@ -65,8 +67,7 @@ tinyMCE.init({
 	         var textArea = $("#" + ed.id);
 	         if(e.type && (e.type == "keypress" || e.type == "click")) {
 		         if(textArea.hasClass("defaultpromptactive")) {
-		        	 $("#" + ed.id + "_defaultprompt").css("display", "none");
-		        	 textArea.removeClass("defaultpromptactive");
+		        	 hideTinyMCEOverlay(ed.id);
 		         }
 	         }
 	      });	

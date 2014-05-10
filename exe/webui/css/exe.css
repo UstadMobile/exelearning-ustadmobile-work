@@ -188,3 +188,25 @@ body:after{content:url(../images/exe_lightbox_close.png) url(../images/exe_light
 .lightboxOverlay{background-color:#fff}
 .lb-data{color:#333}
 .lb-data .lb-number{color:#444}
+
+/* Default prompts put over tinymce */
+.default_prompt_mceoverlay {
+    font-weight: bold;
+    font-style: italic;
+} 
+
+.edit_inline_hint {
+	padding-left: 50px;
+	min-height: 50px;
+	max-width: 800px;
+	background: url('/images/help-hint.png') no-repeat left top;
+}
+
+.add_item_button {
+    font-weight: bold;
+    color: white;
+    padding-left: 20px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background: green url('/images/plusbutton.png') no-repeat 4px center;
+}

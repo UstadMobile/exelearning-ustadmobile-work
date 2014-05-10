@@ -76,11 +76,26 @@ class ExtendedFieldSet(Field):
         elementDict = field_engine_build_elements_on_block(self.fieldInfoDict, self.fields, self.idevice)
         return elementDict
 
-    def renderEditInOrder(self, elementDict, request = None):
+    def renderEditInOrder(self, elementDict, request = None, from_field = None, to_field = None):
+        """Render the edit elements in the order of this extendedfieldset 
+        from_field - id of the field to start at
+        to_field - id of the field to finish at
+        """
+        
         html = ""
         #when field has a "type" go and render those types with a show/hide option to simplify editing
         otherFieldTypeDict = {}
-        for fieldId in self.fieldOrder:
+        start_index = 0
+        end_index = len(self.fieldOrder)
+        
+        if from_field is not None:
+            start_index = self.fieldOrder.index(from_field)
+            
+        if to_field is not None:
+            end_index = self.fieldOrder.index(to_field)
+            
+        for field_index in range(start_index, end_index):
+            fieldId = self.fieldOrder[field_index]
             currentElement = elementDict[fieldId]
             isOtherType = False
             if len(self.fieldInfoDict[fieldId]) > EXEFIELDINFO_EXTRAINFODICT:
