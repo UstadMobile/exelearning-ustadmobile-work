@@ -210,3 +210,7 @@ body:after{content:url(../images/exe_lightbox_close.png) url(../images/exe_light
     padding-bottom: 4px;
     background: green url('/images/plusbutton.png') no-repeat 4px center;
 }
+
+.exednd_imgholder IMG {
+	display: none;
+}

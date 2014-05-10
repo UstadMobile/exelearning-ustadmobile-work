@@ -156,6 +156,7 @@ class TextField(Field):
     
     persistenceVersion = 2
     
+    
     def __init__(self, name, instruc="", content="", default_prompt = ""):
         """
         Initialize 
@@ -163,10 +164,10 @@ class TextField(Field):
         Field.__init__(self, name, instruc)
         self.content = content
         self.default_prompt = default_prompt
-    
+        
     def upgradeToVersion2(self):
         self.default_prompt = ""
-
+    
 # ===========================================================================
 class FieldWithResources(Field):
     """
@@ -177,18 +178,19 @@ class FieldWithResources(Field):
     via the tinyMCE RichTextArea.
     """
 
-    persistenceVersion = 2
+    persistenceVersion = 3
 
     # do not save the following redundant fields with the .elp, but instead 
     # regenerate them from content_w_resourcePaths in 'TwistedRePersist':
     nonpersistant      = ['content', 'content_wo_resourcePaths']
 
-    def __init__(self, name, instruc="", content=""):
+    def __init__(self, name, instruc="", content="", default_prompt = ""):
         """
         Initialize 
         """
         Field.__init__(self, name, instruc)
         self.content = content
+        self.default_prompt = default_prompt
 
         # to allow the easiest transition into using this FieldWithResources
         # to hold any number of image (and other) resources, the above
@@ -2590,6 +2592,10 @@ class FieldWithResources(Field):
                 image._thumbnailResource.delete()
                 image._thumbnailResource = None
                 image.makeThumbnail = False
+                
+                
+    def upgradeToVersion3(self):
+        self.default_prompt = ""
 
 
 
@@ -3017,11 +3023,11 @@ class ClozeField(FieldWithResources):
     # these will be recreated in FieldWithResources' TwistedRePersist:
     nonpersistant      = ['content', 'content_wo_resourcePaths']
 
-    def __init__(self, name, instruc):
+    def __init__(self, name, instruc, default_prompt = ""):
         """
         Initialise
         """
-        FieldWithResources.__init__(self, name, instruc)
+        FieldWithResources.__init__(self, name, instruc, default_prompt = default_prompt)
         self.parts = []
         self._encodedContent = ''
         self.rawContent = ''

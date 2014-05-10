@@ -24,10 +24,13 @@ class DragNDropIdevice(Idevice):
         main_field_order = ["title", "instructions", "positivefeedback",\
                              "negativefeedback","mainImg", "scale"]
         main_field_info  = \
-            {'title' : ['text', x_('Title'), x_('Title')],\
+            {'title' : ['text', x_('Title'), x_('Title'),
+                        {"default_prompt" : x_("Type your title here")}],\
              'instructions' : ['textarea', x_('Instructions to show'), \
-                               x_('Instructions')],\
-             'mainImg' : ['image', x_('Background'), x_('Background') ],\
+                               x_('Instructions'), 
+                               {"default_prompt" : x_("Enter instructions for students here.  You can add images, media, etc. too.")}],\
+             'mainImg' : ['image', x_('Background'), x_('Background'),
+                          {"defaultval" : "exe_dnd_defaultbackgroundworld.jpg"} ],\
              'positivefeedback' : ['textarea',\
                                x_('Default Correct Answer Feedback'),\
                                x_('Default Correct Answer Feedback')],
@@ -48,6 +51,7 @@ class DragNDropIdevice(Idevice):
         self.system_scripts = ["exedragndrop.js", \
                                         "jquery-ui-1.10.4.custom.min.js"]
         
+        self.add_area_fields(2)
         
     def add_area_fields(self, num_to_add = 1):
         """Add the specified number of area fields"""
@@ -55,6 +59,11 @@ class DragNDropIdevice(Idevice):
             newDndField = DragNDropAreaField(self)
             self.area_fields.append(newDndField)
             newDndField.field_num = str(len(self.area_fields))
+            space_needed = str(i*120)
+            newDndField.main_fields.makeFields()
+            newDndField.main_fields.fields['coords'].content = \
+                "%s,%s,100,100" % (space_needed, space_needed)
+            
         
 
 class DragNDropAreaField(Field):
@@ -88,7 +97,9 @@ class DragNDropAreaField(Field):
                        {"defaultval": "0,0,50,50"}],\
            'exetarget' : ['choice', x_('Correct Drop Target'), \
                           x_('Correct Drop Target'),\
-                          {"choices" : [['none', x_('none')]]}],
+                          {"choices" : [['none', 
+                             x_('Select the correct area that the student should drag this area to...')],
+                                        ['none2', x_('None')]]}],
            'draggable' : ['choice', x_('Behaviour'), \
                           x_('Behaviour'),\
                           {"choices" : [['candrag', x_('User can drag')],\

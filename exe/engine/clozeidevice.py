@@ -128,11 +128,17 @@ completed. Default text will be entered if there are no changes to this field.
             x_(u"""<p>Enter the text for the cloze activity in to the cloze field 
 by either pasting text from another source or by typing text directly into the 
 field.</p><p> To select words to hide, double click on the word to select it and 
-click on the Hide/Show Word button below.</p>"""))
+click on the Hide/Show Word button below.</p>"""),
+            default_prompt = x_("""Type the whole sentence here, 
+            then hilight the parts you want to make blank and 
+            click Hide/Show Word button below.  Underlined words 
+            get turned into blank boxes to fill in."""))
         self._content.idevice = self
         self.feedback = TextAreaField(x_(u'Feedback'),
             x_(u'Enter any feedback you wish to provide the learner '
-                'with-in the feedback field. This field can be left blank.'))
+                'with-in the feedback field. This field can be left blank.'),
+              default_prompt = x_("""Type any feedback you want to provide 
+              the learner.  This will be shown regardless of score"""))
         self.feedback.idevice = self
         self.emphasis = Idevice.SomeEmphasis
         self.systemResources += ["common.js"]

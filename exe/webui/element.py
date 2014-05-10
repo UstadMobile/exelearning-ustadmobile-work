@@ -1228,7 +1228,7 @@ class ClozeElement(ElementWithResources):
             # Render the iframe box
             common.formField('richTextArea', this_package, _('Cloze Text'),'',
                              self.editorId, self.field.instruc,
-                             self.field.encodedContent),
+                             self.field.encodedContent, default_prompt = self.field.default_prompt),
             # Render our toolbar
             u'<table style="width: 100%;">',
             u'<tbody>',

@@ -5,13 +5,15 @@ ${instructions}
 
 ${scale}
 
+<div class='edit_inline_hint'>
+    Select the background image by clicking the button below.  
+    Areas added can be draggable elements or drop targets.  On the 
+    draggable element select the <b>correct drop target</b> to
+    mark the correct destination for an object.
+</div>
 <div class='exednd_imgholder' id='exednd_imgholder_${ideviceid}'>
     ${mainImg}
 </div>
-
-${positivefeedback}
-
-${negativefeedback}
 
 <div id='exednd_edit_mastercontainer_${ideviceid}' 
     style='width: ${mainImg_imgwidth}px;height: ${mainImg_imgheight}px; border: 1px solid red;'>
@@ -26,6 +28,8 @@ ${negativefeedback}
     </div>
 </div>
 
+${add_button_text}
+
 <div style='display: none'>
     ${areas_html}
 </div>
@@ -34,3 +38,10 @@ ${negativefeedback}
 <div class='exednd_editor_accordion'>
     ${areas_html_edit}
 </div>
+
+
+${positivefeedback}
+
+${negativefeedback}
+
+

@@ -91,10 +91,14 @@ class ClozeBlock(Block):
         Renders a screen that allows the user to enter paragraph text and choose
         which words are hidden.
         """
+        title_text_val = self.idevice.title
+        if title_text_val == _("Cloze Activity"):
+            title_text_val = ""
         html = [
             u'<div class="iDevice">',
             u'<div class="block">',
-            common.textInput("title"+self.id, self.idevice.title),
+            common.textInput("title"+self.id, title_text_val, 
+                             default_prompt = 'Type your title here'),
             u'</div>',
             self.instructionElement.renderEdit(),
             self.clozeElement.renderEdit(),

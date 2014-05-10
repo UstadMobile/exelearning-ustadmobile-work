@@ -62,20 +62,13 @@ class DragNDropBlock(Block):
             img_width = self.main_elements['mainImg'].field.width
             img_height = self.main_elements['mainImg'].field.height
         
-        #html += """<div  style='width: %(width)spx; 
-        #    height: %(height)spx; border: 1px solid red;'>""" % \
-        #    {"width" : str(img_width), "height" : str(img_height)}    
-        #html += """<div class="exednd_edit_container" 
-        #    id='exednd_edit_container_%(ideviceid)s' 
-        #    data-exedndid='%(ideviceid)s' style='position: relative; width: %(width)spx; height: %(height)spx;'>
-        #</div>
-        #""" % {"ideviceid": str(self.idevice.id),\
-        #       "width" : str(img_width), "height" : str(img_height)}
-        #html += "</div>"
         
         #the drag/drop positioning area (hidden)
         
-        main_dict['areas_html'] = self._renderAreasHTML(style, True) 
+        main_dict['areas_html'] = self._renderAreasHTML(style, True)
+        main_dict['add_button_text'] = common.submitButton(
+                   "addArea"+unicode(self.id), _("Add Area"), 
+                   extra_classes='add_item_button') 
         #html += self._renderAreasHTML(style, True)
         #html += "</div>"
         
@@ -88,7 +81,7 @@ class DragNDropBlock(Block):
         #html += "</div>"
         html += self.idevice.main_fields.applyFileTemplateToDict(main_dict, \
             "exedragndrop_edit.html", True)
-        html += common.submitButton("addArea"+unicode(self.id), _("Add Area"))
+        
         html += "<br/>"
         html += self.renderEditButtons()
     

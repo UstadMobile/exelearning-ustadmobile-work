@@ -1,5 +1,5 @@
 
-<h3>Area ${fieldnum}</h3>
+<h3>Area ${fieldnum} Options</h3>
 <div style='height: 200px;'>
     <div class='exednd_area_tabdiv'>
         <ul>
@@ -18,11 +18,17 @@
 		    
 		    ${type}
 		    
+		    <div class='content_type_${fieldid}' id='content_type_img_${fieldid}'>
 		    ${image}
+		    </div>
 		    
+		    <div class='content_type_${fieldid}' id='content_type_richtext_${fieldid}'>
 		    ${richtext}
+		    </div>
 		    
+		    <div class='content_type_${fieldid}' id='content_type_plaintext_${fieldid}'>
 		    ${plaintext}
+		    </div>
 	    </div>
 	    
 	    <div id='exednd_area_feedback_tab_${fieldid}'>

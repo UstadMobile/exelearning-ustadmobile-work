@@ -132,7 +132,7 @@ EXEDragNDrop.prototype = {
             	
             	//check and see if there is a drop target for this
             	var targetName = $(this).attr("data-exednd-target");
-            	if(dropTargetArr.indexOf(targetName) == -1 && targetName != "none") {
+            	if(dropTargetArr.indexOf(targetName) == -1 && (targetName != "none" && targetName != "none2")) {
             		dropTargetArr.push(targetName);
             	}
             }
@@ -241,14 +241,25 @@ EXEDragNDrop.prototype = {
         
         
         var targetEls = "";
+        var targetElsArr = [];
         for(var i = 0; i < this.targets.length; i++) {
         	var targetNum = i + 1;
         	targetEls += "<option value='" + this.targets[i]+"'>" 
         		+ "Area " + targetNum + "</option>";
+        	targetElsArr[i] = [this.targets[i], targetNum];
         }
         
-        $(".exetarget").each(function() {
-        	$(this).append(targetEls);
+        var exeTargetEls = $(".exetarget"); 
+        exeTargetEls.each(function() {
+        	var thisIndex = exeTargetEls.index(this);
+        	for(var j = 0; j < targetElsArr.length; j++) {
+        		if(j != thisIndex) {
+        			$(this).append("<option value='" + targetElsArr[j][0]+"'>" 
+        	        		+ "Area " + targetElsArr[j][1] + "</option>");
+        		}
+        	}
+        	//alert(thisIndex);
+        	//$(this).append(targetEls);
         	var selectedVal = $(this).attr("data-currentval");
         	$(this).val(selectedVal);
         });
