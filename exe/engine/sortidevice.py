@@ -51,9 +51,15 @@ class SortIdeviceInc(Idevice):
         
         mainFieldInfo = { \
                  'title' : ['text', x_('Title'), x_('Title to show'), {"default_prompt" : "Type your title here"}], \
-                'instructions' : ['textarea', x_('Instructions'), x_('Instructions before sortable list')], \
-                'correctoverlay' : ['textarea', x_('Correctly Sorted Overlay'), x_('Shown when check is clicked and correct')], \
-                'wrongoverlay' : ['textarea', x_('Wrongly Sorted Overlay'), x_('Shown when check is clicked and wrong')], \
+                'instructions' : ['textarea', x_('Instructions'), 
+                                  x_('Instructions before sortable list'),
+                                  {"default_prompt" : x_("Put here instructions for what the user should do - e.g. sort the list from highest to lowest")}], \
+                'correctoverlay' : ['textarea', x_('Correctly Sorted Feedback'), 
+                                    x_('Shown when check is clicked and correct'),
+                                    {"default_prompt" : x_("Put here the feedback that will appear when the user correctly sorts the list and clicks the check button.  You can add media/images too.")}], \
+                'wrongoverlay' : ['textarea', x_('Wrongly Sorted Feedback'), 
+                                  x_('Shown when check is clicked and wrong'),
+                                  {"default_prompt" : x_("Put here the feedback that will appear when the user has not correctly sorted the list and clicks the check button.  You can add media/images too.")}], \
                 'correcteffect' : ['choice', x_('Effect for showing correct overlay'), x_('Effect showing correct overlay'), \
                         {'choices' : EXEFIELD_JQUERYUI_EFFECTLIST } ], \
                 'wrongeffect' : ['choice', x_('Effect showing wrong answer overlay'), x_('Effect for showing wrong overlay'), \

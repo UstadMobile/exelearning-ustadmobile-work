@@ -854,3 +854,16 @@ function changeMagnifierImageHeight(elementId) {
     
 }
 
+var scrollBackInterval = null;
+
+/**
+ * TinyMCE has an annoying habit of focusing the last editor - 
+ * normally taking users to the end of the field.  Scroll by
+ * default to currentBlock (this could be adjusted by the add
+ * functions
+ */
+function scrollBackOnAllMceInit() {
+	var currentBlockEl = $("[name='currentBlock']");
+	currentBlockEl.get(0).scrollIntoView();
+}
+

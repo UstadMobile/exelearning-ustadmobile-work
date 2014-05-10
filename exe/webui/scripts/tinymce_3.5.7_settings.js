@@ -38,6 +38,9 @@ tinyMCE.init({
 		//check if this is the default text, clear if so on click
 		ed.onInit.add(function(ed){
 			console.log("Editor " + ed.id + " does init");
+			if(scrollBackInterval == null) {
+				scrollBackInterval = setTimeout("scrollBackOnAllMceInit()", 500);
+			}
 			var edObj = $("#" + ed.id);
 			if(edObj.hasClass("defaultprompt")) {
 				var defaultPrompt = edObj.attr('data-defaultprompt');
