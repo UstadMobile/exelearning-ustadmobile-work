@@ -265,6 +265,26 @@ EXEDragNDrop.prototype = {
         });
         
         this.addPicEventHandlers();
+        
+        $(".content_type_choiceholder SELECT").on("change", function(evt){
+        	thisEl.updateAreaContentTypeFromSelect(evt.target);
+        });
+        
+        $(".content_type_choiceholder SELECT").each(function() {
+        	thisEl.updateAreaContentTypeFromSelect(this);
+        });
+    },
+    
+    /**
+     * 
+     */
+    updateAreaContentTypeFromSelect : function(selectEl) {
+    	var currentVal = $(selectEl).val();
+    	var thisFieldId = $(selectEl).closest(
+			".content_type_choiceholder").attr(
+					"data-content-type-fieldid");
+    	$(".content_type_" + thisFieldId).hide();
+    	$("#content_type_" + currentVal + "_" + thisFieldId).show();
     },
     
     showFeedbackEl : function(eleId) {
@@ -327,7 +347,7 @@ function initDragNDrop() {
 
 $(function() {
     initDragNDrop();
-    $(".exednd_editor_accordion").accordion();
+    $(".exednd_editor_accordion").accordion({heightStyle: "fill"});
     $(".exednd_area_tabdiv").tabs();
     $(".exednd_area_feedbacktabs").tabs();
 });

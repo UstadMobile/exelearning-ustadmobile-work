@@ -9,26 +9,29 @@
         </ul>
 
         <div id='exednd_area_content_tab_${fieldid}'>
-		    
+		    <div class='content_type_choiceholder' data-content-type-fieldid='${fieldid}'>
+            ${type}
+            </div>
+            
+            <div class='content_type_${fieldid}' id='content_type_image_${fieldid}'>
+            ${image}
+            </div>
+            
+            <div class='content_type_${fieldid}' id='content_type_richtext_${fieldid}'>
+            ${richtext}
+            </div>
+            
+            <div class='content_type_${fieldid}' id='content_type_plaintext_${fieldid}'>
+            ${plaintext}
+            </div>
+            
 		    ${draggable}
 		    		    
 		    ${exetarget}
 		    
 		    ${ondropinvalid}
 		    
-		    ${type}
 		    
-		    <div class='content_type_${fieldid}' id='content_type_img_${fieldid}'>
-		    ${image}
-		    </div>
-		    
-		    <div class='content_type_${fieldid}' id='content_type_richtext_${fieldid}'>
-		    ${richtext}
-		    </div>
-		    
-		    <div class='content_type_${fieldid}' id='content_type_plaintext_${fieldid}'>
-		    ${plaintext}
-		    </div>
 	    </div>
 	    
 	    <div id='exednd_area_feedback_tab_${fieldid}'>
