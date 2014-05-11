@@ -23,6 +23,17 @@ class DragNDropIdevice(Idevice):
         
         main_field_order = ["title", "instructions", "positivefeedback",\
                              "negativefeedback","mainImg", "scale"]
+        
+        
+        fb_positive_help_msg = x_("""Enter the default 
+                            feedback that will appear when an area is 
+                             dragged into the correct drop target
+                              area (e.g. feedback is set to by question""")
+        
+        fb_negative_help_msg = x_("""Enter the default 
+                            feedback that will appear when an area is 
+                             dragged outside the correct drop target
+                              area (e.g. feedback is set to by question""")
         main_field_info  = \
             {'title' : ['text', x_('Title'), x_('Title'),
                         {"default_prompt" : x_("Type your title here")}],\
@@ -33,10 +44,12 @@ class DragNDropIdevice(Idevice):
                           {"defaultval" : "exe_dnd_defaultbackgroundworld.jpg"} ],\
              'positivefeedback' : ['textarea',\
                                x_('Default Correct Answer Feedback'),\
-                               x_('Default Correct Answer Feedback')],
+                               fb_positive_help_msg,
+                                {"default_prompt" : fb_positive_help_msg}],
              'negativefeedback' : ['textarea',\
                                x_('Default Wrong Answer Feedback'),\
-                               x_('Default Wrong Answer Feedback')],\
+                               fb_negative_help_msg, 
+                               {"default_prompt" :fb_negative_help_msg }],\
              'scale' : ['choice', x_('Auto Resize'), \
                           x_('Auto Resize'),{"choices" : \
                          [['scaletofit', x_('Resize to fit screen width')],\
@@ -83,16 +96,26 @@ class DragNDropAreaField(Field):
                                       ['image', x_('Image')],\
                                       ['plaintext', x_('Plaintext') ] ] }],\
            'image' : ['image', x_('Image'), x_('Image for element')],\
-           'richtext' : ['textarea', x_('Content'), x_('Content')],\
-           'plaintext' : ['text', x_("Content"), x_("Content")],\
+           'richtext' : ['textarea', x_('Content'), x_('Content'),
+                         {'default_prompt' : x_('Enter text, images, or media to appear inside this area')}],\
+           'plaintext' : ['text', x_("Content"), x_("Content"),
+                          {"default_prompt" : x_('Enter text to appear inside this area')}],\
            'feedbacktype' : ['choice', x_("Feedback Type"), x_("Feedback Type"),\
-                             {"choices" : [['none', x_("None")],\
-                                      ['question', x_("Question Default") ],\
-                                      ['peranswer', x_("By Answer")]]}],\
+                             {"choices" : [['none', x_("No Feedback")],\
+                                      ['question', x_("Use Question Default Feedback") ],\
+                                      ['peranswer', x_("Use Feedback specific to this area")]]}],\
            'positivefeedback' : ['textarea', x_('Correct Answer Feedback'), \
-                                 x_('Feedback on correct answer')],\
+                                 x_('Feedback on correct answer'),
+                                 {"default_prompt" : """Enter the feedback 
+                                 that will appear when this area is 
+                                 dragged into the correct drop target
+                                  area"""}],\
            'negativefeedback' : ['textarea', x_('Wrong Answer Feedback'), \
-                                 x_('Feedback on wrong answer')],\
+                                 x_('Feedback on wrong answer'),
+                                 {"default_prompt" : """Enter the feedback that will
+                                  appear when this area is dragged and 
+                                  dropped outside the correct drop target 
+                                  area"""}],\
            'coords' : ['text', "Coordinates", "Coordinates", \
                        {"defaultval": "0,0,50,50"}],\
            'exetarget' : ['choice', x_('Correct Drop Target'), \

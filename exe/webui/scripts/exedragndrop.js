@@ -214,7 +214,18 @@ EXEDragNDrop.prototype = {
             thisEl.targets[thisEl.targets.length] = idS[0] + "_" + idS[1];
             copyEl.attr("id", newElId);
             var elIdNum = i + 1;
-            copyEl.html("Area " + elIdNum);
+            
+            
+            //delete link stuff
+            
+            var elementId = idS[0] + "_" + idS[1];
+            var objId = idS[0];
+            var deleteLink = ' <a style="display: inline-block; float: right; background-color: black; color: white; padding: 3px;" href="#" onclick="submitLink(\'' 
+            	+ elementId + "', '" + objId + '\',1)">x</a>';
+            
+            
+            copyEl.html(deleteLink + "Area " + elIdNum);
+            
             copyEl.appendTo("#exednd_edit_container_" + idS[0]);
             var coordsAttr = $(this).attr("data-exednd-pos");
             var coordsParts = coordsAttr.split(",");
@@ -273,9 +284,30 @@ EXEDragNDrop.prototype = {
         $(".content_type_choiceholder SELECT").each(function() {
         	thisEl.updateAreaContentTypeFromSelect(this);
         });
+        
+        
+        
+        $(".exednd_area_feedback_typeholder SELECT").on("change", function(evt) {
+        	thisEl.updateFeedbackForArea(evt.target);
+        });
+        
+        $(".exednd_area_feedback_typeholder SELECT").each(function() {
+        	thisEl.updateFeedbackForArea(this);
+        });
+        
+    },
+    
+    updateFeedbackForArea : function(selectEl) {
+    	var currentVal = $(selectEl).val();
+    	var thisFieldId = $(selectEl).closest(
+			".exednd_area_feedback_typeholder").attr(
+					"data-content-type-fieldid");
+    	$(".exednd_area_feedbacktype_" + thisFieldId).hide();
+    	$("#exednd_area_feedback_" + currentVal + "_" + thisFieldId).show();
     },
     
     /**
+     * Hide content area types for those other than what is being used
      * 
      */
     updateAreaContentTypeFromSelect : function(selectEl) {

@@ -38,6 +38,8 @@ EXEFIELD_JQUERYUI_EFFECTLIST = [ ["blind" , x_("Blind")], ["bounce" , x_("Bounce
     ["pulsate", x_("Pulsate")], ["scale", x_("Scale")], ["shake", x_("Shake")], ["size", x_("Size")], ["slide", x_("Slide")], \
     ["transfer",  x_("Transfer")] ]
 
+EXEFIELD_CORRECT_FB_PROMPT = "Enter the feedback that will appear to the learner when the correct answer is chosen."
+
 """
 For different field types that we can show/hide have the complete string
 so that it can be translated without gender/word etc. difficulties

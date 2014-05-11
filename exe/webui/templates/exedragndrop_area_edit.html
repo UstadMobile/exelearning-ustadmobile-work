@@ -35,22 +35,33 @@
 	    </div>
 	    
 	    <div id='exednd_area_feedback_tab_${fieldid}'>
-	       ${feedbacktype}
 	       
-	       <div class='exednd_area_feedbacktabs' id='exednd_feedbacktabs'>
-		       <ul>
-		           <li style='margin-bottom: 0px; list-style-image: none;'><a href='#exednd_area_feedbackpositive_${fieldid}'>Correct</a></li>
-		           <li style='margin-bottom: 0px; list-style-image: none;'><a href='#exednd_area_feedbacknegative_${fieldid}'>Wrong</a></li>
-		       </ul>
-		       
-		       <div id='exednd_area_feedbackpositive_${fieldid}'>
-		           ${positivefeedback}
-	           </div>
-		       
-		       <div id='exednd_area_feedbacknegative_${fieldid}'>
-		           ${negativefeedback}
+	       <div class='exednd_area_feedback_typeholder' data-content-type-fieldid='${fieldid}'>
+	           ${feedbacktype}
+	       </div>
+	       
+	       <div id='exednd_area_feedback_question_${fieldid}' class='exednd_area_feedbacktype_${fieldid}'>
+                Feedback will be from question default (below)
+           </div>
+	       
+	       <div id='exednd_area_feedback_peranswer_${fieldid}' class='exednd_area_feedbacktype_${fieldid}'>
+		       <div class='exednd_area_feedbacktabs' id='exednd_feedbacktabs'>
+			       <ul>
+			           <li style='margin-bottom: 0px; list-style-image: none;'><a href='#exednd_area_feedbackpositive_${fieldid}'>Correct</a></li>
+			           <li style='margin-bottom: 0px; list-style-image: none;'><a href='#exednd_area_feedbacknegative_${fieldid}'>Wrong</a></li>
+			       </ul>
+			       
+			       <div id='exednd_area_feedbackpositive_${fieldid}'>
+			           ${positivefeedback}
+		           </div>
+			       
+			       <div id='exednd_area_feedbacknegative_${fieldid}'>
+			           ${negativefeedback}
+		           </div>
 	           </div>
            </div>
+           
+           
 	    </div>
 	    
 	    <div id='exednd_area_advanced_tab_${fieldid}'>

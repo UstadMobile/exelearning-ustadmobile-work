@@ -35,6 +35,7 @@ class DragNDropBlock(Block):
         
         for area_el in self.area_elements:
             area_el.process(request)
+            field_engine_check_delete(area_el, request, self.idevice.area_fields)
         
         
         field_engine_process_all_elements(self.main_elements, request)
