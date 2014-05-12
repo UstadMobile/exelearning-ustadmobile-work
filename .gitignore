@@ -28,3 +28,4 @@ testing.elp
 run-exe.py
 exe.dmg
 *.dmg
+*.deb
