@@ -163,6 +163,7 @@ if __name__ == "__main__":
 
     parser = prepareParser()
     options, args = parser.parse_args()
+    
 
     if options.x and options.i:
         parser.error(_(u'Options --export and --import are mutually \
@@ -201,6 +202,23 @@ exclusive.').encode(sys.stdout.encoding))
                 for name in names[:-1]:
                     obj = getattr(obj, name)
                 name = names[-1]
+                prop_type = type(getattr(obj, name))
+                     
+                print("Printing name and value..")
+                print(name)
+                print(value)
+                 
+                if(prop_type == bool):
+                    print("Property of current set option is boolean!")
+                    if(value == "False"):
+                        print("Boolean value set to False");
+                        value = False
+                    else:
+                        print("Boolean value set to True");
+                        value = True 
+                else:
+                    print("Not a boolean value")
+               
                 setattr(obj, name, value)
             pkg.save()
             if options.set_options_write:

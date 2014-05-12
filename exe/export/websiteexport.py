@@ -42,12 +42,14 @@ class WebsiteExport(object):
     """
     WebsiteExport will export a package as a website of HTML pages
     """
-    def __init__(self, config, styleDir, filename, prefix="", report=False, skipNavigation=False, ustadMobileMode=False):
+    def __init__(self, config, styleDir, filename, prefix="", report=False, skipNavigation=False, ustadMobileMode=False, ustadMobileTestMode=False):
+        #Added ustadMobileTestMode for Course Test Mode.
         """
         'stylesDir' is the directory where we can copy the stylesheets from
         'outputDir' is the directory that will be [over]written
         with the website
         """
+        
 
         self.config       = config
         self.imagesDir    = config.webDir/"images"
@@ -60,7 +62,8 @@ class WebsiteExport(object):
         self.prefix       = prefix
         self.report       = report
         self.skipNavigation = skipNavigation
-        self.ustadMobileMode = ustadMobileMode
+        self.ustadMobileMode = ustadMobileMode  
+        self.ustadMobileTestMode = ustadMobileTestMode  #Added for Course Test Mode
         self.styleSecureMode = config.styleSecureMode
 
         self.config          = config
@@ -317,6 +320,11 @@ class WebsiteExport(object):
             self.templatesDir.copylist(WebsitePage.getUstadMobileScriptList(), outputDir)
             self.templatesDir.copylist(WebsitePage.getUstadMobileCSSList(), outputDir)
             
+        if self.ustadMobileTestMode:        #Added for course test mode in eXe. 
+            print("in seld.ustadMobileTestMode")
+            self.templatesDir.copylist(WebsitePage.getUstadMobileTestScriptList(), outputDir)
+        else:
+            print("Outside of ustadMobileTestMode")
 
         if hasattr(package, 'exportSource') and package.exportSource:
             (G.application.config.webDir/'templates'/'content.xsd').copyfile(outputDir/'content.xsd')

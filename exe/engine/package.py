@@ -287,7 +287,8 @@ class Package(Persistable):
     Package represents the collection of resources the user is editing
     i.e. the "package".
     """
-    persistenceVersion = 12
+    #persistenceVersion = 12
+    persistenceVersion = 14 #used to be 12 before. +1-ed for course test mode.
     nonpersistant      = ['resourceDir', 'filename', 'previewDir']
     # Name is used in filenames and urls (saving and navigating)
     _name              = '' 
@@ -361,6 +362,8 @@ class Package(Persistable):
         self.mxmlheight = ""
         self.mxmlwidth = ""
         self.mxmlforcemediaonly = False
+        
+        self.ustadMobileTestMode = False    #Added for course test mode
         
         self.ustadMobileAutoOpen = False
         self.ustadMobileImageResizeStrategy = "scalefit"
@@ -1612,6 +1615,9 @@ class Package(Persistable):
     def upgradeToVersion13(self):
         if not hasattr(self, '_docType'):
             self._docType = G.application.config.docType
+            
+    def upgradeToVersion14(self):       #This version bump includes Course test mode in exe_do
+        self.ustadMobileTestMode = False
             
     def downgradeToVersion9(self):
         for attr in ['lomEs', 'lom', 'scowsinglepage', 'scowwebsite',
