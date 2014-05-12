@@ -42,18 +42,18 @@ class WebsitePage(Page):
     This class transforms an eXe node into a page on a self-contained website
     """
 
-    def save(self, outputDir, prevPage, nextPage, pages, ustadMobileMode = False, skipNavLinks = False):
+    def save(self, outputDir, prevPage, nextPage, pages, ustadMobileMode = False, ustadMobileTestMode = False, skipNavLinks = False):
         """
         This is the main function. It will render the page and save it to a
         file.  'outputDir' is the directory where the filenames will be saved
         (a 'path' instance)
         """
         outfile = open(outputDir / self.name+".html", "wb")
-        outfile.write(self.render(prevPage, nextPage, pages, ustadMobileMode = ustadMobileMode, skipNavLinks = skipNavLinks))
+        outfile.write(self.render(prevPage, nextPage, pages, ustadMobileMode = ustadMobileMode, ustadMobileTestMode = ustadMobileTestMode, skipNavLinks = skipNavLinks))
         outfile.close()
         
 
-    def render(self, prevPage, nextPage, pages, ustadMobileMode = False, skipNavLinks = False):
+    def render(self, prevPage, nextPage, pages, ustadMobileMode = False, ustadMobileTestMode = False, skipNavLinks = False):
         """
         Returns an XHTML string rendering this page.
         """
@@ -136,6 +136,12 @@ class WebsitePage(Page):
         
         if ustadMobileMode == True:
             html += WebsitePage.makeUstadMobileHeadElement(escape(self.node.titleLong))
+            
+        if ustadMobileTestMode == True:
+            print("if ustadMobileTestMode == True -> here")
+            html += WebsitePage.makeUstadMobileTestHeadElement(escape(self.node.titleLong))
+        else:
+            print("ustadMobileTestMode is False")
         
         if style.hasValidConfig:
             #html += style.get_extra_head()
@@ -423,6 +429,33 @@ class WebsitePage(Page):
         return html
     
     """
+    Make a header with all the needed scripts and stylesheets etc, for Test Mode.
+    make sure to get rid of main-wrapper extra padding
+    
+    To add JS/CSS files see getUstadMobileTestScriptList and getUstadMobileCSSList
+    respectively
+    """
+    @classmethod
+    def makeUstadMobileTestHeadElement(cls, title):
+        html = u""
+        html += """<style type='text/css'>
+                #main-wrapper { padding: 0px; }
+                </style>
+            """
+        for scriptName in WebsitePage.getUstadMobileTestScriptList():
+            html += "<script src=\"%s\" type=\"text/javascript\"></script>\n" \
+            % scriptName
+        for cssName in WebsitePage.getUstadMobileCSSList():
+            html += "<link type=\"text/css\" rel=\"stylesheet\" href=\"%s\"/>\n" \
+             % cssName
+        
+        html += """<meta name=\"viewport\" content=\"width=device-width, 
+            initial-scale=1\"/> \n"""
+        
+        return html
+    
+    
+    """
     Genetates a JQuery Mobile style div (div data-role=content)
     """
     @classmethod
@@ -502,6 +535,15 @@ class WebsitePage(Page):
         return ["ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile-1.3.2.min.js",\
                  "ustadmobile-common.js", "ustadmobile-constants.js",\
                  "ustadmobile-booklist.js", "jquery.touchSwipe.min.js"]
+    
+    """
+    List of .js files that are needed by UstadMobile TestMode pages
+    """
+    @classmethod
+    def getUstadMobileTestScriptList(cls):
+        #Temp: Qunit removed due to conflict with imagemapster - "qunit-1.12.0.js",  "ustadmobile-test.js", 
+        return [ "qunit-1.12.0.js",  "ustadmobile-test.js"]
+    
     
     """
     List of .css files that are needed by UstadMobile Pages

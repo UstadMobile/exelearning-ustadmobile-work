@@ -77,6 +77,8 @@ class XMLExport(WebsiteExport):
         """
         outputDir = self.filename
         currentOutputDir = Path(outputDir/package.name)
+        #Added for course test mode.
+        self.ustadMobileTestMode = package.ustadMobileTestMode
         
         #copy needed files
         if not outputDir.exists(): 
@@ -148,13 +150,18 @@ class XMLExport(WebsiteExport):
         thisPage = self.pages[0]
         
         for nextPage in self.pages[1:]:
+            #Added parameter for course test mode.
             thisPage.save(currentOutputDir, prevPage, nextPage, self.pages, \
-                          ustadMobileMode = True, skipNavLinks = True)
+                          ustadMobileMode = True, \
+                          ustadMobileTestMode = package.ustadMobileTestMode, \
+                          skipNavLinks = True)
             prevPage = thisPage
             thisPage = nextPage
         
         #the last page
+        #Added parameter for course test mode.
         thisPage.save(currentOutputDir, prevPage, None, self.pages, \
+                      ustadMobileTestMode = package.ustadMobileTestMode, \
                       ustadMobileMode = True, skipNavLinks = True)
         
         #now make filelists
