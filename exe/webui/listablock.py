@@ -26,6 +26,7 @@ import logging
 from exe.webui.block   import Block
 from exe.webui         import common
 from exe.webui.element import TextAreaElement, ElementWithResources
+import re
 import random
 
 
@@ -167,7 +168,8 @@ class ListaElement(ElementWithResources):
             # Render the iframe box
             common.formField('richTextArea', this_package, _('Text'),'',
                              self.editorId, self.field.instruc,
-                             self.field.encodedContent),
+                             self.field.encodedContent, 
+                             default_prompt = self.field.default_prompt),
             # Render our toolbar
             
             u'  <input type="button" value="%s" ' % _("Hide/Show Word"),
@@ -180,7 +182,8 @@ class ListaElement(ElementWithResources):
                             'clOtras'+self.id, '',
                             self.field.otrasInstruc,
                             self.field.otras,
-                            size=80),
+                            size=80, 
+                            default_prompt = "Enter additional words separated by ,"),
            
    
             u'</br></br>',
@@ -239,7 +242,9 @@ class ListaElement(ElementWithResources):
         for i, (text, missingWord) in enumerate(self.field.parts):
             if missingWord:
                 wordsarray.append([missingWord])
-        listaotras=self.field.otras.split('|')
+        
+        listaotras=re.compile(",|\|").split(self.field.otras)
+        
         for i, (missingWord) in enumerate(listaotras):
             if missingWord:
                 listaotras2.append([missingWord])
@@ -383,10 +388,15 @@ class ListaBlock(Block):
         Renders a screen that allows the user to enter paragraph text and choose
         which words are hidden.
         """
+        title_text = self.idevice.title
+        if title_text == _("DropDown Activity"):
+            title_text = ""
+        
         html = [
             u'<div class="iDevice">',
             u'<div class="block">',
-            common.textInput("title"+self.id, self.idevice.title),
+            common.textInput("title"+self.id, title_text,
+                             default_prompt = "Type your title here"),
             u'</div>',
             self.instructionElement.renderEdit(),
             self.listaElement.renderEdit(),

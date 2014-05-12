@@ -50,16 +50,11 @@ tinyMCE.init({
 				}
 				heightSet = parseInt(heightSet);
 				var margin = Math.round(heightSet/2);
-				var width = $("#" + ed.id)
+				//var width = $("#" + ed.id)
 				
-				$('#' + ed.id).after(
-					"<div id='" + ed.id + "_defaultprompt' "
-					+ " class='default_prompt_mceoverlay' "
-					+ " onclick='hideTinyMCEOverlay(\"" + ed.id + "\")' "
-					+ "style='z-index: 10; position: absolute; width: 900px; "
-					+ "text-align: center; margin-top : " + margin + "px;'>"
-					+ defaultPrompt + "</div>");
-				
+				var overLayDivHTML =  makeOverlayDiv(ed.id, 900, margin, 0, 
+						defaultPrompt, "center");
+				$('#' + ed.id).after(overLayDivHTML);
 			}
 		});
 		 ed.onEvent.add(function(ed, e) {
@@ -67,7 +62,7 @@ tinyMCE.init({
 	         var textArea = $("#" + ed.id);
 	         if(e.type && (e.type == "keypress" || e.type == "click")) {
 		         if(textArea.hasClass("defaultpromptactive")) {
-		        	 hideTinyMCEOverlay(ed.id);
+		        	 hideDefaultPromptOverlay(ed.id);
 		         }
 	         }
 	      });	

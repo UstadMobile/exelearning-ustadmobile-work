@@ -135,12 +135,20 @@ class ListaIdevice(Idevice):
             x_(u"""<p>Enter the text for the dropdown activity in to the dropdown field 
 by either pasting text from another source or by typing text directly into the 
 field.</p><p> To select words to choose, double click on the word to select it and 
-click on the 'Hide/Show' button below.</p>"""))
+click on the 'Hide/Show' button below.</p>"""), 
+                   default_prompt = x_("""Enter the complete text here, 
+                   then hilight and click Hide/Show Word on the words
+                   you want the learner to fill in.  In each blank
+                   space will be a dropdown menu with a list of hidden
+                   words to choose from."""))
         self._content.idevice = self
         self._content.otras=''
         self.feedback = TextAreaField(x_(u'Feedback'),
             x_(u'Enter any feedback you wish to provide the learner '
-                'with-in the feedback field. This field can be left blank.'))
+                'with-in the feedback field. This field can be left blank.'),
+            default_prompt = x_("""Enter feedback to show the learner 
+                     after completion here.  It will be shown regardless
+                     of their score"""))
         self.feedback.idevice = self
         self.emphasis = Idevice.SomeEmphasis
         #self.systemResources += ["common.js"]
@@ -332,11 +340,12 @@ class ListaField(FieldWithResources):
     # these will be recreated in FieldWithResources' TwistedRePersist:
     nonpersistant      = ['content', 'content_wo_resourcePaths']
 
-    def __init__(self, name, instruc):
+    def __init__(self, name, instruc, default_prompt = ""):
         """
         Initialise
         """
-        FieldWithResources.__init__(self, name, instruc)
+        FieldWithResources.__init__(self, name, instruc, 
+                                    default_prompt = default_prompt)
         self.parts = []
         self._encodedContent = ''
         self.rawContent = ''

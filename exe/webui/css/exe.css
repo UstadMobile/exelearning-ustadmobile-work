@@ -193,6 +193,7 @@ body:after{content:url(../images/exe_lightbox_close.png) url(../images/exe_light
 .default_prompt_mceoverlay {
     font-weight: bold;
     font-style: italic;
+    color: #888;
 } 
 
 .edit_inline_hint {
