@@ -183,7 +183,7 @@ class ListaElement(ElementWithResources):
                             self.field.otrasInstruc,
                             self.field.otras,
                             size=80, 
-                            default_prompt = "Enter additional words separated by ,"),
+                            default_prompt = "Enter additional words for learners to select from separated by ,"),
            
    
             u'</br></br>',

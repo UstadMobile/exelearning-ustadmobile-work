@@ -288,7 +288,7 @@ def textArea(name, value="", disabled="", cols="80", rows="8"):
     return html
 
 
-def richTextArea(name, value="", width="100%", height=100, package=None, default_prompt = None): #Original width="100%"
+def richTextArea(name, value="", width="100%", height=100, package=None, default_prompt = None, default_text = None): #Original width="100%"
     """Adds a editor to a form"""
     log.debug(u"richTextArea %s, height=%s" % (value, height))
     # to counter TinyMCE's ampersand-processing:
@@ -304,12 +304,20 @@ def richTextArea(name, value="", width="100%", height=100, package=None, default
     #print("The width is: " + width) #Testing..
     default_prompt_class = ""
     default_prompt_attr = ""
+    default_text_attr = ""
+    
     if default_prompt is not None and default_prompt != "" and value == "":
         default_prompt_class = " defaultprompt defaultpromptactive"
         default_prompt_attr = "data-defaultprompt='%s' " \
             % default_prompt
+    
+    if default_text is not None and default_text != "":
+        default_text_attr = " data-defaulttext='%s' " % \
+            default_text
+    
     html += u'class="mceEditor %s" %s ' % (default_prompt_class, \
                                            default_prompt_attr)
+    html += default_text_attr
     html += u'cols="52" rows="8">'
     ########
     # add exe_tmp_anchor tags 
@@ -358,7 +366,7 @@ def image(name, value, width="", height="", alt=None):
     if alt is None:
         alt = name
     log.debug(u"image %s" % value)
-    html  = u"<img height='32' width='32' id=\"%s\" " % name #Added height="32" width="32"
+    html  = u"<img id=\"%s\" " % name
     html += u'alt="%s" ' % alt
     if width:
         html += u"width=\"%s\" " % width
@@ -477,7 +485,7 @@ def submitImage(action, object_, imageFile, title=u"", isChanged=1, relative=Fal
         relativeText = u'style="position:relative;z-index:100000"'
     html  = u'<a %s' % titleText
     html += u' href="#" onclick="%s" %s>' % (onclick, relativeText)
-    html += u'<img alt="%s" height="32" width="32" class="submit" src="%s"/>' % (title, imageFile) #Added height="42" width="42"
+    html += u'<img alt="%s" class="submit" src="%s"/>' % (title, imageFile) #Added height="42" width="42"
     html += u'</a>\n' 
     return html
 
@@ -491,7 +499,7 @@ def insertSymbol(name, image, title, string, text ='', num=0):
     html += u'title="%s">' % title
     html += text
     if image <> "":
-        html += u'<img alt="%s" height="32" width="32" src="%s"/>' % ('symbol', image) #Added height="32" width="32"
+        html += u'<img alt="%s" src="%s"/>' % ('symbol', image) 
     html += u'</a>\n' 
     return html
 
@@ -507,7 +515,7 @@ def confirmThenSubmitImage(message, action, object_, imageFile,
     html += " href=\"#\" "
     html += "onclick=\"confirmThenSubmitLink('"+re.escape(message)+"', '"+action+"', "
     html += "'"+object_+"', "+unicode(isChanged)+");\" >"
-    html += u'<img alt="%s" height="32" width="32" class="submit" src="%s"/>' % (title, imageFile) #Added height="32" width="32"
+    html += u'<img alt="%s" class="submit" src="%s"/>' % (title, imageFile) 
     html += u'</a>\n' 
     return html
 
@@ -556,7 +564,7 @@ def elementInstruc(instruc, imageFile="help.gif", label=None):
         html += u'</a>\n'
         html += u'<div id="i%s" style="display:none;">' % id_
         html += u'<div style="float:right;" >'
-        html += u'<img height="32" width="32" alt="%s" ' % _("Close") #Added height="32" width="32"
+        html += u'<img alt="%s" ' % _("Close") 
         html += u'src="/images/stock-stop.png" title="%s" ' % _("Close")
         html += u' onmousedown="Javascript:hideMe();"/></div>'
         html += u'<div class="popupDivLabel">%s</div>%s' % (label, instruc)

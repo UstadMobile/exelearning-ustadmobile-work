@@ -10,9 +10,14 @@ $(function() {
  */
 function setupTextPrompts() {
 	$(".defaultprompt").each(function() {
+		
+		var defaultText = $(this).attr("data-defaulttext");
+		if(typeof defaultText !== 'undefined' && $(this).val() == "") {
+			$(this).val(defaultText);
+		}
+		
 		if(!$(this).hasClass("mceEditor")) {
 			if($(this).val() == "") {
-				//$(this).val($(this).attr("data-defaultprompt"));
 				var overlayDiv = makeOverlayDiv($(this).attr("id"), 
 						800, 2, 6, $(this).attr("data-defaultprompt"),
 						"left");

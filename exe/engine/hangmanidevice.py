@@ -39,6 +39,7 @@ from exe.engine.field   import ImageField
 from exe.engine.field   import TextField
 from exe.engine.path      import Path, toUnicode
 from exe.engine.resource  import Resource
+from exe.engine.extendedfieldengine import *
 
 log = logging.getLogger(__name__)
 
@@ -49,18 +50,24 @@ class HangmanIdeviceInc(Idevice):
     
     def __init__(self, content=""):
         Idevice.__init__(self, x_(u"Hangman Game"), 
-                         x_(u"Mike Dawson, Toughra Technologies FZ LLC"), 
+                         x_(u"Mike Dawson, UstadMobile Ltd"), 
                          x_(u"""Hangman style word game with customizable images."""), "", "")
         self.emphasis = Idevice.SomeEmphasis
         self.short_desc = x_("Student has to guess letters from alphabet from a hint to complete word.  Each wrong letter guessed gets the student closer to losing a life")
         self.message = ""
         
-        self.titleField = TextField(x_("Title"), x_("Title"))
+        self.titleField = TextField(x_("Title"), x_("Title"),
+                                    default_prompt = x_("Type your title here"))
 
         self.chanceImageFields = []
         self.content  = TextAreaField(x_(u"Instructions"), 
-                                      x_(u"Instructions for Game."), 
-                                      content)
+                                      x_(u"Instructions for Game."), content,
+                                      default_prompt = x_("""
+                          Enter the instructions for the
+                          student here<br/>E.g. Guess the 
+                          word from the hint and click on
+                           letters you think are in the word.""") 
+                                      )
         self.content.idevice = self
 
         #the words that the player will have to guess
@@ -70,8 +77,14 @@ class HangmanIdeviceInc(Idevice):
         self.hintTextFields = []
 
         self.content.idevice = self
-        self.addChance()
-        self.addWord()
+        for count in range(0,4):
+            self.addChance(defaultImagePath="hangman%s.gif" % str(count))
+            #self.addChance()
+        
+        #add two words
+        for count in range(0,2):
+            self.addWord()
+        
 
         #the alphabet (available letters)
         self.alphabet = TextField(x_(u"Alphabet to Select From"), x_(u"Alphabet to show players"), \
@@ -107,16 +120,24 @@ class HangmanIdeviceInc(Idevice):
 
     def _initNewAlerts(self):
         self.wrongGuessMessageField = TextAreaField(x_(u"Wrong Guess Message"), \
-                x_(u"Player will see this message when they guess a letter wrong"), "")
+                x_(u"Player will see this message when they guess a letter wrong"), "",
+                default_prompt =  x_("""Enter here the message the player
+                 will see when they make a wrong letter guess"""))
         self.wrongGuessMessageField.idevice = self
         self.lostLevelMessageField = TextAreaField(x_(u"Lost Level Message"), \
-                x_(u"Player will see this message when they loose the level"), "")
+                x_(u"Player will see this message when they loose the level"), "",
+                default_prompt =  x_("""Enter here the message the player
+                 will see when they have used up all their chances"""))
         self.lostLevelMessageField.idevice = self
         self.levelPasssedMessageField = TextAreaField(x_(u"Level Passed Message"), \
-                x_(u"Player will see this message when they guess the word correctly"), "")
+                x_(u"Player will see this message when they guess the word correctly"), "",
+                default_prompt =  x_("""Enter here the message the player
+                 will see when they successfully complete a word"""))
         self.levelPasssedMessageField.idevice = self
         self.gameWonMessageField = TextAreaField(x_(u"Game Won Message"), \
-                x_(u"Player will see this message when they guess all words correctly"), "")
+                x_(u"Player will see this message when they guess all words correctly"), "",
+                default_prompt =  x_("""Enter here the message the player
+                 will see when they have guessed all the words on the list"""))
         self.gameWonMessageField.idevice = self
 
 
@@ -139,17 +160,25 @@ class HangmanIdeviceInc(Idevice):
 
 
     #Adds a chance and image for the player
-    def addChance(self):
-        newLevelImageField = ImageField(x_(u"chance"), u"")
+    def addChance(self, defaultImagePath = None):
+        newLevelImageField = ImageField(x_(u"Image for this chance"), u"")
         newLevelImageField.idevice = self
+        if defaultImagePath is not None:
+            newLevelImageField.defaultImage = \
+                str(field_engine_get_template_absolute_path(
+                                                    defaultImagePath)) 
+        
         self.chanceImageFields.append(newLevelImageField)
 
     #adds a word to the list of those to guess
     def addWord(self):
-        newWordTextField = TextField(x_(u"Word to Guess"), x_(u"Word To Guess"), "")
-        newWordTextField.idevice = self
-        newWordHintField = TextField(x_(u"Hint to Show User"), x_(u"Hint for Word"), "")
+        newWordHintField = TextField(x_(u"Hint to Show User"), x_(u"Hint for Word"), 
+                                     default_prompt = "Hint the user will see e.g. Red Fruit")
         newWordHintField.idevice = self
+        
+        newWordTextField = TextField(x_(u"Word to Guess"), 
+                             x_(u"Word To Guess"), "", default_prompt = "Word the user has to guess - e.g. Apple")
+        newWordTextField.idevice = self
         self.wordTextFields.append(newWordTextField)
         self.hintTextFields.append(newWordHintField)
     

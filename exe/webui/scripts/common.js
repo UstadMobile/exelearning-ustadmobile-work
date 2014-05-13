@@ -175,7 +175,9 @@ function playPositiveFeedbackDefault() {
     //play positive feedback sound
     var sndToPlayIndex = Math.floor(Math.random() * 3);
     var audioElementToPlay = document.getElementById("exesfx_good" + sndToPlayIndex);
-    playAndReset(audioElementToPlay);
+    if(audioElementToPlay != null) {
+    	playAndReset(audioElementToPlay);
+    }
 }
 
 /*
@@ -183,7 +185,9 @@ function playPositiveFeedbackDefault() {
 */
 function playNegativeFeedbackDefault() {
     var audioElementToPlay = document.getElementById("exesfx_wrong");
-    playAndReset(audioElementToPlay);
+    if(audioElementToPlay != null) {
+    	playAndReset(audioElementToPlay);
+    }
 }
 
 function playClickSound() {
@@ -328,7 +332,7 @@ function getFeedback(optionId, optionsNum, ideviceId, mode) {
     	
     	if(mode == 'multi') {
     		var tinCanDefinition = JSON.parse($("#tcdef_"+ideviceId).text()); 
-    		var tinCanAnsMap = JSON.parse($("#tc_ansmap_"+ideviceId).Text()); 
+    		var tinCanAnsMap = JSON.parse($("#tc_ansmap_"+ideviceId).text()); 
     		getEXETinCanInstance().makeMCQTinCanStatement(
     				tinCanDefinition,ideviceId, tinCanAnsMap[optionId]['id'], 
     				tinCanAnsMap[optionId]['iscorrect']);
@@ -1551,4 +1555,19 @@ if (typeof jQuery != 'undefined') {
 	$(function(){
 		$exe.init();
 	});
+}
+
+/** 
+ * Utility function to get rid of white space
+ */
+function exeUtilRemoveWhiteSpace(str) {
+	
+	/*var whiteSpace = [' ', '\n', '\r', '\t'];
+	for(currentChar in whiteSpace) {
+		str = str.replace(currentChar, '');
+	}*/
+	
+	str =str.replace(/\s+/g, ''); 
+	
+	return str;
 }

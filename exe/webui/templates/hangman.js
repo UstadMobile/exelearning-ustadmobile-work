@@ -78,9 +78,9 @@ function makeDisplayWord(gameId) {
         var actualWord = hangman_words[gameId][currentWord[gameId]][0];
         var wordForDisplay = "";
         for (var i = 0; i < actualWord.length; i++) {
-                var currentLetter = actualWord.charAt(i);
+                var currentLetter = new String(actualWord.charAt(i)).toLowerCase();
                 if(currentLetter == ' ' || lettersGuessed[gameId].indexOf(currentLetter) != -1) {
-                        wordForDisplay += currentLetter;
+                        wordForDisplay += actualWord.charAt(i);
                 }else {
                         wordForDisplay += '-';
                 }
@@ -151,7 +151,9 @@ function restartLevel(gameId) {
 function guess(gameId, letter, domId) {
         var buttonDomElement = document.getElementById(domId);
         var newStyle = "";
-        if(hangman_words[gameId][currentWord[gameId]][0].indexOf(letter) != -1) {
+        var wordLowerCase = hangman_words[gameId][currentWord[gameId]][0].toLowerCase();
+         
+        if(wordLowerCase.indexOf(letter) != -1) {
                 //correct guess
                 lettersGuessed[gameId] += letter;
                 updateWordArea(gameId);

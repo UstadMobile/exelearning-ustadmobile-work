@@ -267,11 +267,17 @@ class HangmanBlockInc(Block):
         for imgElement in self.chanceImageElements:
             if imgElement.field.imageResource and imgElement.field.imageResource is not None:
                 html += "<div id='hangman" + self.id + "img" + imgElement.id + "' style='display: none'>"
+                img_str = None
             
                 if mode == "view":
-                    html += imgElement.renderView()
+                    img_str = imgElement.renderView() 
                 else:       
-                    html += imgElement.renderPreview()
+                    img_str = imgElement.renderPreview()
+                
+                #make it stay within what it should do on a phone
+                img_str = img_str[:4] + " style='max-width: 100%' " + img_str[4:]
+                
+                html += img_str
                 html += "</div>"
        
         html += "</div>"
@@ -280,7 +286,8 @@ class HangmanBlockInc(Block):
         gameWidth = max(600, imgMaxWidth)
         gameAreaHTML = """
 <div id="%(gameId)s_gamearea" style='width: %(width)dpx;' class='exehangman_gamearea'>
-        <div class='exehangman_alertarea' id="%(gameId)s_alertarea" style='position: absolute; z-index: 10; text-align: center; border: 1px; background-color: white; width: %(width)dpx; margin-top: %(messagetopmargin)dpx; visibility: hidden'>
+        <div class='exehangman_alertarea' id="%(gameId)s_alertarea" 
+        style='position: absolute; z-index: 10; text-align: center; border: 1px; background-color: white; width: %(width)dpx; margin-top: %(messagetopmargin)dpx; visibility: hidden'>
         &#160;
         </div>
         <div id="%(gameId)s_imgarea" style='height: %(height)dpx; z-index: 1;' class='exehangman_imgarea'>
@@ -311,8 +318,58 @@ class HangmanBlockInc(Block):
         html  = u"<div>\n"
         html += common.ideviceShowEditMessage(self)
         
+        html += """<div class='edit_inline_hint'>The Hangman activity 
+        creates a game where the learner has to guess the letters in a
+        word from a hint.  Everytime a letter is guessed incorrectly they
+        lose a life, represented by an image (e.g. a series of pictures
+        with less and less apples on a tree)
+        </div>
+        """
         
         html += self.titleElement.renderEdit()
+        
+        #show words to be guessed
+        html += _("<h2>Words to Guess</h2>")
+        for wordIndex in range(0, len(self.wordElements)):
+            html += "<div class='idevice_item_container' style='width: 500px;'>"
+            word = self.wordElements[wordIndex]
+            
+            html += "<table width='99%'><tr><td valign='top'>"
+            html += "<strong>"
+            html += _("Word %s" % str(wordIndex+1))
+            html += "</strong>"
+            html += self.hintElements[wordIndex].renderEdit()
+            html += word.renderEdit()
+            html += "</td><td valign='top' style='text-align: right'>"
+            if wordIndex > 0:
+                html += common.submitImage(word.id, word.field.idevice.id, 
+                                   "/images/stock-cancel.png",
+                                   _("Remove This Word")) + "<br/>"
+            html += "</td></tr></table>"
+            html += "</div>"
+        html += common.submitButton("addWord"+unicode(self.id),\
+                         _("Add Word"), extra_classes="add_item_button")
+        
+        #render edit of these images
+        for img_count in range(0, len(self.chanceImageElements)):
+            imgElement = self.chanceImageElements[img_count]
+            html += "<div class='idevice_item_container' style='width: 700px;'>"
+            html += "<table><tr><td valign='top'>"
+            html += "<strong>"
+            html += "Chance %s" % str(img_count+1)
+            html += "</strong>"
+            html += imgElement.renderEdit()
+            html += "</td><td valign='top' style='text-align: right'>"
+            html += common.submitImage(imgElement.id, imgElement.field.idevice.id, 
+                                   "/images/stock-cancel.png",
+                                   _("Remove This Chance"))
+            html += "</td></tr></table>"
+            html += "</div>"
+            
+        addChanceButtonLabel = _("Add Chance")
+        html += common.submitButton("addChance"+unicode(self.id), \
+                            addChanceButtonLabel, extra_classes="add_item_button")     
+        
         html += self.contentElement.renderEdit()
         html += self.alphabetElement.renderEdit()
 
@@ -342,30 +399,12 @@ class HangmanBlockInc(Block):
         html += self.resetButtonStyleElement.renderEdit()
         html += "</div>"
         
-        #render edit of these images
-        for imgElement in self.chanceImageElements:
-            html += imgElement.renderEdit()
-            html += common.submitImage(imgElement.id, imgElement.field.idevice.id, 
-                                   "/images/stock-cancel.png",
-                                   _("Remove This Life")) + "<br/>"
+        
 
-        addChanceButtonLabel = _("Add Chance")
-        html += common.submitButton("addChance"+unicode(self.id), addChanceButtonLabel)
+        
         html += "<br/>"
 
-        #show words to be guessed
-        html += _("<h2>Words to Guess</h2>")
-        for wordIndex in range(0, len(self.wordElements)):
-            word = self.wordElements[wordIndex]
-            html += word.renderEdit()
-            html += self.hintElements[wordIndex].renderEdit()
-            html += "<br/>"
-            if wordIndex > 0:
-                html += common.submitImage(word.id, word.field.idevice.id, 
-                                   "/images/stock-cancel.png",
-                                   _("Remove This Word")) + "<br/>"
-        
-        html += common.submitButton("addWord"+unicode(self.id), _("Add Word"))        
+           
         html += "<br/>"
         html += self.renderEditButtons()
         html += u"</div>\n"

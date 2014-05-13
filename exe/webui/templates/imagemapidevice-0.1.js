@@ -42,11 +42,20 @@ ImageMapIdevice.prototype = {
     handleClick : function(data) {
         var key = data.key;
         var ideviceId = key.substring(0, key.indexOf("_"));
-        /*
-        $("#imagemapidevice_img_" + ideviceId).mapster("set_options", {"showToolTip" : "true"});
-        var exprMe = '$("#imagemapidevice_img_ ' + ideviceId +'").mapster("tooltip", "' + key + '")';
-        setTimeout(exprMe, 100);
-        */
+        var tipHasContents = true;
+        var tipContents = $("#imageMapToolTip_" +ideviceId + "_"
+        		+ key).text();
+        tipContents = exeUtilRemoveWhiteSpace(tipContents);
+        if(tipContents.length == 0) {
+        	var numImg = $("#imgmap_area_" + key + " img").length;
+        	var numVideo = $("#imgmap_area_" + key + " video").length
+        	tipHasContents = (numImg > 0 || numVideo > 0);
+        }
+        
+        /*Show tips only if they are not blank*/
+        if(tipHasContents) {
+        	$("#imagemapidevice_img_" + ideviceId).mapster("tooltip", key);
+        }
         
         //find media to play
         var elementId = "imageMapToolTip_" + ideviceId + "_" + key;
@@ -56,7 +65,7 @@ ImageMapIdevice.prototype = {
             playAndReset(audioElements[i]);
         }
         
-        return true;
+        return false;
     },
     
     

@@ -215,3 +215,11 @@ body:after{content:url(../images/exe_lightbox_close.png) url(../images/exe_light
 .exednd_imgholder IMG {
 	display: none;
 }
+
+/*
+Used in some instances where idevices have a list of items in them
+*/
+.idevice_item_container {
+	border: 1px solid #888;
+	margin-bottom: 10px;
+}

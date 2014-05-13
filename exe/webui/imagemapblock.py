@@ -194,6 +194,7 @@ class ImageMapAreaElement(Element):
         field_id = self.field.id
         coords = self.field.main_fields.fields['coords'].content
         html = """<area shape='rect' alt='%(field_id)s' 
+            id='imgmap_area_%(field_id)s'
             coords='%(coords)s' data-key='%(field_id)s' href='#'/>
         """ % {'field_id' : field_id, 'coords' : coords}
         

@@ -175,7 +175,9 @@ function playPositiveFeedbackDefault() {
     //play positive feedback sound
     var sndToPlayIndex = Math.floor(Math.random() * 3);
     var audioElementToPlay = document.getElementById("exesfx_good" + sndToPlayIndex);
-    playAndReset(audioElementToPlay);
+    if(audioElementToPlay != null) {
+    	playAndReset(audioElementToPlay);
+    }
 }
 
 /*
@@ -183,7 +185,9 @@ function playPositiveFeedbackDefault() {
 */
 function playNegativeFeedbackDefault() {
     var audioElementToPlay = document.getElementById("exesfx_wrong");
-    playAndReset(audioElementToPlay);
+    if(audioElementToPlay != null) {
+    	playAndReset(audioElementToPlay);
+    }
 }
 
 function playClickSound() {
@@ -1551,4 +1555,12 @@ if (typeof jQuery != 'undefined') {
 	$(function(){
 		$exe.init();
 	});
+}
+
+/** 
+ * Utility function to get rid of white space
+ */
+function exeUtilRemoveWhiteSpace(str) {
+	str =str.replace(/\s+/g, ''); 
+	return str;
 }
