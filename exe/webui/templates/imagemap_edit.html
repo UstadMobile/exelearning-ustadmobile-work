@@ -1,0 +1,31 @@
+<script type='text/javascript' src='/scripts/jquery-ui-1.10.4.custom.min.js'></script>
+
+<script src="/scripts/imagemapidevice.js" type="text/javascript">
+</script>
+
+${title}
+
+${instructions}
+
+<div class='exeimgmap_imgholder' id='exeimgmap_imgholder_${ideviceid}'>
+    ${mapImg}
+</div>
+
+<map name="imagemapidevice_map_${ideviceid}" id="imagemapidevice_map_${ideviceid}" data-exeimgmap-id="${ideviceid}">
+    ${map_areas_html}
+</map>
+
+<div id='exeimgmap_edit_mastercontainer_${ideviceid}' 
+    style='width: ${mapImg_imgwidth}px;height: ${mapImg_imgheight}px; border: 1px solid red;'>
+    <div class="exeimgmap_edit_container" 
+         id='exeimgmap_edit_container_${ideviceid}' 
+         data-exedndid='${ideviceid}' data-imgfieldid='${mapImg_fieldid}'
+         style='position: relative; width: ${mapImg_imgwidth}px;height: ${mapImg_imgheight}px;'>
+         
+         <img src="${mapImg_imgsrc}" id='imagemapidevice_img_${ideviceid}' class="imagemapidevice_img"
+            data-exeimgmap-id='${ideviceid}' 
+            style='position: absolute; z-index -1; width: ${mapImg_imgwidth}px; height: ${mapImg_imgheight}px'/> 
+            
+    </div>
+</div>
+

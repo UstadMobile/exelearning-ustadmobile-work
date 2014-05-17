@@ -306,7 +306,7 @@ def richTextArea(name, value="", width="100%", height=100, package=None, default
     default_prompt_attr = ""
     default_text_attr = ""
     
-    if default_prompt is not None and default_prompt != "" and value == "":
+    if default_prompt is not None and default_prompt != "":
         default_prompt_class = " defaultprompt defaultpromptactive"
         default_prompt_attr = "data-defaultprompt='%s' " \
             % default_prompt

@@ -31,10 +31,13 @@ class ImageMapIdevice(Idevice):
         
         mainFieldOrder = ["title", "instructions", "mapImg"]
         mainFieldsInfo = \
-            {'title' : ['text', x_('Title'), x_('Title')],\
-             'instructions' : ['textarea', x_('Instructions to show'), \
-                               x_('Instructions')],\
-             'mapImg' : ['image', x_('Image'), x_('Use for map background') ]
+            {'title' : ['text', x_('Title'), x_('Title'),
+                        {"defaultprompt" : x_("Type your title here")}],
+             'instructions' : ['textarea', x_('Instructions to show'), 
+                               x_('Instructions'), 
+                               {"defaultprompt" : "Enter instructions for the students here"}],
+             'mapImg' : ['image', x_('Image'), x_('Use for map background'),
+                         {"defaultval" : "imagemap_defaultbg.png" } ]
              }
         
         self.mainFieldSet = ExtendedFieldSet(self, mainFieldOrder, mainFieldsInfo)
@@ -43,7 +46,7 @@ class ImageMapIdevice(Idevice):
         #The areas with coordinates
         self.map_areas = []
         
-        self.add_map_area()
+        self.add_map_area(num_areas_to_add=2)
         
     """
     Get the scripts that we need 
@@ -66,8 +69,13 @@ class ImageMapIdevice(Idevice):
             (gameScriptFile.md5 not in self.parentNode.package.resources):
                 Resource(self, gameScriptFile)
         
-    def add_map_area(self):
-        self.map_areas.append(ImageMapAreaField(self))
+    def add_map_area(self, num_areas_to_add = 1):
+        default_width = 100
+        for count in range(0, num_areas_to_add):
+            base_coord = (count * 100)+10
+            coords = "%(b)s,%(b)s,%(x)s,%(x)s" % {'b' : str(base_coord),
+                                          'x' : str(base_coord+100)}
+            self.map_areas.append(ImageMapAreaField(self,coords=coords))
         
     def get_img_filename(self):
         """Return the filename of the image we use for area map, None if no image loaded
@@ -89,7 +97,7 @@ class ImageMapAreaField(Field):
     
     persistenceVersion = 1
     
-    def __init__(self, idevice):
+    def __init__(self, idevice, coords=""):
         Field.__init__(self, x_("Image Map Area"), x_("Image Map Area"))
         self.idevice = idevice
         
@@ -98,7 +106,8 @@ class ImageMapAreaField(Field):
            'tooltip' : ['textarea', x_('Popup tooltip'), x_('Popup tooltip')],\
            'shape' : ['choice', x_('Area Shape'), x_('Area Shape'),\
                                 {'choices' : [['rect', x_('Rectangle')] ] }],\
-           'coords' : ['text', "Coordinates", "Coordinates"]\
+           'coords' : ['text', "Coordinates", "Coordinates",
+                       {"defaultval" : coords}]\
                        }
         
         self.main_fields = ExtendedFieldSet(self.idevice, \

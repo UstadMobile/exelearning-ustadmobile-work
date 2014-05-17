@@ -55,17 +55,21 @@ tinyMCE.init({
 				var overLayDivHTML =  makeOverlayDiv(ed.id, 900, margin, 0, 
 						defaultPrompt, "center");
 				$('#' + ed.id).after(overLayDivHTML);
+				checkMceEditorDefaultOverlay(ed);
 			}
 		});
 		 ed.onEvent.add(function(ed, e) {
-	         console.log('Editor event ' + ed.id + ' occured on: ' + e.target.nodeName + " : " + e.type);
-	         var textArea = $("#" + ed.id);
-	         if(e.type && (e.type == "keypress" || e.type == "click")) {
-		         if(textArea.hasClass("defaultpromptactive")) {
-		        	 hideDefaultPromptOverlay(ed.id);
-		         }
+	         console.log('Editor event ' + ed.id + ' occured on: ' 
+	        		 + e.target.nodeName + " : " + e.type);
+	         if(e.type && e.type == "keyup") {
+	        	 checkMceEditorDefaultOverlay(ed);
 	         }
-	      });	
+	    });
+		 
+		 ed.onChange.add(function(ed, o) {
+	           // Replaces all a characters with b characters
+	           checkMceEditorDefaultOverlay(ed);
+	     });
 		
 		ed.onInit.add(function(ed, e) {
 			$exeAuthoring.countBase64(ed);

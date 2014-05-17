@@ -223,3 +223,8 @@ Used in some instances where idevices have a list of items in them
 	border: 1px solid #888;
 	margin-bottom: 10px;
 }
+
+/* Image Map Idevice Editing: hide the image, it is shown in another editor */
+.exeimgmap_imgholder IMG {
+	display: none;
+}

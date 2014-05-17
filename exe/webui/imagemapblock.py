@@ -55,7 +55,20 @@ class ImageMapBlock(Block):
         """
         html  = u"<div>\n"
         html += common.ideviceShowEditMessage(self)
-        html += self.idevice.mainFieldSet.renderEditInOrder(self.mainElements)
+        #html += self.idevice.mainFieldSet.renderEditInOrder(self.mainElements)
+        
+        map_areas_html = ""
+        for map_area in self.map_area_elements:
+            map_areas_html += map_area.get_area_element()
+            
+         
+        main_dict = self.idevice.mainFieldSet.getRenderDictionary(\
+                         self.mainElements, "", True, editMode = True)
+        main_dict['map_areas_html'] = map_areas_html
+        
+        html += self.idevice.mainFieldSet.applyFileTemplateToDict(main_dict, \
+            "imagemap_edit.html", True)
+        
         
         for area_element in self.map_area_elements:
             html += area_element.renderEdit()
@@ -185,20 +198,24 @@ class ImageMapAreaElement(Element):
     def renderEdit(self):
         html = u""
         
-        html += self.make_crop_selector()
+        #html += self.make_crop_selector()
         html += self.field.main_fields.renderEditInOrder(self.elements)
         
         return html
     
     def get_area_element(self):
         field_id = self.field.id
+        coords_text_field_id = self.field.main_fields.fields['coords'].id
         coords = self.field.main_fields.fields['coords'].content
         html = """<area shape='rect' alt='%(field_id)s' 
             id='imgmap_area_%(field_id)s'
+            data-coords-fieldid='%(coords_text_field_id)s'
             coords='%(coords)s' data-key='%(field_id)s' href='#'/>
-        """ % {'field_id' : field_id, 'coords' : coords}
+        """ % {'field_id' : field_id, 'coords' : coords,
+               'coords_text_field_id' : coords_text_field_id}
         
         return html
+    
     
     def get_tooltip(self, preview_mode = False):
         html = u""

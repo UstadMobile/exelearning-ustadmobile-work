@@ -3619,7 +3619,7 @@ class QuizOptionField(Field):
 
     persistenceVersion = 1
 
-    def __init__(self, question, idevice, name="", instruc=""):
+    def __init__(self, question, idevice, name="", instruc="", answer_prompt = "", feedback_prompt = ""):
         """
         Initialize 
         """
@@ -3629,11 +3629,13 @@ class QuizOptionField(Field):
         self.idevice = idevice
 
         self.answerTextArea = TextAreaField(x_(u'Option'), 
-                                  idevice._answerInstruc, u'')
+                                  idevice._answerInstruc, u'',
+                                  default_prompt = answer_prompt)
         self.answerTextArea.idevice = idevice
 
         self.feedbackTextArea = TextAreaField(x_(u'Feedback'), 
-                                    idevice._feedbackInstruc, u'')
+                                    idevice._feedbackInstruc, u'',
+                                    default_prompt = feedback_prompt)
         self.feedbackTextArea.idevice = idevice
 
     def getResourcesField(self, this_resource):
@@ -3695,7 +3697,7 @@ class QuizQuestionField(Field):
 
     persistenceVersion = 1
     
-    def __init__(self, idevice, name, instruc=""):
+    def __init__(self, idevice, name, instruc="", question_prompt = "", hint_prompt = ""):
         """
         Initialize 
         """
@@ -3703,18 +3705,27 @@ class QuizQuestionField(Field):
 
         self.options              = []
         self.idevice              = idevice
+        if question_prompt == "":
+            question_prompt = x_("Enter the question here.")
+        
         self.questionTextArea     = TextAreaField(x_(u'Question'), 
-                                        idevice._questionInstruc, u'')
+                                     idevice._questionInstruc, u'',
+                                     default_prompt = question_prompt)
         self.questionTextArea.idevice     = idevice
+        
+        
         self.hintTextArea         = TextAreaField(x_(u'Hint'), 
-                                        idevice._hintInstruc, u'')
+                                        idevice._hintInstruc, u'',
+                                        default_prompt = hint_prompt)
         self.hintTextArea.idevice         = idevice
 
-    def addOption(self):
+    def addOption(self, answer_prompt = "", feedback_prompt = ""):
         """
         Add a new option to this question. 
         """
-        option = QuizOptionField(self, self.idevice)
+        option = QuizOptionField(self, self.idevice, 
+                         answer_prompt = answer_prompt, 
+                         feedback_prompt = feedback_prompt)
         self.options.append(option)
 
     def getResourcesField(self, this_resource):
