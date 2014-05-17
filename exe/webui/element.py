@@ -2442,18 +2442,49 @@ class QuizOptionElement(Element):
         """
         Returns an XHTML string for editing this option element
         """
-        html  = u"<tr><td align=\"left\"><b>%s</b>" % _("Option")
-        html += common.elementInstruc(self.field.idevice.answerInstruc)
-
+        
+        #Start header row
+        html  = u"<tr>"
+                
         header = ""
         if self.index == 0:
-            header = _("Correct Option")
-
-        html += u"</td><td align=\"right\"><b>%s</b>\n" % header
-        html += u"</td><td>\n"
+            header = _("Correct?")
+        html += u"<td align=\"center\"><b>%s</b>\n" % header
         if self.index == 0: 
             html += common.elementInstruc(self.field.idevice.keyInstruc)
-        html += "</td></tr><tr><td colspan=2>\n" 
+        
+        html += u"</td>"
+        
+        html += u"<td align=\"left\"><b>%s</b>" % _("Option")
+        html += common.elementInstruc(self.field.idevice.answerInstruc)
+
+        html += u"</td>"
+
+        
+        html += u"<td align='right'>\n"
+        
+        html += common.submitImage("del"+self.id, self.field.idevice.id, 
+                                   "/images/stock-cancel.png",   
+                                   _(u"Delete option"))
+        
+        
+        html += "</td>"
+        html += "</tr>"
+        #end header row
+        
+        #start textarea for answer text and selector for iscorrect
+        html += "<tr>"
+        
+        #begin selector/delete
+        html += "<td align=\"center\">\n"
+        html += common.option("c"+self.field.question.id, 
+                              self.field.isCorrect, self.index,
+                              css_classes="exe_correct_radio_button")   
+        html += "<br><br><br><br>\n"
+        html += "</td>"
+        
+        #begin answer area
+        html += "<td colspan=2>\n" 
 
         # rather than using answerElement.renderEdit(),
         # access the appropriate content_w_resourcePaths attribute directly,
@@ -2467,21 +2498,23 @@ class QuizOptionElement(Element):
 
         html += common.richTextArea("ans"+self.id, 
                           self.answerElement.field.content_w_resourcePaths,
-                          package=this_package)
+                          package=this_package, 
+                          default_prompt = self.answerElement.field.default_prompt)
         
-        html += "</td><td align=\"center\">\n"
-        html += common.option("c"+self.field.question.id, 
-                              self.field.isCorrect, self.index)   
-        html += "<br><br><br><br>\n"
-        html += common.submitImage("del"+self.id, self.field.idevice.id, 
-                                   #"/images/stock-cancel.png",  #Commented
-                                   "/images/edit-delete.png",   #Added
-                                   _(u"Delete option"))
-        html += "</td></tr>\n"
+        html += "</td>"
+        
+        
+        html += "</tr>\n"
+        #end row with answer text and selector for iscorrect
 
-        html += "<tr><td align=\"left\"><b>%s</b>" % _("Feedback")
+        html += "<tr><td>&nbsp;</td><td align=\"left\"><b>%s</b>" % _("Feedback")
         html += common.elementInstruc(self.field.idevice.feedbackInstruc)
-        html += "</td><td></td></tr><tr><td colspan=2>\n" 
+        html += "</td><td></td></tr>"
+        
+        html += "<tr>"
+        
+        html += "<td>&nbsp;</td>"
+        html += "<td colspan=2>\n" 
          
         # likewise, rather than using feedbackElement.renderEdit(),
         # access the appropriate content_w_resourcePaths attribute directly,
@@ -2495,7 +2528,8 @@ class QuizOptionElement(Element):
 
         html += common.richTextArea('f'+self.id, 
                          self.feedbackElement.field.content_w_resourcePaths,
-                         package=this_package)
+                         package=this_package,
+                         default_prompt = self.feedbackElement.field.default_prompt)
          
         html += "</td></tr>\n"
 
@@ -2681,15 +2715,19 @@ class QuizQuestionElement(Element):
         """
         Returns an XHTML string with the form element for editing this element
         """
-        html = u" "+common.submitImage("del"+self.id, self.field.idevice.id,  
-                #"/images/stock-cancel.png", #Commented
-                "/images/edit-delete.png", #Added
-                _("Delete question")) 
-
+        html = u"<table width='100%'><tr>"
+        html += u"<td valign='top'>"
         html += self.questionElement.renderEdit()
-
         html += self.hintElement.renderEdit()
+        html += u"</td>"
 
+        html += u"<td valign='top' align='right'>"
+        html += u" "+common.submitImage("del"+self.id, self.field.idevice.id,  
+                "/images/stock-cancel.png", 
+                _("Delete question")) 
+        html += u"</td>"
+        html += u"</tr></table>"
+        
         html += "<table width =\"100%%\">"
         html += "<tbody>"
 
@@ -2700,7 +2738,10 @@ class QuizQuestionElement(Element):
         html += "</table>\n"
 
         value = _("Add another option")    
-        html += common.submitButton("addOption"+unicode(self.id), value)
+        html += u"<div style='margin-left: 75px;'>"
+        html += common.submitButton("addOption"+unicode(self.id), value,
+                                    extra_classes= "add_item_button")
+        html += u"</div>"
 
         return html
 

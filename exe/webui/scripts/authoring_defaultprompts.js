@@ -1,5 +1,5 @@
 /**
- * 
+ * Initialization function 
  */
 $(function() {
     setupTextPrompts();

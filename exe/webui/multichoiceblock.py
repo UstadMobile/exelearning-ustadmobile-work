@@ -105,7 +105,12 @@ class MultichoiceBlock(Block):
         html  = "<div class=\"iDevice\"><br/>\n"
         if self.idevice.message<>"":
             html += common.editModeHeading(self.idevice.message)
-        html += common.textInput("title"+self.id, self.idevice.title) + '<br/>'
+        
+        title_val = self.idevice.title
+        if title_val == _("Multi-choice"):
+            title_val = ""
+        html += common.textInput("title"+self.id, title_val,
+                                 default_prompt=_("Type your title here")) + '<br/>'
             
         for element in self.questionElements:
             html += element.renderEdit() 
@@ -113,7 +118,8 @@ class MultichoiceBlock(Block):
             
         html += "<br/>"
         value = _("Add another question")    
-        html += common.submitButton("addQuestion"+unicode(self.id), value)
+        html += common.submitButton("addQuestion"+unicode(self.id), value,
+                                    extra_classes="add_item_button")
         html += "<br /><br />" 
         html += self.renderEditButtons(undo=self.idevice.undo)
         html += "</div>\n"

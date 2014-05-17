@@ -130,11 +130,17 @@ for the other options.""")
         Add a new question to this iDevice. 
         """
         question = QuizQuestionField(self, x_(u'Question'), 
-                         question_prompt = x_("Enter your question here"),
-                         hint_prompt = x_("(optional) enter for a hint button to appear"))
+                         question_prompt = x_("""Enter your question
+                          here you can use text, images, and media"""),
+                         hint_prompt = x_("""(Optional) Enter a hint 
+                         here and a hint popup button will appear 
+                         to show this hint"""))
         
-        answer_prompt = x_("Enter an option for the answer here")
-        feedback_prompt = x_("Enter the feedback if the student selects this answer here")                 
+        answer_prompt = x_("""Enter an option for the answer here - you
+             can use text, images, and media""")
+        feedback_prompt = x_("""Enter the feedback to show if the 
+            student selects this option here - you can use text
+            , images, and media""")                 
         question.addOption(answer_prompt = answer_prompt, 
                            feedback_prompt = feedback_prompt)
         question.addOption(answer_prompt = answer_prompt, 

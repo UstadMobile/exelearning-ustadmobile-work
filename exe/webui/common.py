@@ -519,14 +519,17 @@ def confirmThenSubmitImage(message, action, object_, imageFile,
     html += u'</a>\n' 
     return html
 
-def option(name, checked, value):
+def option(name, checked, value, css_classes = ""):
     """Add a option input"""
     chkStr = u''
+    css_str = ""
     if checked:
         chkStr = u'checked="checked"'
+    if css_classes != "":
+        css_str = " class='%s' " % css_classes
     html  = (u'<input type="radio" name="%s"'
-             u' value="%s" %s/>\n' % 
-              (name, value, chkStr))
+             u' value="%s" %s %s/>\n' % 
+              (name, value, chkStr, css_str))
     return html
 
 
