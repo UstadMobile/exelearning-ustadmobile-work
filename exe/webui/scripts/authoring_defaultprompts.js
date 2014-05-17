@@ -105,7 +105,7 @@ function checkMceEditorDefaultOverlay(ed) {
     var promptActive =textArea.hasClass("defaultpromptactive"); 
     var areaContent = ed.getContent({format : 'raw'});
     var contentIsBlank = false;
-    if(areaContent.length < 25) {
+    if(areaContent.length < 50) {
     	var areaContentText =areaContent.replace(/<(?:.|\n)*?>/gm, ''); 
    		
    	 	var hasMedia = false;

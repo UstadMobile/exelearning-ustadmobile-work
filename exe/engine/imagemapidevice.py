@@ -32,10 +32,13 @@ class ImageMapIdevice(Idevice):
         mainFieldOrder = ["title", "instructions", "mapImg"]
         mainFieldsInfo = \
             {'title' : ['text', x_('Title'), x_('Title'),
-                        {"defaultprompt" : x_("Type your title here")}],
+                        {"default_prompt" : x_("Type your title here")}],
              'instructions' : ['textarea', x_('Instructions to show'), 
                                x_('Instructions'), 
-                               {"defaultprompt" : "Enter instructions for the students here"}],
+                               {"default_prompt" : """Enter instructions
+                                for the students here; e.g. click on the
+                                areas below for more information to
+                                 popup"""}],
              'mapImg' : ['image', x_('Image'), x_('Use for map background'),
                          {"defaultval" : "imagemap_defaultbg.png" } ]
              }
@@ -103,7 +106,11 @@ class ImageMapAreaField(Field):
         
         main_field_order = ["tooltip", "shape", "coords"]
         main_field_info = {\
-           'tooltip' : ['textarea', x_('Popup tooltip'), x_('Popup tooltip')],\
+           'tooltip' : ['textarea', x_('Popup tooltip'), x_('Popup tooltip'),
+                        {"default_prompt" : """Enter the popup that 
+                        will appear when the user clicks or hovers
+                         over this area.  If you add a sound by 
+                         using insert media it will play too."""}],\
            'shape' : ['choice', x_('Area Shape'), x_('Area Shape'),\
                                 {'choices' : [['rect', x_('Rectangle')] ] }],\
            'coords' : ['text', "Coordinates", "Coordinates",

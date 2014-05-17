@@ -150,6 +150,12 @@ ImageMapIdevice.prototype = {
 			
 			$("#exeimgmap_edit_container_" + thisIdeviceId).append(
 					newDivHTML);
+			
+			var elementId = areaKey;
+			var objId = areaKey.substring(0, areaKey.indexOf("_"));
+			var deleteLink = ' <a style="display: inline-block; float: right; background-color: black; color: white; padding: 3px;" href="#" onclick="submitLink(\'' 
+            	+ elementId + "', '" + objId + '\',1)">x</a>';
+			$("#" + newId).html(deleteLink + "Area " + (i+1));
 			$("#" + newId).css("left", coords[0] + "px").css("top", 
 					coords[1] + "px");
 			$("#" + newId).css("width", width).css("height", height);

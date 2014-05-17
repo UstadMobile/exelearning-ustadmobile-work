@@ -44,6 +44,7 @@ class ImageMapBlock(Block):
         field_engine_process_all_elements(self.mainElements, request)
         
         for map_area_el in self.map_area_elements:
+            field_engine_check_delete(map_area_el, request, self.idevice.map_areas)
             map_area_el.process(request)
         
         
@@ -69,8 +70,12 @@ class ImageMapBlock(Block):
         html += self.idevice.mainFieldSet.applyFileTemplateToDict(main_dict, \
             "imagemap_edit.html", True)
         
-        
-        for area_element in self.map_area_elements:
+        area_count = 1
+        for area_count in range(0, len(self.map_area_elements)):
+            area_element = self.map_area_elements[area_count]
+            html += "<strong>"
+            html += _("Area %s") % str(area_count + 1)
+            html += "</strong>"
             html += area_element.renderEdit()
         
         html += "<br/>"
