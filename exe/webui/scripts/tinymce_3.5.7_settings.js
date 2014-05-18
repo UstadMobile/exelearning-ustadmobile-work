@@ -15,9 +15,12 @@ tinyMCE.init({
 	convert_urls : false,
 	// The New eXeLearning
 	content_css : "/css/extra.css," + exe_style,
-    height : "250",
+    height : "70",
+    min_height : "70",
 	// The New eXeLearning
-	plugins : "clearfloat,advalign,autolink,lists,pagebreak,style,layer,table,advhr,advimage,advlink,emotions,iespell,insertdatetime,preview,media,exemath,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,visualblocks,pastecode,inlinepopups,spellchecker,template",
+	plugins : "clearfloat,advalign,autolink,lists,pagebreak,style,layer,table,advhr,advimage,advlink,emotions,iespell,insertdatetime,preview,media,exemath,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,visualblocks,pastecode,inlinepopups,spellchecker,template,autoresize",
+	autoresize_min_height : "70",
+	theme_advanced_resizing_min_height : "70",
     //paste_text_sticky : true,    
     //paste_text_sticky_default : true,
 	extended_valid_elements : "img[*],iframe[*]", //The exemath plugin uses this attribute: exe_math_latex, and the iframes might have "allowfullscreen".
@@ -27,7 +30,7 @@ tinyMCE.init({
 	theme_advanced_buttons1 : "newdocument,spellchecker,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,clearfloat,|,bullist,numlist,|,outdent,indent,blockquote,|,formatselect,fontsizeselect,fontselect,|,forecolor,backcolor,|,sub,sup,|,fullscreen",
 	theme_advanced_buttons2 : "undo,redo,|,cut,copy,paste,pastetext,pasteword,|,pastehtml,pastecode,|,search,replace,|,link,unlink,anchor,|,image,media,|,removeformat,cleanup,|,insertdate,inserttime,advhr,cite,abbr,acronym,del,ins,attribs,nonbreaking,|,charmap,exemath,|,styleprops",
 	theme_advanced_buttons3 : "template,|,tablecontrols,|,code,help",
-	theme_advanced_toolbar_location : "top",
+	theme_advanced_toolbar_location : "external",
 	theme_advanced_toolbar_align : "left",
 	theme_advanced_statusbar_location : "bottom",
 	theme_advanced_resizing : true,	
@@ -42,17 +45,28 @@ tinyMCE.init({
 				scrollBackInterval = setTimeout("scrollBackOnAllMceInit()", 500);
 			}
 			var edObj = $("#" + ed.id);
+			
+			//position the external toolbar
+			//var externalToolbarObj = $("#" + ed.id + "_external").detach();
+			//$("#mce_editing_bar_holder").append(externalToolbarObj);
+			setupMceExternalToolbar(ed);
+			
+			//setup default prompts
 			if(edObj.hasClass("defaultprompt")) {
 				var defaultPrompt = edObj.attr('data-defaultprompt');
-				var heightSet = "250";//eXe's default
+				var heightSet = "70";//eXe's default
 				if(ed.settings.height) {
 					heightSet = ed.settings.height;
 				}
 				heightSet = parseInt(heightSet);
-				var margin = Math.round(heightSet/2);
-				//var width = $("#" + ed.id)
+				var margin = Math.round(heightSet/2)-10;
+				var width = 700;//default
+				var textAreaWidth = $("#" + ed.id).css("width");
+				if(textAreaWidth) {
+					width = parseInt(textAreaWidth);
+				}
 				
-				var overLayDivHTML =  makeOverlayDiv(ed.id, 900, margin, 0, 
+				var overLayDivHTML =  makeOverlayDiv(ed.id, width, margin, 0, 
 						defaultPrompt, "center");
 				$('#' + ed.id).after(overLayDivHTML);
 				checkMceEditorDefaultOverlay(ed);
@@ -63,6 +77,8 @@ tinyMCE.init({
 	        		 + e.target.nodeName + " : " + e.type);
 	         if(e.type && e.type == "keyup") {
 	        	 checkMceEditorDefaultOverlay(ed);
+	         }else if(e.type && e.type == "click") {
+	        	 activateExternalToolbarForEditor();
 	         }
 	    });
 		 

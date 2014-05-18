@@ -462,6 +462,7 @@ def field_engine_check_field(fieldId, fieldInfoDict, fieldDict, idevice):
         newField = TextAreaField(fieldInfoDict[fieldId][EXEFIELDINFO_DESC], 
                                  fieldInfoDict[fieldId][EXEFIELDINFO_HELP],
                                  content = "", default_prompt = default_prompt)
+        newField.width = 775
     elif fieldTypeName == 'choice':
         newField = ChoiceField(idevice, \
                        fieldInfoDict[fieldId][EXEFIELDINFO_EXTRAINFODICT]['choices'], \

@@ -76,6 +76,8 @@ function focusInputField(elId) {
 	el = $("#" + elId);
 	if(!el.hasClass("mceEditor")) {
 		el.focus();
+	}else {
+		tinyMCE.get(elId).focus();
 	}
 }
 
@@ -93,7 +95,7 @@ function makeOverlayDiv(elId,  width, marginTop, marginLeft, defaultPrompt, text
 	var retVal = "<div id='" + elId + "_defaultprompt' "
 	+ " class='default_prompt_mceoverlay' "
 	+ " onclick='focusInputField(\"" + elId + "\")' "
-	+ "style='z-index: 10; position: absolute; width: 900px; "
+	+ "style='z-index: 10; position: absolute; width: " + width + "px; "
 	+ "text-align: " + textAlign + "; margin-top : " + marginTop + "px; "
 	+ "margin-left: " + marginLeft + "px'>"
 	+ defaultPrompt + "</div>"

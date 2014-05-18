@@ -129,6 +129,11 @@ class AuthoringPage(RenderableResource):
         self.__addBlocks(topNode)
         html  = self.__renderHeader()
         html += u'<body onload="onLoadHandler();" class="exe-authoring-page js">\n'
+        html += u"""<div id='externalToolbarHolder' 
+        style='z-index: 1000; position: fixed; top: 0px; width: 100%; left:0px; border-bottom: 2px solid gray; height: 0px'>"""
+        html += u"<div id='externalToolbarWrapper' class='defaultSkin'>&nbsp;</div>\n"
+        html += u"</div>"
+        
         html += u"<form method=\"post\" "
 
         if request is None:
@@ -154,7 +159,7 @@ class AuthoringPage(RenderableResource):
                 
                 <i>Hmmm... Looks like this page is blank now.  
                 Why not click </i>
-                <span style='background-color: #e8e8e8; border: 1px solid black; font-size: 8pt; display: inline-block; height: 16px; padding: 3px; '
+                <span style='font-weight: bold; font-size: 8pt; display: inline-block; height: 16px; padding: 3px; '
                 onclick='alert("Click the button up on the toolbar. This is only for show")'
                 >
                 <img src='/images/plusbutton.png'/>
@@ -201,6 +206,7 @@ class AuthoringPage(RenderableResource):
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/imgAreaSelect/imgareaselect-default.css\" />"
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/style/%s/content.css\" />" % self.package.style
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/jquery-ui-1.10.4.custom/ui-lightness/jquery-ui-1.10.4.custom.min.css\" />"
+        html += u"<link rel='stylesheet' type='text/css' href='/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/skins/default/ui.css' />"
         if G.application.config.assumeMediaPlugins: 
             html += u"<script type=\"text/javascript\">var exe_assume_media_plugins = true;</script>\n"
         #JR: anado una variable con el estilo

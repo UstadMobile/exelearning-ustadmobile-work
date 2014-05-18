@@ -228,3 +228,28 @@ Used in some instances where idevices have a list of items in them
 .exeimgmap_imgholder IMG {
 	display: none;
 }
+
+/* central top location for MCE editing toolbar
+#externalToolbarWrapper {
+	z-index: 1000; 
+	width: 100%;
+	left: 0px;
+	top: 0px; 
+	height: 80px; 
+	border: 1px solid red;
+	
+}
+
+#externalToolbarHolder {
+	position: fixed; 
+	height: 80px; 
+	border:1px solid blue; 
+	width: 100%;
+	left: 0px;
+	width: 0px;
+	
+}
+
+.mceEditor td.mceIframeContainer iframe {
+    min-height: 30px !important;
+}

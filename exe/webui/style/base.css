@@ -85,7 +85,7 @@ input.feedbackbutton{margin-top:10px;margin-bottom:10px}
 
 /*Sortable Item*/
 .sortablesub {
-	cursor: pointer;
+	cursor: move;
 }
 
 .sortableitemulcontainer {

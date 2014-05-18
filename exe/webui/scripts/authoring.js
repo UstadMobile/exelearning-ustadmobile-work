@@ -865,6 +865,9 @@ var scrollBackInterval = null;
 function scrollBackOnAllMceInit() {
 	var currentBlockEl = $("[name='currentBlock']");
 	currentBlockEl.get(0).scrollIntoView();
+	//adjust for the tinyMCE toolbar space
+	var toolbarHeight = $("#externalToolbarHolder").height();
+	window.scrollBy(0, -toolbarHeight);
 }
 
 
@@ -931,4 +934,37 @@ function setRadioOption(forName, checkVal) {
 }
 
 
+function setupMceExternalToolbar(ed) {
+	if (ed.getParam('theme_advanced_toolbar_location') != 'external') return;
+	
+	$("#externalToolbarHolder").css("height", "80px");
+	$("#main").css("margin-top", "84px");
+	
+	var $toolbar = $('#'+ed.id + '_external');
+	
+	//$('#externalToolbarWrapper').append('<div id="replacementDiv"></div>');
+	
+	
+	//TODO: change so we have multiple toolbars actually
+    //$('#replacementDiv').replaceWith($toolbar.show());
+	$("#externalToolbarWrapper").append($toolbar);
+	
+    $toolbar.css('top','0px');
+    $toolbar.css('display','block');
 
+    $('#' + ed.id + '_external_close').remove();
+    $('#' + ed.id +'_toolbargroup').css('width', innerWidth || 800);
+}
+
+function activateExternalToolbarForEditor() {
+	var activeId = tinyMCE.activeEditor.editorId;
+	var wantedActiveToolbarId = activeId + "_external";
+	$(".mceExternalToolbar").each(function() {
+		if($(this).attr("id") == wantedActiveToolbarId) {
+			$(this).css("top", "0px");
+			$(this).show();
+		}else {
+			$(this).hide();
+		}
+	});
+}

@@ -195,7 +195,7 @@ class TextAreaElement(ElementWithResources):
                     ("activity", "objectives", "preknowledge")):
             self.height = 250
         else:
-            self.height = 100
+            self.height = 50
 
 
     def process(self, request):
