@@ -59,9 +59,10 @@ function initSortActivity(sortId) {
 			if(exe_isTouchScreenDev == false) {
 			    clickHandle = "";
 			}
-			$(sortHolderId).append("<li class='sortablesub' " + clickHandle + " id='li" + sortItemsList[i] + "' style='z-index: 5; " 
+			$(sortHolderId).append("<li class='sortablesub' " + clickHandle 
+					+ " id='li" + sortItemsList[i] + "' style='z-index: 5; " 
+					+ " list-style-image: none; list-style-type: none; "
 				+ itemStyle + "'>" + thisItemHTML + "</li>");
-			
 		}
 
 				

@@ -82,3 +82,13 @@ input.feedbackbutton{margin-top:10px;margin-bottom:10px}
 
 /*Tin Can strings inside identified divs*/
 .tcdiv {display: none}
+
+/*Sortable Item*/
+.sortablesub {
+	cursor: pointer;
+}
+
+.sortableitemulcontainer {
+	list-style-type: none;
+	list-style-image: none;
+}
