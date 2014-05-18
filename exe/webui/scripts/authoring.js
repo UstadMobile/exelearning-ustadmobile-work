@@ -874,6 +874,7 @@ function scrollBackOnAllMceInit() {
  * 'exe_correct_radio_button' show images, hide original radio button
  */
 function initCorrectCheckboxes() {
+	//replace the normal radio button with styled checkboxes
 	$("INPUT.exe_correct_radio_button").each(function() {
 		var imgSrc = "/images/selectcorrect";
 		if($(this).attr("checked")) {
@@ -888,17 +889,30 @@ function initCorrectCheckboxes() {
 		var newImgEl = $("<img src='" + imgSrc + "' " 
 				+ "data-checkval='" + thisVal + "'" 
 				+ "data-forname='" + thisName + "'/>");
+		newImgEl.css("cursor", "pointer");
 		newImgEl.on("click", function(evt) {
-			setRadioOption(this);
+			setRadioOption($(this).attr("data-forname"), 
+					$(this).attr("data-checkval"));
 		});
 		$(this).after(newImgEl);
 		$(this).css("display", "none");
 	});
+	
+	//setup the dropdown menu
+	$("SELECT.exe_mcq_correctans_dropdown").each(function() {
+		$(this).on("change", function() {
+			setRadioOption($(this).attr("data-forname"),
+					$(this).val());
+		});
+	});
 }
 
-function setRadioOption(el) {
-	var imgElSrc = el;
-	var thisName = $(el).attr("data-forname");
+
+
+function setRadioOption(forName, checkVal) {
+	var imgElSrc = $("IMG[data-forname='" + forName+ "']"  
+			+ "[data-checkval='" + checkVal + "']");
+	var thisName = $(imgElSrc).attr("data-forname");
 	$("input[name='" + thisName + "']").each(function() {
 		var thisVal = $(this).attr("value");
 		var imgSelStr = "IMG[data-forname='" + thisName + "']"  
@@ -911,6 +925,9 @@ function setRadioOption(el) {
 			$(imgSelStr).attr("src", "/images/selectcorrect-unchecked.png");
 		}
 	});
+	
+	//set the select value
+	$("SELECT[data-forname='" + forName + "']").val(checkVal);
 }
 
 

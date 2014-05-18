@@ -142,7 +142,8 @@ for the other options.""")
             student selects this option here - you can use text
             , images, and media""")                 
         question.addOption(answer_prompt = answer_prompt, 
-                           feedback_prompt = feedback_prompt)
+                           feedback_prompt = feedback_prompt,
+                           is_correct = True)
         question.addOption(answer_prompt = answer_prompt, 
                            feedback_prompt = feedback_prompt)
         self.questions.append(question)

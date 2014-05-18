@@ -3719,13 +3719,15 @@ class QuizQuestionField(Field):
                                         default_prompt = hint_prompt)
         self.hintTextArea.idevice         = idevice
 
-    def addOption(self, answer_prompt = "", feedback_prompt = ""):
+    def addOption(self, answer_prompt = "", feedback_prompt = "", is_correct=False):
         """
         Add a new option to this question. 
         """
         option = QuizOptionField(self, self.idevice, 
                          answer_prompt = answer_prompt, 
                          feedback_prompt = feedback_prompt)
+        if is_correct == True:
+            option.isCorrect = is_correct
         self.options.append(option)
 
     def getResourcesField(self, this_resource):

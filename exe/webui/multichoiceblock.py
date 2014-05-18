@@ -110,7 +110,7 @@ class MultichoiceBlock(Block):
         if title_val == _("Multi-choice"):
             title_val = ""
         html += common.textInput("title"+self.id, title_val,
-                                 default_prompt=_("Type your title here")) + '<br/>'
+                             default_prompt=_("Type your title here")) + '<br/>'
             
         for element in self.questionElements:
             html += element.renderEdit() 

@@ -2448,14 +2448,19 @@ class QuizOptionElement(Element):
                 
         header = ""
         if self.index == 0:
-            header = _("Correct?")
+            #header = _("Correct?")
+            #TODO: TIDY ME
+            pass
         html += u"<td align=\"center\"><b>%s</b>\n" % header
         if self.index == 0: 
-            html += common.elementInstruc(self.field.idevice.keyInstruc)
+            #html += common.elementInstruc(self.field.idevice.keyInstruc)
+            #TODO: tidy me
+            pass
         
         html += u"</td>"
         
-        html += u"<td align=\"left\"><b>%s</b>" % _("Option")
+        option_str = _("Option %s") % str(self.index + 1)
+        html += u"<td align=\"left\"><b>%s</b>" % option_str
         html += common.elementInstruc(self.field.idevice.answerInstruc)
 
         html += u"</td>"
@@ -2727,6 +2732,26 @@ class QuizQuestionElement(Element):
                 _("Delete question")) 
         html += u"</td>"
         html += u"</tr></table>"
+        
+        html += "<strong>Correct Option:</strong>"
+        html += common.elementInstruc(_("""Select the correct option
+             for this question from the dropdown"""))
+        html += "<br/>"
+        html += """<select class='exe_mcq_correctans_dropdown'
+        data-forname='c%(id)s' 
+        id='c%(id)s_dropdown'>""" % {"id" : self.id }
+        for element_count in range(0, len(self.options)):
+            element = self.options[element_count]
+            selected_str = ""
+            if element.field.isCorrect:
+                selected_str = " selected='selected' "
+            html += "<option value='%s' %s>" % \
+                (str(element_count), selected_str)
+            html += _("Option %s") % str(element_count+1)
+            html += "</option>\n"
+        html += "</select>\n"
+        
+        html += "<br/><br/>"
         
         html += "<table width =\"100%%\">"
         html += "<tbody>"
