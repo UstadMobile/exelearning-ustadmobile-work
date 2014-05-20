@@ -129,7 +129,7 @@ completed. Default text will be entered if there are no changes to this field.
 by either pasting text from another source or by typing text directly into the 
 field.</p><p> To select words to hide, double click on the word to select it and 
 click on the Hide/Show Word button below.</p>"""),
-            default_prompt = x_("""Type the whole sentence here, 
+            default_prompt = x_("""Type the whole text for learners here, 
             then hilight the parts you want to make blank and 
             click Hide/Show Word button below.  Underlined words 
             get turned into blank boxes to fill in."""))

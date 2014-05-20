@@ -78,8 +78,11 @@ distractors </li>
         """
         Add a new question to this iDevice. 
         """
-        question = SelectQuestionField(self, x_(u'Question'))
-        question.addOption()
+        question = SelectQuestionField(self, x_(u'Question'), 
+                                   question_default_prompt = _("""Enter a question that has one or more correct answers here. You can use text, images and media.  A list with checkboxes will be shown to students, and they check select all correct answers."""))
+        option_default_prompt = _("Enter an option for the answer here; click the toggle on the left to indicate if this answer is correct or incorrect.")
+        question.addOption(default_prompt = option_default_prompt)
+        question.addOption(default_prompt = option_default_prompt)
         self.questions.append(question)
 
     def getResourcesField(self, this_resource):
