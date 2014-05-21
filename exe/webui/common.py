@@ -533,17 +533,20 @@ def option(name, checked, value, css_classes = ""):
     return html
 
 
-def checkbox(name, checked, value="", title="", instruction=""):
+def checkbox(name, checked, value="", title="", instruction="", extra_classes = ""):
     """Add a checkbox"""
     chkStr = u''
     if checked:
         chkStr = u'checked'
+    extra_classes_str = ""
+    if extra_classes != "":
+        extra_classes_str = " class='%s' " % extra_classes
     html = ''
     if title:
         html += u'<b>%s</b>' % title
     html += (u'<input type="checkbox" name="%s"'
-             u' value="%s" %s/>\n' % 
-              (name, value, chkStr))
+             u' value="%s" %s %s/>\n' % 
+              (name, value, chkStr, extra_classes_str))
     if instruction:
         html += elementInstruc(instruction)
     return html

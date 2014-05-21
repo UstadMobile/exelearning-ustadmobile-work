@@ -3798,7 +3798,7 @@ class SelectOptionField(Field):
     """
     persistenceVersion = 1
 
-    def __init__(self, question, idevice, name="", instruc=""):
+    def __init__(self, question, idevice, name="", instruc="", default_prompt = ""):
         """
         Initialize 
         """
@@ -3808,7 +3808,8 @@ class SelectOptionField(Field):
         self.idevice = idevice
 
         self.answerTextArea    = TextAreaField(x_(u'Options'), 
-                                     question._optionInstruc, u'')
+                                     question._optionInstruc, u'',
+                                     default_prompt = default_prompt)
         self.answerTextArea.idevice = idevice
 
 
@@ -3859,7 +3860,7 @@ class SelectQuestionField(Field):
 
     persistenceVersion = 1
     
-    def __init__(self, idevice, name, instruc=""):
+    def __init__(self, idevice, name, instruc="", question_default_prompt = ""):
         """
         Initialize 
         """
@@ -3871,7 +3872,8 @@ class SelectQuestionField(Field):
 The question should be clear and unambiguous. Avoid negative premises as these 
 can tend to confuse learners.""")
         self.questionTextArea = TextAreaField(x_(u'Question:'), 
-                                    self.questionInstruc, u'')
+                                    self.questionInstruc, u'',
+                                    default_prompt = question_default_prompt)
         self.questionTextArea.idevice = idevice
 
         self.options              = []
@@ -3885,7 +3887,8 @@ options as required by clicking the check box beside the option.""")
         self.feedbackInstruc       = x_(u"""Type in the feedback you want 
 to provide the learner with.""")
         self.feedbackTextArea = TextAreaField(x_(u'Feedback:'), 
-                                    self.feedbackInstruc, u'')
+                                    self.feedbackInstruc, u'',
+                                    default_prompt = "Enter feedback to show learners here.  This feedback will appear regardless of performance.")
         self.feedbackTextArea.idevice = idevice
     
     
@@ -3894,11 +3897,11 @@ to provide the learner with.""")
     optionInstruc        = lateTranslate('optionInstruc')
     correctAnswerInstruc = lateTranslate('correctAnswerInstruc')
     
-    def addOption(self):
+    def addOption(self, default_prompt = ""):
         """
         Add a new option to this question. 
         """
-        option = SelectOptionField(self, self.idevice)
+        option = SelectOptionField(self, self.idevice, default_prompt = default_prompt)
         self.options.append(option)
 
     def getResourcesField(self, this_resource):

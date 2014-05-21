@@ -2056,18 +2056,42 @@ class SelectOptionElement(Element):
         Returns an XHTML string for editing this option element
         code is pretty much straight from the Multi-Option aka QuizOption
         """
-        html  = u"<tr><td align=\"left\"><b>%s</b>" % _("Option")
+        html  = u"<tr>"
+        html += "<td>&nbsp;</td>"
+        option_title = _("Option %s") % str(self.index+1)
+        html += u"<td align=\"left\"><b>%s</b>" % option_title
         html += common.elementInstruc(self.field.question.optionInstruc)
 
         header = ""
-        if self.index == 0:
-            header = _("Correct Option")
+        #MD: Hide this - confusing
+        #if self.index == 0:
+        #    header = _("Correct Option")
 
-        html += u"</td><td align=\"right\"><b>%s</b>\n" % header
-        html += u"</td><td>\n"
-        if self.index == 0: 
-             html += common.elementInstruc(self.field.question.correctAnswerInstruc)
-        html += "</td></tr><tr><td colspan=2>\n" 
+        html += u"</td>"
+        
+        html += u"<td align=\"right\" valign='top'>" 
+        #html += u"<b>%s</b>\n" % header
+        html += common.submitImage("del"+self.id, self.field.idevice.id, 
+                                   "/images/stock-cancel.png",
+                                   _(u"Delete option"))
+        html += u"</td>"
+        
+        html += "<td>\n"
+        #MD : hide this - confusing
+        #if self.index == 0: 
+        #     html += common.elementInstruc(self.field.question.correctAnswerInstruc)
+        html += "</td></tr>"
+        html += "<tr>"
+        
+        html += "<td align=\"center\" width=\"70\" valign='top'>\n"
+        html += common.checkbox("c"+self.id, 
+                              self.field.isCorrect, self.index,
+                              extra_classes="exe_multiselect_checkbox")
+        #html += "<br><br><br><br>\n"
+        
+        html += "</td>"
+        
+        html += "<td colspan=2>\n" 
 
         # rather than using answerElement.renderEdit(),
         # access the appropriate content_w_resourcePaths attribute directly,
@@ -2081,17 +2105,12 @@ class SelectOptionElement(Element):
 
         html += common.richTextArea("ans"+self.id, 
                           self.answerElement.field.content_w_resourcePaths,
-                          package=this_package)
+                          package=this_package, 
+                          default_prompt = self.answerElement.field.default_prompt)
         
-        html += "</td><td align=\"center\">\n"
-        html += common.checkbox("c"+self.id, 
-                              self.field.isCorrect, self.index)
-        html += "<br><br><br><br>\n"
-        html += common.submitImage("del"+self.id, self.field.idevice.id, 
-                                   #"/images/stock-cancel.png",  #Commented
-                                   "/images/edit-delete.png",   #Added
-                                   _(u"Delete option"))
-        html += "</td></tr>\n"
+        html += "</td>"
+        
+        html += "</tr>\n"
 
         return html
 
@@ -2224,13 +2243,18 @@ class SelectquestionElement(Element):
         Returns an XHTML string with the form element for editing this element
         """
         html  = u"<div class=\"iDevice\">\n"
+        html += u"<table width='100%'>"
+        html += "<tr><td valign='top'>"
         html += u"<b>" + _("Question:") + " </b>" 
         html += common.elementInstruc(self.field.questionInstruc)
+        html += "</td>"
+        html += "<td valign='top' align='right'>"
         html += u" " + common.submitImage("del" + self.id, 
                                    self.field.idevice.id, 
-                                   #"/images/stock-cancel.png", #Commented
-                                   "/images/edit-delete.png",   #Added
+                                   "/images/stock-cancel.png",
                                    _("Delete question"))
+        html +="</td>"
+        html +="</tr></table>"
         # rather than using questionElement.renderEdit(),
         # access the appropriate content_w_resourcePaths attribute directly,
         # since this is in a customised output format 
@@ -2243,7 +2267,8 @@ class SelectquestionElement(Element):
 
         html += common.richTextArea("question"+self.id, 
                        self.questionElement.field.content_w_resourcePaths,
-                       package=this_package)
+                       package=this_package, 
+                       default_prompt = self.questionElement.field.default_prompt)
 
         html += u"<table width =\"100%%\">"
         html += u"<thead>"
@@ -2263,8 +2288,10 @@ class SelectquestionElement(Element):
         html += u"</table>\n"
 
 
+        html += u"<div style='margin-left: 70px;'>"
         value = _(u"Add another Option")    
-        html += common.submitButton("addOption"+self.id, value)
+        html += common.submitButton("addOption"+self.id, value, extra_classes='add_item_button')
+        html += u"</div>"
         html += u"<br />"
 
         html += self.feedbackElement.renderEdit()

@@ -870,7 +870,35 @@ function scrollBackOnAllMceInit() {
 	window.scrollBy(0, -toolbarHeight);
 }
 
-
+/**
+ * Make an image element to serve in place of an input
+ * checkbox or radio button
+ * 
+ * data-forname and data-checkval
+ *  
+ * @param inputEl Input element
+ * @param imgBaseURL - which will be suffixed with either 
+ * -checked.png or -unchecked.png
+ * @return created img object
+ */
+function eXeMakeImgForInput(inputEl, imgBaseURL) {
+	var imgSrc = new String(imgBaseURL);
+	if($(inputEl).attr("checked")) {
+		imgSrc += "-checked.png";
+	}else {
+		imgSrc += "-unchecked.png";
+	}
+	
+	var thisVal = $(inputEl).attr("value");
+	var thisName = $(inputEl).attr("name");
+	
+	var newImgEl = $("<img src='" + imgSrc + "' " 
+			+ "data-checkval='" + thisVal + "'" 
+			+ "data-forname='" + thisName + "'/>");
+	newImgEl.css("cursor", "pointer");
+	
+	return newImgEl;
+}
 
 /**
  * Go through all options with the class 
@@ -879,20 +907,7 @@ function scrollBackOnAllMceInit() {
 function initCorrectCheckboxes() {
 	//replace the normal radio button with styled checkboxes
 	$("INPUT.exe_correct_radio_button").each(function() {
-		var imgSrc = "/images/selectcorrect";
-		if($(this).attr("checked")) {
-			imgSrc += "-checked.png";
-		}else {
-			imgSrc += "-unchecked.png";
-		}
-		
-		var thisVal = $(this).attr("value");
-		var thisName = $(this).attr("name");
-		
-		var newImgEl = $("<img src='" + imgSrc + "' " 
-				+ "data-checkval='" + thisVal + "'" 
-				+ "data-forname='" + thisName + "'/>");
-		newImgEl.css("cursor", "pointer");
+		var newImgEl = eXeMakeImgForInput(this, "/images/selectcorrect");
 		newImgEl.on("click", function(evt) {
 			setRadioOption($(this).attr("data-forname"), 
 					$(this).attr("data-checkval"));
@@ -908,9 +923,34 @@ function initCorrectCheckboxes() {
 					$(this).val());
 		});
 	});
+	
+	$("INPUT.exe_multiselect_checkbox").each(function() {
+		var newImgEl = eXeMakeImgForInput(this, "/images/toggleselect");
+		$(this).after(newImgEl);
+		$(this).css("display", "none");
+		
+		newImgEl.on("click", function(evt) {
+			setCheckboxItem($(this).attr("data-forname"), 
+					$(this).attr("data-checkval"));
+		});
+	});
 }
 
-
+function setCheckboxItem(forName,checkVal) {
+	//find the input item that represents this one now
+	var inputEl = $("input[name='" + forName + "'][value='" 
+			+ checkVal +"']");
+	var imgEl = $("IMG[data-forname='" + forName+ "']"  
+			+ "[data-checkval='" + checkVal + "']");
+	var currentVal = inputEl.prop("checked");
+	if(currentVal) {
+		inputEl.prop("checked", false);
+		imgEl.attr("src", "/images/toggleselect-unchecked.png");
+	}else {
+		inputEl.prop("checked", true);
+		imgEl.attr("src", "/images/toggleselect-checked.png");
+	}
+}
 
 function setRadioOption(forName, checkVal) {
 	var imgElSrc = $("IMG[data-forname='" + forName+ "']"  

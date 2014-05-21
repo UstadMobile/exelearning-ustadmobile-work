@@ -90,7 +90,7 @@ class MultiSelectBlock(Block):
             
         value = _("Add another Question")    
         html += "<br/>" 
-        html += common.submitButton("addQuestion"+self.id, value)
+        html += common.submitButton("addQuestion"+self.id, value, extra_classes="add_item_button")
         
         html += "<br/><br/>" 
         html += self.renderEditButtons(undo=self.idevice.undo)
