@@ -2821,14 +2821,15 @@ class QuizQuestionElement(Element):
      
      
         json_obj = {\
-             "name" : exetincan.summarize_str_tincan(self.questionElement.renderView()),\
+             "name" : { "en-US" : exetincan.summarize_str_tincan(self.questionElement.renderView()) },\
              "type" : "http://adlnet.gov/expapi/activities/cmi.interaction",\
              "interactionType": "choice",\
              "correctResponsesPattern" : "[%s]" % correct_option,\
              "choices" : choices_obj
                  } 
      
-        json_str = json.dumps(json_obj)
+        json_str = json.dumps(json_obj, ensure_ascii=False)
+        json_str = json_str.replace("&nbsp", "&#160")
         return json_str
     
     

@@ -1236,7 +1236,6 @@ class MainPage(RenderableLivePage):
             xmlExport.export(self.package)
             if client is not None:
                 client.alert(_(u'Ustad Mobile version exported to %s') % filename)
-                self._startFileWTK(filename)        
         except Exception, e:
             if client is not None: 
                 client.alert(_('EXPORT FAILED!\n%s') % str(e))
