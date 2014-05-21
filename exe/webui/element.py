@@ -2824,7 +2824,7 @@ class QuizQuestionElement(Element):
              "name" : { "en-US" : exetincan.summarize_str_tincan(self.questionElement.renderView()) },\
              "type" : "http://adlnet.gov/expapi/activities/cmi.interaction",\
              "interactionType": "choice",\
-             "correctResponsesPattern" : "[%s]" % correct_option,\
+             "correctResponsesPattern" :  [correct_option] ,\
              "choices" : choices_obj
                  } 
      
