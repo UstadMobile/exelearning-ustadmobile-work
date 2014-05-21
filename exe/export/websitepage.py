@@ -49,6 +49,11 @@ class WebsitePage(Page):
         (a 'path' instance)
         """
         outfile = open(outputDir / self.name+".html", "wb")
+        
+        #set the current page name as a class variable so it can be accessed by idevices for TINCAN ids
+        from exe.export.websiteexport import WebsiteExport as w_export
+        w_export.current_page = self.name
+        
         outfile.write(self.render(prevPage, nextPage, pages, ustadMobileMode = ustadMobileMode, ustadMobileTestMode = ustadMobileTestMode, skipNavLinks = skipNavLinks))
         outfile.close()
         
@@ -208,6 +213,8 @@ class WebsitePage(Page):
             html += '</'+headerTag+'>'+lb
 
         for idevice in self.node.idevices:
+            from exe.export.websiteexport import WebsiteExport as w_export
+            w_export.current_idevice_id = idevice.id
             if idevice.klass != 'NotaIdevice':
                 e=" em_iDevice"
                 if unicode(idevice.emphasis)=='0':

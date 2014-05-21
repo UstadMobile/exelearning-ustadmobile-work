@@ -27,6 +27,7 @@ from exe.webui       import common
 from exe.engine import exetincan
 from exe.engine.path import Path
 from exe             import globals as G
+from exe.export.websiteexport import WebsiteExport
 from urllib import quote
 import json
 
@@ -2543,7 +2544,10 @@ class QuizOptionElement(Element):
     def renderXML(self):
         from exe.export.xmlexport import remove_html_tags
         from exe.export.exportmediaconverter import ExportMediaConverter
-        xml = "<answer iscorrect='%s'> " % str(self.field.isCorrect).lower()
+        xml = "<answer iscorrect='%(iscorrect)s' id='%(id)s'> " % { 
+            "iscorrect" : str(self.field.isCorrect).lower(),
+            "id" : self.answerId }
+        
         xml += "\n<![CDATA[\n"
         xml += self.answerElement.renderView()
         xml += "\n]]>\n"
@@ -2879,7 +2883,12 @@ class QuizQuestionElement(Element):
         for element in self.options:
             xml += element.renderXML() + "\n"
             
-        
+        xml += "<tincan id='%s'>" % \
+            WebsiteExport.getTinCanId(self.questionId)
+        xml += "<activitydef>"
+        xml += self.render_tincan_definition(64)
+        xml += "</activitydef>"
+        xml += "</tincan>"
         xml += "</question>"
         return xml
     

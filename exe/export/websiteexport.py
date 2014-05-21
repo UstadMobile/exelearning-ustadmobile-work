@@ -39,6 +39,15 @@ log = logging.getLogger(__name__)
 
 # ===========================================================================
 class WebsiteExport(object):
+    
+    
+    #Track these variables so we can generate TinCan IDs as we go
+    #Initialising the current Course's page's idevice id for the current package.   
+    current_page = ""
+    current_package_name = ""
+    current_idevice_id = ""
+    
+    
     """
     WebsiteExport will export a package as a website of HTML pages
     """
@@ -76,7 +85,28 @@ class WebsiteExport(object):
         self.pages           = []
         self.prefix          = prefix
         self.report          = report
+       
+       
+    @staticmethod
+    def getTinCanId(suffix = ""):
+        """Make a tin can activity ID - use a server prefix, the 
+        package name, the page name, then the idevice id, and if
+        needed another / and a question id or other depending on
+        the idevice
+        suffix: will be added to the tincan string
+        """
+        server_tincan_prefix = "http://www.ustadmobile.com/tincan"
+        tin_can_prefix = "%(urlprefix)s/%(packagename)s/%(pagename)s/%(ideviceid)s" % {
+                                "urlprefix" : server_tincan_prefix,
+                                "packagename" :  WebsiteExport.current_package_name,
+                                "pagename" : WebsiteExport.current_page,
+                                "ideviceid" : WebsiteExport.current_idevice_id
+                                }
+        if suffix != "":
+            tin_can_prefix += "/" + suffix
         
+        return tin_can_prefix
+ 
 
     def exportZip(self, package):
         """ 
@@ -142,6 +172,8 @@ class WebsiteExport(object):
             if not outputDir.exists():
                 outputDir.mkdir()
 
+        WebsiteExport.current_package_name = package.name
+        
         # Import the Website Page class.  If the style has it's own page class
         # use that, else use the default one.
         if (self.stylesDir/"websitepage.py").exists():

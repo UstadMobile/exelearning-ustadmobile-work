@@ -50,8 +50,8 @@ log = logging.getLogger(__name__)
 # ===========================================================================
 class XMLExport(WebsiteExport):
     
-    
-    
+     
+     
     """
     WebsiteExport will export a package as a website of HTML pages
     """
@@ -67,6 +67,8 @@ class XMLExport(WebsiteExport):
     def encodeEntities(html):
         import cgi
         return  cgi.escape(html)
+    
+                            
         
 
     def export(self, package):
@@ -77,6 +79,8 @@ class XMLExport(WebsiteExport):
         """
         outputDir = self.filename
         currentOutputDir = Path(outputDir/package.name)
+        WebsiteExport.current_package_name = package.name
+        
         #Added for course test mode.
         self.ustadMobileTestMode = package.ustadMobileTestMode
         

@@ -29,7 +29,9 @@ from exe.webui.blockfactory   import g_blockFactory
 from exe.engine.error         import Error
 from exe.engine.path          import Path
 from exe.export.pages         import Page, uniquifyNames
-from exe.webui                import common 
+from exe.webui                import common
+from exe.export.websiteexport import WebsiteExport
+ 
 log = logging.getLogger(__name__)
 
 
@@ -68,6 +70,7 @@ class XMLPage(Page):
     def save(self, outputDir, prevPage, nextPage, pages, nonDevices):
         
         XMLPage.currentOutputDir = outputDir
+        WebsiteExport.current_page = self.name
         
         xml = u'<?xml version="1.0" encoding="UTF-8"?>\n'
         xml += u"<exepage title='%s' " % escape(self.node.titleLong)
@@ -89,6 +92,7 @@ class XMLPage(Page):
         
         for idevice in self.node.idevices:
             block = g_blockFactory.createBlock(None, idevice)
+            WebsiteExport.current_idevice_id = idevice.id
             
             if not block:
                 log.critical("Unable to render iDevice.")
