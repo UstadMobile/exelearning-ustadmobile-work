@@ -212,6 +212,25 @@ body:after{content:url(../images/exe_lightbox_close.png) url(../images/exe_light
     background: green url('/images/plusbutton.png') no-repeat 4px center;
 }
 
+.insert_button {
+	font-weight: bold;
+	font-size: 12pt;
+    color: white;
+    padding-left: 20px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background: green url('/images/plusbutton.png') no-repeat 4px center;
+}
+
+.authoring_button_row {
+	border-top: 1px dashed gray;
+	margin-left: 10px;
+	margin-right: 20px;
+	padding: 8px;
+	border-bottom: 1px dashed gray;
+	width: 90%;
+}
+
 .exednd_imgholder IMG {
 	display: none;
 }

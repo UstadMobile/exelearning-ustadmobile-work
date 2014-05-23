@@ -126,7 +126,7 @@ Ext.define('eXe.view.ui.editToolbar', {
                     },
                     {
                         xtype: 'button',
-                        text: _('Wizard'),
+                        text: _('Start'),
                         //accesskey: 'x',
                         icon: '/images/tools-wizard-2.png', //Added
                         itemId: 'tools_wizard'
@@ -197,7 +197,7 @@ Ext.define('eXe.view.ui.editToolbar', {
 		                itemId: 'tools_idevicep',
 		                icon: '/images/plusbutton.png',
 		                accesskey: 'w',
-		                text: _('Add IDevices'),
+		                text: _('Insert'),
 		                height: 30	//30 is default
 		            },
 		            /*

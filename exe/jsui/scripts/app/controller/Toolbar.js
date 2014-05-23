@@ -1410,3 +1410,26 @@ Ext.define('eXe.controller.Toolbar', {
     	});
     }
 });
+
+/*
+ Temporary UI testing 
+*/
+function showIdeviceToolbar() {
+    //Ext.getCmp('idevicepwin')
+
+    var idevicep = new Ext.Window ({
+        height: 450, 
+        width: 550, 
+        modal: true,
+        id: 'idevicepwin',
+        title: _("Insert"),
+        layout: 'fit',
+        items: [{
+          xtype: 'idevicep'
+        }]
+      }),
+      formpanel = idevicep.down('form');
+  formpanel.load({url: 'idevicep', method: 'GET'});
+  idevicep.show();        
+}
+

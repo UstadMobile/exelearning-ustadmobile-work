@@ -124,6 +124,9 @@ class AuthoringPage(RenderableResource):
                     return "<body onload='location.replace(\"" + request.path + "?clientHandleId=" + activeClient.handleId + "\")'/>"
                 else:
                     log.error("No active client")
+                    
+            if request.args["action"][0] == "addidevice":
+                activeClient.call("showIdeviceToolbar")
 
         self.blocks = []
         self.__addBlocks(topNode)
@@ -153,23 +156,18 @@ class AuthoringPage(RenderableResource):
         html += escape(topNode.titleLong)
         html += u'</h1>\n'
         html += u'</div>\n'
-
-        if len(self.blocks) == 0:
-            html += _("""
-                
-                <i>Hmmm... Looks like this page is blank now.  
-                Why not click </i>
-                <span style='font-weight: bold; font-size: 8pt; display: inline-block; height: 16px; padding: 3px; '
-                onclick='alert("Click the button up on the toolbar. This is only for show")'
-                >
-                <img src='/images/plusbutton.png'/>
-                Add IDevices</span>
-                 <i>up there on the toolbar?</i>
-                 <img src='/images/curve_arrow.png'/>
-                 """)
+        
+        html += "<div class='authoring_button_row'>"
+        html += "<input value='%s' class='insert_button' type='button' onclick=\"submitLink('%s', '%s', %d);\"/>" % \
+                (_("Insert Here"), "addidevice", "authoring", 1)
+        html += "</div>"
         
         for block in self.blocks:
             html += block.render(self.package.style)
+            
+        
+        
+        
 
         html += u'</div>'
         html += '<script type="text/javascript">$exeAuthoring.ready()</script>\n'

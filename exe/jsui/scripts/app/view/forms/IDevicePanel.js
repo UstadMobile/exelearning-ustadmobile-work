@@ -161,7 +161,7 @@ var idevicep = Ext.define('eXe.view.forms.IDevicePanel', {
                     items: [	//This is the box area declatationarea
                     	{
                     		xtype: 'label',
-                    		html: '<h3><i>Click an idevice to add it to your current page</i></h3>'
+                    		html: '<h3><i>Select the content type you would like to add:</i></h3>'
                     	},
                     	{	//This is where we make new additions to the box. 
                         	xtype: 'container',
