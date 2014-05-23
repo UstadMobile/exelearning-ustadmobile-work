@@ -209,6 +209,7 @@ body:after{content:url(../images/exe_lightbox_close.png) url(../images/exe_light
     padding-left: 20px;
     padding-top: 4px;
     padding-bottom: 4px;
+    cursor: pointer;
     background: green url('/images/plusbutton.png') no-repeat 4px center;
 }
 
@@ -220,6 +221,7 @@ body:after{content:url(../images/exe_lightbox_close.png) url(../images/exe_light
     padding-top: 4px;
     padding-bottom: 4px;
     background: green url('/images/plusbutton.png') no-repeat 4px center;
+    cursor: pointer;
 }
 
 .authoring_button_row {

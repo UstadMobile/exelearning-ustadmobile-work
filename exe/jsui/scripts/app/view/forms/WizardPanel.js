@@ -98,7 +98,7 @@ function updateRecent2(){	//For updating the recent projects list
 				recpanel.add({
         			xtype: 'button',
     	        	text: _(textButton),
-    	        	margin: 10,
+    	        	margin: 3,
     	        	textButton: textButton,
     	        	handler: function(cow){
 						console.log("You clicked: " + cow.textButton + "!");
@@ -136,7 +136,7 @@ function updateTemplate(){	//For updating the Styles list
                 item = Ext.create('Ext.Button',{
                 	xtype: 'button',
     	        	text: _(styles[i].label),
-    	        	margin: 10,
+    	        	margin: 4,
     	        	handler: function(button) {
             	        	//Something?
     	        	},
@@ -154,7 +154,7 @@ function updateTemplate(){	//For updating the Styles list
         		stylepanel.add({
         			xtype: 'button',
     	        	text: _(styles[i].label),
-    	        	margin: 10,
+    	        	margin: 4,
     	        	width : 128,
     	            height : 64,
     	            itemid: 'test_button'
@@ -197,27 +197,37 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
             items: [	//This is the whole Panel start
                 {	
                     xtype: 'fieldset',
+                    layout: {
+                    	type: 'hbox',
+                    	align: 'stretch'
+                    },
                     defaults: {
                         labelWidth: 200, // Width of Label that one selects from options.
                         anchor: '100%' // How much % of screen should these options take in that frame.
                     },
-                    margin: 10, //Margin from top
+                    margin: 4, //Margin from top
                     items: [	//This is the box area declatationarea
                         
                     	{	//This is where we make new additions to the box. 
                         	xtype: 'container',
-                        	//layout: 'hbox',
-                        	margin: 10, //Maring between Save and the options above it.
+                        	//width: '50%',
+                        	layout: {
+                        		type: 'hbox',
+                        		align : 'stretch'
+                        	},
+                        	margin: 4, //Margin between Save and the options above it.
                         	items: [ //This is the box's items within the panel
                     	        { //To open a new blank Project
                     	        	xtype: 'button',
                     	        	text: _('New Project'),
-                    	        	margin: 10,
+                    	        	icon: '/images/wizard-new.png',
+                    	        	iconAlign: 'top',
+                    	        	margin: 4,
                     	        	handler: function(button) {
 	                    	        	//Something?
                     	        	},
-                    	        	width : 128,
-                    	            height : 64,
+                    	        	width : 240,
+                    	            height : 60,
                     	            cls: 'opennewproject',
                     	            //We have to make a new class in css: .opennewproject to add background images, etc
                     	            	//.opennewproject
@@ -226,27 +236,18 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
                     	            	// }
                     	            itemId: 'file_new'
                     	        },
-                    	        {	//Trying out to put Styles in here..
-                                    xtype: 'accesskey_button',
-                                    text: _('New Styled Project'),
-                                    accesskey: 's',
-                                    width : 128,
-                    	            height : 64,
-                                    itemId: 'wizard_styles_button',
-                                    menu: {
-                                        xtype: 'menu',
-                	                    itemId: 'wizard_styles_menu',
-                                    }
-                                },
+                    	        
                     	        { //To Open Existing elp files from the Wizard
                     	        	xtype: 'button',
                     	        	text: _('Open Existing'),
-                    	        	margin: 10,
+                    	        	margin: 4,
                     	        	handler: function(button) {
                 	        			//Something?
                     	        		},
-                    	        	width : 128,
-                    	            height : 64,
+                	        		icon: '/images/wizard-open.png',
+                	        		iconAlign: 'top',
+                    	        	width : 240,
+                    	            height : 60,
                     	            cls: 'openexistingproject',
                     	            //We have to make a new class in css: .openexistingproject to add background images, etc
                     	            	//.openexistingproject
@@ -284,8 +285,10 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
                 },
                 {
                     xtype:            'label',
-                    html:       '<h3><i>Your recent projects:</i></h3><br></br>',
+                    margin: 4,
+                    html:       '<h3><i>Your recent projects:</i></h3>',
                 	width: 100,
+                	padding: 4,
                 	height: 10,	//Doesnt really do much.
                 },
                                
@@ -293,16 +296,20 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
             	{ //This is another box..
 					
                     xtype: 'panel',
-                    //layout: 'hbox',
+                    layout: {
+                    	type: 'vbox',
+                    	align: 'stretch'
+                    },
 					//border:1,
 					width: '100%',
 					id: 'showrecentprojectspanel',
+					margin: 4,
                     items: [
                             //Any items for testing here..
                             { //Sample button
 		        	        	xtype: 'button',
 		        	        	text: _('Show Recent Projects'),
-		        	        	margin: 10,
+		        	        	margin: 4,
 		        	        	handler: function(button) {
 		            	        	//Something?
                             		//alert("test: calling updateRecent()");
@@ -323,6 +330,7 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
                     ]
                 },
                 
+                /*
     	        { //Auto start check button
     	        	xtype: 'checkboxfield',
     	        	margin: 10,
@@ -351,7 +359,7 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
     	        		});
     	        	},
     	        	itemId: 'save_wizard'	 //Just an ID..
-    	        },
+    	        },*/
     	        
         ]
     }); //End of ExtApplyIf

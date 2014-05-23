@@ -488,7 +488,7 @@ Ext.define('eXe.controller.Toolbar', {
 	          width: 550, 
 	          modal: true,
 	          id: 'wizardwin',
-	          title: _("Wizard"),
+	          title: _("Start Page"),
 	          layout: 'fit',
 	          items: [{
                 xtype: 'wizard'
@@ -1383,11 +1383,15 @@ Ext.define('eXe.controller.Toolbar', {
     	        })
     			for (i in rm) {				
     				textButton = rm[i].num + ". " + rm[i].path;
+    				//Button that will appear to open recent projects
     				recpanel.add({
             			xtype: 'button',
         	        	text: _(textButton),
-        	        	margin: 10,
+        	        	margin: 5,
+        	        	padding: 5,
         	        	icon: '/images/package-green.png',
+        	        	iconAlign: 'left',
+        	        	textAlign: 'left',
         	        	textButton: textButton,
         	        	handler: function(cow){
     						console.log("You clicked: " + cow.textButton[0] + "!");
@@ -1396,9 +1400,7 @@ Ext.define('eXe.controller.Toolbar', {
     						 Ext.Msg.wait(_('Loading package...'));
     						nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
     					},
-
-        	        	//width : 128,
-        	            //height : 34,
+    					width: 300,
         	            //itemid: 'recent_project_button'
             		},
             		 {	//For intendation purposes.

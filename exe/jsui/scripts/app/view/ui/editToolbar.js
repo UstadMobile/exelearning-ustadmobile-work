@@ -126,7 +126,7 @@ Ext.define('eXe.view.ui.editToolbar', {
                     },
                     {
                         xtype: 'button',
-                        text: _('Start'),
+                        text: _('Start Page'),
                         //accesskey: 'x',
                         icon: '/images/tools-wizard-2.png', //Added
                         itemId: 'tools_wizard'
