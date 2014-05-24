@@ -46,7 +46,7 @@ class ClozeIdevice(Idevice):
         """
         Sets up the idevice title and instructions etc
         """
-        Idevice.__init__(self, x_(u"Cloze Activity"),
+        Idevice.__init__(self, x_(u"Fill in the Blank"),
                          x_(u"University of Auckland"), 
                          x_(u"<p>Cloze exercises are texts or "
                              "sentences where students must fill in "

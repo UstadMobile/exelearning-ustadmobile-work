@@ -80,7 +80,8 @@ class IdeviceStore:
         In future the idevices which are returned will depend
         upon the pedagogical template we are using
         """
-        return self.extended + self.generic
+        #return self.extended + self.generic
+        return self.extended
     
     def getFactoryIdevices(self):
         """
@@ -357,8 +358,8 @@ class IdeviceStore:
         
         factoryExtendedIdevices.append(FreeTextIdevice())
         factoryExtendedIdevices.append(MultichoiceIdevice())
-        factoryExtendedIdevices.append(ReflectionIdevice())
-        factoryExtendedIdevices.append(CasestudyIdevice())
+        #factoryExtendedIdevices.append(ReflectionIdevice())
+        #factoryExtendedIdevices.append(CasestudyIdevice())
         factoryExtendedIdevices.append(TrueFalseIdevice())
         defaultImage = unicode(self.config.webDir / "images" / "sunflowers.jpg")
         # converting ImageWithTextIdevice -> FreeTextIdevice:
@@ -382,9 +383,9 @@ class IdeviceStore:
         #JRJ: Eliminamos este iDevices de los extendidos
         # (we eliminate this iDevice from the extended ones)
         #factoryExtendedIdevices.append(MultimediaIdevice())
-        factoryExtendedIdevices.append(RssIdevice())
+        #factoryExtendedIdevices.append(RssIdevice())
         factoryExtendedIdevices.append(MultiSelectIdevice())
-        factoryExtendedIdevices.append(AppletIdevice())
+        #factoryExtendedIdevices.append(AppletIdevice())
         #JRJ: Eliminamos este iDevices de los extendidos
         # (we eliminate this iDevice from the extended ones)
         #factoryExtendedIdevices.append(FlashMovieIdevice())

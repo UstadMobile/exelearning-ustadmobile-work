@@ -473,7 +473,7 @@ Ext.define('eXe.controller.Toolbar', {
 	          width: 550, 
 	          modal: true,
 	          id: 'idevicepwin',
-	          title: _("IDevices"),
+	          title: _("Insert"),
 	          layout: 'fit',
 	          items: [{
                 xtype: 'idevicep'
@@ -1440,7 +1440,7 @@ Ext.define('eXe.controller.Toolbar', {
                         items: deviceItemsByCategory[categoryName]
                     });
                 }
-                
+                ideviceTabPanel.setActiveTab(0);
             }
         });
     },

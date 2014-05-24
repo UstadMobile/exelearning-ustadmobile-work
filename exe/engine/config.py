@@ -65,7 +65,7 @@ class Config:
         'reading activity': [x_('Non-Interactive Activities')],
         'dropdown activity': [x_('Interactive Activities')],
         'java applet': [x_('Non-Textual Information')],
-        'wiki article': [x_('Non-Textual Information')],
+        'wiki article': [x_('Documents')],
         'case study': [x_('Non-Interactive Activities')],
         'preknowledge': [x_('Textual Information')],
         'scorm quiz': [x_('Interactive Activities')],
@@ -86,25 +86,25 @@ class Config:
         'fpd - think about it (with feedback)': [x_('FPD')],
         'fpd - think about it (without feedback)': [x_('FPD')],
         'fpd - free text': [x_('FPD')],
-        'image gallery': [x_('Non-Textual Information')],
-        'image magnifier': [x_('Non-Textual Information')],
-        'note': [x_('Textual Information')],
+        'image gallery': [x_('Image Widgets')],
+        'image magnifier': [x_('Image Widgets')],
+        'note': [x_('Text/Media')],
         'objectives': [x_('Textual Information')],
         'multi-choice': [x_('Interactive Activities')],
         'multi-select': [x_('Interactive Activities')],
         'true-false question': [x_('Interactive Activities')],
         'reflection': [x_('Non-Interactive Activities')],
-        'cloze activity': [x_('Interactive Activities')],
+        'fill in the blank': [x_('Interactive Activities')],
         'rss': [x_('Non-Textual Information')],
-        'external web site': [x_('Non-Textual Information')],
-        'free text': [x_('Textual Information')],
+        'external web site': [x_('Documents')],
+        'free text/media': [x_('Text/Media')],
         'click in order game': [x_('Interactive Activities')],
         'hangman game': [x_('Interactive Activities')],
         'image map' : [x_('Interactive Activities')],
         'drag and drop' : [x_('Interactive Activities')],
         'place the objects': [x_('Interactive Activities')],
         'memory match game': [x_('Interactive Activities')],
-        'file attachments': [x_('Non-Textual Information')],
+        'file attachments': [x_('Documents')],
         'sort items': [x_('Interactive Activities')]
     }
 
@@ -182,7 +182,7 @@ class Config:
         # iDevice pane but, contrary to the hiddens, these are ones that the 
         # configuration can specify to turn ON:
         self.deprecatediDevices = [ "flash with text", "flash movie", "mp3", \
-                                    "attachment"]
+                                    "attachment", "java applet", "rss"]
         # by default, only allow embedding of media types for which a 
         # browser plugin is found:
         self.assumeMediaPlugins = False;
