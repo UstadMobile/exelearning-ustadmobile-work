@@ -22,6 +22,7 @@ Ext.define('eXe.view.ui.eXeViewport', {
     requires: [
         'eXe.view.ui.eXeToolbar',
         'eXe.view.ui.editToolbar', //Added
+        'eXe.view.ui.TitleToolbar',
         'eXe.view.ui.MainTabPanel',
         'eXe.view.ui.LeftPanel'
     ],
@@ -35,6 +36,10 @@ Ext.define('eXe.view.ui.eXeViewport', {
 
         Ext.applyIf(me, {
             items: [
+                {
+                	xtype: 'titletoolbar',
+                	region: 'north'
+                },
                 {
                     xtype: 'exetoolbar',
                     region: 'north'

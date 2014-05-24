@@ -1036,12 +1036,49 @@ class Package(Persistable):
                 return
         # Save in recentDocuments list
         recentProjects = G.application.config.recentProjects
+        recentWTitle = filename + "::::" + self.title
+        
+        items_to_remove = []
+        for i in range(0, len(recentProjects)):
+            recent_proj_filename = recentProjects[i]
+            try:
+                recent_proj_sep = recentProjects[i].index("::::")
+                recent_proj_filename = recentProjects[i].split("::::")[0]
+            except ValueError:
+                pass
+            
+            if recent_proj_filename == filename:
+                if i == 0 and recentProjects[i] == recentWTitle:
+                    return
+                else:
+                    items_to_remove.append(recentProjects[i])
+        
+        for item_to_remove in items_to_remove:
+            recentProjects.remove(item_to_remove)
+                    
+        """
         if filename in recentProjects:
             # If we're already number one, carry on
             if recentProjects[0] == filename:
                 return
-            recentProjects.remove(filename)
-        recentProjects.insert(0, filename)
+            try:
+                recentProjects.remove(filename)
+            except:
+                pass
+        
+        
+        
+        if recentWTitle in recentProjects:
+            # If we're already number one, carry on
+            if recentProjects[0] == recentWTitle:
+                return
+            try:
+                recentProjects.remove(recentWTitle)
+            except:
+                pass
+        """
+        
+        recentProjects.insert(0, recentWTitle)
         del recentProjects[5:] # Delete any older names from the list
         G.application.config.configParser.write() # Save the settings
 

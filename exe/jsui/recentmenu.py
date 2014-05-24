@@ -52,6 +52,11 @@ class RecentMenu(Renderable, Resource):
         Loads a file from our recent files list
         """
         filename = self.parent.config.recentProjects[int(number) - 1]
+        try:
+            indexPos = filename.index("::::")
+            filename = filename[:indexPos]
+        except ValueError:
+            pass
         self.parent.handleLoadPackage(client, filename)
 
     def handleClearRecent(self, client):
@@ -69,7 +74,16 @@ class RecentMenu(Renderable, Resource):
 
         l = []
         for num, path in enumerate(self.parent.config.recentProjects):
-            l.append({'num': num + 1, 'path': escape(path)})
+            path_with_title = escape(path)
+            title = ""
+            try:
+                if path_with_title.index("::::") != -1:
+                    parts = path_with_title.split("::::")
+                    path = parts[0]
+                    title = parts[1]
+            except ValueError:
+                pass
+            l.append({'num': num + 1, 'path': escape(path), 'title' : title})
         return json.dumps(l).encode('utf-8')
 
 # ===========================================================================

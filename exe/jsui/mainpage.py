@@ -201,6 +201,7 @@ class MainPage(RenderableLivePage):
         setUpHandler(self.handleCancelImport,    'cancelImportPackage')
         setUpHandler(self.handleExport,          'exportPackage')
         setUpHandler(self.startUSBExport,        'exportPackageToUSB')
+        setUpHandler(self.setPackageTitle,        'setPackageTitle')
         setUpHandler(self.handleXliffExport,     'exportXliffPackage')
         setUpHandler(self.handleQuit,            'quit')
         setUpHandler(self.handleBrowseURL,       'browseURL')
@@ -1004,6 +1005,10 @@ class MainPage(RenderableLivePage):
     def handleCancelImport(self, client):
         log.info('Cancel import')
         Resources.cancelImport()
+   
+    def setPackageTitle(self, client, new_title):
+        self.package.set_title(new_title)
+
         
     def startUSBExport(self, client, exportType, filename):
         if not os.path.exists(filename):

@@ -67,6 +67,10 @@ Ext.define('eXe.controller.Toolbar', {
         	'#wizard_show_recent': {
         		beforerender: this.updateRecent
         	},
+        	'#title_button' : {
+        	   click : this.setPackageTitle,
+        	   beforerender : this.updatePackageTitle
+        	},
         	//export_ustadmobile_show_usb_list
         	'#export_ustadmobile_show_usb_list': {
         		beforerender: this.updateUSBDevicesList
@@ -487,7 +491,7 @@ Ext.define('eXe.controller.Toolbar', {
     toolsWizard: function() {	//added for Wizard test
     	//alert("testWizard01");
         var wizard = new Ext.Window ({
-	          height: 400, 
+	          height: 480, 
 	          width: 550, 
 	          modal: true,
 	          id: 'wizardwin',
@@ -1305,6 +1309,42 @@ Ext.define('eXe.controller.Toolbar', {
     	this.checkDirty(nextStep, 'eXe.app.getController("Toolbar").askSave("'+nextStep+'")');
     },
     
+    setPackageTitle: function(button) {
+        Ext.Msg.show({
+            prompt: true,
+            title: _('Project Title'),
+            msg: _('Enter the new name:'),
+            buttons: Ext.Msg.OKCANCEL,
+            multiline: false,
+            value: button.text,
+            scope: this,
+            fn: function(button, text) {
+                if (button == "ok") {
+                    if (text) {
+                        nevow_clientToServerEvent('setPackageTitle', this,'', text);
+                        Ext.getCmp("title_button").setText(text);
+                    }
+                }
+            }
+        });
+    },
+    
+    updatePackageTitle: function() {
+        Ext.Ajax.request({
+            url: location.pathname + '/properties?pp_title=',
+            scope: this,
+            success: function(response) {
+                var respData = Ext.JSON.decode(response.responseText);
+                var packageTitle = respData['data']['pp_title'];
+                if(packageTitle == "") {
+                    packageTitle = _("Untitled Project");
+                }
+                
+                Ext.getCmp("title_button").setText(packageTitle);
+            }
+        });
+    },
+    
     updateUSBDevicesList: function() {
     	var recpanel = Ext.getCmp('showremovabledevices'); //showrecentprojectspanel
     	recpanel.removeAll();
@@ -1461,7 +1501,12 @@ Ext.define('eXe.controller.Toolbar', {
     	        	flex: 1
     	        })
     			for (i in rm) {				
-    				textButton = rm[i].num + ". " + rm[i].path;
+    			    if(rm[i].title == "") {
+    				    textButton = rm[i].num + ". " + rm[i].path;
+				    }else {
+				        textButton = "<b>" + rm[i].title + "</b><br/>"
+				            + rm[i].path;
+			        }
     				//Button that will appear to open recent projects
     				recpanel.add({
             			xtype: 'button',
@@ -1471,13 +1516,14 @@ Ext.define('eXe.controller.Toolbar', {
         	        	icon: '/images/package-green.png',
         	        	iconAlign: 'left',
         	        	textAlign: 'left',
+        	        	id: rm[i].num + "openrecent",
         	        	textButton: textButton,
         	        	handler: function(cow){
     						console.log("You clicked: " + cow.textButton[0] + "!");
     						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
     						//fileOpenRecent2(cow.textButton[0]);
     						 Ext.Msg.wait(_('Loading package...'));
-    						nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
+    						nevow_clientToServerEvent('loadRecent', this, '', cow.id[0])
     					},
     					width: 300,
         	            //itemid: 'recent_project_button'

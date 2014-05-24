@@ -65,7 +65,11 @@ Ext.define('eXe.view.ui.LeftPanel', {
                         }
                     ]
                 },
-                {
+                
+                //start idevice part of menu
+                /* Hide the panel here because we now have the insert 
+                 * button
+                 * {
                     xtype: 'gridpanel',
                     itemId: 'idevice_panel',
                     height: 150,
@@ -189,7 +193,8 @@ Ext.define('eXe.view.ui.LeftPanel', {
                         
                     ]
                     
-                }
+                }//end idevice panel
+                */
             ]
         });
 

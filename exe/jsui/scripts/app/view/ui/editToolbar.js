@@ -1,6 +1,6 @@
 // ===========================================================================
 // eXe
-// Copyright 2012, Pedro Peña Pérez, Open Phoenix IT
+// Copyright 201, Pedro Peña Pérez, Open Phoenix IT
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

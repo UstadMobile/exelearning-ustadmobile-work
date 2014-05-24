@@ -28,8 +28,16 @@
   height:     auto;
 }
 
+#title_button-btnInnerEl {
+    font-size: 16pt;
+    font-weight: bold;
+}
+
+
+
 .property-form-dirty {
   background-image: url('../jsui/extjs/resources/themes/images/default/grid/dirty.gif');
   background-position: 0 0;
   background-repeat: no-repeat;
 }​
+
