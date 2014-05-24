@@ -122,7 +122,7 @@ function updateTemplate(){	//For updating the Styles list
 
 //To Create the IDevice Panel.
 var idevicep = Ext.define('eXe.view.forms.IDevicePanel', {
-    extend: 'Ext.form.Panel',
+    extend: 'Ext.tab.Panel',
     id: 'idevicepanel',
     alias: 'widget.idevicep',
     refs: [
@@ -151,158 +151,8 @@ var idevicep = Ext.define('eXe.view.forms.IDevicePanel', {
             trackResetOnLoad: true,
             url: 'idevicep',		//declared by wizardpage.py
             items: [	//This is the whole Panel start
-                {	
-                    xtype: 'fieldset',
-                    defaults: {
-                        labelWidth: 200, // Width of Label that one selects from options.
-                        anchor: '100%' // How much % of screen should these options take in that frame.
-                    },
-                    margin: 10, //Margin from top
-                    items: [	//This is the box area declatationarea
-                    	{
-                    		xtype: 'label',
-                    		html: '<h3><i>Select the content type you would like to add:</i></h3>'
-                    	},
-                    	{	//This is where we make new additions to the box. 
-                        	xtype: 'container',
-                        	//layout: 'hbox',
-                        	margin: 10, //Maring between Save and the options above it.
-                        	items: [ //This is the box's items within the panel
-                        	         {
-                                         xtype: 'gridpanel',
-                                         itemId: 'toolbar_idevice_panel',
-                                         height: 300,
-                                         autoScroll: true,
-                                         store: 'IdeviceXmlStore', //file: IdeviceXmlStore.js
-                                         flex: 1,
-                                         
-                                         plugins: [{ptype: 'cellediting', clicksToEdit: 1}],
-                                         features: [{
-                                            ftype: 'grouping',
-                                     	   startCollapsed: false,
-                                     	   groupHeaderTpl: '{name}',
-                                     	   
-                                         }],
-                                         
-                                  	    tbar: [
-                                  	           /* Not used anymore
-                                  	        {
-                                  	        	xtype: 'button',
-                                  	        	text: _('Ungroup iDevices'),
-                                  	        	handler: function(button) {
-                                  	        		var panel = button.up("#idevice_panel");
-                                  	        		if (button.getText() == _('Ungroup iDevices')) {
-                                  	        			panel.view.features[0].disable();
-                                  	        			button.setText(_('Group iDevices'));
-                                  	        		}
-                                  	        		else {
-                                  	        			panel.view.features[0].enable();
-                                  	        			button.setText(_('Ungroup iDevices'));
-                                  	        		}
-                                  	        	}
-                                  	        },
-                                  	        
-                                  	        {	//This is the edit button on the iDevices panel on the left.
-                                  	        	xtype: 'button',
-                                  	        	text: _('Edit iDevices'),
-                                  	        	handler: function(button) {
-                                  	        		var panel = button.up("#idevice_panel"),
-                     	             	        		leftpanel = panel.up("leftpanel"),
-                     	          	        			gbutton = button.prev("button");
-                     	          	        		if (button.getText() == _('Edit iDevices')) {
-                                  	        			button.leftPanelSize = leftpanel.getWidth();
-                                  	        			if (button.leftPanelSize < 350)
-                                  	        				leftpanel.setWidth(350);
-                                  	        			panel.editing = true;
-                                  	        			panel.columns[1].show();
-                                  	        			panel.columns[2].show();
-                                  	        			panel.store.clearFilter();
-                                  	        			button.setText(_('Save iDevices'));
-                                  	        			panel.view.features[0].disable();
-                                  	        			gbutton.disable();
-                                  	        		}
-                                  	        		else {
-                                  	        			var restore = function() {
-                     	         	        				panel.editing = false;
-                     	         	        				panel.columns[1].hide();
-                     	         	        				panel.columns[2].hide();
-                     	         	        				leftpanel.setWidth(button.leftPanelSize);
-                     	         	        				button.setText(_('Edit iDevices'));
-                     	         	        				gbutton.enable();
-                     	         	        				if (gbutton.getText() == _('Ungroup iDevices'))
-                     	         	        					panel.view.features[0].enable();
-                     	         	        				panel.store.filter('visible', true);
-                                  	        			};
-                                  	        			if (panel.store.getModifiedRecords().length) {
-                                  	        				panel.store.sync({
-                                  	        					callback: restore
-                                  	        				});
-                                  	        			}
-                                  	        			else {
-                                  	        				restore();
-                                  	        			}
-                                  	        		}
-                                  	        	}
-                                  	        }	//End of edit iDevices.
-                                  	        
-                                  	        */
-                                  	    ],
-                     					selModel: {
-                     					    selType: 'cellmodel'
-                     					},
-                                         region: 'south',
-                                         split: true,
-                                         columns: [
-                                                   
-                                             {	//For edit iDevices section column: iDevices
-                                                 xtype: 'gridcolumn',
-                                                 sortable: false,
-                                                 dataIndex: 'titlewithicon', 
-                                                 fixed: true,
-                                                 flex: 1,
-                                                 hideable: false,
-                                                 menuDisabled: true,
-                                                 text: _('iDevices')
-                                             },
-                                             {	//For edit iDevices section coloumn: Category
-                                                 xtype: 'gridcolumn',
-                                                 hidden: true,
-                                                 sortable: false,
-                                                 dataIndex: 'category',
-                                                 fixed: true,
-                                                 flex: 1,
-                                                 hideable: false,
-                                                 menuDisabled: true,
-                                                 text: _('Category'),
-                                                
-                                             },
-                                             {	//For edit iDevices section Column: Visible
-                                                 xtype: 'checkcolumn',
-                                                 width: 50,
-                                                 hidden: true,
-                                                 sortable: false,
-                                                 dataIndex: 'visible',
-                                                 fixed: true,
-                                                 flex: 0,
-                                                 hideable: false,
-                                                 menuDisabled: true,
-                                                 text: _('Visible'),
-                                                 editor: {
-                                                     xtype: 'checkbox'
-                                                 }
-                                             }
-                                             
-                                         ]
-                                         
-                                     }
-                    	        
-                	        ]
-                        },
-                      
-                    ]
-                },
-                
-        ]
+                	
+            ]
     }); //End of ExtApplyIf
         
     me.callParent(arguments);

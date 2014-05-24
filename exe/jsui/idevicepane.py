@@ -178,22 +178,24 @@ class IdevicePane(Renderable, Resource):
         log.debug("_title "+prototype._title)
         log.debug("of type "+repr(type(prototype.title)))
         log.debug(prototype._title.lower())
-        xml  = u"  <idevice>\n"
-        xml += u"   <label>" + prototype.title + "</label>\n"
-        xml += u"   <id>" + prototype.id + "</id>\n"
-        xml += u"   <category>" + _(category) + "</category>\n"
-        xml += u"   <visible>" + str(visible).lower() + "</visible>\n"
         short_desc = ""
         if hasattr(prototype, "short_desc"):
             short_desc = prototype.short_desc
         
+        
+        xml  = u"  <idevice>\n"
+        xml += u"   <label>" + prototype.title + "</label>\n"
+        xml += u"   <id>" + prototype.id + "</id>\n"
+        xml += u"   <category>" + _(category) + "</category>\n"
+        xml += u"   <shortdesc><![CDATA[" + _(short_desc) + "]]></shortdesc>\n"
+        xml += u"   <visible>" + str(visible).lower() + "</visible>\n"
+        
         #To merge icon and title for idevice panel (new) -07042014 ^VS
         title_with_icon = """<![CDATA[
-            <h2>%(title)s</h2> 
-            <p style='white-space: normal; margin-top: 4px'>
-                <img src='/images/ideviceicons/icon_%(classname)s.png' align='left' style='margin-right: 4px'/>
-                %(short_desc)s
-            </p>
+            <div style='white-space: normal; text-align: left; padding-top: 4px; height: 28px;'>
+                <img src='/images/ideviceicons/icon_%(classname)s.png' align='left' style='margin-right: 4px; width: 24px; height: 24px;'/>
+                <b style='font-size: 10pt'>%(title)s</b>
+            </div>
             ]]>
         """ % {"classname" : str(prototype.__class__.__name__).lower() , \
                "title" : prototype.title, "short_desc" : short_desc }

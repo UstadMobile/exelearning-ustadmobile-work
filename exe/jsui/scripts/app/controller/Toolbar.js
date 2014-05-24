@@ -60,6 +60,9 @@ Ext.define('eXe.controller.Toolbar', {
         	'#file_recent_menu': {
         		beforerender: this.recentRender
         	},
+        	'#idevicepanel' : {
+        	   beforerender: this.updateIdeviceTabs
+        	},
         	//wizard_show_recent
         	'#wizard_show_recent': {
         		beforerender: this.updateRecent
@@ -466,7 +469,7 @@ Ext.define('eXe.controller.Toolbar', {
     toolsIDeviceP: function() {	//added for IDevice
     	//alert("testWizard01");
         var idevicep = new Ext.Window ({
-	          height: 450, 
+	          height: "95%", 
 	          width: 550, 
 	          modal: true,
 	          id: 'idevicepwin',
@@ -475,9 +478,9 @@ Ext.define('eXe.controller.Toolbar', {
 	          items: [{
                 xtype: 'idevicep'
               }]
-	        }),
-            formpanel = idevicep.down('form');
-        formpanel.load({url: 'idevicep', method: 'GET'});
+	        });
+            //formpanel = idevicep.down('form');
+        //formpanel.load({url: 'idevicep', method: 'GET'});
         idevicep.show();        
 	},
     
@@ -1366,6 +1369,82 @@ Ext.define('eXe.controller.Toolbar', {
     	});
     },
     
+    /*
+     Update tabs in the idevice selector panel - go through, check 
+     category of each idevice, make a tab for each, then populate
+     with buttons
+    */
+    updateIdeviceTabs: function() {
+        
+        var ideviceTabPanel = Ext.getCmp("idevicepanel");
+        Ext.Ajax.request({
+            url: location.pathname + '/idevicePane',
+            scope: this,
+            success: function(response) {
+                //dictionary of categoryname - array
+                var deviceItemsByCategory = {};
+                var responseXmlDoc = response.responseXML.documentElement;
+                var ideviceObjs = responseXmlDoc.getElementsByTagName("idevice");
+                for(var i = 0; i < ideviceObjs.length; i++) {
+                    var idevice = ideviceObjs[i];
+                    var visible = idevice.getElementsByTagName(
+                        "visible")[0].childNodes[0].nodeValue;
+                    if(visible == "false") {
+                        continue;
+                    }
+                    
+                    var label = idevice.getElementsByTagName(
+                        "label")[0].childNodes[0].nodeValue;
+                    var category = idevice.getElementsByTagName(
+                        "category")[0].childNodes[0].nodeValue;
+                    
+                    var ideviceId  = idevice.getElementsByTagName(
+                        "id")[0].childNodes[0].nodeValue;
+                    var titleIconHTML = idevice.getElementsByTagName(
+                        "titlewithicon")[0].childNodes[0].nodeValue;
+                    var short_desc = idevice.getElementsByTagName(
+                        "shortdesc")[0].childNodes[0].nodeValue;
+                    if(!deviceItemsByCategory[category]) {
+                        deviceItemsByCategory[category] = [];
+                    }
+                    
+                    deviceItemsByCategory[category].push({
+                        xtype : 'button',
+                        text : titleIconHTML,
+                        align : 'left',
+                        id : ideviceId,
+                        width: "100%",
+                        margin: 5,
+                        tooltip: short_desc,
+                        handler: function(button) {
+                            var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+                            if (authoring && authoring.submitLink) {
+                                var outlineTreePanel = eXe.app.getController("Outline").getOutlineTreePanel();
+                                selected = outlineTreePanel.getSelectionModel().getSelection();
+                                authoring.submitLink("AddIdevice", button.id, 1, selected !== 0? selected[0].data.id : '0');
+                            }
+                            Ext.getCmp('idevicepwin').close();
+                        }
+                    });    
+                    console.log("Found idevice "+ label + " in " + category); 
+                }
+                
+                for(categoryName in deviceItemsByCategory) {
+                    ideviceTabPanel.add({
+                        title : categoryName,
+                        xtype : "panel",
+                        layout : {
+                            type : "vbox",
+                            align : "sretch"
+                        },
+                        items: deviceItemsByCategory[categoryName]
+                    });
+                }
+                
+            }
+        });
+    },
+    
     updateRecent: function(){	//For updating the recent projects list
     	var recpanel = Ext.getCmp('showrecentprojectspanel'); //showrecentprojectspanel
     	recpanel.removeAll();
@@ -1420,7 +1499,7 @@ function showIdeviceToolbar() {
     //Ext.getCmp('idevicepwin')
 
     var idevicep = new Ext.Window ({
-        height: 450, 
+        height: "95%", 
         width: 550, 
         modal: true,
         id: 'idevicepwin',
@@ -1429,9 +1508,9 @@ function showIdeviceToolbar() {
         items: [{
           xtype: 'idevicep'
         }]
-      }),
-      formpanel = idevicep.down('form');
-  formpanel.load({url: 'idevicep', method: 'GET'});
+      });
+      //formpanel = idevicep.down('form');
+  //formpanel.load({url: 'idevicep', method: 'GET'});
   idevicep.show();        
 }
 
