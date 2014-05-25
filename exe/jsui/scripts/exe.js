@@ -169,13 +169,20 @@ Ext.application({
         if (eXe.app.config.showWizard)	//Added
         	eXe.app.getController('Toolbar').toolsWizard();
         
+        /* Disabled due to new insert menu
         if (!eXe.app.config.showIdevicesGrouped) {
-        	var panel = Ext.ComponentQuery.query('#idevice_panel')[0],
-        		button = panel.down('button');
+        	var panelResult = Ext.ComponentQuery.query('#idevice_panel');
+        	if(typeof panelResult !== "undefined") {
+        		var panel = panelResult[0];
+        		if(panel) {
+        			var button = panel.down('button');
         	
-        	panel.view.features[0].disable();
+        			panel.view.features[0].disable();
+        		}
+        	}
         	button.setText(_('Group iDevices'));
         }
+        */
     },
 
     appFolder: "jsui/app"
