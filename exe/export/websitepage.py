@@ -485,10 +485,10 @@ class WebsitePage(Page):
             
         
         html += """
-        <div data-role="header" data-position="fixed" data-id="exeheader" class= "exeTranslated" data-exe-translation = "%s" data-tap-toggle="false">
-        <h3>%s</h3> <!-- Note the page title that needs to be replaced with the Page Tite -->
+        <div data-theme="b" data-role="header" data-position="fixed" data-id="exeheader" class= "exeTranslated" data-exe-translation = "%s" data-tap-toggle="false">
+        <h3>%s</h3>
         </div>
-        <div data-role="content">
+        <div data-role="content" data-theme="b">
         """ % (title, title)
         
         html += """
@@ -510,23 +510,24 @@ class WebsitePage(Page):
         html += """
 
         <div data-role="footer" data-position="fixed" 
-            style="text-align: center;" data-id="exefooter" 
+            style="text-align: center;" data-id="exefooter"
+            data-theme="b" 
             data-tap-toggle="false">
             
             <a id="umBack" data-role="button" data-icon="arrow-l" 
                 class="ui-btn-left exeTranslated" 
                 onclick="exePreviousPageOpen()" data-exe-translation="Back"
-                data-theme="a" data-inline="true">Back</a>
+                data-inline="true">Back</a>
             
             <a onclick="exeMenuPageOpen()"   style="text-align: center;" 
                 data-exe-translation="Menu" class="exeTranslated"
                 data-transition="slideup" data-inline="true" data-icon="grid" 
-                data-theme="a">Menu</a>
+                >Menu</a>
                      
             <a id="umForward" data-role="button" data-icon="arrow-r" 
                 class="ui-btn-right exeTranslated" data-direction="reverse"
                 data-exe-translation="Forward" 
-                onclick="exeNextPageOpen()" data-theme="a" 
+                onclick="exeNextPageOpen()"  
                 data-inline="true">Forward</a>
         </div>
         </div>   """
@@ -539,7 +540,7 @@ class WebsitePage(Page):
     @classmethod
     def getUstadMobileScriptList(cls):
         #Temp: Qunit removed due to conflict with imagemapster - "qunit-1.12.0.js",  "ustadmobile-test.js", 
-        return ["ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile-1.3.2.min.js",\
+        return ["ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile.min.js",\
                  "ustadmobile-common.js", "ustadmobile-constants.js",\
                  "ustadmobile-booklist.js", "jquery.touchSwipe.min.js"]
     
@@ -557,5 +558,5 @@ class WebsitePage(Page):
     """
     @classmethod
     def getUstadMobileCSSList(cls):
-        return ["jquery.mobile-1.3.2.css"]
+        return ["jqm-base.css", "jqm-app-theme.css", "jqm-content-theme.css"]
     
