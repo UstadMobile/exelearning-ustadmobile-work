@@ -387,8 +387,7 @@ Ext.define('eXe.controller.Toolbar', {
     },
     
     toolsRefresh: function() {
-        eXe.app.quitWarningEnabled = false;
-        window.location = window.location;
+        eXe.app.reload();
     },
     //login_umcloud_toolbar
     login_umcloud_toolbar: function() {	//added for IDevice
@@ -508,7 +507,7 @@ Ext.define('eXe.controller.Toolbar', {
 
     toolsPreferences: function() {
         var preferences = new Ext.Window ({
-	          height: 250, 
+	          height: 320, 
 	          width: 550, 
 	          modal: true,
 	          id: 'preferenceswin',

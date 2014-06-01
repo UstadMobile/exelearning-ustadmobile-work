@@ -116,11 +116,34 @@ Ext.application({
 
     quitWarningEnabled: true,
 
+    reload: function() {
+        var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+        if (authoring && authoring.submitLink) {
+        	var outlineTreePanel = eXe.app.getController("Outline").getOutlineTreePanel(),
+            	selected = outlineTreePanel.getSelectionModel().getSelection();
+        	eXe.app.quitWarningEnabled = false;
+        	eXe.app.on({
+        		'authoringLoaded': function() {
+        			nevow_clientToServerEvent('reload');
+        		}
+        	});
+	        authoring.submitLink("changeNode", selected !== 0? selected[0].data.id : '0');
+        }
+    },
+
     gotoUrl: function(location) {
         eXe.app.quitWarningEnabled = false;
         if (location == undefined)
             location = window.top.location.pathname;
         nevow_closeLive('window.top.location = "' + location + '";');
+    },
+    
+    showLoadError: function() {
+    	if (eXe.app.config.loadErrors.length > 0) {
+    		Ext.Msg.alert(_('Load Error'), eXe.app.config.loadErrors.pop(), eXe.app.showLoadError);
+    	}
+    	else
+    		eXe.app.afterShowLoadErrors();
     },
     
     launch: function() {
@@ -170,6 +193,7 @@ Ext.application({
         	eXe.app.getController('Toolbar').toolsWizard();
         
         /* Disabled due to new insert menu
+
         if (!eXe.app.config.showIdevicesGrouped) {
         	var panelResult = Ext.ComponentQuery.query('#idevice_panel');
         	if(typeof panelResult !== "undefined") {
@@ -183,6 +207,14 @@ Ext.application({
         	button.setText(_('Group iDevices'));
         }
         */
+
+        eXe.app.afterShowLoadErrors = function() {
+        	if (eXe.app.config.showPreferences)
+        		eXe.app.getController('Toolbar').toolsPreferences();
+        };
+
+        eXe.app.showLoadError();
+
     },
 
     appFolder: "jsui/app"

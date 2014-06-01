@@ -484,14 +484,17 @@ function markClozeWord(ele, mark) {
         case 0:
             // Not attempted
             ele.style.backgroundColor = "";
+            ele.style.color = "";
             break;
         case 1:
             // Wrong
             ele.style.backgroundColor = "#FF9999";
+            ele.style.color = "#000000";
             break;
         case 2: 
             // Correct
             ele.style.backgroundColor = "#CCFF99";
+            ele.style.color = "#000000";
             break;
     }
     return mark
@@ -1364,6 +1367,7 @@ var $exe = {
     init : function(){
         var d = document.body.className;
         d += ' js';
+        $exe.addRoles();
         //iDevice Toggler
         if (d!='exe-single-page js') {
             var ie_v = $exe.isIE();
@@ -1380,9 +1384,21 @@ var $exe = {
         }
         $exe.hint.init();
     },
+    addRoles : function(){
+        $('#header').attr('role','banner'); 
+        $('#siteNav').attr('role','navigation'); 
+        $('#main').attr('role','main'); 
+        $('#siteFooter').attr('role','contentinfo');
+        $('.js-feedback').attr('role','status');
+    },   
     isIE :function() {
         var n = navigator.userAgent.toLowerCase();
         return (n.indexOf('msie') != -1) ? parseInt(n.split('msie')[1]) : false;
+    },
+    imageGallery : {
+        init : function(id) {
+            $("A","#"+id).attr("rel","lightbox["+id+"]");
+        }
     },
     hint : {
         init : function(){
@@ -1540,11 +1556,11 @@ var $exe = {
         var id = e.name.replace("toggle-","");
         var f = document.getElementById(id);
         if (f) {
-            if (f.className == "feedback js-hidden") {
-                f.className = "feedback";
+            if (f.className == "feedback js-feedback js-hidden") {
+                f.className = "feedback js-feedback";
                 e.value = $exe_i18n.hideFeedback
             } else {
-                f.className = "feedback js-hidden";
+                f.className = "feedback js-feedback js-hidden";
                 e.value = $exe_i18n.showFeedback
             }
         }
@@ -1561,13 +1577,6 @@ if (typeof jQuery != 'undefined') {
  * Utility function to get rid of white space
  */
 function exeUtilRemoveWhiteSpace(str) {
-	
-	/*var whiteSpace = [' ', '\n', '\r', '\t'];
-	for(currentChar in whiteSpace) {
-		str = str.replace(currentChar, '');
-	}*/
-	
 	str =str.replace(/\s+/g, ''); 
-	
 	return str;
 }

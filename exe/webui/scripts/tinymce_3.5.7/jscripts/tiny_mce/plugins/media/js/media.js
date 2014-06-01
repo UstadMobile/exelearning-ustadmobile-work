@@ -147,9 +147,6 @@
                     var uploaded_file_1_name_parts = uploaded_file_1_name.split("/");
                     if (uploaded_file_1_name_parts.length>1) uploaded_file_1_name = uploaded_file_1_name_parts[uploaded_file_1_name_parts.length-1];
                     link_text = uploaded_file_1_name;
-                    // Replace path by resources/file_name in audio, video, windowsmedia and realmedia
-                    uploaded_file_1_name = uploaded_file_1_name.replace( /\ /g, "_" );
-                    file_src = "resources/"+uploaded_file_1_name;           
                 }
             }   
 
@@ -258,9 +255,18 @@
                 var cText = "";
                 var license = "";
                 
+                var figureTag = "div";
+                var headerFigcaptionTag = "div";
+                var footerFigcaptionTag = "div";
+                if (parent.exe_export_format=="html5") {
+                    figureTag = "figure";
+                    if (imageTitle=="" && imageTitleLink=="" && authorName=="" && authorNameLink=="" && captionLicense=="") headerFigcaptionTag = "figcaption";
+                    footerFigcaptionTag = "figcaption";
+                }                 
+                
                 //Header
                 if (imageHeader!="") {
-                    hText = "<div class='figcaption header'><strong>"+imageHeader+"</strong></div>";
+                    hText = "<"+headerFigcaptionTag+" class='figcaption header'><strong>"+imageHeader+"</strong></"+headerFigcaptionTag+">";
                 }
                 
                 //Author and link
@@ -340,9 +346,9 @@
                 
                 var extraStyle="width:"+_w+"px;";
                 var fText = "";
-                if (cText!="" || license!="") fText = "<div class='figcaption'>"+cText+license+"</div>";
+                if (cText!="" || license!="") fText = "<"+footerFigcaptionTag+" class='figcaption'>"+cText+license+"</"+footerFigcaptionTag+">";
 
-                c = "<div class='"+cssClass+"' style='"+extraStyle+"'>"+hText+c+fText+"</div><br />";
+                c = "<"+figureTag+" class='"+cssClass+"' style='"+extraStyle+"'>"+hText+c+fText+"</"+figureTag+"><br />";
             }
             
             tinyMCEPopup.editor.execCommand('mceInsertContent', false, c);
@@ -600,6 +606,11 @@
                 }
             } else {
                 src = getVal("src");
+				
+				// The New eXeLearning
+				var p = 'http';
+				if (src.indexOf("https")==0) p += 's';
+				// /The New eXeLearning				
 
                 // YouTube *NEW*
                 if (src.match(/youtu.be\/[a-z1-9.-_]+/)) {
@@ -607,7 +618,10 @@
                     data.height = 350;
                     data.params.frameborder = '0';
                     data.type = 'iframe';
-                    src = 'http://www.youtube.com/embed/' + src.match(/youtu.be\/([a-z1-9.-_]+)/)[1];
+                    //src = 'http://www.youtube.com/embed/' + src.match(/youtu.be\/([a-z1-9.-_]+)/)[1];
+                    // The New eXeLearning
+                    src = p+'://www.youtube.com/embed/' + src.match(/youtu.be\/([a-z1-9.-_]+)/)[1];
+                    // /The New eXeLearning					
                     setVal('src', src);
                     setVal('media_type', data.type);
                 }
@@ -618,7 +632,10 @@
                     data.height = 350;
                     data.params.frameborder = '0';
                     data.type = 'iframe';
-                    src = 'http://www.youtube.com/embed/' + src.match(/v=([^&]+)/)[1];
+                    //src = 'http://www.youtube.com/embed/' + src.match(/v=([^&]+)/)[1];
+                    // The New eXeLearning
+                    src = p+'://www.youtube.com/embed/' + src.match(/v=([^&]+)/)[1];
+                    // /The New eXeLearning					
                     setVal('src', src);
                     setVal('media_type', data.type);
                 }
@@ -628,7 +645,10 @@
                     data.width = 425;
                     data.height = 326;
                     data.type = 'flash';
-                    src = 'http://video.google.com/googleplayer.swf?docId=' + src.match(/docid=([^&]+)/)[1] + '&hl=en';
+                    //src = 'http://video.google.com/googleplayer.swf?docId=' + src.match(/docid=([^&]+)/)[1] + '&hl=en';
+                    // The New eXeLearning
+                    src = p+'://video.google.com/googleplayer.swf?docId=' + src.match(/docid=([^&]+)/)[1] + '&hl=en';
+                    // /The New eXeLearning
                     setVal('src', src);
                     setVal('media_type', data.type);
                 }
@@ -639,7 +659,10 @@
                     data.height = 350;
                     data.params.frameborder = '0';
                     data.type = 'iframe';
-                    src = 'http://player.vimeo.com/video/' + src.match(/vimeo.com\/([0-9]+)/)[1];
+                    //src = 'http://player.vimeo.com/video/' + src.match(/vimeo.com\/([0-9]+)/)[1];
+                    // The New eXeLearning
+                    src = p+'://player.vimeo.com/video/' + src.match(/vimeo.com\/([0-9]+)/)[1];
+                    // /The New eXeLearning		
                     setVal('src', src);
                     setVal('media_type', data.type);
                 }
@@ -661,7 +684,10 @@
                     data.height = 350;
                     data.params.frameborder = '0';
                     data.type = 'iframe';
-                    src = 'http://maps.google.com/maps/ms?msid=' + src.match(/msid=(.+)/)[1] + "&output=embed";
+                    //src = 'http://maps.google.com/maps/ms?msid=' + src.match(/msid=(.+)/)[1] + "&output=embed";
+                    // The New eXeLearning
+                    src = p+'://maps.google.com/maps/ms?msid=' + src.match(/msid=(.+)/)[1] + "&output=embed";
+                    // /The New eXeLearning					
                     setVal('src', src);
                     setVal('media_type', data.type);
                 }

@@ -13,6 +13,7 @@ tinyMCE.init({
 	editor_selector: "mceEditor",	
 	theme : "advanced",
 	convert_urls : false,
+    //schema : exe_export_format, // html5 or empty  (html4 schema)
 	// The New eXeLearning
 	content_css : "/css/extra.css," + exe_style,
     height : "70",
@@ -23,9 +24,8 @@ tinyMCE.init({
 	theme_advanced_resizing_min_height : "70",
     //paste_text_sticky : true,    
     //paste_text_sticky_default : true,
-	extended_valid_elements : "img[*],iframe[*]", //The exemath plugin uses this attribute: exe_math_latex, and the iframes might have "allowfullscreen".
-	//entity_encoding : "raw",
-
+    valid_elements : "*[*]",
+    entity_encoding : "raw",
 	// Theme options
 	theme_advanced_buttons1 : "newdocument,spellchecker,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,clearfloat,|,bullist,numlist,|,outdent,indent,blockquote,|,formatselect,fontsizeselect,fontselect,|,forecolor,backcolor,|,sub,sup,|,fullscreen",
 	theme_advanced_buttons2 : "undo,redo,|,cut,copy,paste,pastetext,pasteword,|,pastehtml,pastecode,|,search,replace,|,link,unlink,anchor,|,image,media,|,removeformat,cleanup,|,insertdate,inserttime,advhr,cite,abbr,acronym,del,ins,attribs,nonbreaking,|,charmap,exemath,|,styleprops",
@@ -89,6 +89,9 @@ tinyMCE.init({
 		
 		ed.onInit.add(function(ed, e) {
 			$exeAuthoring.countBase64(ed);
+			$(ed.getDoc()).bind('drop', function(event){
+				return tinymce.dom.Event.cancel(event);
+			});		
 		});	
 		ed.onChange.add(function(ed, e) {
 			$exeAuthoring.compareBase64(ed);

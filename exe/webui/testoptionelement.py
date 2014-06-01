@@ -155,26 +155,33 @@ class TestoptionElement(object):
         log.debug("renderView called")
         
         lb = "\n" #Line breaks
+        dT = common.getExportDocType()
+        sectionTag = "div"
+        if dT == "HTML5":
+            sectionTag = "section"
         
-        html = '<div class="iDevice_answer">'+lb
+        html = '<'+sectionTag+' class="iDevice_answer">'+lb
         
         # Checkbox
         fieldId = self.keyId+unicode((self.index+1));
         html += '<p class="iDevice_answer-field js-required">'+lb
-        html += '<label for="'+fieldId+'" class="sr-av"><a href="#answer-'+fieldId+'">'+_("Option")+' '+unicode((self.index+1))+'</a></label>'
+        html += '<label for="'+fieldId+'" class="sr-av"><a href="#answer-'+fieldId+'">' + c_("Option")+' '+unicode((self.index+1))+'</a></label>'
         html += '<input type="radio" name="'+self.keyId+'" id="'+fieldId+'" value="'+unicode(self.index)+'" />'
         html += lb
         html += '</p>'+lb       
         
         # Answer content
-        html += '<div class="iDevice_answer-content" id="answer-'+fieldId+'"><a name="answer-'+fieldId+'"></a>'+lb
+        html += '<div class="iDevice_answer-content" id="answer-'+fieldId+'">'
+        if dT != "HTML5":
+            html += '<a name="answer-'+fieldId+'"></a>'
+        html += lb
         if preview: 
             html += self.answerElement.renderPreview()
         else:
             html += self.answerElement.renderView()
         html += '</div>'+lb
         
-        html += "</div>"+lb
+        html += "</"+sectionTag+">"+lb
        
         return html    
    

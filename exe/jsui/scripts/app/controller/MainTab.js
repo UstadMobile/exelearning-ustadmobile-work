@@ -73,6 +73,12 @@ Ext.define('eXe.controller.MainTab', {
             '#save_properties': {
                 click: this.onClickSave
             },
+            '#clear_properties': {
+                click: this.onClickClear
+            },
+            '#reset_properties': {
+                click: this.onClickReset
+            },
             '#header_background_show': {
                 click: this.showHeaderBackground,
                 scope: this
@@ -149,18 +155,20 @@ Ext.define('eXe.controller.MainTab', {
             form, field;
         form = formpanel.getForm();
         field = form.findField('pp_backgroundImg');
-        field.setValue(null);
-        form.submit({
-            success: function(f, action) {
-                var img = this.getHeaderBackgroundImg(), json,
-                    showbutton = this.getHeaderBackgroundShowButton();
-                img.setSrc(null);
-                img.hide();
-                showbutton.setText(_('Show Image'));
-                showbutton.hide();
-            },
-            scope: this
-        });
+        if (field) {
+        	field.setValue(null);
+        	form.submit({
+        		success: function(f, action) {
+        			var img = this.getHeaderBackgroundImg(), json,
+        			showbutton = this.getHeaderBackgroundShowButton();
+        			img.setSrc(null);
+        			img.hide();
+        			showbutton.setText(_('Show Image'));
+        			showbutton.hide();
+        		},
+        		scope: this
+        	});
+        }
     },
     
     loadHeaderBackground: function() {
@@ -231,9 +239,17 @@ Ext.define('eXe.controller.MainTab', {
                     Ext.MessageBox.alert("", _('Settings Saved'));
                     if (formpanel.itemId == 'package_properties') {
                         var formclear = function(formpanel) {
-                            formpanel.clear()
+                            formpanel.clear();
                         };
                         Ext.iterate(formpanel.up().query('lomdata'), formclear);
+                        if (form.getFieldValues(true).pp_lang) {
+                            var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+                            if (authoring && authoring.submitLink) {
+                            	var outlineTreePanel = eXe.app.getController("Outline").getOutlineTreePanel(),
+                                	selected = outlineTreePanel.getSelectionModel().getSelection();
+                    	        authoring.submitLink("changeNode", selected !== 0? selected[0].data.id : '0');
+                            }
+                        }
                     }
                 },
 	            failure: function(form, action) {
@@ -245,7 +261,64 @@ Ext.define('eXe.controller.MainTab', {
             Ext.Msg.alert(_('Error'), _('The form contains invalid fields. Please check back.'))
     },
     
-    
+    onClickClear: function(cbutton) {
+    	Ext.Msg.show( {
+			title: _('Confirm'),
+			msg: _('Are you sure you want clear all form fields?'),
+			scope: this,
+			modal: true,
+			buttons: Ext.Msg.YESNO,
+			fn: function(button) {
+				if (button == "yes") {
+					var formpanel = cbutton.up('form'),
+				    	form = formpanel.getForm(),
+			        	value = null,
+			        	data = {};
+	
+				    for (value in form.getValues())
+				    	data[value] = null;
+				    
+					form.setValues(data);
+					form.submit({
+						clientValidation: false,
+						params: {
+							clear: true
+						},
+						success: function() {
+							var formclear = function(formpanel) {
+								formpanel.clear();
+							};
+							this.loadForm(formpanel);
+							this.clearHeaderBackground();
+	                        Ext.iterate(formpanel.up().query('lomdata'), formclear);
+						},
+						failure: function(form, action) {
+			                Ext.Msg.alert(_('Error'), action.result.errorMessage);
+			            },
+						scope: this
+					});
+		    	}
+			}
+		});
+    },
+
+    onClickReset: function(cbutton) {
+    	Ext.Msg.show({
+			title: _('Confirm'),
+			msg: _('Are you sure you want reset all form fields?'),
+			scope: this,
+			modal: true,
+			buttons: Ext.Msg.YESNO,
+			fn: function(button) {
+				if (button == "yes") {	
+			    	var form = cbutton.up('form').getForm();
+			    	
+			    	form.reset();
+				}
+			}
+    	});
+    },
+
     loadForm: function(formpanel) {
 //      console.log('render ' + formpanel.itemId);
         formpanel.load({ 

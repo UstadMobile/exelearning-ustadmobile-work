@@ -406,7 +406,7 @@ Ext.define('eXe.view.forms.PackagePanel', {
 		                                                xtype: 'radio',
 		                                                boxLabel: _('Face to Face'),
 		                                                name: 'pp_contextMode',
-		                                                inputValue: 'face to face',
+		                                                inputValue: 'presencial',
                                                         dirtyCls: 'property-form-dirty',
 		                                                checked: true
 		                                            },
@@ -414,7 +414,7 @@ Ext.define('eXe.view.forms.PackagePanel', {
 		                                                xtype: 'radio',
 		                                                boxLabel: _('Blended'),
 		                                                name: 'pp_contextMode',
-		                                                inputValue: 'blended',
+		                                                inputValue: 'face to face',
                                                         dirtyCls: 'property-form-dirty'
 		                                            },
 		                                            {
@@ -579,6 +579,18 @@ Ext.define('eXe.view.forms.PackagePanel', {
                     xtype: 'button',
                     text: _('Save'),
                     itemId: 'save_properties',
+                    margin: 10
+                },
+                {
+                    xtype: 'button',
+                    text: _('Clear'),
+                    itemId: 'clear_properties',
+                    margin: 10
+                },
+                {
+                    xtype: 'button',
+                    text: _('Reset'),
+                    itemId: 'reset_properties',
                     margin: 10
                 }
             ]

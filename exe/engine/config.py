@@ -37,11 +37,12 @@ import twisted
 import shutil
 from exe                      import globals as G
 from exe.engine.stylestore  import StyleStore
+from exe.webui import common
 
 x_ = lambda s: s
 
 
-class Config:
+class Config(object):
     """
     The Config class contains the configuration information for eXe.
     """
@@ -107,6 +108,14 @@ class Config:
         'file attachments': [x_('Documents')],
         'sort items': [x_('Interactive Activities')]
     }
+    
+    @classmethod
+    def getConfigPath(cls):
+        obj = cls.__new__(cls)
+        obj.configParser = ConfigParser()
+        obj._overrideDefaultVals()
+        obj.__setConfigPath()
+        return obj.configPath
 
     def __init__(self):
         """
@@ -378,11 +387,11 @@ class Config:
             self.configDir.mkdir()
         
         if not G.application.standalone: 
-             #FM: Copy styles         
+            #FM: Copy styles         
             if not os.path.exists(self.stylesDir) or not os.listdir(self.stylesDir):
-                self.copyStyles()
+                self.copyStyles() 
             else:
-                self.updateStyles()                       
+                self.updateStyles()                      
         else:
             if G.application.portable:
                 if os.name == 'posix': 
@@ -436,6 +445,7 @@ class Config:
         if self.configParser.has_section('user'):
             if self.configParser.user.has_option('docType'):
                 self.docType = self.configParser.user.docType
+                common.setExportDocType(self.configParser.user.docType)
             if self.configParser.user.has_option('defaultStyle'):
                 self.defaultStyle= self.configParser.user.defaultStyle
             if self.configParser.user.has_option('styleSecureMode'):
@@ -544,7 +554,19 @@ class Config:
         if os.path.exists(bkstyle):            
             if os.path.exists(dststyle) and not os.listdir(self.stylesDir): shutil.rmtree(dststyle)                 
             shutil.copytree(bkstyle,dststyle )
-                    
+            
+    def updateStyles(self):
+        bkstyle=self.webDir/'style'
+        dststyle=self.stylesDir
+        if os.stat(bkstyle).st_mtime - os.stat(dststyle).st_mtime > 1:
+            for name in os.listdir(bkstyle):
+                bksdirstyle=os.path.join(bkstyle, name)
+                dstdirstyle=os.path.join(dststyle, name)
+                if os.path.isdir(bksdirstyle):
+                    if os.path.exists(dstdirstyle):shutil.rmtree(dstdirstyle)
+                    shutil.copytree(bksdirstyle, dstdirstyle)
+                else:
+                    shutil.copy(bksdirstyle, dstdirstyle)                    
                     
 
     def loadLocales(self):
@@ -565,6 +587,7 @@ class Config:
                     locale = subDir.basename()
                     log.debug(" loading locale %s" % locale)
                     self.locales[locale].install(unicode=True)
+                    __builtins__['c_'] = self.locales[locale].ugettext
 
 
 

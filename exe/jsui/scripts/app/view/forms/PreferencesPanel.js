@@ -150,6 +150,27 @@ Ext.define('eXe.view.forms.PreferencesPanel', {
                         ]
                     }
                     ]
+                },{
+                    xtype: 'fieldset',
+					title: _('Format'),
+                    margin: 10,
+                    items: [
+                         {
+                            xtype: 'helpcontainer',
+                            item: {
+							xtype: 'combobox',
+		                    inputId: 'docType',
+		                    dirtyCls: 'property-form-dirty',
+		                    fieldLabel: _('Doctype'),
+		                    store: [
+                                ["XHTML", ("XHTML")],
+                                ["HTML5", ("HTML5")]
+                           ]						   
+                            },
+                            flex: 0,
+                            help: _('Doctype')+" (DOCTYPE: XHTML/HTML5)"
+                        }
+						]
                 },
                 {
                 	xtype: 'container',
@@ -165,7 +186,7 @@ Ext.define('eXe.view.forms.PreferencesPanel', {
             	        		form = formpanel.getForm();
             	        		form.submit({
             	        			success: function() {
-            	        				nevow_clientToServerEvent('reload');
+            	        		        eXe.app.reload();
             	        			},
             	        			failure: function(form, action) {
             	        				Ext.Msg.alert(_('Error'), action.result.errorMessage);
