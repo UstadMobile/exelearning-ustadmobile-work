@@ -358,12 +358,12 @@ class IdeviceStore:
         
         factoryExtendedIdevices.append(FreeTextIdevice())
         factoryExtendedIdevices.append(MultichoiceIdevice())
-        #factoryExtendedIdevices.append(ReflectionIdevice())
-        #factoryExtendedIdevices.append(CasestudyIdevice())
+        factoryExtendedIdevices.append(ReflectionIdevice())
+        factoryExtendedIdevices.append(CasestudyIdevice())
         factoryExtendedIdevices.append(TrueFalseIdevice())
         defaultImage = unicode(self.config.webDir / "images" / "sunflowers.jpg")
         # converting ImageWithTextIdevice -> FreeTextIdevice:
-        #factoryExtendedIdevices.append(ImageWithTextIdevice(defaultImage))
+        factoryExtendedIdevices.append(ImageWithTextIdevice(defaultImage))
         factoryExtendedIdevices.append(ImageMagnifierIdevice(defaultImage))
         defaultImage = unicode(self.config.webDir / "images" / "sunflowers.jpg")
         defaultSite = 'http://%s.wikipedia.org/' % self.config.locale
