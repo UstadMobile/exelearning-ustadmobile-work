@@ -81,7 +81,7 @@ class IdeviceStore:
         upon the pedagogical template we are using
         """
         #return self.extended + self.generic
-        return self.extended
+        return self.extended + self.generic
     
     def getFactoryIdevices(self):
         """
@@ -363,7 +363,7 @@ class IdeviceStore:
         factoryExtendedIdevices.append(TrueFalseIdevice())
         defaultImage = unicode(self.config.webDir / "images" / "sunflowers.jpg")
         # converting ImageWithTextIdevice -> FreeTextIdevice:
-        factoryExtendedIdevices.append(ImageWithTextIdevice(defaultImage))
+        #factoryExtendedIdevices.append(ImageWithTextIdevice(defaultImage))
         factoryExtendedIdevices.append(ImageMagnifierIdevice(defaultImage))
         defaultImage = unicode(self.config.webDir / "images" / "sunflowers.jpg")
         defaultSite = 'http://%s.wikipedia.org/' % self.config.locale
