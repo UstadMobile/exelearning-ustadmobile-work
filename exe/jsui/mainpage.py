@@ -29,6 +29,16 @@ import logging
 import traceback
 import shutil
 import tempfile
+
+import urllib
+import urllib2
+import cookielib
+from multipartposthandler import MultipartPostHandler
+import base64
+import time
+from exe.export.wtkpreviewthread import WTKPreviewThread
+
+
 from exe.engine.version import release, revision
 from twisted.internet            import threads, reactor
 from exe.webui.livepage          import RenderableLivePage,\
@@ -224,7 +234,13 @@ class MainPage(RenderableLivePage):
         setUpHandler(self.startUSBExport,        'exportPackageToUSB')
         setUpHandler(self.setPackageTitle,        'setPackageTitle')
 
+        #umcloud functions
+        setUpHandler(self.handleUMUploadFileName, 'startUMUploadFileName')  
+        setUpHandler(self.handleCheckUMCloudLogin, 'checkUMCloudLogin')  
+        setUpHandler(self.handleAutoSavePackage,     'autoSavePackage') 
         
+        #for j2me preview with Ustad Mobile
+        setUpHandler(self.previewFeaturePhone, "previewFeaturePhone")
 
         self.idevicePane.client = client
         self.styleMenu.client = client
@@ -234,6 +250,30 @@ class MainPage(RenderableLivePage):
         if not self.webServer.monitoring:
             self.webServer.monitoring = True
             self.webServer.monitor()
+
+    def previewFeaturePhone(self, client):
+        canRunWTK = WTKPreviewThread.canRunWTK() 
+        if canRunWTK:
+            self._startWTKPreview()
+        else:
+            client.alert(_("""
+            Sorry! It seems like your system is not setup for Feature Phone Preview.  
+            You need to install Java and Java 2 Micro Edition WTK.  For help go to
+            www.ustadmobile.com"""))
+
+    def _startWTKPreview(self):
+        if not self.package.previewDir:
+            stylesDir = self.config.stylesDir / self.package.style
+            self.package.previewDir = TempDirPath()
+            self.exportXML(None, self.package.previewDir, stylesDir)
+            self.previewPage = File(self.package.previewDir / self.package.name)
+        
+        self._startFileWTK(Path(self.package.previewDir / self.package.name))
+                    
+    # run the mobile emulator (j2me)
+    def _startFileWTK(self, filename):
+        wtkPreviewThread = WTKPreviewThread(filename, self.package.name)
+        wtkPreviewThread.start()
 
     def render_config(self, ctx, data):
         config = {'lastDir': G.application.config.lastDir,
@@ -292,6 +332,216 @@ class MainPage(RenderableLivePage):
         filename
         """
         client.call(onDone, unicode(self.package.filename), onDoneParam)
+
+    def handleCheckUMCloudLogin (self, client, onDone, onDoneParam, filepath, username, password, url):   #Added
+        """
+        Testing file upload in Python..
+        """
+        
+        print username
+        print url
+        credentials = {'username': username, 'password': password} #Can be used in params=credentials in the request.
+
+        #Login for TINCAN Login
+        cred = username + ":" + password
+        encode = base64.b64encode(cred)
+        encoded = "Basic " + encode
+        headers = {'X-Experience-API-Version': '1.0.1', 'Authorization': encoded}
+        #End of logic
+        
+        c = urllib.urlencode(credentials)
+        
+        req2 = urllib2.Request(url, c)
+        try:
+            response = urllib2.urlopen(req2)
+        
+            if (response.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                #return "Error: Wrong username and password combination. Try again"
+            elif (response.code == 200):
+                client.alert("Your login was a success.")
+                client.sendScript("Ext.getCmp('loginumcloudtwin').close()")
+            elif (response.code == 500):
+                client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+        except urllib2.HTTPError, e:
+            print (e.code)
+            if (e.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                #return "Error: Wrong username and password combination. Try again"
+            elif (e.code == 200):
+                client.alert("Your login was a success.")
+                client.sendScript("Ext.getCmp('loginumcloudtwin').close()")
+            elif (e.code == 500):
+                client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+     
+    def handleAutoSavePackage(self, client, filename=None, onDone=None):    #Added
+        """
+        Save the current package
+        'filename' is the filename to save the package to
+        'onDone' will be evaled after saving instead or redirecting
+        to the new location (in cases of package name changes).
+        (This is used where the user goes file|open when their 
+        package is changed and needs saving)
+        """
+        filename = Path(filename, 'utf-8')
+        saveDir  = filename.dirname()
+        if saveDir and not saveDir.isdir():
+            client.alert(_(u'Cannot access directory named ') + unicode(saveDir) + _(u'. Please use ASCII names.'))
+            return
+        oldName = self.package.name
+        # If the script is not passing a filename to us,
+        # Then use the last filename that the package was loaded from/saved to
+        if not filename:
+            filename = self.package.filename
+            assert filename, 'Somehow save was called without a filename on a package that has no default filename.'
+        # Add the extension if its not already there and give message if not saved
+        filename = self.b4save(client, filename, '.elp', _(u'SAVE FAILED!'))
+        try:
+            self.package.save(filename) # This can change the package name
+        except Exception, e:
+            client.alert(_('SAVE FAILED!\n%s') % str(e))
+            raise
+        # Tell the user and continue
+        if onDone:
+            buffer="blah" #Random
+            #client.alert(_(u'Package saved to: %s') % filename, onDone)
+            #Basically dont alert the customer of anything -VS
+        elif self.package.name != oldName:
+            # Redirect the client if the package name has changed
+            self.webServer.root.putChild(self.package.name, self)
+            log.info('Package saved, redirecting client to /%s' % self.package.name)
+            #client.alert(_(u'Package saved to: %s') % filename, 'eXe.app.gotoUrl("/%s")' % self.package.name.encode('utf8'), \
+            #            filter_func=otherSessionPackageClients)
+            #Basically don't alert the customer of anything while auto saving -VS
+        else:
+            buffer="blah2"
+            #client.alert(_(u'Package saved to: %s') % filename, filter_func=otherSessionPackageClients)
+            #Basically don't alert the customer of anything while auto saving -VS
+
+
+
+
+    def handleUMUploadFileName (self, client, onDone, onDoneParam, filepath, username, password, url):   #Added
+        """
+        Testing file upload in Python..
+        """
+        print("FileNAME is: ")
+        print filepath
+        print username
+        print password
+        print url
+        testfilepath = "/home/varuna/test/test.txt"
+        credentials = {'username': username, 'password': password} #Can be used in params=credentials in the request.
+
+        #Login for TINCAN Login
+        cred = username + ":" + password
+        encode = base64.b64encode(cred)
+        encoded = "Basic " + encode
+        headers = {'X-Experience-API-Version': '1.0.1', 'Authorization': encoded}
+        #End of logic
+        
+        
+        files={'exeuploadelp': (filepath, open(filepath, 'rb'))}
+        
+        fields = [('username', username), ('password', password)]
+        files2 = [('exeuploadelp', filepath, open(filepath, 'rb'))]
+        
+        
+        """
+        Example:
+          import MultipartPostHandler, urllib2, cookielib
+        
+          cookies = cookielib.CookieJar()
+          opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies),
+                                        MultipartPostHandler.MultipartPostHandler)
+          params = { "username" : "bob", "password" : "riviera",
+                     "file" : open("filename", "rb") }
+          opener.open("http://wwww.bobsite.com/upload/", params)
+
+        """
+        
+        cookies = cookielib.CookieJar()
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies), 
+                                      MultipartPostHandler.MultipartPostHandler)
+        params = { 'username': username, 'password': password, 'exeuploadelp': open(filepath, 'rb')}
+        
+        
+        
+        try:
+            response = opener.open(url, params)
+
+            if (response.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                
+                #return "Error: Wrong username and password combination. Try again"
+            elif (response.code == 200):
+                courseid = response.info().getheader('courseid')
+                coursename = response.info().getheader('coursename')
+                
+                #Trigger something on the client..
+                client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
+                client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
+                
+                client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
+            elif (response.code == 500):
+                error = response.info().getheader('error')
+                if (error == "Grunt test failed"):
+                    client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
+                elif (error == "Exe export failed"):
+                    client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
+                elif (error == "Exe export failed to start"):
+                    client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
+                elif (error == "Request is not POST"):
+                    client.alert("eXe error: eXe failed to connect with the server by POST request")
+                else:
+                    client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+            
+            
+        except urllib2.HTTPError, response:
+            if (response.code == 403):
+                client.alert("Error: Wrong username and password combination. Try again")
+                
+                #return "Error: Wrong username and password combination. Try again"
+            elif (response.code == 200):
+                courseid = response.info().getheader('courseid')
+                coursename = response.info().getheader('coursename')
+                client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
+                #Trigger something on the client..
+                client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
+                client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
+            elif (response.code == 500):
+                error = response.info().getheader('error')
+                if (error == "Grunt test failed"):
+                    client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
+                elif (error == "Exe export failed"):
+                    client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
+                elif (error == "Exe export failed to start"):
+                    client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
+                elif (error == "Request is not POST"):
+                    client.alert("eXe error: eXe failed to connect with the server by POST request")
+                else:
+                    client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+                #Trigger something on the client..
+                #I think nothing needs to be triggered.
+            else:
+                client.alert("Something went wrong. could not identify.")
+                #Trigger something on the client..
+     
 
     def b4save(self, client, inputFilename, ext, msg):
         """
@@ -784,6 +1034,7 @@ class MainPage(RenderableLivePage):
             os.makedirs(filename)
             print("Made directory: " + filename)
         self.handleExport(client, exportType, filename)
+        x = 10
         
     def handleExport(self, client, exportType, filename):
         """
@@ -1008,6 +1259,8 @@ class MainPage(RenderableLivePage):
         except Exception, e:
             client.alert(_('EXPORT FAILED!\n%s') % str(e))
             raise
+        if client:
+            client.alert(_("Exported to\n%s") % filename)
 
     def exportSinglePage(self, client, filename, webDir, stylesDir, \
                          printFlag):

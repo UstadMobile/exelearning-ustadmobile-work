@@ -57,13 +57,10 @@ function updateUSBDevicesList(){	//Added for refreshing of USB devices.
 							nevow_clientToServerEvent('autoSavePackage', this, '');	
 							
     						console.log("You clicked: " + cow.textButton + "!");
-    						//this.askDirty("eXe.app.getController('Toolbar').fileOpenRecent2('" + cow.textButton[0] + "');")
-    						//fileOpenRecent2(cow.textButton[0]);
     						Ext.Msg.wait(_('Saving package to ' + cow.textButton + ' ...'));
     						//nevow_clientToServerEvent('loadRecent', this, '', cow.textButton[0])
     						
     						//self.package.name needs to be changed to the user's input
-    						//nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
     						nevow_clientToServerEvent('exportPackageToUSB', this, '', "mxml", cow.usbPath);
     						
     						

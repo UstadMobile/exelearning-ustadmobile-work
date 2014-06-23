@@ -81,7 +81,7 @@ class IdeviceStore:
         upon the pedagogical template we are using
         """
         #return self.extended + self.generic
-        return self.extended + self.generic
+        return self.extended
     
     def getFactoryIdevices(self):
         """

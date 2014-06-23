@@ -63,11 +63,11 @@ class Config(object):
 
     idevicesCategories = {
         'activity': [x_('Non-Interactive Activities')],
-        'reading activity': [x_('Non-Interactive Activities')],
+        'reading activity': [x_('Text/Media')],
         'dropdown activity': [x_('Interactive Activities')],
         'java applet': [x_('Non-Textual Information')],
         'wiki article': [x_('Documents')],
-        'case study': [x_('Non-Interactive Activities')],
+        'case study': [x_('Text/Media')],
         'preknowledge': [x_('Textual Information')],
         'scorm quiz': [x_('Interactive Activities')],
         'fpd - multi choice activity': [x_('FPD')],
