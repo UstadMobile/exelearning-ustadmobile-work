@@ -435,12 +435,6 @@ class MainPage(RenderableLivePage):
         """
         Testing file upload in Python..
         """
-        print("FileNAME is: ")
-        print filepath
-        print username
-        print password
-        print url
-        testfilepath = "/home/varuna/test/test.txt"
         credentials = {'username': username, 'password': password} #Can be used in params=credentials in the request.
 
         #Login for TINCAN Login
@@ -513,34 +507,36 @@ class MainPage(RenderableLivePage):
             
             
         except urllib2.HTTPError, response:
-            if (response.code == 403):
-                client.alert("Error: Wrong username and password combination. Try again")
-                
-                #return "Error: Wrong username and password combination. Try again"
-            elif (response.code == 200):
-                courseid = response.info().getheader('courseid')
-                coursename = response.info().getheader('coursename')
-                client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
-                #Trigger something on the client..
-                client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
-                client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
-            elif (response.code == 500):
-                error = response.info().getheader('error')
-                if (error == "Grunt test failed"):
-                    client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
-                elif (error == "Exe export failed"):
-                    client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
-                elif (error == "Exe export failed to start"):
-                    client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
-                elif (error == "Request is not POST"):
-                    client.alert("eXe error: eXe failed to connect with the server by POST request")
-                else:
-                    client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
-                #Trigger something on the client..
-                #I think nothing needs to be triggered.
+            pass
+        
+        if (response.code == 403):
+            client.alert("Error: Wrong username and password combination. Try again")
+            
+            #return "Error: Wrong username and password combination. Try again"
+        elif (response.code == 200):
+            courseid = response.info().getheader('courseid')
+            coursename = response.info().getheader('coursename')
+            client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
+            #Trigger something on the client..
+            #client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
+            #client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
+        elif (response.code == 500):
+            error = response.info().getheader('error')
+            if (error == "Grunt test failed"):
+                client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
+            elif (error == "Exe export failed"):
+                client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
+            elif (error == "Exe export failed to start"):
+                client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
+            elif (error == "Request is not POST"):
+                client.alert("eXe error: eXe failed to connect with the server by POST request")
             else:
-                client.alert("Something went wrong. could not identify.")
-                #Trigger something on the client..
+                client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
+            #Trigger something on the client..
+            #I think nothing needs to be triggered.
+        else:
+            client.alert("Something went wrong. could not identify.")
+            #Trigger something on the client..
      
 
     def b4save(self, client, inputFilename, ext, msg):
