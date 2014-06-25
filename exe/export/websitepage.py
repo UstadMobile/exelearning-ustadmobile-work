@@ -485,10 +485,10 @@ class WebsitePage(Page):
             
         
         html += """
-        <div data-theme="b" data-role="header" data-position="fixed" data-id="exeheader" class= "exeTranslated" data-exe-translation = "%s" data-tap-toggle="false">
+        <div data-theme="b" data-role="header" data-position="fixed" data-id="exeheader" data-exe-translation = "%s" data-tap-toggle="false">
         <h3>%s</h3>
         </div>
-        <div data-role="content" data-theme="b">
+        <div role="content" data-theme="b" class="ui-content">
         """ % (title, title)
         
         html += """
@@ -514,21 +514,21 @@ class WebsitePage(Page):
             data-theme="b" 
             data-tap-toggle="false">
             
-            <a id="umBack" data-role="button" data-icon="arrow-l" 
-                class="ui-btn-left exeTranslated" 
+            <a id="umBack" data-role="button" 
+                class="ui-btn ui-btn-left" 
                 onclick="exePreviousPageOpen()" data-exe-translation="Back"
-                data-inline="true">Back</a>
-            
+                data-inline="true"><i class='lIcon fa fa-arrow-circle-left' style='font-size: 24pt'></i></a>
+                            
             <a onclick="exeMenuPageOpen()"   style="text-align: center;" 
                 data-exe-translation="Menu" class="exeTranslated"
                 data-transition="slideup" data-inline="true" data-icon="grid" 
                 >Menu</a>
                      
-            <a id="umForward" data-role="button" data-icon="arrow-r" 
-                class="ui-btn-right exeTranslated" data-direction="reverse"
+            <a id="umForward" data-role="button" 
+                class="ui-btn-right" data-direction="reverse"
                 data-exe-translation="Forward" 
                 onclick="exeNextPageOpen()"  
-                data-inline="true">Forward</a>
+                data-inline="true"><i class='lIcon fa fa-arrow-circle-right' style='font-size: 24pt'></i></a>
         </div>
         </div>   """
         

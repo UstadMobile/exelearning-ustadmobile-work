@@ -292,6 +292,11 @@ class XMLExport(WebsiteExport):
         for file in jqmImageDir.files():
             html5Content += "<file>images/%s</file>\n" % file.name
         
+        #FontAwesome library
+        jqmFontDir = outputDir/"fonts"
+        for file in jqmFontDir.files():
+            html5Content += "<file>fonts/%s</file>\n" % file.name
+        
         html5Content += "</ustadpackage>"
         html5ListFile.write(html5Content)
         html5ListFile.close()
@@ -504,6 +509,8 @@ class XMLExport(WebsiteExport):
         
         
         self.copy_sub_dir("ustad-jqmimages", "images", ['png', 'gif'], \
+                          outputDir)
+        self.copy_sub_dir("fontawesome-fonts", "fonts", ['otf', 'svg', 'eot', 'svg', 'woff', 'ttf'], \
                           outputDir)
         self.copy_sub_dir("ustad-locale", "locale", ['js'], outputDir)
         
