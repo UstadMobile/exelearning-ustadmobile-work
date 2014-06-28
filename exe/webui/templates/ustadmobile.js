@@ -365,6 +365,10 @@ UstadMobileServerSettings = function(serverName, xapiBaseURL, getCourseIDURL) {
     this.getCourseIDURL = getCourseIDURL;
 }
 
+// Put this in a central location in case we don't manage to load it
+var messages = [];
+//default lang
+
 UstadMobile.getInstance().loadScripts();
 
 //Load the panel when document is ready
@@ -722,7 +726,7 @@ $(document).on("pageshow", function(event, ui) {
     On Pagechange, the logic for touch, swipe and scroll events are executed.
 */
 
-
+/*
 $(document).on("pagechange", function(event){
     setupClozeWidth();
     $('.ui-page-active').swipe( {   //On the active page..
@@ -776,7 +780,7 @@ $(document).on("pagechange", function(event){
     	}
 
 });
-
+*/
 
 
 
@@ -970,8 +974,10 @@ $(window).load(function(){
 //Function to handle Previous Page button within eXe content's footer.
 function exePreviousPageOpen(){
     var previousPageHREF = $(".ui-page-active #exePreviousPage").attr("href");
-	debugLog("Ustad Mobile CONTENT: Going to previous page: " + previousPageHREF);
-    $.mobile.changePage( previousPageHREF, { transition: "slide", reverse: true }, true, true );
+    debugLog("Ustad Mobile CONTENT: Going to previous page: " + previousPageHREF);
+    if(previousPageHREF) {
+        $.mobile.changePage( previousPageHREF, { transition: "slide", reverse: true }, true, true );
+    }
 }
 
 //Function to handle First Next Page button within eXe content's footer. (Is not used)
@@ -986,7 +992,9 @@ function exeFirstNextPageOpen(){
 function exeNextPageOpen(){
     var nextPageHREF = $(".ui-page-active #exeNextPage").attr("href");
     debugLog("Ustad Mobile Content: Going to next page: " + nextPageHREF);  
-    $.mobile.changePage( nextPageHREF, { transition: "slide" }, true, true );
+    if(nextPageHREF) {
+        $.mobile.changePage( nextPageHREF, { transition: "slide" }, true, true );
+    }
 }
 
 //Function to handle Menu Page within eXe content's footer.

@@ -715,6 +715,7 @@ UstadMobileBookList.prototype = {
            openFile = umBookListObj.currentBookPath;
        }else if(UstadMobile.getInstance().isNodeWebkit()) {
            window.open(openFile, "_self");
+           return;
        }else {
            console.log("Mobile Device detected. Continuing..");
            umBookListObj.currentBookPath = openFile;
