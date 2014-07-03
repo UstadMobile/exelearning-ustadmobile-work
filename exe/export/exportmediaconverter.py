@@ -515,7 +515,10 @@ class ExportMediaConverter(object):
                     
                     #is this included in package
                     propName = "ustadMobileVideo" + formatName
-                    if getattr(self.currentPackage, propName):
+                    has_this_attr = hasattr(self.currentPackage, propName)
+                    #
+                    #TODO: if has_this_attr is false - set it somehow as a default val 
+                    if has_this_attr and getattr(self.currentPackage, propName):
                         #ok - we need to convert this
                         convertCmd = getattr(G.application.config, "videoMediaConverter_" + formatName.lower())
                         print "We should run %(cmd)s to convert %(infile)s\n" % \

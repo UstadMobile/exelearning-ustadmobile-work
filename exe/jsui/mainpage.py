@@ -1022,6 +1022,10 @@ class MainPage(RenderableLivePage):
     def setPackageTitle(self, client, new_title):
         """Handle when user clicks on title bar"""
         self.package.set_title(new_title)
+        
+    def handleRenameNode(self):
+        """Handle when user double clicks on page title"""
+        pass
 
         
     def startUSBExport(self, client, exportType, filename):

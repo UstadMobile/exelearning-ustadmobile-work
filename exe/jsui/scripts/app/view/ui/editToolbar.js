@@ -98,7 +98,7 @@ Ext.define('eXe.view.ui.editToolbar', {
 					    text: _('Save'),
 					    accesskey: 's',
 					    tooltip: 'Ctrl+S',
-					    icon: '/images/stock-save.png', //Added
+					    icon: '/images/document-save.png',
 					    itemId: 'file_save'
 					},
 					
