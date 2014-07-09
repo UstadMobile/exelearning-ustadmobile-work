@@ -146,6 +146,7 @@ class XMLExport(WebsiteExport):
         self._writeTOCXML(currentOutputDir, numDevicesByPage, nonDevices, package)
         
         #now go through and make the HTML output
+        common.setExportDocType("HTML5")
         self.pages = [ WebsitePage(self.prefix + "index", 0, package.root) ]
         self.generatePages(package.root, 1)
         uniquifyNames(self.pages)

@@ -485,6 +485,7 @@ class WebsitePage(Page):
             
         
         html += """
+        <div data-role="page">
         <div data-theme="b" data-role="header" data-position="fixed" data-id="exeheader" data-exe-translation = "%s" data-tap-toggle="false">
         <h3>%s</h3>
         </div>
@@ -529,6 +530,7 @@ class WebsitePage(Page):
                 data-exe-translation="Forward" 
                 onclick="exeNextPageOpen()"  
                 data-inline="true"><i class='lIcon fa fa-arrow-circle-right' style='font-size: 24pt'></i></a>
+        </div>
         </div>
         </div>   """
         
