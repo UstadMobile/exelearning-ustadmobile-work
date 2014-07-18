@@ -284,14 +284,15 @@ class WebsiteExport(object):
                 break
             for idevice in page.node.idevices:
                 if (hasFlowplayer and hasMagnifier and hasXspfplayer and hasGallery and hasWikipedia and hasInstructions and hasMediaelement):
-                    isBreak = True
+                    pass
+                    #isBreak = True
                     #Mike Dawson: don't break anymore.. looking for system scripts
                     #break
                 if hasattr(idevice, "system_scripts"):
                     for system_script in idevice.system_scripts:
                         if system_script not in system_scripts:
-                            system_scripts.append(system_script)    
-                
+                            system_scripts.append(system_script)
+                                
                 if not hasFlowplayer:
                     if 'flowPlayer.swf' in idevice.systemResources:
                         hasFlowplayer = True

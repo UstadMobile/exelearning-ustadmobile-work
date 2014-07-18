@@ -286,7 +286,6 @@ EXEDragNDrop.prototype = {
         });
         
         
-        
         $(".exednd_area_feedback_typeholder SELECT").on("change", function(evt) {
         	thisEl.updateFeedbackForArea(evt.target);
         });
@@ -379,6 +378,9 @@ function initDragNDrop() {
 
 $(function() {
     initDragNDrop();
+    $(document).on("execontentpageshow", function() {
+    	initDragNDrop();
+    });
     $(".exednd_editor_accordion").accordion({heightStyle: "fill"});
     $(".exednd_area_tabdiv").tabs();
     $(".exednd_area_feedbacktabs").tabs();

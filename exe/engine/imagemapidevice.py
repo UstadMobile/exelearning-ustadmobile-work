@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 # ===========================================================================
 class ImageMapIdevice(Idevice):
     
-    persistenceVersion = 3
+    persistenceVersion = 4
     
     def __init__(self, content=""):
         Idevice.__init__(self, x_(u"Image Map"), 
@@ -50,6 +50,10 @@ class ImageMapIdevice(Idevice):
         self.map_areas = []
         
         self.add_map_area(num_areas_to_add=2)
+        
+        #use the new system_scripts method
+        self.system_scripts = ["imagemapidevice.js", \
+                                    "jquery.imagemapster.js"]
         
     """
     Get the scripts that we need 
@@ -94,7 +98,11 @@ class ImageMapIdevice(Idevice):
     def upgradeToVersion3(self):
         """V3: Updated script and rendering here"""
         self.uploadNeededScripts()
-   
+    
+    def upgradeToVersion4(self):
+        self.system_scripts = ["imagemapidevice.js", \
+                                    "jquery.imagemapster.js"] 
+        
    
 class ImageMapAreaField(Field):
     

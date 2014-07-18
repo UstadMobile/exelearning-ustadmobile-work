@@ -120,7 +120,7 @@ class XMLExport(WebsiteExport):
         indexPageXML = XMLPage("index", 1, package.root)
         self.pages = [ indexPageXML ]
         
-        self.copyFilesXML(package, currentOutputDir)
+        
         
         self.pkgNodeToPageDict = self.generatePagesXML(package.root, 1)
         self.pkgNodeToPageDict[package.root] = indexPageXML
@@ -128,6 +128,9 @@ class XMLExport(WebsiteExport):
         uniquifyNames(self.pages)
         
         self.generateJQueryMobileTOC(package.root, currentOutputDir)
+        
+        self.copyFilesXML(package, currentOutputDir)
+        
     
         prevPage = None
         thisPage = self.pages[0]

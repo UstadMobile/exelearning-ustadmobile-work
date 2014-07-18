@@ -43,8 +43,11 @@ ImageMapIdevice.prototype = {
         var key = data.key;
         var ideviceId = key.substring(0, key.indexOf("_"));
         var tipHasContents = true;
-        var tipContents = $("#imageMapToolTip_" +ideviceId + "_"
-        		+ key).text();
+        var tipContentEl =$("#imageMapToolTip_" +ideviceId + "_"
+        		+ key).clone(); 
+		tipContentEl.find("audio").remove();
+		
+        var tipContents = tipContentEl.text();
         tipContents = exeUtilRemoveWhiteSpace(tipContents);
         if(tipContents.length == 0) {
         	var numImg = $("#imgmap_area_" + key + " img").length;
@@ -257,9 +260,13 @@ function imageMapIdevicePageInit() {
 }
 
 
+
 /*
 Init - lets get going
 */
 $(function() {
-	imageMapIdevicePageInit();
+    $(document).on("execontentpageshow", function() {
+                        imageMapIdevicePageInit();
+                    });
+    imageMapIdevicePageInit();
 });

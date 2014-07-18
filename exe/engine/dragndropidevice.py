@@ -76,7 +76,7 @@ class DragNDropIdevice(Idevice):
             newDndField.main_fields.makeFields()
             newDndField.main_fields.fields['coords'].content = \
                 "%s,%s,100,100" % (space_needed, space_needed)
-            
+    
         
 
 class DragNDropAreaField(Field):
