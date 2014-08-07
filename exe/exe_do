@@ -24,7 +24,7 @@ import sys
 import optparse
 
 # Make it so we can import our own nevow and twisted etc.
-if os.name == 'posix':
+if os.name == 'posix' and '--standalone' not in sys.argv:
     sys.path.insert(0, '/usr/share/exe')
 
 # Try to work even with no python path
@@ -66,6 +66,10 @@ def prepareParser():
     usage = _(u"Usage: %prog [options] input_file [output_file]\n\nTo show \
 help:\n%prog -h").encode(sys.stdout.encoding)
     parser = CustomOptionParser(usage=usage, formatter=CustomHelpFormatter())
+
+    #Option is actually handled in main method: but add here so it does
+    #not create an error message
+    parser.add_option("--standalone")
 
     parser.add_option("-s", "--set",
                       action="store", type='string', dest='set_options', metavar='field=value,<field=value>...',
@@ -158,6 +162,10 @@ or '--import xliff', it's possible to configure the following import options:").
 
 if __name__ == "__main__":
     application = Application()
+    
+    if '--standalone' in sys.argv:
+        application.standalone = True
+        
     application.loadConfiguration()
     optparse._ = application.config.locales[application.config.locale].gettext
 

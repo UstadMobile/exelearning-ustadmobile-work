@@ -71,6 +71,15 @@ ImageMapIdevice.prototype = {
         return false;
     },
     
+    /**
+     * Get rid of all global references to this, unbind mapster
+     */
+    dispose: function(evt) {
+        $("#id" + evt.ideviceId).mapster("unbind", false);
+        imageMapIdevices[evt.ideviceId] = null;
+        console.log("Disposed of imagemapidevice for id: " + evt.ideviceId);
+    },
+    
     
     /**
      * Initiate this using ImageMapster JQuery plugin
@@ -78,6 +87,8 @@ ImageMapIdevice.prototype = {
      * @method initMapIdevice
      */
     initMapIdevice : function(cfg) {
+    
+
         
     	this.cfg = cfg;
     	
@@ -88,6 +99,9 @@ ImageMapIdevice.prototype = {
         //go through the areas and see if there are corresponding tips
         var areaSelector = "#imagemapidevice_map_" + this.ideviceId + " area";
         var initIdeviceId = this.ideviceId;
+        
+        $("#id" + this.ideviceId).on("ideviceremove", this.dispose);
+        
         $(areaSelector).each(function() {
             var dataKeyVal = $(this).attr("data-key");
             var imageMapToolTipSelector = "#imageMapToolTip_" + initIdeviceId 
@@ -118,6 +132,8 @@ ImageMapIdevice.prototype = {
         var newHeight = Math.round(this.cfg['height'] * ratio);
         $("#imagemapidevice_img_" + this.ideviceId).mapster("resize",
         		parentWidth, newHeight, 0);
+		$("imagemapidevice_img_" + this.ideviceId).attr(
+		    'data-idevice-init', 'done');
     },
     
     updateLocation: function(element, updateFieldId) {
@@ -234,7 +250,7 @@ function imageMapIdevicePageInit() {
         var elId = this.id;
         if(elId != null && elId.length > 1) {
             var realId = elId.substring(imageMapIdeviceIdPrefix.length);
-            if(!imageMapIdevices[realId]) {
+            if(!(imageMapIdevices[realId] && $("#imagemapidevice_img_" + realId).attr("data-idevice-init") === "done")) {
                 imageMapIdevices[realId] = new ImageMapIdevice(realId);
                 
                 if($("#exeimgmap_edit_mastercontainer_" + realId).length > 0) {
@@ -250,6 +266,10 @@ function imageMapIdevicePageInit() {
 	                }else {
 	                    imageMapIdevices[realId] = null;
 	                    $(document).on("pageshow", function() {
+	                        imageMapIdevicePageInit();
+	                    });
+	                    
+	                    $(document).on("execontentpageshow", function() {
 	                        imageMapIdevicePageInit();
 	                    });
 	                }
