@@ -67,10 +67,6 @@ def prepareParser():
 help:\n%prog -h").encode(sys.stdout.encoding)
     parser = CustomOptionParser(usage=usage, formatter=CustomHelpFormatter())
 
-    #Option is actually handled in main method: but add here so it does
-    #not create an error message
-    parser.add_option("--standalone")
-
     parser.add_option("-s", "--set",
                       action="store", type='string', dest='set_options', metavar='field=value,<field=value>...',
                       help=_(u"Set ELP field values. Example: -s style=Default,root.title='Root Node'").encode(sys.stdout.encoding))
@@ -165,6 +161,7 @@ if __name__ == "__main__":
     
     if '--standalone' in sys.argv:
         application.standalone = True
+        sys.argv.remove("--standalone")
         
     application.loadConfiguration()
     optparse._ = application.config.locales[application.config.locale].gettext
