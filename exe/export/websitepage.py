@@ -23,6 +23,7 @@ This class transforms an eXe node into a page on a self-contained website
 
 import logging
 import re
+
 from cgi                      import escape
 from urllib                   import quote
 from exe.webui.blockfactory   import g_blockFactory
@@ -32,6 +33,10 @@ from exe.engine.version       import release
 from exe.export.pages         import Page, uniquifyNames
 from exe.webui                import common
 from exe                      import globals as G
+
+from exe.engine               import exetincan
+
+from exe.engine.exetincan   import EXETinCan
 
 log = logging.getLogger(__name__)
 
@@ -158,15 +163,24 @@ class WebsitePage(Page):
         if ustadMobileMode == True:
             onLoadFunction = " onload='_onLoadFunction();' "
         
-        html += u"""<body class="exe-web-site" %s>
+        html += u"""<body class="exe-web-site" data-tincan-id="%s" %s>
             <script type="text/javascript">
             document.body.className+=" js" 
-            </script>""" % onLoadFunction
+            </script>""" % (self.get_tincan_id(), onLoadFunction)
         html += lb
         if ustadMobileMode == True:
             #do the header another way
             html += WebsitePage.makeUstadMobileHeader(escape(self.node.titleLong), nextPage, prevPage)
         html += u"<div id=\"content\">"+lb
+        
+        html += """<div id='tcdef_%(pageid)s' class='tcdiv'>
+        %(tcdef)s
+        </div>
+        """ % {
+               "pageid" : self.name, 
+               "tcdef" : self.get_tincan_activity_definition()
+           }
+        
         html += '<p id="skipNav"><a href="#main" class="sr-av">' + c_('Skip navigation')+'</a></p>'+lb
 
         if self.node.package.backgroundImg or self.node.package.title:
@@ -278,6 +292,10 @@ class WebsitePage(Page):
 
         return html
 
+    
+    
+    
+    
     def indent(self,level):
         i = 0
         indent_text = ""

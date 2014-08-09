@@ -31,6 +31,7 @@ from exe.engine.path          import Path
 from exe.export.pages         import Page, uniquifyNames
 from exe.webui                import common
 from exe.export.websiteexport import WebsiteExport
+from exe.engine.exetincan     import EXETinCan
  
 log = logging.getLogger(__name__)
 
@@ -86,7 +87,19 @@ class XMLPage(Page):
         if prevPage is not None:
             xml += u"prevpage='%s' " % prevPage.name
         """
+        
+        
         xml += u">"
+        
+        #put in TinCan IDs
+        xml += "<tincan id='%s'>" % \
+            WebsiteExport.getTinCanId(suffix = "", 
+                                      id_type = EXETinCan.PAGE)
+        xml += "<activitydef>"
+        xml += EXETinCan.dump_json(
+                           self.get_tincan_activity_definition())
+        xml += "</activitydef>"
+        xml += "</tincan>"
         
         style = self.node.package.style
         

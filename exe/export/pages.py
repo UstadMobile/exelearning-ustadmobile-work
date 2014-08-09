@@ -24,7 +24,7 @@ Export Pages functions
 import logging
 from urllib import quote
 from exe.webui import common
-
+from exe.engine.exetincan import EXETinCan
 
 log = logging.getLogger(__name__)
 
@@ -103,6 +103,21 @@ class Page(object):
             html += '</p>'
 
         return html
+
+    def get_tincan_id(self):
+        from exe.export.websiteexport import WebsiteExport
+        return WebsiteExport.getTinCanId(suffix="", id_type=EXETinCan.PAGE)
+    
+    def get_tincan_activity_definition(self):
+        """
+        Return a dictionary object representing the TINCAN Activity 
+        definition JSON
+        """
+        json_obj = {"name" : {"en-US" : self.node.titleShort},
+                    "description" : {"en-US" : self.node.titleLong},
+                   "type" : "http://adlnet.gov/expapi/activities/module" }
+        return json_obj
+    
 
     def renderFooter(self):
         """

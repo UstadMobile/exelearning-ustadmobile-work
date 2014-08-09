@@ -31,6 +31,8 @@ from exe.export.websitepage   import WebsitePage
 from zipfile                  import ZipFile, ZIP_DEFLATED
 from exe.webui                import common
 from exe                      import globals as G
+from exe.engine.exetincan     import *
+
 import os
 from exe.engine.persist import encodeObject
 from exe.engine.persistxml import encodeObjectToXML
@@ -88,20 +90,28 @@ class WebsiteExport(object):
        
        
     @staticmethod
-    def getTinCanId(suffix = ""):
+    def getTinCanId(suffix = "", id_type="idevice"):
         """Make a tin can activity ID - use a server prefix, the 
         package name, the page name, then the idevice id, and if
         needed another / and a question id or other depending on
         the idevice
+        
         suffix: will be added to the tincan string
+        id_type: can be idevice (default), page or  
+        
         """
         server_tincan_prefix = "http://www.ustadmobile.com/tincan"
-        tin_can_prefix = "%(urlprefix)s/%(packagename)s/%(pagename)s/%(ideviceid)s" % {
+        tin_can_prefix = "%(urlprefix)s/%(packagename)s" % {
                                 "urlprefix" : server_tincan_prefix,
-                                "packagename" :  WebsiteExport.current_package_name,
-                                "pagename" : WebsiteExport.current_page,
-                                "ideviceid" : WebsiteExport.current_idevice_id
+                                "packagename" :  WebsiteExport.current_package_name
                                 }
+        
+        if id_type == EXETinCan.PAGE or id_type == EXETinCan.IDEVICE:
+            tin_can_prefix += "/" + WebsiteExport.current_page
+        
+        if id_type == EXETinCan.IDEVICE:
+            tin_can_prefix += "/" + WebsiteExport.current_idevice_id
+        
         if suffix != "":
             tin_can_prefix += "/" + suffix
         
