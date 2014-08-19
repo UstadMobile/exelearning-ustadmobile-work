@@ -91,16 +91,9 @@ class XMLPage(Page):
         
         xml += u">"
         
-        #put in TinCan IDs
-        xml += "<tincan id='%s'>" % \
-            WebsiteExport.getTinCanId(suffix = "", 
-                                      id_type = EXETinCan.PAGE)
-        xml += "<activitydef>"
-        xml += EXETinCan.dump_json(
-                           self.get_tincan_activity_definition())
-        xml += "</activitydef>"
-        xml += "</tincan>"
         
+        xml += self.render_tincan_xml()
+                
         style = self.node.package.style
         
         for idevice in self.node.idevices:
@@ -135,3 +128,18 @@ class XMLPage(Page):
         outfile.close()
         
         return numRealDevices
+    
+    def render_tincan_xml(self):
+        xml = ""
+        #put in TinCan IDs
+        xml += "<tincan id='%s'>" % \
+            WebsiteExport.getTinCanId(suffix = "", 
+                                      id_type = EXETinCan.PAGE)
+        xml += "<activitydef>"
+        xml += EXETinCan.dump_json(
+                           self.get_tincan_activity_definition())
+        xml += "</activitydef>"
+        xml += "</tincan>"
+        
+        return xml
+

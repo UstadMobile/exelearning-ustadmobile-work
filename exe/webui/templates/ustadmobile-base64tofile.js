@@ -46,27 +46,17 @@ If you need a commercial license to remove these restrictions please contact us 
   
 		
 		//var base64VarName = ["base64Testjs", "ustadmobilejs", "jquerymobilejs", "ustadmobilebooklistjs", "ustadmobilecommonjs", "ustadmobileconstantsjs", "ustadmobilegetpackagesjs", "ustadmobileloginjs", "ustadmobiletestjs"];
-		
-		var base64VarName = [base64Testjs, ustadmobilejs, jquerymobilejs, ustadmobilebooklistjs, ustadmobilecommonjs, ustadmobileconstantsjs, ustadmobilegetpackagesjs, ustadmobileloginjs, ustadmobiletestjs, touchswipejs, modernizrjs];
+		var base64VarName = []
+		if(typeof base64Testjs !== "undefined") {
+                    base64VarName = [base64Testjs, ustadmobilejs, jquerymobilejs, ustadmobilebooklistjs, ustadmobilecommonjs, ustadmobileconstantsjs, ustadmobilegetpackagesjs, ustadmobileloginjs, ustadmobiletestjs, touchswipejs, modernizrjs];
+                }
 		//9Dec2013: added modernizrjs
 
 		var currentB64Index = 0;
 		var globalCurrentB64 = "";
 
         var base64FileFolder;
-        if(navigator.userAgent.indexOf("TideSDK") !== -1){
-		
-            console.log("Desktop detected - TideSDK. ustadmobile-booklist.js . Updating folders to scan..");
-        
-            if (window.navigator.userAgent.indexOf("Windows") != -1) {
-                console.log("TideSDK: You are using WINDOWS.");
-                base64FileFolder = "/ustadmobileContent/";
-            }else{
-                console.log("TideSDK: You are NOT using WINDOWS.");
-                base64FileFolder = "ustadmobileContent/";
-
-            }
-        }else if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
+        if(navigator.userAgent.indexOf("Safari") !== -1 && navigator.userAgent.indexOf("BB10") !== -1){
             console.log("Detected Blackberry 10 device in ustadmobile-base64tofile.js .. Continuing..");
             blackberry.io.sandbox = false;
             base64FileFolder = blackberry.io.SDCard + "/ustadmobileContent/";
@@ -124,21 +114,7 @@ If you need a commercial license to remove these restrictions please contact us 
 
             base64ToFileCallback = callback;			
             
-            if(navigator.userAgent.indexOf("TideSDK") !== -1){
-                    console.log("[base64tofile] Desktop - TideSDK detected in course content.");
-                    if (window.navigator.userAgent.indexOf("Windows") != -1) {
-                        console.log("[base64tofile] TideSDK: You are using WINDOWS.");
-                        //alert("In Windows TideSDK base64tofile");
-                    }else{
-                        console.log("[base64tofile] TideSDK: You are NOT using WINDOWS.");
-                        console.log("In Non Windows TideSDK base64tofile");
-                    }  
-                    //Get file: currentB64FilePath
-                    //gotB64FileWriter();
-                    gotTideSDKB64FileWriter(currentB64FilePath);
-                    
-              
-            }else{
+            {
 
 			    try {
 
@@ -174,39 +150,7 @@ If you need a commercial license to remove these restrictions please contact us 
 			fileEntry.createWriter(gotB64FileWriter, notFileWriter);
 		}
     		
-        function gotTideSDKB64FileWriter(path){
-
-            debugLog("Writing the contents..");
-            var result = false;
-
-			var currentB64data = window.atob(globalCurrentB64[0]);
-
-             if(navigator.userAgent.indexOf("TideSDK") !== -1){
-
-                console.log("[base64tofile] ****CONVERTING BASE64 TO FILE****");
-                
-                //TODO
-                //data is: currentB64data
-                //file is : path
-               
-                var fileHandle_currentB64FilePath = Ti.Filesystem.getFileStream(path);
-                fileHandle_currentB64FilePath.open(Ti.Filesystem.MODE_WRITE);
-                result = fileHandle_currentB64FilePath.write(currentB64data);
-                fileHandle_currentB64FilePath.close();
-				
-				if(result === true){
-					console.log("Updating: " + path + " a success!. Moving on to next file (if any)..");
-					writeNextBase64();
-				}else{
-					alert("Error in updating: " + path);
-				}
-				
-
-            }else{
-                alert("Couldn't confirm platform.(not TideSDK)");
-            }
-
-        }
+        
 
 		function gotB64FileWriter(writer){
 			debugLog("Writing the contents..");

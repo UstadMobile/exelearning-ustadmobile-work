@@ -175,6 +175,7 @@ class ExportMediaConverter(object):
                 mediaSlide = True
         
         
+        
         """
         check and see if we were told something before
         e.g. this has a width/height attribute
@@ -200,11 +201,13 @@ class ExportMediaConverter(object):
             else:
                 scaleX = float(profWidth) / float(origWidth)
                 scaleY = float(profHeight) / float(origHeight)
-                fitScale = min(scaleX, scaleY)
-                strToEval = self.currentPackage.inlineImageResizeFormula % \
-                    {"fitscale" : str(fitScale)}
-                scale = eval(strToEval)
-                newDimension = [int(origWidth * scale), int(origHeight * scale)]
+                if resizeStrategy == "scalefit":
+                    fitScale = min(scaleX, scaleY)
+                    scaleX = fitScale
+                    scaleY = fitScale
+                    
+                newDimension = [int(origWidth * scaleX), 
+                                int(origHeight * scaleY)]
                 
             newFileName = ExportMediaConverter.get_imgname_for_resolutionprofile(imgPath, profileName)
             newPath = imgPath.parent/newFileName
@@ -488,6 +491,7 @@ class ExportMediaConverter(object):
             
             #handle audio conversion
             if tagName == "audio":
+                audioInFile = mediaName
                 #new way of doing things - we go through all the formats - and then convert
                 for formatName in ENGINE_AUDIO_FORMATS:
                     if formatName.lower() == mediaExtension:
@@ -508,6 +512,7 @@ class ExportMediaConverter(object):
                 countAudio = countAudio + 1
             if tagName == "video":
                 #new way of doing things - we go through all the formats - and then convert
+                videoInFile = mediaName
                 for formatName in ENGINE_VIDEO_FORMATS:
                     if formatName.lower() == mediaExtension:
                         #we already have it - this is the original format - skip
@@ -531,22 +536,23 @@ class ExportMediaConverter(object):
             startIndex = startIndex + 1
         
         #see if we have one audio and one video - in which case auto mix them
-        """
-        Semi obsolete - the mixer
+        
+        #Semi obsolete - the mixer
         
         if countVideo == 1 and countAudio == 1:
             audioInFileAbs = workingDir + "/" + audioInFile
             videoInFileAbs = workingDir + "/" + videoInFile
-            combinedOutFile = workingDir + "/" + videoOutFile
+            videoOutBaseName = os.path.splitext(videoInFile)[0]
+            combinedOutFile = workingDir + "/" + videoOutBaseName + ".3gp"
             
             print "Mixing Video/Audio"
-            mixCommand = ExportMediaConverter.appConfig.ffmpegPath + " -i %(audioin)s -i %(videoin)s -s qcif -vcodec h263 -acodec libvo_aacenc -ac 1 -ar 8000 -r 25 -ab 32 -y -aspect 4:3 %(videoout)s" \
+            mixCommand = G.application.config.ffmpegPath + " -i %(audioin)s -i %(videoin)s -s qcif -vcodec h263 -acodec libvo_aacenc -ac 1 -ar 8000 -r 25 -ab 32 -y -aspect 4:3 %(videoout)s" \
                 % { "audioin" : audioInFileAbs, "videoin" : videoInFileAbs, "videoout" : combinedOutFile}
                 
             print "Running command %s \n" % mixCommand   
             
             call(mixCommand, shell=True)
-        """
+        
         
         #remove the <script part that exe made for FF3- compatibility
         #TODO: potential case sensitivity issue here -but exe always makes lower case...

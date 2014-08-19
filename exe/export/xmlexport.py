@@ -114,6 +114,8 @@ class XMLExport(WebsiteExport):
         
         mediaConverter.setCurrentPackage(package)
         ExportMediaConverter.autoMediaOnly = package.mxmlforcemediaonly
+        if 'FORCEMEDIAONLY' in os.environ:
+            ExportMediaConverter.autoMediaOnly = True
         
         ExportMediaConverter.setWorkingDir(currentOutputDir)
 
@@ -457,6 +459,10 @@ class XMLExport(WebsiteExport):
                 % {"link" : page.name, "title" : XMLExport.encodeEntities(page.node.titleShort) }
             xmlDirectoryFile.write(lineStr.encode("UTF-8"))
             xmlDirectoryFile.write("\n")
+            tin_can_str = page.render_tincan_xml()
+            xmlDirectoryFile.write(tin_can_str.encode("UTF-8"))
+            xmlDirectoryFile.write("\n")
+            
             for idevice in page.node.idevices:
                 #TODO: Make sure that we do not have an idevice entry for 
                 #something on a page with real idevices 
