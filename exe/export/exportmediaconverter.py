@@ -224,7 +224,10 @@ class ExportMediaConverter(object):
                 newImg.save(newPath)
             except:
                 #because pyclipse does weird stuff....
+                traceback = sys.exc_info()[2]
                 print "Unexpected error:", sys.exc_info()[0]
+                from traceback import print_tb
+                print_tb(traceback)
                 print "Error resizing image " + newFileName + " to " + str(newDimension[0]) + "x" + str(newDimension[1]) + "\n"
             pass
         
