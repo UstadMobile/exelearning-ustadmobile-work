@@ -134,7 +134,8 @@ class XMLPage(Page):
         #put in TinCan IDs
         xml += "<tincan id='%s'>" % \
             WebsiteExport.getTinCanId(suffix = "", 
-                                      id_type = EXETinCan.PAGE)
+                                      id_type = EXETinCan.PAGE,
+                                      pagename = self.name)
         xml += "<activitydef>"
         xml += EXETinCan.dump_json(
                            self.get_tincan_activity_definition())

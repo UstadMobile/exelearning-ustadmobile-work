@@ -190,12 +190,19 @@ class ExportMediaConverter(object):
         #go through all sizes
         for profileName in ENGINE_IMAGE_SIZES:
             xPos = profileName.find('x')
-            #TODO: check if this resolution is enabled or not
-            enabled = getattr(self.currentPackage, "ustadMobileIncRes"+profileName)
+            attr_name = "ustadMobileIncRes"+profileName
+            has_prof_attr = hasattr(self.currentPackage, attr_name)
+            enabled = True
+            if has_prof_attr is True:
+                enabled = getattr(self.currentPackage, attr_name)
+            
             profWidth = int(profileName[:xPos])
             profHeight = int(profileName[xPos+1:])
             
-            resizeStrategy = self.currentPackage.ustadMobileImageResizeStrategy
+            resizeStrategy = "scalefit"
+            if hasattr(self.currentPackage, "ustadMobileImageResizeStrategy"):
+                resizeStrategy = self.currentPackage.ustadMobileImageResizeStrategy
+            
             if mediaSlide:
                 newDimension = self.calcNewDimensions(origWidth, origHeight, profWidth, profHeight, resizeStrategy)
             else:

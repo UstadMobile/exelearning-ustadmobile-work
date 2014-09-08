@@ -28,4 +28,10 @@ testing.elp
 run-exe.py
 exe.dmg
 *.dmg
+#files created by debian builds
 *.deb
+debian/python-intef-exe
+debian/python-intef-exe.debhelper.log
+debian/python-intef-exe.postinst.debhelper
+debian/python-intef-exe.prerm.debhelper
+debian/python-intef-exe.substvars

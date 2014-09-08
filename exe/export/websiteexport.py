@@ -90,24 +90,28 @@ class WebsiteExport(object):
        
        
     @staticmethod
-    def getTinCanId(suffix = "", id_type="idevice"):
+    def getTinCanId(suffix = "", id_type="idevice", pagename = None):
         """Make a tin can activity ID - use a server prefix, the 
         package name, the page name, then the idevice id, and if
         needed another / and a question id or other depending on
         the idevice
         
         suffix: will be added to the tincan string
-        id_type: can be idevice (default), page or  
+        id_type: can be idevice (default), page or
+        pagename: the page file name (without .html etc). 
         
         """
         server_tincan_prefix = "http://www.ustadmobile.com/tincan"
+        if pagename is None:
+            pagename = WebsiteExport.current_package_name
+        
         tin_can_prefix = "%(urlprefix)s/%(packagename)s" % {
                                 "urlprefix" : server_tincan_prefix,
                                 "packagename" :  WebsiteExport.current_package_name
                                 }
         
         if id_type == EXETinCan.PAGE or id_type == EXETinCan.IDEVICE:
-            tin_can_prefix += "/" + WebsiteExport.current_page
+            tin_can_prefix += "/" + pagename
         
         if id_type == EXETinCan.IDEVICE:
             tin_can_prefix += "/" + WebsiteExport.current_idevice_id
