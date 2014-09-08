@@ -111,7 +111,8 @@ class TestUstadMobileExport(unittest.TestCase):
             vidSrc = videoElNodeList[0].getAttribute("src")
             vidPath = Path(mainFolder/vidSrc)
             self.assertTrue(vidPath.exists(), "Video %s does not exist" % vidSrc)
-            self.checkMediaFiles(vidPath, exetocEl, "videoformats") 
+            #disable - this way of doing things is deprecated
+            #self.checkMediaFiles(vidPath, exetocEl, "videoformats") 
             
         else:
             # should be audio video
@@ -134,7 +135,8 @@ class TestUstadMobileExport(unittest.TestCase):
                 self.assertTrue(audPath.exists(), \
                                 "Audio %s referred to in %s does not exist" % (audSrc, href))
                 hasAudio = True
-                self.checkMediaFiles(audPath, exetocEl, "audioformats")
+                #disable - this whole method is deprecated really
+                #self.checkMediaFiles(audPath, exetocEl, "audioformats")
                 
             self.assertTrue(hasImg or hasAudio, \
                             "%s is a mediaslide with no audio, image or video!" % href)
