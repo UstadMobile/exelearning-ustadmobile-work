@@ -39,7 +39,7 @@ class SortIdeviceInc(Idevice):
     the system idevices.
     """
     
-    persistenceVersion = 3
+    persistenceVersion = 5
     
     def __init__(self, content=""):
         Idevice.__init__(self, x_(u"Sort Items"), 
@@ -95,6 +95,9 @@ class SortIdeviceInc(Idevice):
 
         self.emphasis = Idevice.SomeEmphasis
         self.message = ""
+        self.system_scripts = ["exedragndrop.js", \
+                                        "jquery-ui-1.10.4.custom.min.js",
+                                        "sortItems-0.2.js"]
 
     def addItemToSort(self):
         item_num = len(self.itemsToSort) + 1
@@ -113,7 +116,7 @@ class SortIdeviceInc(Idevice):
     def uploadNeededScripts(self):
         from exe import globals
         import os,sys
-        scriptFileNames = ['jquery-ui-1.10.3.custom.min.js', 'sortItems.js']
+        scriptFileNames = ['jquery-ui-1.10.3.custom.min.js', 'sortItems-0.2.js']
         for scriptName in scriptFileNames:
             
             from exe import globals 
@@ -145,7 +148,15 @@ class SortIdeviceInc(Idevice):
         self.mainFieldSet.fieldInfoDict['title'] =  ['text', x_('Title'), x_('Title to show')]
         self.mainFieldSet.fieldOrder.insert(0, "title")
         self.emphasis = Idevice.SomeEmphasis
-
+        
+    def upgradeToVersion4(self):
+        self.uploadNeededScripts()
+        
+    def upgradeToVersion5(self):
+        self.system_scripts = ["exedragndrop.js", \
+                                "jquery-ui-1.10.4.custom.min.js",
+                                "jquery.ui.touch-punch.min.js",
+                                "sortItems-0.2.js"]
 # ===========================================================================
 def register(ideviceStore):
     """Register with the ideviceStore"""

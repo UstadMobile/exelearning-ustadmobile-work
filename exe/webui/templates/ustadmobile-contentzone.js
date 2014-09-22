@@ -106,6 +106,15 @@ UstadMobileContentZone.prototype = {
      */
     transitionInProgress: false,
     
+    /**
+     * The ID of the navigation buttons mapped to the numerical direction
+     * that is used in contentPageSelectors
+     * 
+     * @type Object
+     */
+    navigationButtonToDirMap: {"umForward" : UstadMobile.RIGHT,
+        "umBack" : UstadMobile.LEFT},
+    
     
     /**
      * Run startup routines for the content zone - setup event handlers for making
@@ -326,9 +335,11 @@ UstadMobileContentZone.prototype = {
             if(typeof hrefs[i] !== "undefined" && hrefs[i] !== "#") {
                 this.preloadPage(hrefs[i], i);
             }else {
-                $("#" + linkIds[i]).css("visibility", "hidden");
+                $(".ui-page-active a#" + linkIds[i]).css("visibility", "hidden");
             }
         }
+        
+        
     },
     
     /**
@@ -461,7 +472,7 @@ UstadMobileContentZone.prototype = {
             
             var newPageContentEl = $(newPageContentParsed).find(".ustadcontent");
             
-            
+
             if(newPageContentEl.length === 0) {
                 //try old #content selector
                 newPageContentEl = $(newPageContentParsed).find("#content");
@@ -490,7 +501,7 @@ UstadMobileContentZone.prototype = {
             
             var viewWidth = $(window).width();
             newPageContentEl.css("position", "absolute").css("width", 
-                "100%").css("left", "0px").css("right", "0px");
+                "100%").css("left", "0px");
                     
                        
             var newPosFactor = 1;
@@ -516,16 +527,33 @@ UstadMobileContentZone.prototype = {
         });
     },
     
-    
+    /**
+     * Will check which of the forward and back arrows should be shown
+     */
+    checkNavArrowVisibility: function() {
+        var umObj = UstadMobileContentZone.getInstance();
+        for(var key in umObj.navigationButtonToDirMap) {
+            if(umObj.navigationButtonToDirMap.hasOwnProperty(key)) {
+                var dir = umObj.navigationButtonToDirMap[key];
+                if(umObj.contentPageSelectors[dir] !== null) {
+                    $(".ui-page-active #"+key).css("visibility", "visible");
+                }else {
+                    $(".ui-page-active #"+key).css("visibility", "hidden");
+                }
+            }
+        }
+        
+    },
     
     /**
      * Shows the next or previous page
      * 
      * @param {Number} dir UstadMobile.LEFT or UstadMobile.RIGHT
+     * @param function callBack function to run once page has changed
      * 
      * @returns {undefined}
      */
-    contentPageGo: function(dir) {
+    contentPageGo: function(dir, callbackFn) {
         var umObj = UstadMobileContentZone.getInstance();
         UstadMobileUtils.debugLog("ContentPageGo: " + dir);
         
@@ -550,17 +578,8 @@ UstadMobileContentZone.prototype = {
         var animTime = umObj.contentPageTransitionTime;
         //nextPage.css("visibility", "visible");
         
-        var contentDetached = $(umObj.contentPageSelectors[dir]).detach();
-        
-        contentDetached.css("position", "absolute");
-        
-        console.log("Number of insertions to make: " 
-            + $.mobile.pageContainer.find(".ui-page-active .ui-content").length);
-        
-        $.mobile.pageContainer.find(".ui-page-active .ui-content").prepend(
-                contentDetached);
-        contentDetached = null;
-        
+        $(umObj.contentPageSelectors[dir]).css("position", "absolute");
+                
         $(umObj.contentPageSelectors[UstadMobile.MIDDLE]).css("transition", "all " 
                 + animTime + "ms ease-in-out");
         
@@ -591,7 +610,9 @@ UstadMobileContentZone.prototype = {
             umObj.contentPageSelectors[UstadMobile.MIDDLE] = 
                     umObj.contentPageSelectors[dir];
             
-            $(umObj.contentPageSelectors[UstadMobile.MIDDLE]).css("position", "");
+            //$(umObj.contentPageSelectors[UstadMobile.MIDDLE]).css("position", "");
+            $(umObj.contentPageSelectors[UstadMobile.MIDDLE]).css("position", 
+                "absolute").css("width", "100%").css("left", "0px");
             
             window.scrollTo(0,0);
             
@@ -631,9 +652,11 @@ UstadMobileContentZone.prototype = {
             }
             
             umObj.transitionInProgress = false;
+            umObj.checkNavArrowVisibility();
             
             UstadMobileUtils.debugLog("ChangePage: COMPLETED");
             umObj = null;
+            UstadMobileUtils.runCallback(callbackFn)
         }, animTime + Math.round(animTime * 0.1));
     },
     

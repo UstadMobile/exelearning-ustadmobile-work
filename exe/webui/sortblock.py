@@ -170,16 +170,13 @@ class SortBlockInc(Block):
         
         headFragment = self.idevice.mainFieldSet.applyFileTemplateToDict(mainDict, "sort_head_template.html", previewMode)
         html += headFragment
-        perItemScript = ""
         perItemFragment = ""
-        sortArrayVarName = "sortmeItemIds" + self.idevice.id
 
         for sortableElement in self.sortableItemElements:
             sortableItemId = "sortmeitem" + sortableElement.id
         
-            perItemScript += "%(sortvarname)s[%(sortvarname)s.length] = \"%(sortitemid)s\";\n" \
-                                        % {"sortvarname" : sortArrayVarName, "sortitemid" : sortableItemId}
-            perItemFragment += "<div id='" + sortableItemId + "'>"
+            perItemFragment += "<div id='" + sortableItemId \
+                 + "' class='sortMeItem'>"
             if previewMode == True:
                 perItemFragment += sortableElement.renderPreview()
             else:
@@ -190,8 +187,6 @@ class SortBlockInc(Block):
         html += perItemFragment
         html += "</div>\n"
 
-        #script fragments
-        html += "<script type='text/javascript'>" + perItemScript + "</script>"
         footerFragment = self.idevice.mainFieldSet.applyFileTemplateToDict(mainDict, "sort_foot_template.html", previewMode)
         html += footerFragment
         return html

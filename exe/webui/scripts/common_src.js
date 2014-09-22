@@ -327,7 +327,8 @@ function getFeedback(optionId, optionsNum, ideviceId, mode) {
     }    
     
     //try and send TINCAN statement
-    
+    /*
+     * DISABLED DUE TO ERRORS IN PARSING THESE JSONs
     if(EXETinCan) {
     	
     	if(mode == 'multi') {
@@ -338,7 +339,7 @@ function getFeedback(optionId, optionsNum, ideviceId, mode) {
     				tinCanAnsMap[optionId]['iscorrect']);
     	}
     	
-    }
+    }*/
     
 }
 
@@ -1383,7 +1384,32 @@ var $exe = {
         	}         
         }
         $exe.hint.init();
+        
+        if(document.location.search.indexOf("exe_content_qunit_test=1") !== -1) {
+        	//load required files
+        	$exe.initTestMode();
+        }
     },
+    
+    initTestMode: function() {
+    	var scriptList = ["qunit.js", "exe_content_qunit.js", 
+	                  "test-multichoiceidevice.js"];
+    	
+    	$exe.loadScriptsInOrder(scriptList, function() {
+    		EXEContentTesting.getInstance().runAfterScriptsLoad();
+    	});
+    },
+    
+    runCallback: function(fn, args, thisObj) {
+        if(typeof fn !== "undefined" && fn !== null) {
+        	if(typeof fn === "function") {
+        		fn.apply(thisObj, args);
+        	}else if(typeof fn === "string"){
+        		eval(fn);
+        	}
+        }
+    },
+    
     addRoles : function(){
         $('#header').attr('role','banner'); 
         $('#siteNav').attr('role','navigation'); 
@@ -1525,7 +1551,17 @@ var $exe = {
 			});
         }
     },
-    loadScript : function(url, callback){
+    
+    /**
+     * Dynamically load css or scriptss by inserting elements into head
+     * 
+     * @param url String URL to load
+     * @param callback Object function object or string to eval on load
+     * @param failCallback Object function object or string to eval on fail
+     * 
+     * @method
+     */
+    loadScript : function(url, callback, failCallback){
         var s;
         if (url.split('.').pop()=="css") {
             s = document.createElement("link");
@@ -1538,20 +1574,64 @@ var $exe = {
             s.src = url;
         }
         if (s.readyState){  //IE
-            s.onreadystatechange = function(){
+            s.onreadystatechange = function(evt){
                 if (s.readyState == "loaded" ||
                         s.readyState == "complete"){
                     s.onreadystatechange = null;
-                    if (callback) eval(callback);
+                    //if (callback) eval(callback);
+                    $exe.runCallback(callback, [evt], $exe);
                 }
             };
         } else {  //Others
-            s.onload = function(){
-                if (callback) eval(callback);
+            s.onload = function(evt){
+            	$exe.runCallback(callback, [evt], s);
+            };
+            s.onerror = function(evt) {
+            	$exe.runCallback(failCallback, [evt], s);
             };
         }
         document.getElementsByTagName("head")[0].appendChild(s);
     },
+    
+    /**
+     * Load a list of scripts sequentially in order
+     * 
+     * @param scriptList {Array} list of scripts to load
+     * @param completionCallback function to run when complete
+     *
+     * @method
+     */
+    loadScriptsInOrder: function(scriptList, completionCallback) {
+    	var currentScriptIndex = 0;
+        var totalLoaded = 0;
+        
+        var goNextScript = function() {
+            if(currentScriptIndex < (scriptList.length-1)) {
+                currentScriptIndex++;
+                loadScriptFn();
+            }else {
+                $exe.runCallback(completionCallback,
+                            [totalLoaded], this);
+            }
+        };
+        
+        var loadScriptFn = function() {
+            $exe.loadScript(
+                scriptList[currentScriptIndex], 
+                function() {
+                    //success callback
+                    console.log("Loaded script: " + scriptList[currentScriptIndex]);
+                    totalLoaded++;
+                    goNextScript();
+                }, function() {
+                    console.log("Failed to load: " + scriptList[currentScriptIndex]);
+                    goNextScript();
+                });
+        };
+        
+        loadScriptFn();
+    },
+    
     toggleFeedback : function(e) {
         var id = e.name.replace("toggle-","");
         var f = document.getElementById(id);
@@ -1580,3 +1660,4 @@ function exeUtilRemoveWhiteSpace(str) {
 	str =str.replace(/\s+/g, ''); 
 	return str;
 }
+

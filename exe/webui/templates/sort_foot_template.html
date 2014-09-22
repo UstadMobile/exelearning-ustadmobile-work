@@ -3,5 +3,12 @@
 </ul>
 
 <input type='button' value="${checkbuttontext}" style="${checkbuttonstyle}" onclick='checkOrder("${ideviceid}")'/><br/><br/>
-<script type='text/javascript'>initSortActivity('${ideviceid}');</script>
 
+<div id="sortmefeedback${ideviceid}">
+	<div id="sortmecorrectoverlay${ideviceid}">
+	    ${correctoverlay}
+	</div>
+	<div id="sortmewrongoverlay${ideviceid}">
+	    ${wrongoverlay}
+	</div>
+</div>

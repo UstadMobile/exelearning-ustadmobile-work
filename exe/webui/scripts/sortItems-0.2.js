@@ -10,23 +10,6 @@ var activeBg = "red";
 
 var colorCache = "";
 
-var sortItemsAdvanceText = "<<";
-var sortItemsPrevText = ">>";
-
-
-function clickItem(itemId, sortId) {
-    if(colorCache != "") {
-        if(sortAcitvitySelectedArr[sortId]) {
-            document.getElementById(sortAcitvitySelectedArr[sortId]).style.backgroundColor 
-                = colorCache;
-        }
-    }
-    
-    sortAcitvitySelectedArr[sortId] = itemId;
-    var element = document.getElementById(itemId);
-    colorCache = element.style.backgroundColor;
-    element.style.backgroundColor = activeBg;
-}
 
 function moveSortableItem(sortId, increment) {
     //first find the array / order of it now
@@ -42,52 +25,71 @@ function moveSortableItem(sortId, increment) {
     }
 }
 
+/**
+ * Gets an array of the ids that contain the items to be sorted
+ * 
+ * @param sortId String Idevice ID 
+ * @return Array Array of node ids that should be sorted by the user
+ */
+function sortItemsGetOriginalArray(sortId) {
+    var sortItemsArr = [];
+    var sortItemSelector = "#sortmeitemcontainer" + sortId
+	     + " .sortMeItem";
+    var numItems = $(sortItemSelector).length;
+    $(sortItemSelector).each(function() {
+        sortItemsArr.push($(this).attr("id"));
+    });
+    
+    return sortItemsArr;    
+}
+
+/** 
+ * Get the effect name to use for feedback to show
+ *
+ * @param sortId String Idevice ID
+ * @param feedbackType String correct or wrong
+ * @return String effect name to use
+ */
+function sortItemGetEffectName(sortId, feedbackType) {
+    return $("#sortmeitemcontainer"+sortId).attr("data-fbeffect-"
+        + feedbackType);
+}
+
 function initSortActivity(sortId) {
-	var sortItemsListOriginal = eval("sortmeItemIds" + sortId);
+	var sortItemsListOriginal = sortItemsGetOriginalArray(sortId);
+	if($("#sortme"+sortId).attr("data-sort-init") === "done") {
+	    return;//already done - do not rerun
+	}
+    	
 	var sortItemsList = new Array();
 	for (var i = 0; i < sortItemsListOriginal.length; i++) {
 		sortItemsList[i] = sortItemsListOriginal[i];
 	}
 	sortItemsList.sort(function() { return 0.5 - Math.random()});
 	var sortHolderId = "#sortme" + sortId;
-	var itemStyle = eval("sortMeStyle" + sortId);
+	var itemStyle = $("#sortmeitemcontainer" + sortId).attr("data-sortable-item-style");
 	$(function() {
 		for(var i = 0; i < sortItemsList.length; i++) {	
 			var thisItemHTML = $("#" + sortItemsList[i]).html();
 			var thisItemId = "li" + sortItemsList[i];
-			var clickHandle = "onclick='clickItem(\"li" + sortItemsList[i] + "\", \"" + sortId + "\")'" ;
-			if(exe_isTouchScreenDev == false) {
-			    clickHandle = "";
-			}
-			$(sortHolderId).append("<li class='sortablesub' " + clickHandle 
+
+			$(sortHolderId).append("<li class='sortablesub' " 
 					+ " id='li" + sortItemsList[i] + "' style='z-index: 5; " 
 					+ " list-style-image: none; list-style-type: none; "
 				+ itemStyle + "'>" + thisItemHTML + "</li>");
 		}
 
-				
 		$(sortHolderId).sortable();	
 		
 		var buttonContainer = "";
 		
-		if(exe_isTouchScreenDev == true) {
-		    buttonContainer += "<div class='sortMoveButtonHolder'>";
-				    buttonContainer += "<input type='button' value='" + sortItemsAdvanceText 
-		        + "' style='' onclick='moveSortableItem(\"" + sortId + "\", 1)'/>";
-
-            buttonContainer += "<input type='button' value='" + sortItemsPrevText 
-                + "' style='' onclick='moveSortableItem(\"" + sortId + "\", -1)'/>";
-	        buttonContainer += "</div>";
-	        $(buttonContainer).insertAfter(sortHolderId);
-        }
-        
-		//$(sortHolderId).disableSelection();
+	//$(sortHolderId).disableSelection();
 		$("#sortmecorrectoverlay" + sortId).hide();
 		$("#sortmewrongoverlay" + sortId).hide();
 		$(sortHolderId).unbind("click");
 	});
 	
-	
+	$("#sortme"+sortId).attr("data-sort-init", "done")
 }
 
 
@@ -96,7 +98,7 @@ Check the order of the items in the list
 */
 function checkOrder(sortId) {
 	var orderAsIs = $("#sortme" + sortId).sortable("toArray");
-	var correctOrder = eval("sortmeItemIds" + sortId);				
+	var correctOrder = sortItemsGetOriginalArray(sortId);				
 	var orderCorrect = true;
 	for (var i = 0 ; i < orderAsIs.length; i++) {
 		var currentItemId = orderAsIs[i];
@@ -115,13 +117,40 @@ function checkOrder(sortId) {
 		}
 	}
 	if(orderCorrect) {
-		$("#sortmecorrectoverlay" + sortId).show(eval("sortMeEffect" + sortId));
+		$("#sortmecorrectoverlay" + sortId).show(sortItemGetEffectName(
+		    sortId, "correct"));
 		$("#sortme" + sortId).sortable("disable");
-		playPositiveFeedbackDefault();
 	}else {
-		$("#sortmewrongoverlay" + sortId).show(eval("sortMeEffectWrong" + sortId));
+		$("#sortmewrongoverlay" + sortId).show(sortItemGetEffectName(
+		    sortId, "wrong"));
 		setTimeout("$('#sortmewrongoverlay" + sortId + "').fadeOut();", 10000);
-		playNegativeFeedbackDefault();
 	}
 }
+
+function initSortExercises(activeContainerSelector) {
+    if(typeof activeContainerSelector === "undefined") {
+        if(typeof UstadMobile !== "undefined") {
+            activeContainerSelector = UstadMobileContentZone.getInstance(
+                ).contentPageSelectors[UstadMobile.MIDDLE];
+        }else {
+            activeContainerSelector = "#main";
+        }
+    }
+    
+    $(activeContainerSelector + " .sortmeitemcontainer").each(function() {
+        var deviceId = $(this).attr("data-idevice-id");
+        initSortActivity(deviceId);
+    });
+}
+
+/*
+Init - lets get going
+*/
+$(function() {
+    $(document).on("execontentpageshow", function(evt) {
+                        initSortExercises(evt.targetSelector);
+                    });
+    initSortExercises();
+});
+
 
