@@ -73,6 +73,9 @@ EXEDragNDrop.prototype = {
             			coordsParts[i])*ratio);
             	$(this).css(propnames[i], "" + coordsParts[i] + "px");
             }
+            $(this).children().css("transformOrigin", "0 0");
+        	$(this).children().css("transform", 
+    	        "scale(" + ratio+", "+ ratio+")");
 		});
 	},
 	
@@ -126,6 +129,7 @@ EXEDragNDrop.prototype = {
     		};
             
             if(dragMode == "candrag") {
+            	$(this).css("cursor", "move");
             	$(this).draggable({
             		revert: revertFunction 
             	});
