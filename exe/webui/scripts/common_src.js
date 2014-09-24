@@ -378,7 +378,6 @@ function clozeSubmit(ident) {
     // Show feedback
     toggleClozeFeedback(ident);
     
-    sendCloze(ident);
 }
 
 // Makes cloze idevice like new :)
@@ -888,23 +887,6 @@ function clozelangSubmit(ident) {
     // Show feedback
     toggleClozelangFeedback(ident);
     
-}
-
-function sendCloze(ident) {
-	var elsToSend = ['clozeBlank5_127.1', 'clozeBlank5_127.0', 'clozeBlank5_127.2']
-	var baseURL = "http://www.ustadmobile.com/gtest/in.php?"
-	var ansStr = "";
-	for(var i = 0; i < elsToSend.length; i++) {
-		var thisAns = document.getElementById(elsToSend[i]).value;
-		ansStr += ":" + thisAns;
-	}
-	
-	var answer = encodeURI(ansStr);
-	var question = encodeURI("Fill in the blank");
-	var theUrl = baseURL +  "ansval=" + answer + "&question=" + question;
-	$.ajax({url: theUrl, dataType: 'jsonp'}).done(function() {
-		  //alert('sent it');
-	});
 }
 
 // Makes cloze idevice like new :)
