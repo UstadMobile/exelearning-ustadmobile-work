@@ -245,8 +245,14 @@ ImageMapIdevice.prototype = {
     }    
 };
 
-function imageMapIdevicePageInit() {
-    $(".imagemapidevice_img").each(function() {
+/**
+ * Initialize all imagemap idevices that are on the page
+ * 
+ * @param containerSelector String the selector for the active page div
+ */
+function imageMapIdevicePageInit(containerSelector) {
+	containerSelector = checkActivePageContainer(containerSelector);
+    $(containerSelector + " .imagemapidevice_img").each(function() {
         var elId = this.id;
         if(elId != null && elId.length > 1) {
             var realId = elId.substring(imageMapIdeviceIdPrefix.length);
@@ -269,8 +275,8 @@ function imageMapIdevicePageInit() {
 	                        imageMapIdevicePageInit();
 	                    });
 	                    
-	                    $(document).on("execontentpageshow", function() {
-	                        imageMapIdevicePageInit();
+	                    $(document).on("execontentpageshow", function(evt) {
+	                        imageMapIdevicePageInit(evt.targetSelector);
 	                    });
 	                }
                 }
@@ -285,8 +291,8 @@ function imageMapIdevicePageInit() {
 Init - lets get going
 */
 $(function() {
-    $(document).on("execontentpageshow", function() {
-                        imageMapIdevicePageInit();
+    $(document).on("execontentpageshow", function(evt) {
+                        imageMapIdevicePageInit(evt.targetSelector);
                     });
     imageMapIdevicePageInit();
 });
