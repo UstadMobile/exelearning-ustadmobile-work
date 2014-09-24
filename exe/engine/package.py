@@ -288,7 +288,7 @@ class Package(Persistable):
     i.e. the "package".
     """
     #persistenceVersion = 12
-    persistenceVersion = 14 #used to be 12 before. +1-ed for course test mode.
+    persistenceVersion = 15 #used to be 12 before. +1-ed for course test mode.
     nonpersistant      = ['resourceDir', 'filename', 'previewDir']
     # Name is used in filenames and urls (saving and navigating)
     _name              = '' 
@@ -388,6 +388,10 @@ class Package(Persistable):
         self.resourceDir = TempDirPath()
         self.resources = {} # Checksum-[_Resource(),..]
         self._docType    = G.application.config.docType
+        
+        #tincan options
+        self.xapi_prefix = "http://www.ustadmobile.com/um-tincan/activities"
+        
         
     def setLomDefaults(self):
         entry = str(uuid.uuid4())
@@ -1693,6 +1697,9 @@ class Package(Persistable):
         self.ustadMobileVideoMP4 = True
         self.ustadMobileVideoOGV = True
         self.ustadMobileVideo3GP = True
+    
+    def upgradeToVersion15(self):
+        self.xapi_prefix = "http://www.ustadmobile.com/um-tincan/activities"
         
             
     def downgradeToVersion9(self):
