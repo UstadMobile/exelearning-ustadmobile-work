@@ -11,7 +11,7 @@ from exe.engine.extendedfieldengine import *
 
 class DragNDropIdevice(Idevice):
     
-    persistenceVersion = 1
+    persistenceVersion = 2
     
     def __init__(self, content=""):
         Idevice.__init__(self, x_(u"Drag And Drop"), 
@@ -62,7 +62,8 @@ class DragNDropIdevice(Idevice):
         self.main_fields.makeFields()
         
         self.system_scripts = ["exedragndrop.js", \
-                                        "jquery-ui-1.10.4.custom.min.js"]
+                                    "jquery-ui-1.10.4.custom.min.js",
+                                    "jquery.ui.touch-punch.min.js"]
         
         self.add_area_fields(2)
         
@@ -77,6 +78,13 @@ class DragNDropIdevice(Idevice):
             newDndField.main_fields.fields['coords'].content = \
                 "%s,%s,100,100" % (space_needed, space_needed)
     
+    def upgradeToVersion2(self):
+        """
+        Adds touchpunch
+        """
+        self.system_scripts = ["exedragndrop.js", \
+                                    "jquery-ui-1.10.4.custom.min.js",
+                                    "jquery.ui.touch-punch.min.js"]
         
 
 class DragNDropAreaField(Field):
