@@ -1661,3 +1661,27 @@ function exeUtilRemoveWhiteSpace(str) {
 	return str;
 }
 
+/**
+ * Gets the selector for the container holding currently active
+ * page contents.  This is useful when content is AJAX loaded and in 
+ * the DOM but not actually on active display
+ * 
+ *  @param activeContainerSelector String selector given - can be undefined
+ */
+function checkActivePageContainer(activeContainerSelector) {
+	if(typeof activeContainerSelector === "undefined") {
+	    if(typeof UstadMobile !== "undefined") {
+	        activeContainerSelector = UstadMobileContentZone.getInstance(
+	            ).contentPageSelectors[UstadMobile.MIDDLE];
+	        if(activeContainerSelector === null) {
+	        	//actually is the first page to load from TOC 
+	        	//selector id not known
+	        	activeContainerSelector = "";
+	        }
+	    }else {
+	        activeContainerSelector = "#main";
+	    }
+	}
+	
+	return activeContainerSelector;
+}

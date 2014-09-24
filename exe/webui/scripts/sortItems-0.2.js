@@ -128,19 +128,12 @@ function checkOrder(sortId) {
 }
 
 function initSortExercises(activeContainerSelector) {
-    if(typeof activeContainerSelector === "undefined") {
-        if(typeof UstadMobile !== "undefined") {
-            activeContainerSelector = UstadMobileContentZone.getInstance(
-                ).contentPageSelectors[UstadMobile.MIDDLE];
-        }else {
-            activeContainerSelector = "#main";
-        }
-    }
-    
-    $(activeContainerSelector + " .sortmeitemcontainer").each(function() {
-        var deviceId = $(this).attr("data-idevice-id");
-        initSortActivity(deviceId);
-    });
+    var activeContainerSelector = checkActivePageContainer(
+    		activeContainerSelector);
+	$(activeContainerSelector + " .sortmeitemcontainer").each(function() {
+	    var deviceId = $(this).attr("data-idevice-id");
+	    initSortActivity(deviceId);
+	});	
 }
 
 /*

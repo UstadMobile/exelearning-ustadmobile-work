@@ -365,8 +365,9 @@ EXEDragNDrop.prototype = {
 
 };
 
-function initDragNDrop() {
-    $(".exednd_container").each(function() {
+function initDragNDrop(containerSelector) {
+	containerSelector = checkActivePageContainer(containerSelector);
+    $(containerSelector + " .exednd_container").each(function() {
         var x = 0;
         var dndIdeviceId = $(this).attr("data-exedndid");
         EXEDragNDropInstance[dndIdeviceId] = new EXEDragNDrop(
@@ -382,8 +383,8 @@ function initDragNDrop() {
 
 $(function() {
     initDragNDrop();
-    $(document).on("execontentpageshow", function() {
-    	initDragNDrop();
+    $(document).on("execontentpageshow", function(evt) {
+    	initDragNDrop(evt.targetSelector);
     });
     $(".exednd_editor_accordion").accordion({heightStyle: "fill"});
     $(".exednd_area_tabdiv").tabs();
