@@ -46,12 +46,54 @@ function setChance(gameId, chanceIndex) {
 }
 
 function setupGame(gameId) {
-        populateLetters(gameId);
-        currentWord[gameId] = 0;
-        startGame(gameId, 0);
-        $(document).on("pageshow", function(event, ui) {
-            checkHangmanWidth(gameId);
-        });
+    //find the images
+    hangman_chanceimgids[gameId] = new Array();
+    $("#exe" + gameId + " .hangmanimage_series IMG").each(function(index, val) {
+        hangman_chanceimgids[gameId].push($(this).attr("id"));
+    });
+    
+    //set words
+    hangman_words[gameId] = JSON.parse($("#exe"+gameId).attr("data-hangman-words"));
+    
+    //set alphabet
+    hangman_alphabet[gameId] = $("#exe"+gameId).attr("data-alphabet");
+
+    
+    //set button styles
+    hangman_buttonStyles[gameId] = new Array();
+    hangman_buttonStyles[gameId][HANGMAN_BEFORE_GUESS] = 
+		$("#exe" + gameId).attr("data-buttonstyle-before")
+    hangman_buttonStyles[gameId][HANGMAN_CORRECT_GUESS] = 
+    	$("#exe"+gameId).attr("data-buttonstyle-correct")
+	hangman_buttonStyles[gameId][HANGMAN_WRONG_GUESS] = 
+		$("#exe"+gameId).attr("data-buttonstyle-wrong")
+	
+	playerMessages[gameId] = new Array();
+	//set the feedback messages
+    playerMessages[gameId]['wrongguess'] = 
+        document.getElementById('hmwrong'+gameId).innerHTML;
+    playerMessages[gameId]['lostlevel'] =
+        document.getElementById('hmlost' + gameId).innerHTML;
+    playerMessages[gameId]['levelpassed'] = 
+        document.getElementById('hmpassed'+gameId).innerHTML;
+    playerMessages[gameId]['gamewon'] = 
+        document.getElementById('hmwon'+gameId).innerHTML;
+    
+
+    populateLetters(gameId);
+    checkHangmanWidth(gameId);
+    
+    currentWord[gameId] = 0;
+    startGame(gameId, 0);
+    
+    
+    $(document).on("pageshow", function(event, ui) {
+        checkHangmanWidth(gameId);
+    });
+    
+    $(document).on("execontentpageshow", function(evt) {
+    	checkHangmanWidth(gameId);
+    });
 }
 
 function populateLetters(gameId) {
@@ -69,6 +111,9 @@ function populateLetters(gameId) {
         }
         hangman_letterCounts[gameId] = letterCounter;
         document.getElementById(gameId + "_letterarea").innerHTML = letterAreaHTML;
+        if($.mobile) {
+        	$("#" + gameId+"_letterarea").enhanceWithin();
+        }
 }
 
 /*
@@ -171,18 +216,22 @@ delayToShow - how long to show the message.  -1 to show forever
 */
 function showAlert(gameId, msg, delayToShow) {
         var alertAreaElement = document.getElementById(gameId + "_alertarea");
-        alertAreaElement.innerHTML = msg;
-        alertAreaElement.style.visibility = '';
-        if(delayToShow > 0) {
-                setTimeout('document.getElementById("' + gameId + 
-                        '_alertarea").style.visibility = "hidden"', delayToShow);
+        if(alertAreaElement !== null) {
+        	alertAreaElement.innerHTML = msg;
+            alertAreaElement.style.visibility = '';
+            if(delayToShow > 0) {
+                    setTimeout('document.getElementById("' + gameId + 
+                            '_alertarea").style.visibility = "hidden"', delayToShow);
+            }
         }
 }
 
 //responsive design to make sure we are fitting within the screen
 function checkHangmanWidth(gameId) {
-    var widthAvailable = $(".HangmanIdeviceInc .iDevice_header").width() - 60;
+    var widthAvailable = $(".HangmanIdeviceInc .iDevice_header").width();
     var chanceArr = hangman_chanceimgids[gameId];
+    var maxHeight = 0;
+    
     for(var i = 0; i < chanceArr.length; i++) {
         var thisImg = $("#"+chanceArr[i]);
         var thisWidth = parseInt(thisImg.attr("width"));
@@ -192,9 +241,34 @@ function checkHangmanWidth(gameId) {
             thisImg.attr("width", widthAvailable);
             thisImg.attr("height", newHeight);
         }
+        
+        var setHeight = parseInt(thisImg.attr("height"));
+        if(setHeight > maxHeight) {
+            maxHeight = setHeight;
+        }
     }
+    
+    $("#"+gameId+"_imgarea").css("height", maxHeight+"px");
 }
 
 function playLevelCompleteSound() {
     //does nothing
 }
+
+function exeHangmanInit(containerSelector) {
+	var activeContainerSelector = checkActivePageContainer(
+			containerSelector);
+	$(activeContainerSelector + " .exehangmanblock").each(function() {
+		setupGame($(this).attr("data-hangman-id"));
+	});
+}
+
+/*
+Init - lets get going
+*/
+$(function() {
+    $(document).on("execontentpageshow", function(evt) {
+    	exeHangmanInit(evt.targetSelector);
+    });
+    exeHangmanInit();
+});

@@ -186,7 +186,7 @@ class HangmanBlockInc(Block):
         
         resPath = ""
         if mode ==  "preview":
-            resPath = "resources/"       
+            resPath = "/scripts/"       
         
         html = u"<script src='" + resPath + "hangman.js' type='text/javascript'></script>\n"
         html += common.ideviceHeader(self, style, mode)
@@ -197,7 +197,7 @@ class HangmanBlockInc(Block):
         html += self._renderHTMLElement(mode, self.gameWonTextElement, "hmwon" + hangmanGameId)
         
         html += "</div>"
-        html += u"<script type='text/javascript'>\n"
+        
 
         #Go through the images and find out the max height and maxwidth
         imgMaxHeight = 0
@@ -213,60 +213,47 @@ class HangmanBlockInc(Block):
         
 
         #Makes a javascript array of the list of words that the user has given
-        html += "hangman_words['%s'] = new Array();\n" % hangmanGameId
-        html += "hangman_buttonStyles['%s'] = new Array();\n" % hangmanGameId
+        #This assigned as data-hangman-words
+        
+        num_words = len(self.wordElements)
+        word_attr = "["
         for wordIndex, word in enumerate(self.wordElements):
-            html += u"hangman_words['%(gameId)s'][%(index)d] = new Array('%(word)s', '%(hint)s');\n" % \
-                {"index" : wordIndex, "word" : word.renderView(), \
-                "hint" : self.hintElements[wordIndex].renderView(), \
-                "gameId" : hangmanGameId }
-        
-        #make the style for the buttons
-        html += "hangman_buttonStyles['%(gameId)s'][HANGMAN_BEFORE_GUESS] = \"%(style)s\";\n" \
-                % {"gameId" : hangmanGameId, "style" : self.letterButtonStyleElement.renderView()}
-        html += "hangman_buttonStyles['%(gameId)s'][HANGMAN_CORRECT_GUESS] = \"%(style)s\";\n" \
-                % {"gameId" : hangmanGameId, "style" : self.rightLetterButtonStyleElement.renderView()}
-        html += "hangman_buttonStyles['%(gameId)s'][HANGMAN_WRONG_GUESS] = \"%(style)s\";\n" \
-                % {"gameId" : hangmanGameId, "style" : self.wrongLetterButtonStyleElement.renderView()}
-
-        #Makes a javscript string of the alphabet that the user can guess from
-        html += u"hangman_alphabet['%(gameId)s'] = '%(alphabet)s';\n" % \
-        {"alphabet" : self.alphabetElement.renderView(), \
-        "gameId" : hangmanGameId }
-
-        #Makes an array of the ids of the divs that hold the chance images
-        html += u"hangman_chanceimgids['%s'] = new Array();\n" % hangmanGameId
-        for imgIndex, imgElement in enumerate(self.chanceImageElements):
-            html += "hangman_chanceimgids['%(gameId)s'][%(index)d] = '%(imgdivid)s';\n" % \
-                {"index" : imgIndex, "imgdivid" : "hangman" + self.id + "img" + imgElement.id, \
-                "gameId" : hangmanGameId }
-
-        #Make the messages for this game
-        html += u"playerMessages['%s'] = new Array();\n" % hangmanGameId
+            word_attr += "[&#34;%(word)s&#34;, &#34;%(hint)s&#34;]" % {
+                "word" : word.renderView(),
+                "hint" : self.hintElements[wordIndex].renderView(), 
+                }
+            if wordIndex < num_words -1:
+                word_attr += ","
+            
+        word_attr += "]"
         
         
+        """Make main element to hold values for the exercise """
+        html += """<div class='exehangmanblock' id=\"exe%(id)s\"
+            data-hangman-id=\"%(id)s\"
+            data-hangman-words=\"%(words)s\"
+            data-buttonstyle-before="%(button_style_before)s"
+            data-buttonstyle-correct="%(button_style_correct)s"
+            data-buttonstyle-wrong="%(button_style_wrong)s"
+            data-alphabet="%(alphabet)s">
+            """ % {
+                "id" : hangmanGameId, "words" : word_attr,
+                "button_style_before" : 
+                    self.letterButtonStyleElement.renderView(),
+                "button_style_correct" :
+                    self.rightLetterButtonStyleElement.renderView(),
+                 "button_style_wrong" :
+                    self.wrongLetterButtonStyleElement.renderView(),
+                "alphabet":
+                    self.alphabetElement.renderView()
+                }
         
-        messagesStr = """
+        html += "<div class=\"hangmanimage_series\">"
         
-        playerMessages['%(gameid)s']['wrongguess'] = 
-            document.getElementById('hmwrong%(gameid)s').innerHTML;
-        playerMessages['%(gameid)s']['lostlevel'] =
-            document.getElementById('hmlost%(gameid)s').innerHTML;
-        playerMessages['%(gameid)s']['levelpassed'] = 
-            document.getElementById('hmpassed%(gameid)s').innerHTML;
-        playerMessages['%(gameid)s']['gamewon'] = 
-            document.getElementById('hmwon%(gameid)s').innerHTML;
-        </script>
-        """ % {"gameid" : hangmanGameId }
-        
-        html += messagesStr
-        
-
-        html += "<div id='hangman" + self.id + "_img'>"
         #render view of these images
         for imgElement in self.chanceImageElements:
             if imgElement.field.imageResource and imgElement.field.imageResource is not None:
-                html += "<div id='hangman" + self.id + "img" + imgElement.id + "' style='display: none'>"
+                
                 img_str = None
             
                 if mode == "view":
@@ -278,14 +265,17 @@ class HangmanBlockInc(Block):
                 img_str = img_str[:4] + " style='max-width: 100%' " + img_str[4:]
                 
                 html += img_str
-                html += "</div>"
        
         html += "</div>"
 
         messageTopMargin = (imgMaxHeight - 30) / 2
         gameWidth = max(600, imgMaxWidth)
-        gameAreaHTML = """
-<div id="%(gameId)s_gamearea" style='width: %(width)dpx;' class='exehangman_gamearea'>
+        game_area_dict = { "gameId" : hangmanGameId, "width" : gameWidth, "height": imgMaxHeight, \
+                "messagetopmargin" : messageTopMargin, 'hintStyle' : self.hintFieldStyleElement.renderView(), \
+                'wordStyle' : self.wordAreaStyleElement.renderView(), 'resetText' : self.resetButtonTextElement.renderView(), \
+                'resetStyle' : self.resetButtonStyleElement.renderView() }
+        game_area_str ="""
+<div id="%(gameId)s_gamearea" style='width: %(width)dpx; max-width: 100%%; overflow-x: hidden; margin-bottom: 130px;' class='exehangman_gamearea'>
         <div class='exehangman_alertarea' id="%(gameId)s_alertarea" 
         style='position: absolute; z-index: 10; text-align: center; border: 1px; background-color: white; width: %(width)dpx; margin-top: %(messagetopmargin)dpx; visibility: hidden'>
         &#160;
@@ -293,19 +283,16 @@ class HangmanBlockInc(Block):
         <div id="%(gameId)s_imgarea" style='height: %(height)dpx; z-index: 1;' class='exehangman_imgarea'>
         </div>
 
-        <input type='text' style='%(hintStyle)s' id='%(gameId)s_hintarea' style='width: %(width)dpx' class='exehangman_hintarea'/>
-        <input type='text' style='%(wordStyle)s' id='%(gameId)s_wordarea' style='width: %(width)dpx' class='exehangman_wordarea'/>
+        <input type='text' id='%(gameId)s_hintarea' style='%(hintStyle)s width: %(width)dpx; max-width: 100%%;' class='exehangman_hintarea'/>
+        <input type='text' id='%(gameId)s_wordarea' style='%(wordStyle)s width: %(width)dpx; max-width: 100%%' class='exehangman_wordarea'/>
         <div id="%(gameId)s_letterarea" class='exehangman_letterarea'>
         </div>
         <input class='exehangman_resetbutton' type='button' value='%(resetText)s' style='%(resetStyle)s' onclick='restartLevel("%(gameId)s")'/>
 </div>
 
-        """ % { "gameId" : hangmanGameId, "width" : gameWidth, "height": imgMaxHeight, \
-                "messagetopmargin" : messageTopMargin, 'hintStyle' : self.hintFieldStyleElement.renderView(), \
-                'wordStyle' : self.wordAreaStyleElement.renderView(), 'resetText' : self.resetButtonTextElement.renderView(), \
-                'resetStyle' : self.resetButtonStyleElement.renderView() }
+        """ 
+        gameAreaHTML = game_area_str % game_area_dict
         html += gameAreaHTML
-        html += "<script type='text/javascript'>setupGame('%s');</script>" % hangmanGameId
 
         return html
 

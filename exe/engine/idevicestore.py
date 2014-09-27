@@ -349,9 +349,15 @@ class IdeviceStore:
         factoryExtendedIdevices = []
         
         factoryExtendedIdevices.append(SortIdeviceInc())
-        factoryExtendedIdevices.append(HangmanIdeviceInc())
+        
+        #Hide this until stabilized
+        #factoryExtendedIdevices.append(HangmanIdeviceInc())
+        
         #factoryExtendedIdevices.append(ClickInOrderIdeviceInc())
-        factoryExtendedIdevices.append(MemoryMatchIdeviceInc())
+        
+        #Hide this until stabilized
+        #factoryExtendedIdevices.append(MemoryMatchIdeviceInc())
+        
         #factoryExtendedIdevices.append(PlaceTheObjectsIdeviceInc())
         factoryExtendedIdevices.append(FileAttachIdeviceInc())
         factoryExtendedIdevices.append(ImageMapIdevice())

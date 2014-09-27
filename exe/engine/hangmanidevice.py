@@ -46,7 +46,7 @@ log = logging.getLogger(__name__)
 # ===========================================================================
 class HangmanIdeviceInc(Idevice):
     
-    persistenceVersion = 3
+    persistenceVersion = 4
     
     def __init__(self, content=""):
         Idevice.__init__(self, x_(u"Hangman Game"), 
@@ -55,6 +55,8 @@ class HangmanIdeviceInc(Idevice):
         self.emphasis = Idevice.SomeEmphasis
         self.short_desc = x_("Student has to guess letters from alphabet from a hint to complete word.  Each wrong letter guessed gets the student closer to losing a life")
         self.message = ""
+        
+        self.system_scripts = ["hangman.js"]
         
         self.titleField = TextField(x_("Title"), x_("Title"),
                                     default_prompt = x_("Type your title here"))
@@ -143,21 +145,8 @@ class HangmanIdeviceInc(Idevice):
 
     #add the javascript to the package
     def addGameScript(self):
-        from exe import globals
-        import os,sys
-            
-        scriptSrcFilename = globals.application.config.webDir/"templates"/"hangman.js"
-        log.debug("Script filename = " + scriptSrcFilename)
+        pass
         
-        #assert(self.parentNode,
-        #       'Image '+self.id+' has no parentNode')
-        #assert(self.parentNode.package,
-        #       'iDevice '+self.parentNode.id+' has no package')
-
-        gameScriptFile = Path(scriptSrcFilename)
-        if gameScriptFile.isfile():
-            Resource(self, gameScriptFile)
-
 
     #Adds a chance and image for the player
     def addChance(self, defaultImagePath = None):
@@ -204,6 +193,10 @@ class HangmanIdeviceInc(Idevice):
     def upgradeToVersion3(self):
         self.message = ""
         self.titleField = TextField(x_("Title"), x_("Title"))
+        
+    def upgradeToVersion4(self):
+        self.system_scripts = ["hangman.js"]
+        
 # ===========================================================================
 def register(ideviceStore):
     """Register with the ideviceStore"""

@@ -92,3 +92,9 @@ input.feedbackbutton{margin-top:10px;margin-bottom:10px}
 	list-style-type: none;
 	list-style-image: none;
 }
+
+/*Hangman styles*/
+.hangmanimage_series {
+    display: none;
+}
+
