@@ -397,7 +397,8 @@ UstadMobileContentZone.prototype = {
         this.triggerEventOnPageIdevices(pageSelector, "ideviceshow");
         
         var docEvt = $.Event("execontentpageshow", {
-            target: $(pageSelector)
+            target: $(pageSelector),
+            targetSelector: pageSelector
         });
         console.assert($(pageSelector).length === 1);
         
@@ -472,12 +473,15 @@ UstadMobileContentZone.prototype = {
             
             var newPageContentEl = $(newPageContentParsed).find(".ustadcontent");
             
-
             if(newPageContentEl.length === 0) {
                 //try old #content selector
                 newPageContentEl = $(newPageContentParsed).find("#content");
                 newPageContentEl.addClass("ustadcontent");
             }
+            
+            var newPageTitle = $(newPageContentParsed).find(
+                    "[data-role='header']").text();
+            newPageContentEl.attr('data-title', newPageTitle);
                         
             console.log("Attempting to preload into DOM:" + this.url);
             console.log("preloadPage: Check existing pageContentEl - must =1; is " + 
@@ -501,7 +505,7 @@ UstadMobileContentZone.prototype = {
             
             var viewWidth = $(window).width();
             newPageContentEl.css("position", "absolute").css("width", 
-                "100%").css("left", "0px");
+                "100%").css("left", "0px").css("display", "none");
                     
                        
             var newPosFactor = 1;
@@ -578,10 +582,10 @@ UstadMobileContentZone.prototype = {
         var animTime = umObj.contentPageTransitionTime;
         //nextPage.css("visibility", "visible");
         
-        $(umObj.contentPageSelectors[dir]).css("position", "absolute");
+        $(umObj.contentPageSelectors[dir]).css("display", "block");
                 
         $(umObj.contentPageSelectors[UstadMobile.MIDDLE]).css("transition", "all " 
-                + animTime + "ms ease-in-out");
+                + animTime + "ms ease-in-out").css("position", "absolute");
         
         $(umObj.contentPageSelectors[dir]).css("transition", "all " + animTime 
                 + "ms ease-in-out");
@@ -601,6 +605,7 @@ UstadMobileContentZone.prototype = {
         setTimeout(function() {
             var umObj = UstadMobileContentZone.getInstance();
             var currentPageSel = umObj.contentPageSelectors[UstadMobile.MIDDLE];
+            $(currentPageSel).css("display", "none");
             
             var nextPageSel = umObj.contentPageSelectors[dir];
             
@@ -610,13 +615,13 @@ UstadMobileContentZone.prototype = {
             umObj.contentPageSelectors[UstadMobile.MIDDLE] = 
                     umObj.contentPageSelectors[dir];
             
-            //$(umObj.contentPageSelectors[UstadMobile.MIDDLE]).css("position", "");
             $(umObj.contentPageSelectors[UstadMobile.MIDDLE]).css("position", 
-                "absolute").css("width", "100%").css("left", "0px");
+                "static").css("width", "100%").css("left", "0px");
             
-            window.scrollTo(0,0);
+            $(".ui-page-active").trigger("updatelayout");
             
-            
+            $("div[data-role='header'] h3").text(
+                $(nextPageSel).attr("data-title"));
             
             UstadMobileContentZone.getInstance().pageShow(nextPageSel);
             
@@ -698,6 +703,8 @@ UstadMobileContentZone.prototype = {
             var pgEl = $("<div data-role='page' id='" + newPageId +"'></div>");
             var pageParsed = $.parseHTML(data,document, true);
             var header = $(pageParsed).find("[data-role='header']").first();
+            var headerTitle = $(header).text();
+            
             if(header) {
                 pgEl.append(header);
             }
@@ -705,6 +712,8 @@ UstadMobileContentZone.prototype = {
             var footer = $(pageParsed).find("[data-role='footer']").first();
             
             var pageContent = $(pageParsed).find('.ui-content').first();
+            pageContent.find("#content").attr("data-title", headerTitle);
+            
             UstadMobileContentZone.getInstance().preProcessPage(pageContent);
             pgEl.append(pageContent);
             pageContent = null;

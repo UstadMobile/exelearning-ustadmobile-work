@@ -533,21 +533,21 @@ class WebsitePage(Page):
             data-theme="b" 
             data-tap-toggle="false">
             
-            <a id="umBack" data-role="button" 
-                class="ui-btn ui-btn-left" 
-                onclick="exePreviousPageOpen()" data-exe-translation="Back"
-                data-inline="true"><i class='lIcon fa fa-arrow-circle-left' style='font-size: 24pt'></i></a>
+            <a id="umBack"  
+                class="ui-btn ui-corner-all ui-btn-inline ui-mini ui-btn-icon-left ui-icon-carat-l footer-button-left" 
+                onclick="exePreviousPageOpen()" 
+                > </a>
                             
             <a onclick="exeMenuPageOpen()"   style="text-align: center;" 
                 data-exe-translation="Menu" class="exeTranslated"
                 data-transition="slideup" data-inline="true" data-icon="grid" 
                 >Menu</a>
                      
-            <a id="umForward" data-role="button" 
-                class="ui-btn-right" data-direction="reverse"
-                data-exe-translation="Forward" 
+            <a id="umForward" 
+                class="ui-btn ui-corner-all ui-btn-inline ui-mini ui-btn-icon-right ui-icon-carat-r footer-button-right" 
+                data-direction="reverse"                 
                 onclick="exeNextPageOpen()"  
-                data-inline="true"><i class='lIcon fa fa-arrow-circle-right' style='font-size: 24pt'></i></a>
+                > </a>
         </div>
         </div>
         </div>   """
@@ -579,5 +579,6 @@ class WebsitePage(Page):
     """
     @classmethod
     def getUstadMobileCSSList(cls):
-        return ["jqm-base.css", "jqm-app-theme.css", "jqm-content-theme.css"]
+        return ["jqm-base.css", "jqm-app-theme.css", 
+                "jqm-content-theme.css", "ustadmobile.css"]
     

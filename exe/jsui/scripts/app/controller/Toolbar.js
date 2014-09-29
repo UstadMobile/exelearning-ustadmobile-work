@@ -19,7 +19,14 @@
 
 Ext.define('eXe.controller.Toolbar', {
     extend: 'Ext.app.Controller',
-    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel', 'eXe.view.forms.WizardPanel', 'eXe.view.forms.IDevicePanel', 'eXe.view.forms.ExportUstadMobilePanel', 'eXe.view.forms.LoginUMCloudPanel', 'eXe.view.forms.LoginCloudPanel'], //Added WizardPanel and IDevicePanel and ExportUstadMobilePanel
+    requires: ['eXe.view.forms.PreferencesPanel', 
+        'eXe.view.forms.StyleManagerPanel', 
+        'eXe.view.forms.WizardPanel', 
+        'eXe.view.forms.IDevicePanel', 
+        'eXe.view.forms.ExportUstadMobilePanel', 
+        'eXe.view.forms.LoginUMCloudPanel', 
+        'eXe.view.forms.LoginCloudPanel', 
+        'eXe.view.forms.ReadabilityBoundariesPanel'], //Added WizardPanel and IDevicePanel and ExportUstadMobilePanel
 	refs: [{
         ref: 'recentMenu',
         selector: '#file_recent_menu'
@@ -169,6 +176,11 @@ Ext.define('eXe.controller.Toolbar', {
             '#tools_wizard': {	//Added
                 click: this.toolsWizard
             },
+            
+            '#tools_readability_boundaries' : {
+                click: this.readabilityBoundariesClick
+            },
+            
             //tools_idevicep
             '#tools_idevicep': {	//Added
                 click: this.toolsIDeviceP
@@ -486,6 +498,26 @@ Ext.define('eXe.controller.Toolbar', {
         //formpanel.load({url: 'idevicep', method: 'GET'});
         idevicep.show();        
 	},
+    
+    /**
+     *
+     */
+    readabilityBoundariesClick: function() {
+        var readabilityWindow = new Ext.Window( {
+            height: 500,
+            width: 550,
+            modal: true,
+            id: 'readabilityBoundariesWin',
+            title: _("Readability Boundaries"),
+            layout: 'fit',
+            items: [ {
+                xtype: 'readabilityboundarypanel'
+            }]
+        });
+        
+        readabilityWindow.show();
+           
+    },
     
     toolsWizard: function() {	//added for Wizard test
     	//alert("testWizard01");

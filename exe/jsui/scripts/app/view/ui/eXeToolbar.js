@@ -387,6 +387,30 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 accesskey: 'w',
                                 text: _('IDevices')
                             },
+                            /* Hidden for this merge
+                            {
+                                xtype: 'accesskey_menuitem',
+                                text: _('Readability'),
+                                accesskey: 'r',
+                                icon: '/images/stock-export.png', 
+                                menu: {
+                                    xtype: 'menu',
+                                    items: [
+                                        { //Readability boundaries dialog
+                                            xtype: 'accesskey_menuitem',
+                                            itemId: 'tools_readability_boundaries',
+                                            accesskey: 'b',
+                                            text: _('Boundaries')
+                                        },
+                                        {
+                                            xtype: 'accesskey_menuitem',
+                                            itemId: 'tools_readability_wordlist',
+                                            accesskey: 'w',
+                                            text: _('Word List')
+                                        }
+                                    ]
+                                }
+                            },*/
                             {
                                 xtype: 'accesskey_menuitem',
                                 itemId: 'tools_preferences',
