@@ -148,6 +148,10 @@ class Config(object):
         self.stylesDir =Path(self.configDir/'style').abspath()
         #FM: Default Style name
         self.defaultStyle= u"INTEF"
+        
+        #MD: New readability options settings
+        self.readabilityPresetsDir = Path(self.configDir/'readability-presets').abspath()
+        
         #self.defaultStyle= u"EducaMadrid" #Added
         # browser is the name of a predefined browser specified at http://docs.python.org/library/webbrowser.html.
         # None for system default
@@ -364,9 +368,11 @@ class Config(object):
                 self.configDir      = Path(system.configDir)
                 self.webDir         = Path(system.webDir)
                 self.stylesDir      = Path(self.configDir)/'style'
+                self.readabilityPresetsDir = Path(self.configDir)/'readability-presets'
                 self.jsDir          = Path(system.jsDir)
             else:
                 self.stylesDir      = Path(self.webDir/'style').abspath()
+                self.readabilityPresetsDir = Path(self.webDir/'readability').abspath()
             
             self.assumeMediaPlugins = False;
             if self.configParser.has_option('system', \
@@ -391,19 +397,37 @@ class Config(object):
             if not os.path.exists(self.stylesDir) or not os.listdir(self.stylesDir):
                 self.copyStyles() 
             else:
-                self.updateStyles()                      
+                self.updateStyles()     
+                
+            #MD readability presets dir
+            if not os.path.exists(self.readabilityPresetsDir) or not os.listdir(self.readabilityPresetsDir):
+                self.copyReadabilityPresets()
+            else:
+                #self.updateReadabilityPresets()
+                pass
+                 
         else:
             if G.application.portable:
                 if os.name == 'posix': 
                     self.stylesDir      = Path(self.webDir/'..'/'..'/'..'/'style')
+                    self.readabilityPresetsDir = Path(self.webDir/'..'/'..'/'..'/'readability-presets')
                 else: 
                     self.stylesDir      = Path(self.webDir/'..'/'style')
+                    self.readabilityPresetsDir = Path(self.webDir/'..'/'readability-presets')
                 if not os.path.exists(self.stylesDir) or not os.listdir(self.stylesDir): 
                     self.copyStyles()
                 else:
                     self.updateStyles()
+                    
+                if not os.path.exists(self.readabilityPresetsDir) or not os.listdir(self.readabilityPresetsDir):
+                    self.copyReadabilityPresets()
+                
+                #TODO: Update copy    
+                
             else:
                 self.stylesDir     = Path(self.webDir/'style').abspath()
+                self.readabilityPresetsDir = \
+                    Path(self.webDir/'readability-presets').abspath()
             
                
         # Get the list of recently opened projects
@@ -546,7 +570,19 @@ class Config(object):
                 if not dst_file.exists() or src_mtime > dst_file.mtime:
                     src_file.copy(dst_file)
                 
-        
+    def copySystemToUserDir(self, bkdir, dstdir):
+        """
+        Used to initialize user directories from pre-supplied
+        default directories e.g. /usr/share/style to ~/.exe/style
+        """
+        if os.path.exists(bkdir):            
+            if os.path.exists(dstdir) and not os.listdir(dstdir): 
+                shutil.rmtree(dstdir)                 
+            shutil.copytree(bkdir,dstdir )
+    
+    def copyReadabilityPresets(self):
+        self.copySystemToUserDir(self.webDir/'readability-presets', 
+                                 self.readabilityPresetsDir)    
             
     def copyStyles(self):
         bkstyle=self.webDir/'style'
@@ -555,18 +591,7 @@ class Config(object):
             if os.path.exists(dststyle) and not os.listdir(self.stylesDir): shutil.rmtree(dststyle)                 
             shutil.copytree(bkstyle,dststyle )
             
-    def updateStyles(self):
-        bkstyle=self.webDir/'style'
-        dststyle=self.stylesDir
-        if os.stat(bkstyle).st_mtime - os.stat(dststyle).st_mtime > 1:
-            for name in os.listdir(bkstyle):
-                bksdirstyle=os.path.join(bkstyle, name)
-                dstdirstyle=os.path.join(dststyle, name)
-                if os.path.isdir(bksdirstyle):
-                    if os.path.exists(dstdirstyle):shutil.rmtree(dstdirstyle)
-                    shutil.copytree(bksdirstyle, dstdirstyle)
-                else:
-                    shutil.copy(bksdirstyle, dstdirstyle)                    
+        
                     
 
     def loadLocales(self):

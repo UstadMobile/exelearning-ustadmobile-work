@@ -1,4 +1,44 @@
-//To Create the Wizard Panel.
+/**
+ *  Readability Options Panel
+ */
+
+/*
+var readabilityPresetStore = Ext.create('Ext.data.Store', {
+             fields: [{name: 'display'}, {name: 'value'}],
+             autoLoad: true,
+             data: [
+        {"display":"TEST1","value":"TEST1.xml"},
+        {"display":"TEST2","value":"TEST2.xml"}
+     ]
+});
+*/
+
+Ext.define('ReadabilityStoreModel', {
+        extend: 'Ext.data.Model',
+        fields: [{
+            name: 'filename',
+            type: 'string'
+        }, {
+            name: 'basename',
+            type: 'string'
+        }]
+    });
+
+var readabilityPresetStore = Ext.create('Ext.data.Store', {
+     fields: [{name: 'display'}, {name: 'value'}],
+     model: 'ReadabilityStoreModel',
+     proxy: {
+    	 type: 'ajax',
+    	 url: '/readabilitypresets?type=erb',
+    	 reader: {
+    		 root: "rootList"
+    	 }
+     },
+     autoLoad: true
+});
+
+
+
 var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
     extend: 'Ext.tab.Panel',
     id: 'readabilityboundarypanel',
@@ -38,16 +78,15 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
                 		},
                 		items : [
             		        {
-								xtype: 'combobox',
+								xtype: 'combo',
 								inputId: 'readability_boundaries_combobox',
 								fieldLabel: _('Level'),
-								store: [
-								    ['Kindergarten1.1', 'Kindergarten-1.1'],
-								    ['Kindergarten-1.1', 'Kindergarten-1.2'],
-								    ['Grade1', 'Grade1'],
-								    ['Grade2', 'Grade2']
-								],
+								store: readabilityPresetStore,								
 								tooltip: _('Select a level.'),
+								displayField: "basename",
+								valueField: "filename",
+								editable: false,
+								valueField: "value",
 								anchor: '100%'
             		        },
             		        {

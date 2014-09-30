@@ -44,6 +44,7 @@ from exe.webui.wizardpage          import WizardPage #Added
 from exe.webui.idevicepage          import IDevicePage #Added
 from exe.webui.exportustadmobilepage    import ExportUstadMobilePage #Added
 from exe.webui.loginumcloudpage import LoginUMCloudPage #Added
+from exe.webui.readabilitypresetspage import ReadabilityPresetsPage
 from exe.webui.aboutpage           import AboutPage 
 from exe.webui.quitpage            import QuitPage
 from exe.webui.iecmwarning         import IECMWarningPage
@@ -78,12 +79,14 @@ class WebServer:
         self.exportustadmobilep = ExportUstadMobilePage(self.root)#Added
         self.loginumcloudp = LoginUMCloudPage(self.root) #Added
         self.idevicep      = IDevicePage(self.root)#Added
+        
         self.xliffexportpreferences = XliffExportPreferencesPage(self.root)
         self.xliffimportpreferences = XliffImportPreferencesPage(self.root)
         self.dirtree     = DirTreePage(self.root)
         self.about       = AboutPage(self.root)
         self.quit        = QuitPage(self.root)
         self.iecmwaring  = IECMWarningPage(self.root)
+        self.readabilitypresets = ReadabilityPresetsPage(self.root)
         self.monitoring  = False
 
 

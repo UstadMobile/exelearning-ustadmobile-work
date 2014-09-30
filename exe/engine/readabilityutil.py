@@ -5,6 +5,9 @@ Created on Sep 29, 2014
 '''
 
 from textstatistics.textstatistics import TextStatistics
+from exe import globals as G
+
+import os
 
 class ReadabilityUtil(object):
     '''
@@ -15,7 +18,7 @@ class ReadabilityUtil(object):
                      }
     
 
-    def __init__(self, params):
+    def __init__(self, params = None):
         '''
         Constructor
         '''
@@ -85,4 +88,20 @@ class ReadabilityUtil(object):
             text += self.node_to_text(child)
               
         return text
+    
+    def list_readability_presets(self, extension_type):
+        '''
+        Will list the readability presets in the directory
+        extension_type - extension without prefixed .
+        '''
+        extension = "." + extension_type
+        result_list = []
+        
+        for file_name in os.listdir(G.application.config.readabilityPresetsDir):
+            if file_name[-4:] == extension:
+                result_list.append(file_name)
+                
+        
+        return result_list
+        
     
