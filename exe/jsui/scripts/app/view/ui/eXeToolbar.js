@@ -387,7 +387,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 accesskey: 'w',
                                 text: _('IDevices')
                             },
-                            /* Hidden for this merge
+                            
                             {
                                 xtype: 'accesskey_menuitem',
                                 text: _('Readability'),
@@ -410,7 +410,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                         }
                                     ]
                                 }
-                            },*/
+                            },
                             {
                                 xtype: 'accesskey_menuitem',
                                 itemId: 'tools_preferences',

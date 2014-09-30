@@ -145,6 +145,13 @@ class MainPage(RenderableLivePage):
             self.exportXML(None, self.package.previewDir, stylesDir)
             self.previewPage = File(self.package.previewDir / self.package.name)
         return self.previewPage
+    
+    def child_readability_stats(self, ctx):
+        result = {'level' : 'impossible'}
+        from exe.engine.readabilityutil import ReadabilityUtil
+        stat = ReadabilityUtil({}).get_package_readability_info(
+                                                        self.package)
+        return json.dumps(stat)
 
 
     def child_taxon(self, ctx):
@@ -241,6 +248,13 @@ class MainPage(RenderableLivePage):
         
         #for j2me preview with Ustad Mobile
         setUpHandler(self.previewFeaturePhone, "previewFeaturePhone")
+        
+        #for saving readability boundaries
+        setUpHandler(self.handleReadabilityBoundariesExport, 
+                     "readabilityBoundariesExport")
+        
+        setUpHandler(self.handleReadabilityBoundariesImport,
+                     "readabilityBoundariesImport")
 
         self.idevicePane.client = client
         self.styleMenu.client = client
@@ -260,6 +274,39 @@ class MainPage(RenderableLivePage):
             Sorry! It seems like your system is not setup for Feature Phone Preview.  
             You need to install Java and Java 2 Micro Edition WTK.  For help go to
             www.ustadmobile.com"""))
+
+    def handleReadabilityBoundariesExport(self, client, path, boundaries_obj_str):
+        """
+        Export readability boundaries to a JSON file
+        """
+        out_file = open(path, "wb")
+        out_file.write(boundaries_obj_str)
+        out_file.flush()
+        out_file.close()
+        
+    def handleReadabilityBoundariesImport(self, client, path):
+        """
+        Handle when the user has selected a new set of boundaries
+        to import 
+        """
+        
+        in_file = open(path)
+        in_contents = in_file.read()
+        in_file.close()
+        
+        import os
+        basename = os.path.basename(path)
+        if basename[-4:] == ".erb":
+            basename = basename[0:len(basename)-4]
+        
+        if in_contents.find("'") != -1:
+            raise ValueError("single quote ' not allowed in readability boundaries")
+        
+        client.sendScript(
+              "eXeReadabilityHelper.importReadabilityBoundariesShow('"
+              +basename + "','"
+              +in_contents+"')")
+        
 
     def _startWTKPreview(self):
         if not self.package.previewDir:

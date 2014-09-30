@@ -3,31 +3,18 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
     extend: 'Ext.tab.Panel',
     id: 'readabilityboundarypanel',
     alias: 'widget.readabilityboundarypanel',
-    refs: [
-           //{
-	       	//ref: 'wizardStylesMenu',
-	       	//selector: '#wizard_styles_menu'
-	       //}
-        //{
-	    	//ref: 'stylesWizard',
-	    	//selector: '#styles_wizard'
-        //}
-    ],
+    
     constructor: function () {
-    	  //yourStuffBefore();
-    	  //this.callParent(arguments);
-    	  //initComp();
     	  this.callParent(arguments);
-    	  //yourStuffAfter();
-
-    	},
+	},
+    	
+	
 
     initComponent: function() {
 		var me = this;
         Ext.applyIf(me, {
             autoScroll: false,
             trackResetOnLoad: true,
-            url: 'wizard',		//declared by wizardpage.py
             items: [	//This is the whole Panel start
             	{	
             		title: _("Level"),
@@ -43,7 +30,11 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
                 		xtype: 'panel',
                 		margin: 4,
                 		layout: {
-                			type: 'column'
+                			type: 'column',
+                			align: 'stretch'
+                		},
+                		defaults: {
+                			margin: 5
                 		},
                 		items : [
             		        {
@@ -61,17 +52,36 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
             		        },
             		        {
             		        	xtype: 'button',
-            		        	text: _("Import")
+            		        	text: _("Import"),
+            		        	handler: function(obj) {
+            		        		eXeReadabilityHelper.importReadabilityBoundaries();
+            		        	}
             		        },
             		        {
             		        	xtype: 'button',
-            		        	text: _("Export")
+            		        	text: _("Export"),
+            		        	id: "readability_export_boundary_targets",
+            		        	handler: function(obj) {
+            		        		eXeReadabilityHelper.exportReadabilityBoundaries();
+            		        	}
             		        },
             		        {
             		        	xtype: 'button',
             		        	text: _("Delete")
             		        }
         		        ]
+	                	},
+	                	{//The panel where indicators are loaded
+	                		xtype: "panel",
+	                		margin: 5,
+	                		id: "readability_boundaries_indicator_panel",
+	                		layout: {
+	                			type: "table",
+	                			columns: 5
+	                		},
+	                		width: "100%",
+	                		items: [], 
+	                		flex: 1
 	                	}
                     ]
                 },
@@ -115,7 +125,7 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
                 		        },
                 		        {
                 		        	xtype: 'button',
-                		        	text: _("Export")
+                		        	text: _("Export"),
                 		        },
                 		        {
                 		        	xtype: 'button',
@@ -201,10 +211,116 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
     	        
         ]
     }); //End of ExtApplyIf
-        
+    
     me.callParent(arguments);
          
 },	 //end of initComponent
-
-
 });	 //end of Ext.define the panel form.
+
+var eXeReadabilityHelper = {
+	readabilityBoundariesTargetsToJSON: function() {
+    	var boundaryInfoPanel = Ext.getCmp(
+			"readability_boundaries_indicator_panel");
+    	var indicatorsObj = boundaryInfoPanel.readabilityBoundaryStats;
+    	var jsonResult = {};
+    	for(indicatorId in indicatorsObj) {
+    		if(indicatorsObj.hasOwnProperty(indicatorId)) {
+    			jsonResult[indicatorId] = {}
+    			if(indicatorsObj[indicatorId]['max']) {
+    				jsonResult[indicatorId]['max'] = Ext.getCmp(
+    						"readability_boundary_target_" 
+    						+ indicatorId + "_max").getValue();
+    			}
+    			if(indicatorsObj[indicatorId]['average']) {
+    				jsonResult[indicatorId]['average'] = Ext.getCmp(
+    						"readability_boundary_target_"
+    						+ indicatorId + "_average").getValue();
+    			}
+    		}
+    	}
+    	
+    	
+    	return jsonResult;
+    },
+    
+    /**
+     * Get the server to export the currently set readability 
+     * boundaries to a specific location
+     * 
+     */
+    exportReadabilityBoundaries: function() {
+    	var f = Ext.create("eXe.view.filepicker.FilePicker", {
+    		type: eXe.view.filepicker.FilePicker.modeSave,
+    		title: _("Save file"),
+    		modal: true,
+    		scope: this,
+    		callback: function(fp) {
+    		    if (fp.status == eXe.view.filepicker.FilePicker.returnOk || fp.status == eXe.view.filepicker.FilePicker.returnReplace) {
+    		    	var boundariesSet = 
+    		    		eXeReadabilityHelper.readabilityBoundariesTargetsToJSON();
+    		    	nevow_clientToServerEvent("readabilityBoundariesExport", 
+    		    			this, '', f.file.path, JSON.stringify(boundariesSet));
+    		        //nevow_clientToServerEvent('savePackage', this, '', f.file.path)
+    		    } else {
+    	            Ext.defer(function() {
+    			        eval(onDone);
+    	            }, 500);
+    		    }
+    		}
+    	});
+    	f.appendFilters([
+    		{ "typename": _("eXe Readability Boundaries"), "extension": "*.erb", "regex": /.*\.erb$/ },
+    		{ "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
+    		]
+    	);
+    	f.show();
+    },
+    
+    importReadabilityBoundariesShow: function(name, boundariesToSet) {
+    	var boundariesObj = JSON.parse(boundariesToSet);
+    	for(indicatorId in boundariesObj) {
+    		if(boundariesObj.hasOwnProperty(indicatorId)) {
+    			var indicatorVals = boundariesObj[indicatorId];
+    			if(indicatorVals['average']) {
+    				var comp = Ext.getCmp("readability_boundary_target_"
+    						+ indicatorId + "_average");
+    				comp.setValue(indicatorVals['average']);
+    			}
+    			
+    			if(indicatorVals['max']) {
+    				var comp = Ext.getCmp("readability_boundary_target_"
+    						+ indicatorId + "_max");
+    				comp.setValue(indicatorVals['max']);
+    			}
+    		}
+    	}
+    },
+    
+    /**
+     * Import readability boundaries: Show the file picker, then tell 
+     * the server about it
+     * 
+     * @method
+     */
+    importReadabilityBoundaries: function() {
+    	var f = Ext.create("eXe.view.filepicker.FilePicker", {
+    		type: eXe.view.filepicker.FilePicker.modeOpen,
+    		title: _("Open file"),
+    		modal: true,
+    		scope: this,
+    		callback: function(fp) {
+    		    if (fp.status == eXe.view.filepicker.FilePicker.returnOk || fp.status == eXe.view.filepicker.FilePicker.returnReplace) {
+    		    	nevow_clientToServerEvent("readabilityBoundariesImport", 
+    		    			this, '', f.file.path);
+    		    } 
+    		}
+    	});
+    	f.appendFilters([
+    		{ "typename": _("eXe Readability Boundaries"), "extension": "*.erb", "regex": /.*\.erb$/ },
+    		{ "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
+    		]
+    	);
+    	f.show();
+    }
+    
+};

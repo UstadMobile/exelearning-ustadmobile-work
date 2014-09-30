@@ -181,6 +181,16 @@ Ext.define('eXe.controller.Toolbar', {
                 click: this.readabilityBoundariesClick
             },
             
+            '#readabilityBoundariesTargetsToJSON' : {
+            	click: this.saveReadabilityBoundariesTargets
+            },
+            
+            '#readabilityboundarypanel' : {
+                beforerender: this.readabilityBoundariesLoadInfo
+            },
+            
+            
+            
             //tools_idevicep
             '#tools_idevicep': {	//Added
                 click: this.toolsIDeviceP
@@ -517,6 +527,142 @@ Ext.define('eXe.controller.Toolbar', {
         
         readabilityWindow.show();
            
+    },
+    
+    readabilityBoundariesPopulateTargetsFromJSON: function(jsonObj) {
+    	
+    },
+    
+    saveReadabilityBoundariesTargets: function() {
+    	var jsonResult = this.readabilityBoundariesTargetsToJSON();
+    	var x = 0;
+    },
+    
+    
+    
+    /**
+     * Readability boundaries panel - load information
+     */
+    readabilityBoundariesLoadInfo: function() {
+    	var boundaryInfoPanel = Ext.getCmp(
+    			"readability_boundaries_indicator_panel");
+    	boundaryInfoPanel.removeAll();
+    	
+    	var dMargin = 5;
+    	
+    	var statsUrl = document.location.href + "/readability_stats";
+    	
+    	//add headings
+    	boundaryInfoPanel.add({
+    		xtype: "label",
+    		text: " "
+    	});
+    	boundaryInfoPanel.add({
+    		xtype: "label",
+			text: _("Average"),
+			margin: dMargin,
+			colspan: 2
+    	});
+    	boundaryInfoPanel.add({
+    		xtype: "label",
+    		text: _("Max"),
+    		margin: dMargin,
+    		colspan: 2
+    	});
+    	
+    	boundaryInfoPanel.add({
+    		xtype: "label",
+    		text: _("Indicator"),
+    		margin: dMargin
+    	});
+    	
+    	for(var i = 0; i < 2; i++) {
+        	boundaryInfoPanel.add({
+        		xtype: "label",
+        		text: _("Target"),
+        		margin: dMargin
+        	});
+        	
+        	boundaryInfoPanel.add({
+        		xtype: "label",
+        		text: _("Actual"),
+        		margin: dMargin
+        	});
+    	}
+    	
+    	Ext.Ajax.request({
+    		url: statsUrl,
+    		scope: this,
+    		success: function(response) {
+    			var respObj = Ext.JSON.decode(response.responseText);
+    			boundaryInfoPanel.readabilityBoundaryStats = respObj;
+    			//loop over the response
+    			for (var indicator in respObj) {
+    				if(respObj.hasOwnProperty(indicator)) {
+    					var indicatorName = indicator;
+    					var indicatorValObj = respObj[indicator];
+    					var indicatorId = indicator;
+    					
+    					boundaryInfoPanel.add({
+    						xtype: "label",
+    						text: indicatorName,
+    						margin: dMargin
+    					});
+    					
+    					var addBlankCellsFn = function(container, count) {
+    						for(var i = 0; i < count; i++) {
+    							container.add({
+        							xtype: "label",
+        							text: " ",
+        						});
+    						}
+    					};
+    					
+    					if(indicatorValObj['average']) {
+    						//the target for this indicator
+        					boundaryInfoPanel.add({
+        						xtype: "textfield",
+        						text: " ",
+        						id: "readability_boundary_target_" 
+        							+ indicatorId + "_average",
+    							width: 50,
+    							margin: dMargin
+        					})
+        					
+        					boundaryInfoPanel.add({
+        						xtype: "label",
+        						text: indicatorValObj['average'],
+        						margin: dMargin
+        					});
+    					}else {
+    						addBlankCellsFn(boundaryInfoPanel, 2);
+    					}
+    					
+    					
+    					if(indicatorValObj['max']) {
+    						//the target max value for this indicator
+        					boundaryInfoPanel.add({
+        						xtype: "textfield",
+        						text : " ",
+        						id: "readability_boundary_target_" 
+        							+ indicatorId + "_max",
+    							width: 50,
+    							margin: dMargin
+        					});
+        					
+        					boundaryInfoPanel.add({
+        						xtype: "label",
+        						text: indicatorValObj['max'],
+        						margin: dMargin
+        					});
+    					}else {
+    						addBlankCellsFn(boundaryInfoPanel, 2);
+    					}
+    				}
+    			}
+    			
+    		}
+    	});
     },
     
     toolsWizard: function() {	//added for Wizard test
@@ -1422,8 +1568,6 @@ Ext.define('eXe.controller.Toolbar', {
     						
     						//nevow_clientToServerEvent('exportPackage', this, '', "mxml", cow.usbPath);
     						nevow_clientToServerEvent('exportPackageToUSB', this, '', "mxml", cow.usbPath);
-    						
-    						//Works well, but we need to stop the J2ME emulator from popping up all the time.
     					},
 
 	        	        	//width : 128,
