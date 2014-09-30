@@ -2,16 +2,6 @@
  *  Readability Options Panel
  */
 
-/*
-var readabilityPresetStore = Ext.create('Ext.data.Store', {
-             fields: [{name: 'display'}, {name: 'value'}],
-             autoLoad: true,
-             data: [
-        {"display":"TEST1","value":"TEST1.xml"},
-        {"display":"TEST2","value":"TEST2.xml"}
-     ]
-});
-*/
 
 Ext.define('ReadabilityStoreModel', {
         extend: 'Ext.data.Model',
@@ -57,7 +47,7 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
             trackResetOnLoad: true,
             items: [	//This is the whole Panel start
             	{	
-            		title: _("Level"),
+            		title: _("Level Preset"),
                     xtype: 'panel',
                     layout: {
                     	type: 'vbox',
@@ -80,6 +70,7 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
             		        {
 								xtype: 'combo',
 								inputId: 'readability_boundaries_combobox',
+								id: 'ext_readability_boundaries_combobox',
 								fieldLabel: _('Level'),
 								store: readabilityPresetStore,								
 								tooltip: _('Select a level.'),
@@ -87,7 +78,30 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
 								valueField: "filename",
 								editable: false,
 								valueField: "value",
-								anchor: '100%'
+								anchor: '100%',
+								listConfig: {
+							        listeners: {
+							            itemclick: function(list, record) {
+							                var filename = "__base__" 
+							                	+ record.get("filename");
+							                nevow_clientToServerEvent("readabilityBoundariesImport", 
+						    		    			this, '', filename);
+						    		    			
+							            }
+							        }
+							    }
+
+            		        },
+            		        {
+            		        	xtype: 'button',
+            		        	text: _("Save"),
+            		        	handler: function(obj) {
+            		        		eXeReadabilityHelper.saveCurrentPreset();
+            		        	}
+            		        },
+            		        {
+            		        	xtype: 'button',
+            		        	text: _("Delete")
             		        },
             		        {
             		        	xtype: 'button',
@@ -103,10 +117,6 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
             		        	handler: function(obj) {
             		        		eXeReadabilityHelper.exportReadabilityBoundaries();
             		        	}
-            		        },
-            		        {
-            		        	xtype: 'button',
-            		        	text: _("Delete")
             		        }
         		        ]
 	                	},
@@ -148,7 +158,7 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
                 		        {//Preset dropdown panel
     								xtype: 'combobox',
     								inputId: 'readability_decoding_combobox',
-    								fieldLabel: _('Level'),
+    								fieldLabel: _('Level Preset'),
     								store: [
     								    ['Kindergarten1.1', 'Kindergarten-1.1'],
     								    ['Kindergarten-1.1', 'Kindergarten-1.2'],
@@ -280,6 +290,16 @@ var eXeReadabilityHelper = {
     	
     	
     	return jsonResult;
+    },
+    
+    saveCurrentPreset: function() {
+    	var fPath = "__base__"
+    		+ document.getElementById(
+    				"readability_boundaries_combobox").value
+		var boundariesSet = 
+    		eXeReadabilityHelper.readabilityBoundariesTargetsToJSON();
+    	nevow_clientToServerEvent("readabilityBoundariesExport", 
+    			this, '', fPath, JSON.stringify(boundariesSet));
     },
     
     /**

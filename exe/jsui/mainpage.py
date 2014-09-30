@@ -279,16 +279,29 @@ class MainPage(RenderableLivePage):
         """
         Export readability boundaries to a JSON file
         """
+        if path.startswith("__base__"):
+            import re
+            import os
+            basepath = G.application.config.readabilityPresetsDir + os.path.sep
+            path = re.sub("__base__", basepath, path)
+            
         out_file = open(path, "wb")
         out_file.write(boundaries_obj_str)
         out_file.flush()
         out_file.close()
+        client.alert(_("Saved Preset"))
         
     def handleReadabilityBoundariesImport(self, client, path):
         """
         Handle when the user has selected a new set of boundaries
         to import 
         """
+        
+        if path.startswith("__base__"):
+            import re
+            import os
+            basepath = G.application.config.readabilityPresetsDir + os.path.sep
+            path = re.sub("__base__", basepath, path)
         
         in_file = open(path)
         in_contents = in_file.read()
