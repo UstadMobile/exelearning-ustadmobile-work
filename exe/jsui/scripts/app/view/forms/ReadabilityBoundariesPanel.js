@@ -503,6 +503,8 @@ var eXeReadabilityHelper = {
     	var newWords = eXeReadabilityHelper.calculateNewWords(
     			uniqueWords, decodeableWordArr);
     	
+    	newWords.sort();
+    	
     	Ext.getCmp("text_new_words_str").setValue(
     			eXeReadabilityHelper.wordArrToNewLinesStr(newWords));
     	Ext.getCmp("label_new_words").setText("New Words (" 
