@@ -146,12 +146,17 @@ class SinglePage(Page):
         if self.node.package.dublinCore.language!="":
             lenguaje = self.node.package.dublinCore.language
         dT = common.getExportDocType()
+        
+        moz_no_margin = ""
+        if for_print:
+            moz_no_margin=" moznomarginboxes=\"moznomarginboxes\" mozdisallowselectionprint=\"mozdisallowselectionprint\" "
+        
         if dT == "HTML5":
             html = '<!doctype html>'+lb
-            html += '<html lang="'+lenguaje+'">'+lb
+            html += '<html lang="'+lenguaje+'"' + moz_no_margin +'  >'+lb
         else:
             html = u'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'+lb
-            html += u"<html lang=\"" + lenguaje + "\" xml:lang=\"" + lenguaje + "\" xmlns=\"http://www.w3.org/1999/xhtml\">"+lb
+            html += u"<html lang=\"" + lenguaje + "\" xml:lang=\"" + lenguaje + "\" xmlns=\"http://www.w3.org/1999/xhtml\"" + moz_no_margin + ">"+lb
         html += u"<head>"+lb
         html += u"<title>"
         html += name

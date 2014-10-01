@@ -98,3 +98,9 @@ input.feedbackbutton{margin-top:10px;margin-bottom:10px}
     display: none;
 }
 
+/* Avoid URL etc. on the printout */ 
+@page 
+{
+    size: auto;   /* auto is the current printer page size */
+    margin: 0mm;  /* this affects the margin in the printer settings */
+}
