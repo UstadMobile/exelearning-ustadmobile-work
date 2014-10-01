@@ -549,12 +549,24 @@ Ext.define('eXe.controller.Toolbar', {
     	boundaryInfoPanel.add({
     		xtype: "label",
 			text: _("Average"),
+			style : {
+				"font-weight": "bold",
+				"text-align" : "center",
+				"display" : "inline-block",
+				"width" : "100%"
+			},
 			margin: dMargin,
 			colspan: 2
     	});
     	boundaryInfoPanel.add({
     		xtype: "label",
-    		text: _("Max"),
+    		text: _("Maximum"),
+    		style : {
+				"font-weight": "bold",
+				"text-align" : "center",
+				"display" : "inline-block",
+				"width" : "100%"
+			},
     		margin: dMargin,
     		colspan: 2
     	});
@@ -562,6 +574,12 @@ Ext.define('eXe.controller.Toolbar', {
     	boundaryInfoPanel.add({
     		xtype: "label",
     		text: _("Indicator"),
+    		style : {
+				"font-weight": "bold",
+				"text-align" : "left",
+				"display" : "inline-block",
+				"width" : "100%"
+			},
     		margin: dMargin
     	});
     	
@@ -588,8 +606,12 @@ Ext.define('eXe.controller.Toolbar', {
     			//loop over the response
     			for (var indicator in respObj) {
     				if(respObj.hasOwnProperty(indicator)) {
-    					var indicatorName = indicator;
     					var indicatorValObj = respObj[indicator];
+    					var indicatorName = indicator;
+    					if(indicatorValObj['label']) {
+    						indicatorName = _(indicatorValObj['label']);
+    					}
+    					
     					var indicatorId = indicator;
     					
     					boundaryInfoPanel.add({

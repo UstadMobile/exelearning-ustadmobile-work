@@ -32,7 +32,8 @@ class ReadabilityUtil(object):
         
         result["words_per_page"] =  {
                  "average" : round(float(result['word_count']['max'])
-                                    /float(num_pages))
+                                    /float(num_pages)),
+                 "label" : x_("Words Per Page")
         }
         
         return result
@@ -45,21 +46,27 @@ class ReadabilityUtil(object):
         result = {
             "syllables_per_word" : {
                     "max" : ts.max_syllables_per_word(),
-                    "average" : round(ts.average_syllables_per_word(), 2)
+                    "average" : round(ts.average_syllables_per_word(), 2),
+                    "label" : x_("Syllables Per Word")
             },
             "word_count" : {
-                "max" : total_word_count
+                "max" : total_word_count,
+                "label" : x_("Word Count"),
             },
             "words_per_sentence" : {
                 "average" : ts.average_words_per_sentence(),
-                "max" : ts.max_words_per_sentence()
+                "max" : ts.max_words_per_sentence(),
+                "label" : x_("Words Per Sentence")
             },
             "different_words_total_ratio" : {
-                "average" : "1:" + str(round(float(total_word_count) / 
-                                        float(distinct_word_count), 2))
+                "average" : str(round(float(total_word_count) / 
+                                        float(distinct_word_count), 2)),
+                 "label" : x_("Number words total per unique word")
+                                             
             },
             "num_different_words" : {
-                 "max" : distinct_word_count
+                 "max" : distinct_word_count,
+                 "label" : x_("Total number of unique words")
             }
                   
         }
