@@ -267,6 +267,17 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
 });	 //end of Ext.define the panel form.
 
 var eXeReadabilityHelper = {
+	
+	/**
+	 * Indicate processing the target has failed
+	 */
+	TARGET_PROC_FAIL: -1,
+	
+	/**
+	 * Indicates the target is blank - nothing to check really
+	 */
+	TARGET_BLANK: -2,
+		
 	readabilityBoundariesTargetsToJSON: function() {
     	var boundaryInfoPanel = Ext.getCmp(
 			"readability_boundaries_indicator_panel");
@@ -344,12 +355,20 @@ var eXeReadabilityHelper = {
     				var comp = Ext.getCmp("readability_boundary_target_"
     						+ indicatorId + "_average");
     				comp.setValue(indicatorVals['average']);
+    				
+    				//check if the target is hit
+    				eXeReadabilityHelper.hilightReadabilityTarget(
+    						indicatorId, "average");
     			}
     			
     			if(indicatorVals['max']) {
     				var comp = Ext.getCmp("readability_boundary_target_"
     						+ indicatorId + "_max");
     				comp.setValue(indicatorVals['max']);
+    				
+    				//check if the target is hit
+    				eXeReadabilityHelper.hilightReadabilityTarget(
+    						indicatorId, "max");
     			}
     		}
     	}
@@ -380,6 +399,101 @@ var eXeReadabilityHelper = {
     		]
     	);
     	f.show();
+    },
+    
+    /**
+     * Update the hilight on a textfield - find the indicator id
+     * and indicator type from the id of the textfield according
+     * to naming convention used on their creation
+     * 
+     * @param textEl Object ExtJS elemetn for the text field
+     */
+    updateTargetHilightByTextfield: function(textEl) {
+    	var textId = textEl.id;
+    	var targetPrefix = "readability_boundary_target_";
+    	var lastUScore = textId.lastIndexOf("_");
+    	var indicatorId = textId.substring(targetPrefix.length,
+    			lastUScore);
+    	var indicatorType = textId.substring(lastUScore+1);
+    	eXeReadabilityHelper.hilightReadabilityTarget(indicatorId, 
+    			indicatorType);
+    },
+    
+    /**
+     * Hilight if a target has been met or not
+     * 
+     * @param indicatorId String indicator ID e.g. total_words
+     * @param indicatorType String "max" or "average"
+     */
+    hilightReadabilityTarget: function(indicatorId, indicatorType) {
+    	var targetVal = Ext.getCmp("readability_boundary_target_"
+    			+ indicatorId + "_" + indicatorType).getValue();
+    	var valueLabelId = "readability_boundary_value_"
+			+ indicatorId + "_" + indicatorType;
+    	var actualVal = Ext.getCmp(valueLabelId).text;
+    	var isTargetHit = eXeReadabilityHelper.targetWithinRange(
+    			targetVal, actualVal);
+    	var labelEl = document.getElementById(valueLabelId);
+    	if(isTargetHit === true) {
+    		labelEl.style.backgroundColor = 'green';
+    		labelEl.style.color = "white";
+    		labelEl.style.fontWeight = "bold";
+    	}else if(isTargetHit === false) {
+    		labelEl.style.backgroundColor = 'red';
+    		labelEl.style.color = "white";
+    		labelEl.style.fontWeight = "bold";
+    	}else {
+    		//did not really process
+    		labelEl.style.backgroundColor = 'white';
+    		labelEl.style.color = "black";
+    		labelEl.style.fontWeight = "";
+    	}
+    },
+    
+    /**
+     * Checks to see if a target is within the stated range
+     * 
+     * 
+     * @param targetStr String can be a range X-Y, >X, <X, or just X which = <X
+     * @param targetActualVal mixed 
+     */
+    targetWithinRange: function(targetStr, targetActualVal) {
+    	//try and check the comparison
+    	targetStr = targetStr.replace(/\s+/, "");
+    	if(typeof targetActualVal === "string") {
+    		targetActualVal = parseFloat(targetActualVal);
+    	}
+    	
+    	if(targetStr.length === 0) {
+    		return eXeReadabilityHelper.TARGET_BLANK;
+    	}else if(targetStr.indexOf("-") !== -1) {
+    		//this is a range
+    		var strParts = targetStr.split("-");
+    		var value1 = parseFloat(strParts[0]);
+    		var value2 = parseFloat(strParts[1]);
+    		
+    		return targetActualVal > value1 && targetActualVal < value2;
+    	}else if(targetStr.indexOf(">") !== -1) {
+    		//this is a greater than request
+    		var strNum = targetStr.substring(targetStr.indexOf(">")+1);
+    		var value = parseFloat(strNum);
+    		
+    		return targetActualVal > value;
+    	}else {
+    		//assuming we mean less than
+    		var targetNumStr = targetStr;
+    		if(targetStr.indexOf("<") !== -1) {
+    			targetNumStr = targetStr.substring(
+    					targetStr.indexOf("<")+1);
+    		} 
+    			
+    		var strNum = targetStr.substring(targetStr.indexOf("<")+1);
+    		var value = parseFloat(strNum);
+    		return targetActualVal < value;
+    	}
+    	
+    	return eXeReadabilityHelper.TARGET_PROC_FAIL;
     }
+    
     
 };

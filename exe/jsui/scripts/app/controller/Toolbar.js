@@ -529,17 +529,6 @@ Ext.define('eXe.controller.Toolbar', {
            
     },
     
-    readabilityBoundariesPopulateTargetsFromJSON: function(jsonObj) {
-    	
-    },
-    
-    saveReadabilityBoundariesTargets: function() {
-    	var jsonResult = this.readabilityBoundariesTargetsToJSON();
-    	var x = 0;
-    },
-    
-    
-    
     /**
      * Readability boundaries panel - load information
      */
@@ -626,12 +615,30 @@ Ext.define('eXe.controller.Toolbar', {
         						id: "readability_boundary_target_" 
         							+ indicatorId + "_average",
     							width: 50,
-    							margin: dMargin
+    							margin: dMargin,
+    							enableKeyEvents: true,
+    							listeners: {
+    								keyup: function(f,e) {
+    									console.log("update average");
+        								eXeReadabilityHelper.updateTargetHilightByTextfield(f);
+        							}
+    							}
         					})
+        					//try formatting
+        					var valueFormatted =
+        						indicatorValObj['average'];
+        					
+        					try {
+        						valueFormatted = indicatorValObj['average'].toFixed(2);
+        					}catch(err) {
+        						//do nothing - not formattable
+        					}
         					
         					boundaryInfoPanel.add({
         						xtype: "label",
-        						text: indicatorValObj['average'],
+        						text: valueFormatted,
+        						id: "readability_boundary_value_"
+        							+ indicatorId + "_average",
         						margin: dMargin
         					});
     					}else {
@@ -641,18 +648,36 @@ Ext.define('eXe.controller.Toolbar', {
     					
     					if(indicatorValObj['max']) {
     						//the target max value for this indicator
+    						//try formatting
+        					var valueFormatted =
+        						indicatorValObj['max'];
+        					
+        					try {
+        						valueFormatted = indicatorValObj['max'].toFixed(2);
+        					}catch(err) {
+        						//do nothing - not formattable
+        					}
+        					
         					boundaryInfoPanel.add({
         						xtype: "textfield",
         						text : " ",
         						id: "readability_boundary_target_" 
         							+ indicatorId + "_max",
     							width: 50,
-    							margin: dMargin
+    							margin: dMargin,
+    							enableKeyEvents: true,
+    							listeners: {
+    								keyup: function(f,e) {
+        								eXeReadabilityHelper.updateTargetHilightByTextfield(f);
+        							}
+    							}
         					});
         					
         					boundaryInfoPanel.add({
         						xtype: "label",
-        						text: indicatorValObj['max'],
+        						id: "readability_boundary_value_"
+        							+ indicatorId + "_max",
+        						text: valueFormatted,
         						margin: dMargin
         					});
     					}else {
