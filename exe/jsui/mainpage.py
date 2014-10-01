@@ -284,6 +284,9 @@ class MainPage(RenderableLivePage):
             import os
             basepath = G.application.config.readabilityPresetsDir + os.path.sep
             path = re.sub("__base__", basepath, path)
+        
+        if path.endswith(".erb") is False:
+            path += ".erb"
             
         out_file = open(path, "wb")
         out_file.write(boundaries_obj_str)

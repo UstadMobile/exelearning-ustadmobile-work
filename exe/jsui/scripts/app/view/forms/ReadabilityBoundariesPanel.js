@@ -269,7 +269,7 @@ var eXeReadabilityHelper = {
     	for(indicatorId in indicatorsObj) {
     		if(indicatorsObj.hasOwnProperty(indicatorId)) {
     			//Boundary ranges set
-    			if(indicatorId.startsWith("range_")) {
+    			if(indicatorId.substring(0, 6) == "range_") {
     				jsonResult[indicatorId] = {}
         			if(indicatorsObj[indicatorId]['max']) {
         				jsonResult[indicatorId]['max'] = Ext.getCmp(
@@ -304,13 +304,46 @@ var eXeReadabilityHelper = {
     },
     
     saveCurrentPreset: function() {
-    	var fPath = "__base__"
-    		+ document.getElementById(
-    				"readability_boundaries_combobox").value
-		var boundariesSet = 
-    		eXeReadabilityHelper.readabilityBoundariesTargetsToJSON();
-    	nevow_clientToServerEvent("readabilityBoundariesExport", 
-    			this, '', fPath, JSON.stringify(boundariesSet));
+    	var baseName = document.getElementById(
+			"readability_boundaries_combobox").value;
+    	
+    	var saveCurrentNow = function(fileName) {
+    		var fPath = "__base__" +fileName;
+    		var boundariesSet = 
+        		eXeReadabilityHelper.readabilityBoundariesTargetsToJSON();
+        	nevow_clientToServerEvent("readabilityBoundariesExport", 
+        			this, '', fPath, JSON.stringify(boundariesSet));
+    	};
+    	
+    	if(baseName.length >0 ) {
+    		saveCurrentNow(baseName);
+    	}else {
+    		Ext.Msg.show({
+                prompt: true,
+                title: _('Name preset'),
+                msg: _('Enter name for preset:'),
+                buttons: Ext.Msg.OKCANCEL,
+                multiline: false,
+                value: "",
+                scope: this,
+                fn: function(button, text) {
+                    if (button == "ok") {
+                        if (text) {
+                            saveCurrentNow(text);
+                            readabilityPresetStore.load();
+                            if(text.substring(text.length-4, text.length) != '.erb') {
+                            	text += '.erb';
+                            }
+                            
+                            setTimeout(function(){
+                            	document.getElementById(
+                    				"readability_boundaries_combobox").value = text;
+                            },100);
+                        }
+                    }
+                }
+            });
+    	}
     },
     
     /**
@@ -352,7 +385,7 @@ var eXeReadabilityHelper = {
     	//Set generic range indicators
     	for(indicatorId in boundariesObj) {
     		if(boundariesObj.hasOwnProperty(indicatorId)) {
-    			if(indicatorId.startsWith("range_")) {
+    			if(indicatorId.substring(0, 6) == "range_") {
 	    			var indicatorVals = boundariesObj[indicatorId];
 	    			if(indicatorVals['average']) {
 	    				var comp = Ext.getCmp("readability_boundary_target_"

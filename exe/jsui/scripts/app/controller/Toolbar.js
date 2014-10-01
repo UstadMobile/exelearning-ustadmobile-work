@@ -606,7 +606,7 @@ Ext.define('eXe.controller.Toolbar', {
     			//loop over the response
     			for (var indicator in respObj) {
     				if(respObj.hasOwnProperty(indicator)) {
-    					if(!indicator.startsWith("range_")) {
+    					if(!indicator.substring(0, 6) == "range_") {
     						continue;
     					}
     					
