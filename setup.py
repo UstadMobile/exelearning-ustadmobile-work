@@ -55,7 +55,7 @@ dataFiles(["exe/webui/style",
 
 g_oldBase = "exe"
 g_newBase = "/usr/share/exe"
-dataFiles(["exe/locale", "exe/mediaprofiles"])
+dataFiles(["exe/locale", "exe/mediaprofiles", "exe/readability-presets"])
 
 g_oldBase = ""
 g_newBase = "/usr/share/exe"

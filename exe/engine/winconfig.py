@@ -51,6 +51,7 @@ class WinConfig(Config):
         self.lastDir   = Path(self.__getWinFolder(MYDOCUMENTS))
         self.configDir = Path(self.__getWinFolder(APPDATA))/'exe'
         self.stylesDir     = Path(self.configDir)/'style'
+        self.readabilityPresetsDir = Path(self.configDir)/'readability-presets'
         
         self.videoMediaConverter_ogv = ""
         self.videoMediaConverter_3gp = 'ffmpeg -i %(infile)s -s qcif -vcodec h263 -acodec libvo_aacenc -ac 1 -ar 8000 -r 25 -ab 32 -y %(outfile)s'

@@ -47,6 +47,7 @@ class LinuxConfig(Config):
         self.dataDir     = Path(os.environ['HOME'])
         self.configDir   = Path(self.dataDir)/'.exe'
         self.stylesDir =Path(self.configDir)/'style'
+        self.readabilityPresetsDir = Path(self.configDir)/'readability-presets'
         self.lastDir     = Path(os.environ['HOME'])
         
         # Media converters - defaults for now
