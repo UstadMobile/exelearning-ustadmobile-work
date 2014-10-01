@@ -64,12 +64,13 @@ dataFiles(["exe/webui/style",
            "exe/webui/docs",
            "exe/webui/scripts",
            "exe/webui/schemas",
-           "exe/webui/templates"],
+           "exe/webui/templates",
+           "exe/webui/readability-presets"],
            excludes = ['mimetex.cgi', 'mimetex.64.cgi', 'mimetex-darwin.cgi'])
 
 g_oldBase = "exe"
 g_newBase = "."
-dataFiles(["exe/locale", "exe/mediaprofiles", "readability-presets"])
+dataFiles(["exe/locale", "exe/mediaprofiles"])
 
 g_oldBase = "exe/jsui"
 g_newBase = "."
