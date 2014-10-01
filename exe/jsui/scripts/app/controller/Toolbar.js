@@ -188,9 +188,9 @@ Ext.define('eXe.controller.Toolbar', {
             '#readabilityboundarypanel' : {
                 beforerender: this.readabilityBoundariesLoadInfo
             },
-            
-            
-            
+            '#toolbar_readability' : {
+            	click: this.readabilityBoundariesClick
+            },
             //tools_idevicep
             '#tools_idevicep': {	//Added
                 click: this.toolsIDeviceP

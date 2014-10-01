@@ -142,6 +142,12 @@ Ext.define('eXe.view.ui.editToolbar', {
 		                text: _('Insert'),
 		                height: 30	
 		            },
+		            {
+		            	xtype: 'button',
+		            	text: _('Readability'),
+		            	itemId: "toolbar_readability",
+		            	icon: "/images/readability.png"
+		            },
                     {
                         xtype: 'button',
                         text: _('Publish via Ustad Mobile'),
