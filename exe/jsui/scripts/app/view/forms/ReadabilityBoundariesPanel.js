@@ -210,10 +210,37 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
                 		        ]
     	                	}
                     ]
+                },
+                {//The word list tab
+                	xtype: 'panel',
+                    title : _("Word List"),
+                    layout: {
+                    	type: 'vbox',
+                    	align: 'stretch'
+                    },
+					//border:1,
+					width: '100%',
+					id: 'showwordlistpanel',
+					margin: 4,
+                    items: [
+                        {
+                        	xtype: "textfield",
+                        	id: "wordlist_filter_textfield",
+                        	fieldLabel: "Filter",
+                        	enableKeyEvents: true,
+							listeners: {
+								keyup: function(f,e) {
+    								eXeReadabilityHelper.updateWordListFromFilter();
+    							}
+							}
+                        },
+                        {
+                        	xtype: "textarea",
+                        	id: "wordlist_filtered_textarea",
+                        	flex: 1
+                        }
+                    ]
                 }
-                
-                
-    	        
         ]
     }); //End of ExtApplyIf
     
@@ -530,7 +557,7 @@ var eXeReadabilityHelper = {
     },
     
     /**
-     * 
+     * Convert an array of words into a single string with newlines
      */
     wordArrToNewLinesStr: function(wordArr) {
     	var result = "";
@@ -542,6 +569,32 @@ var eXeReadabilityHelper = {
     	}
     	
     	return result;
+    },
+    
+    /**
+     * Update the word list in word list tab as user types in filter
+     */
+    updateWordListFromFilter: function() {
+    	var userFilterStr = Ext.getCmp(
+    			"wordlist_filter_textfield").getValue();
+    	var userWordFilters = userFilterStr.split(/\s+/);
+    	var boundaryInfoPanel = Ext.getCmp(
+		"readability_boundaries_indicator_panel");
+
+    	var uniqueWords = boundaryInfoPanel.readabilityBoundaryStats[
+                                     'info_distinct_words_in_text'];
+    	var matchingWords = [];
+    	for(var i = 0; i < uniqueWords.length; i++) {
+    		for(var j = 0; j < userWordFilters.length; j++) {
+    			if(uniqueWords[i].indexOf(userWordFilters[j]) != -1) {
+    				matchingWords.push(uniqueWords[i]);
+    				break;
+    			}
+    		}
+    	}
+    	
+    	Ext.getCmp("wordlist_filtered_textarea").setValue(
+			eXeReadabilityHelper.wordArrToNewLinesStr(matchingWords));
     }
     
     

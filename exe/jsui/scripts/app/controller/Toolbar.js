@@ -606,6 +606,10 @@ Ext.define('eXe.controller.Toolbar', {
     			//loop over the response
     			for (var indicator in respObj) {
     				if(respObj.hasOwnProperty(indicator)) {
+    					if(!indicator.startsWith("range_")) {
+    						continue;
+    					}
+    					
     					var indicatorValObj = respObj[indicator];
     					var indicatorName = indicator;
     					if(indicatorValObj['label']) {
@@ -708,6 +712,12 @@ Ext.define('eXe.controller.Toolbar', {
     				}
     			}
     			
+    			//set the word list
+    			var wordListArr = respObj["info_distinct_words_in_text"];
+    			wordListArr.sort();
+    			var wordList = eXeReadabilityHelper.wordArrToNewLinesStr(
+    					wordListArr);
+    			Ext.getCmp("wordlist_filtered_textarea").setValue(wordList);
     		}
     	});
     },
