@@ -55,11 +55,11 @@ dataFiles(["exe/webui/style",
 
 g_oldBase = "exe"
 g_newBase = "/usr/share/exe"
-dataFiles(["exe/locale", "exe/mediaprofiles", "exe/readability-presets"])
+dataFiles(["exe/locale", "exe/mediaprofiles"])
 
 g_oldBase = ""
 g_newBase = "/usr/share/exe"
-dataFiles(["twisted", "nevow", "textstatistics", "formless", "multipartposthandler/"])
+dataFiles(["twisted", "nevow", "textstatistics", "formless", "multipartposthandler/", "readability-presets"])
 
 g_oldBase = "exe/jsui"
 g_newBase = "/usr/share/exe"
