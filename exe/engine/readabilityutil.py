@@ -30,8 +30,8 @@ class ReadabilityUtil(object):
         result = self.make_info_arr_for_text(text)
         num_pages = self.page_count(package.root)
         
-        result["words_per_page"] =  {
-                 "average" : round(float(result['word_count']['max'])
+        result["range_words_per_page"] =  {
+                 "average" : round(float(result['range_word_count']['max'])
                                     /float(num_pages)),
                  "label" : x_("Words Per Page")
         }
@@ -40,35 +40,37 @@ class ReadabilityUtil(object):
     
     def make_info_arr_for_text(self, text):
         ts = TextStatistics(text)
-        distinct_word_count = ts.word_count_distinct()
+        distinct_words = ts.get_distinct_words()
+        distinct_word_count = len(distinct_words)
+        
         total_word_count = ts.word_count()
         
         result = {
-            "syllables_per_word" : {
+            "range_syllables_per_word" : {
                     "max" : ts.max_syllables_per_word(),
                     "average" : round(ts.average_syllables_per_word(), 2),
                     "label" : x_("Syllables Per Word")
             },
-            "word_count" : {
+            "range_word_count" : {
                 "max" : total_word_count,
                 "label" : x_("Word Count"),
             },
-            "words_per_sentence" : {
+            "range_words_per_sentence" : {
                 "average" : ts.average_words_per_sentence(),
                 "max" : ts.max_words_per_sentence(),
                 "label" : x_("Words Per Sentence")
             },
-            "different_words_total_ratio" : {
+            "range_different_words_total_ratio" : {
                 "average" : str(round(float(total_word_count) / 
                                         float(distinct_word_count), 2)),
                  "label" : x_("Number words total per unique word")
                                              
             },
-            "num_different_words" : {
+            "range_num_different_words" : {
                  "max" : distinct_word_count,
                  "label" : x_("Total number of unique words")
-            }
-                  
+            },
+            "info_distinct_words_in_text": distinct_words 
         }
         
         return result

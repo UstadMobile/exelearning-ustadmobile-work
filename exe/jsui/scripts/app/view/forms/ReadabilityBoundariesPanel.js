@@ -148,73 +148,6 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
 					id: 'showrecentprojectspanel',
 					margin: 4,
                     items: [
-                            {
-                    		xtype: 'panel',
-                    		margin: 4,
-                    		layout: {
-                    			type: 'column'
-                    		},
-                    		items : [
-                		        {//Preset dropdown panel
-    								xtype: 'combobox',
-    								inputId: 'readability_decoding_combobox',
-    								fieldLabel: _('Level Preset'),
-    								store: [
-    								    ['Kindergarten1.1', 'Kindergarten-1.1'],
-    								    ['Kindergarten-1.1', 'Kindergarten-1.2'],
-    								    ['Grade1', 'Grade1'],
-    								    ['Grade2', 'Grade2']
-    								],
-    								tooltip: _('Select a level.'),
-    								anchor: '100%'
-                		        },
-                		        {
-                		        	xtype: 'button',
-                		        	text: _("Import")
-                		        },
-                		        {
-                		        	xtype: 'button',
-                		        	text: _("Export"),
-                		        },
-                		        {
-                		        	xtype: 'button',
-                		        	text: _("Delete")
-                		        }
-            		        ]
-    	                	},
-    	                	{//word limiting panel
-	                    		xtype: 'panel',
-	                    		margin: 4,
-	                    		layout: {
-	                    			type: 'column'
-	                    		},
-	                    		items : [
-                    		         {
-                    		        	 xtype: 'checkboxfield',
-                    		        	 inputId: 'limitNewWordsCheckboxField',
-                    		        	 hideLabel: true,
-                    		        	 flex: 1,
-                    		        	 margin: 4
-                    		         },
-                    		         {
-                    		        	 xtype: 'textfield',
-                    		        	 fieldLabel: "Limit new words to",
-                    		        	 width: 150
-                    		         },
-                    		         {
-                    		        	 xtype: 'checkboxfield',
-                    		        	 inputId: 'limitTotalWordsCheckboxField',
-                    		        	 hideLabel: true,
-                    		        	 flex: 1,
-                    		        	 margin: 4
-                    		         },
-                    		         {
-                    		        	 xtype: 'textfield',
-                    		        	 fieldLabel: "Limit total words to",
-                    		        	 width: 150
-                    		         }
-                		        ]
-    	                	},
     	                	{
     	                		xtype: 'panel',
 	                    		margin: 4,
@@ -233,23 +166,46 @@ var readabilityPanel = Ext.define('eXe.view.forms.ReadabilityBoundariesPanel', {
 	                		        },
 	                		        {
 	                		        	xtype: 'label',
-	                		        	text: 'New Words'
+	                		        	text: 'New Words',
+	                		        	id: "label_new_words"
 	                		        },
 	                		        {
 	                		        	xtype: 'textareafield',
 	                		        	hideLabel: true,
 	                		        	flex: 1,
 	                		        	margin: 4,
-	                		        	rows: 20,
-	                		        	width: 320
+	                		        	rows: 23,
+	                		        	width: 320,
+	                		        	id: "text_decodeable_words_str"
 	                		        },
 	                		        {
 	                		        	xtype: 'textareafield',
 	                		        	hideLabel: true,
 	                		        	flex: 1,
 	                		        	margin: 4,
-	                		        	rows: 20,
-	                		        	width: 160
+	                		        	rows: 23,
+	                		        	width: 160,
+	                		        	id: "text_new_words_str"
+	                		        }
+                		        ]
+    	                	},
+    	                	{
+    	                		xtype: 'panel',
+    	                		margin: 4,
+    	                		layout: {
+    	                			type: 'column',
+    	                			align: 'stretch'
+    	                		},
+    	                		defaults: {
+    	                			margin: 5
+    	                		},
+    	                		items: [
+	                		        {
+                		        		xtype : "button",
+                		        		text: _("Calculate New Words"),
+                		        		handler: function(){
+                		        			eXeReadabilityHelper.updateNewWords();
+                		        		}
 	                		        }
                 		        ]
     	                	}
@@ -285,22 +241,39 @@ var eXeReadabilityHelper = {
     	var jsonResult = {};
     	for(indicatorId in indicatorsObj) {
     		if(indicatorsObj.hasOwnProperty(indicatorId)) {
-    			jsonResult[indicatorId] = {}
-    			if(indicatorsObj[indicatorId]['max']) {
-    				jsonResult[indicatorId]['max'] = Ext.getCmp(
-    						"readability_boundary_target_" 
-    						+ indicatorId + "_max").getValue();
-    			}
-    			if(indicatorsObj[indicatorId]['average']) {
-    				jsonResult[indicatorId]['average'] = Ext.getCmp(
-    						"readability_boundary_target_"
-    						+ indicatorId + "_average").getValue();
+    			//Boundary ranges set
+    			if(indicatorId.startsWith("range_")) {
+    				jsonResult[indicatorId] = {}
+        			if(indicatorsObj[indicatorId]['max']) {
+        				jsonResult[indicatorId]['max'] = Ext.getCmp(
+        						"readability_boundary_target_" 
+        						+ indicatorId + "_max").getValue();
+        			}
+        			if(indicatorsObj[indicatorId]['average']) {
+        				jsonResult[indicatorId]['average'] = Ext.getCmp(
+        						"readability_boundary_target_"
+        						+ indicatorId + "_average").getValue();
+        			}
     			}
     		}
     	}
     	
+    	//now make a list of the words from decodeable tab
+    	var wordArr = eXeReadabilityHelper.getDecodeableWordArr();
+    	jsonResult['text_decodeable_words_list'] = wordArr;
     	
     	return jsonResult;
+    },
+    
+    getDecodeableWordArr: function() {
+    	var wordListStr = Ext.getCmp("text_decodeable_words_str").getValue();
+    	var wordArr = wordListStr.split("\n");
+    	var wordsToRemoveArr = [];
+    	for(var i = 0; i < wordArr.length; i++) {
+    		wordArr[i] = wordArr[i].trim();
+    	}
+    	
+    	return wordArr;
     },
     
     saveCurrentPreset: function() {
@@ -330,7 +303,7 @@ var eXeReadabilityHelper = {
     		    		eXeReadabilityHelper.readabilityBoundariesTargetsToJSON();
     		    	nevow_clientToServerEvent("readabilityBoundariesExport", 
     		    			this, '', f.file.path, JSON.stringify(boundariesSet));
-    		        //nevow_clientToServerEvent('savePackage', this, '', f.file.path)
+    		        
     		    } else {
     	            Ext.defer(function() {
     			        eval(onDone);
@@ -348,29 +321,53 @@ var eXeReadabilityHelper = {
     
     importReadabilityBoundariesShow: function(name, boundariesToSet) {
     	var boundariesObj = JSON.parse(boundariesToSet);
+    	
+    	//Set generic range indicators
     	for(indicatorId in boundariesObj) {
     		if(boundariesObj.hasOwnProperty(indicatorId)) {
-    			var indicatorVals = boundariesObj[indicatorId];
-    			if(indicatorVals['average']) {
-    				var comp = Ext.getCmp("readability_boundary_target_"
-    						+ indicatorId + "_average");
-    				comp.setValue(indicatorVals['average']);
-    				
-    				//check if the target is hit
-    				eXeReadabilityHelper.hilightReadabilityTarget(
-    						indicatorId, "average");
-    			}
-    			
-    			if(indicatorVals['max']) {
-    				var comp = Ext.getCmp("readability_boundary_target_"
-    						+ indicatorId + "_max");
-    				comp.setValue(indicatorVals['max']);
-    				
-    				//check if the target is hit
-    				eXeReadabilityHelper.hilightReadabilityTarget(
-    						indicatorId, "max");
+    			if(indicatorId.startsWith("range_")) {
+	    			var indicatorVals = boundariesObj[indicatorId];
+	    			if(indicatorVals['average']) {
+	    				var comp = Ext.getCmp("readability_boundary_target_"
+	    						+ indicatorId + "_average");
+	    				comp.setValue(indicatorVals['average']);
+	    				
+	    				//check if the target is hit
+	    				eXeReadabilityHelper.hilightReadabilityTarget(
+	    						indicatorId, "average");
+	    			}
+	    			
+	    			if(indicatorVals['max']) {
+	    				var comp = Ext.getCmp("readability_boundary_target_"
+	    						+ indicatorId + "_max");
+	    				comp.setValue(indicatorVals['max']);
+	    				
+	    				//check if the target is hit
+	    				eXeReadabilityHelper.hilightReadabilityTarget(
+	    						indicatorId, "max");
+	    			}
     			}
     		}
+    	}
+    	
+    	
+    	//look for word lists
+    	if(boundariesObj['text_decodeable_words_list']) {
+    		var wordListStr = "";
+    		var wordArr = boundariesObj['text_decodeable_words_list'];
+    		for(var i = 0; i < wordArr.length; i++) {
+    			wordListStr += wordArr[i];
+    			if(i < wordArr.length -1) {
+    				wordListStr += "\n";
+    			}
+    		}
+    		
+    		if(wordListStr.length >= 0) {
+    			Ext.getCmp("text_decodeable_words_str").setValue(
+    					wordListStr);
+    		}
+    	}else {
+    		Ext.getCmp("text_decodeable_words_str").setValue("");
     	}
     },
     
@@ -493,6 +490,56 @@ var eXeReadabilityHelper = {
     	}
     	
     	return eXeReadabilityHelper.TARGET_PROC_FAIL;
+    },
+    
+    
+    updateNewWords: function() {
+    	var decodeableWordArr = eXeReadabilityHelper.getDecodeableWordArr();
+    	var boundaryInfoPanel = Ext.getCmp(
+			"readability_boundaries_indicator_panel");
+
+    	var uniqueWords = boundaryInfoPanel.readabilityBoundaryStats[
+                                         'info_distinct_words_in_text'];
+    	var newWords = eXeReadabilityHelper.calculateNewWords(
+    			uniqueWords, decodeableWordArr);
+    	
+    	Ext.getCmp("text_new_words_str").setValue(
+    			eXeReadabilityHelper.wordArrToNewLinesStr(newWords));
+    	Ext.getCmp("label_new_words").setText("New Words (" 
+    			+ newWords.length + ")");
+    },
+    
+    /**
+     * Figure out which words are not in the 
+     * @param uniqueWordArr Array Array of unique words that are in the text itself
+     * @param decodeableWordArr Array Array of deocdeable words (words student already should know)
+     * 
+     * @return Array Array of those words in uniqueWordArr that are not in decodeableWordArr
+     */
+    calculateNewWords: function(uniqueWordArr, decodeableWordArr) {
+    	var newWordsArr = [];
+    	for(var i = 0; i < uniqueWordArr.length; i++) {
+    		if(decodeableWordArr.indexOf(uniqueWordArr[i]) === -1) {
+    			newWordsArr.push(uniqueWordArr[i]);
+    		}
+    	}
+    	
+    	return newWordsArr;
+    },
+    
+    /**
+     * 
+     */
+    wordArrToNewLinesStr: function(wordArr) {
+    	var result = "";
+    	for(var i = 0; i < wordArr.length; i++) {
+    		result += wordArr[i];
+    		if(i < (wordArr.length - 1)) {
+    			result += "\n";
+    		}
+    	}
+    	
+    	return result;
     }
     
     
