@@ -32,11 +32,8 @@ import StringIO
 from cgi                           import escape
 from zipfile                       import ZipFile, ZIP_DEFLATED
 from exe.webui                     import common
-from exe.webui.blockfactory        import g_blockFactory
-from exe.engine.error              import Error
 from exe.engine.path               import Path, TempDirPath
-from exe.engine.version            import release
-from exe.export.pages              import Page, uniquifyNames
+from exe.export.pages              import uniquifyNames
 from exe.engine.uniqueidgenerator  import UniqueIdGenerator
 from exe.export.singlepage         import SinglePage
 from exe.export.websiteexport      import WebsiteExport
@@ -241,67 +238,44 @@ xsi:schemaLocation="http://www.imsglobal.org/xsd/imscc/imscp_v1p1 imscp_v1p1.xsd
                 self.itemStr += " </item>\n"
             self.itemStr += "    </item>\n"
         else:
-            # initial depth: 
             depth = 0
-            depthold = 0
-            oldnodeleaf = 0
-            for page in self.pages:        
-                while depth > page.depth:
-                    if self.scormType == "scorm2004":
-                        self.itemStr += u"    <imsss:sequencing>\n"
-                        self.itemStr += u"        <imsss:controlMode flow=\"true\"/>\n"
-                        self.itemStr += u"    </imsss:sequencing>\n"
-                        if page.node.children:
-                            self.itemStr += "    </item>\n"                      
-                        else:
-                            if oldnodeleaf and depthold - 1 > page.depth:
-                                self.itemStr += "    </item>\n"                    
-                    if self.scormType == "scorm1.2":
-                        if page.node.children:
-                            self.itemStr += "    </item>\n"
-                        else:
-                            if oldnodeleaf and depthold - 1 > page.depth:
-                                self.itemStr += "    </item>\n"    
+            for page in self.pages:
+                while depth >= page.depth:
+                    self.itemStr += "</item>\n"
+                    if depth > page.depth and self.scormType == "scorm2004":
+                            self.itemStr += '''  <imsss:sequencing>
+    <imsss:controlMode choice="true" choiceExit="true" flow="true" forwardOnly="false"/>
+  </imsss:sequencing>'''
                     depth -= 1
-                    oldnodeleaf = not page.node.children                         
-                else:                 
-                    if self.scormType == "scorm1.2" and depthold - 1 >= page.depth:                                     
-                        if not page.node.children:
-                            self.itemStr += "    </item>\n"  
-                    # we will compare depth with the actual page.depth...
-                    # we look for decreasing depths -it means we are ending a branch: 
-                    if self.scormType == "scorm2004" and depthold - 1 >= page.depth:                                     
-                        if not page.node.children:
-                            self.itemStr += "    </item>\n"                                                                                 
-                    # go on with the items:
-                    self.genItemResStr(page)
-                    # do not forget update depth before going on with the list:                                 
-                depthold = page.depth
-                depth = page.depth    
-            
-            if self.scormType != "scorm2004":    
-                while depth > 1:               
-                    self.itemStr += "        </item>\n"                                 
-                    depth -= 1   
-                # the LAST </item> of navigation block must disappear in CC exports:
-                if self.scormType == "commoncartridge" and self.itemStr.endswith("   </item>\n"):
-                    self.itemStr = self.itemStr[:-12] 
-                
-            # finally the last page (leaf) must also include sequencing:  
-            if self.scormType == "scorm2004" and not page.node.children:
-                for x in range(1,page.depth):
-                    self.itemStr += u"    <imsss:sequencing>\n"
-                    self.itemStr += u"        <imsss:controlMode flow=\"true\"/>\n"
-                    self.itemStr += u"    </imsss:sequencing>\n"    
-                    self.itemStr += "   </item>\n"
-                # the LAST </item> of navigation block must disappear:
-                if self.itemStr.endswith("   </item>\n") and page.depth > 1:
-                    self.itemStr = self.itemStr[:-12] 
-                    self.itemStr += "\n"
-            # that's all for itemStr
+                if page.node.children and self.scormType == "scorm2004":
+                    # Add fake node with original title
+                    itemId   = "ITEM-"+unicode(self.idGenerator.generate())
+                    self.itemStr += '<item identifier="'+itemId+'" '
+                    self.itemStr += 'isvisible="true">\n'
+                    self.itemStr += "    <title>"
+                    self.itemStr += escape(page.node.titleShort)
+                    self.itemStr += "</title>\n"
                     
+                    # Increase actual depth because fake node added. Next iteration closes the fake node
+                    depth = page.depth + 1
+                else:
+                    depth = page.depth
+                self.genItemResStr(page)
+
+            while depth >= 1:
+                self.itemStr += "</item>\n"
+                if depth > 1 and self.scormType == "scorm2004":
+                    self.itemStr += '''  <imsss:sequencing>
+    <imsss:controlMode choice="true" choiceExit="true" flow="true" forwardOnly="false"/>
+  </imsss:sequencing>'''
+                depth -= 1
+
         xmlStr += self.itemStr   
         
+        if self.scormType == "scorm2004":
+            xmlStr += '''  <imsss:sequencing>
+    <imsss:controlMode choice="true" choiceExit="true" flow="true" forwardOnly="false"/>
+  </imsss:sequencing>'''
         xmlStr += "  </organization>\n"
         xmlStr += "</organizations>\n"
  
@@ -318,19 +292,15 @@ xsi:schemaLocation="http://www.imsglobal.org/xsd/imscc/imscp_v1p1 imscp_v1p1.xsd
                 xmlStr += """  <resource identifier="COMMON_FILES" type="webcontent" adlcp:scormtype="asset">\n"""
             else:
                 xmlStr += """  <resource identifier="COMMON_FILES" type="webcontent" adlcp:scormType="asset">\n"""
-            directory = Path(self.config.webDir).joinpath('style', self.package.style.encode('utf-8'))
-            liststylesfiles = os.listdir(directory)
-            for x in liststylesfiles:
-                if os.path.isfile(directory + '/' + x):
-                    xmlStr += """    <file href="%s"/>\n""" % x 
+            my_style = G.application.config.styleStore.getStyle(page.node.package.style)
+            for x in my_style.get_style_dir().files('*.*'):
+                xmlStr += """    <file href="%s"/>\n""" % x.basename()
             # we do want base.css and (for short time), popup_bg.gif, also:    
             xmlStr += """    <file href="base.css"/>\n"""
             xmlStr += """    <file href="popup_bg.gif"/>\n"""
             # now the javascript files:
             xmlStr += """    <file href="SCORM_API_wrapper.js"/>\n"""
             xmlStr += """    <file href="SCOFunctions.js"/>\n"""
-            resources = page.node.getResources()
-            my_style = G.application.config.styleStore.getStyle(page.node.package.style)
             if my_style.hasValidConfig:
                 if my_style.get_jquery() == True:
                     xmlStr += """    <file href="exe_jquery.js"/>\n"""
@@ -347,72 +317,23 @@ xsi:schemaLocation="http://www.imsglobal.org/xsd/imscc/imscp_v1p1 imscp_v1p1.xsd
     def genItemResStr(self, page):
         """
         Returning xml string for items and resources
-        Notice, please: items AND resources 
         """
         itemId   = "ITEM-"+unicode(self.idGenerator.generate())
-        control = itemId
         resId    = "RES-"+unicode(self.idGenerator.generate())
         filename = page.name+".html"
             
-        ## ITEMS INSIDE ORGANIZATIONS
         
-        # CC do not requires if each section is visible or not, but SCORM yes:
-        if self.scormType == "scorm1.2":
-            self.itemStr += '        <item identifier="'+itemId+'" '
+        self.itemStr += '<item identifier="'+itemId+'" '
+        if self.scormType != "commoncartridge":
             self.itemStr += 'isvisible="true" '
-        if self.scormType == "scorm2004" and page.depth > 1: 
-            self.itemStr += '        <item identifier="'+itemId+'" '
-            self.itemStr += 'isvisible="true" '    
+        self.itemStr += 'identifierref="'+resId+'">\n'
+        self.itemStr += "    <title>"
+        if self.scormType == "scorm2004" and page.node.children:
+            self.itemStr += escape('<-')
         else:
-            if self.scormType == "scorm2004" and page.depth == 1 and not page.node.children:
-                self.itemStr += '        <item identifier="'+itemId+'" '
-                self.itemStr += 'isvisible="true" '    
-        if self.scormType == "commoncartridge":
-            self.itemStr += '  <item identifier="'+itemId+'" '
-            self.itemStr += 'identifierref="'+resId+'">\n'
-            self.itemStr += "  <title>"
             self.itemStr += escape(page.node.titleShort)
-            self.itemStr += "</title>\n"       
-        # If self.scormType == "scorm2004" the identifierref shall not 
-        # be used on <item> elements that contain other <item> elements, 
-        # so:
-        if self.scormType == "scorm2004":
-            if not page.node.children:
-                self.itemStr += 'identifierref="'+resId+'">\n'
-                self.itemStr += "            <title>"
-                self.itemStr += escape(page.node.titleShort)
-                self.itemStr += "</title>\n"
-                self.itemStr += "        </item>\n"
-            else:
-                if page.depth > 1:
-                    self.itemStr += ">\n"
-                    self.itemStr += "            <title>"
-                    # an innocent title by the moment:
-                    self.itemStr += "->"
-                    self.itemStr += "</title>\n"     
-                
-                # create a leaf item with this resource one level beyond,
-                if control == itemId:
-                    itemIdleaf   = "ITEM-"+unicode(self.idGenerator.generate())
-                    self.itemStr += '        <item identifier="'+itemIdleaf+'" '
-                    self.itemStr += 'identifierref="'+resId+'">\n'
-                    self.itemStr += "            <title>"
-                    self.itemStr += escape(page.node.titleShort)
-                    self.itemStr += "</title>\n"
-                    self.itemStr += "        </item>\n" 
-                    control = 0                  
+        self.itemStr += "</title>\n"
         
-        # at SCORM1.2, ALL the items at organizations 
-        # must include identifierref attribute:
-        if self.scormType == "scorm1.2":                 
-            self.itemStr += 'identifierref="'+resId+'">\n'
-            self.itemStr += "            <title>"
-            self.itemStr += escape(page.node.titleShort)
-            self.itemStr += "</title>\n"    
-            if not page.node.children:
-                self.itemStr += "        </item>\n"        
-
-
         ## RESOURCES
         
         self.resStr += "  <resource identifier=\""+resId+"\" "
@@ -458,7 +379,6 @@ xsi:schemaLocation="http://www.imsglobal.org/xsd/imscc/imscp_v1p1 imscp_v1p1.xsd
             self.resStr += '    <file href="exe_html5.js"/>\n'
 
         resources = page.node.getResources()
-        my_style = G.application.config.styleStore.getStyle(page.node.package.style)
         
         if common.nodeHasMediaelement(page.node):
             resources = resources + [f.basename() for f in (self.config.webDir/"scripts"/'mediaelement').files()]
@@ -573,7 +493,7 @@ class ScormExport(object):
         # Copy the style sheet files to the output dir
         styleFiles  = [self.styleDir/'..'/'base.css']
         styleFiles += [self.styleDir/'..'/'popup_bg.gif']
-		# And with all the files of the style we avoid problems:
+        # And with all the files of the style we avoid problems:
         styleFiles += self.styleDir.files("*.*")
         if self.scormType == "commoncartridge":
             for sf in styleFiles[:]:
@@ -724,10 +644,22 @@ class ScormExport(object):
         if hasattr(package, 'scowsinglepage') and package.scowsinglepage:
             page = SinglePage("singlepage_index", 1, package.root)
             page.save(outputDir/"singlepage_index.html")
+            # Incluide eXe's icon if the Style doesn't have one
+            themePath = Path(G.application.config.stylesDir/package.style)
+            themeFavicon = themePath.joinpath("favicon.ico")
+            if not themeFavicon.exists():
+                faviconFile = (self.imagesDir/'favicon.ico')
+                faviconFile.copyfile(outputDir/'favicon.ico')
         if hasattr(package, 'scowwebsite') and package.scowwebsite:
             website = WebsiteExport(self.config, self.styleDir, outputDir, "website_")
             website.export(package)
             (self.styleDir/'nav.css').copyfile(outputDir/'nav.css')
+            # Incluide eXe's icon if the Style doesn't have one
+            themePath = Path(G.application.config.stylesDir/package.style)
+            themeFavicon = themePath.joinpath("favicon.ico")
+            if not themeFavicon.exists():
+                faviconFile = (self.imagesDir/'favicon.ico')
+                faviconFile.copyfile(outputDir/'favicon.ico')
         if hasattr(package, 'exportSource') and package.exportSource:
             (G.application.config.webDir/'templates'/'content.xsd').copyfile(outputDir/'content.xsd')
             (outputDir/'content.data').write_bytes(encodeObject(package))

@@ -1151,9 +1151,18 @@ class MagnifierElement(Element):
         """
         field = self.field
         lb = "\n" #Line breaks
-        html = '<span class="image-thumbnail" id="image-thumbnail-'+self.id+'">'+lb
-        html += '<a href="'+imageFile+'"><img src="'+imageFile+'" alt="" width="'+field.width+'" height="'+field.height+'" class="magnifier-size-'+field.glassSize+' magnifier-zoom-'+field.initialZSize+'" /></a>'+lb
-        html += '</span>'+lb
+        if magnifierFile=="mojomagnify.js": #View
+            html = '<span class="image-thumbnail" id="image-thumbnail-'+self.id+'">'+lb
+            html += '<a href="'+imageFile+'"><img src="'+imageFile+'" alt="" width="'+field.width+'" height="'+field.height+'" class="magnifier-size-'+field.glassSize+' magnifier-zoom-'+field.initialZSize+'" /></a>'+lb
+            html += '</span>'+lb
+        else: #Preview
+            html =u'<img id="magnifier%s" src="%s" data-magnifysrc="%s"' % ( self.id, imageFile,imageFile)
+            if field.width!="":
+                html +=u' width="'+field.width+'"'
+            if field.height!="":
+                html +=u' height="'+field.height+'"'            
+            html +=u' data-size="%s"  data-zoom="%s" />'% (field.glassSize, field.initialZSize)
+            html +=lb
         return html;
         
 
@@ -1258,7 +1267,7 @@ class ClozeElement(ElementWithResources):
             u'</td><td>',
             common.checkbox('checkCaps%s' % self.id,
                             self.field.checkCaps,
-                            title=_(u'Check Caps?'),
+                            title=_(u'Check Capitalization?'),
                             instruction=self.field.checkCapsInstruc),
             u'</td><td>',
             common.checkbox('instantMarking%s' % self.id,
@@ -1405,14 +1414,17 @@ class ClozeElement(ElementWithResources):
             if text:
                 html.append(text)
             if missingWord:
+                aceptedWords=[]
+                aceptedWords=missingWord.split('|')
+                lenWord=max(len(wrd) for wrd in aceptedWords)
                 words += "'" + missingWord + "',"
                 # The edit box for the user to type into
                 #'  autocomplete="off"',
                 inputHtml = ['<label for="clozeBlank%s.%s" class="sr-av">%s (%s):</label>' % (self.id, i, c_("Cloze"), (i+1))]
                 if self.field.instantMarking:
-                    inputHtml += ['<input class="autocomplete-off" type="text" value="" id="clozeBlank%s.%s" style="width:%sem" onkeyup="onClozeChange(this)" />' % (self.id, i, len(missingWord))]
+                    inputHtml += ['<input class="autocomplete-off" type="text" value="" id="clozeBlank%s.%s" style="width:%sem" onkeyup="onClozeChange(this)" />' % (self.id, i, lenWord)]
                 else:
-                    inputHtml += ['<input class="autocomplete-off" type="text" value="" id="clozeBlank%s.%s" style="width:%sem" />' % (self.id, i, len(missingWord))]
+                    inputHtml += ['<input class="autocomplete-off" type="text" value="" id="clozeBlank%s.%s" style="width:%sem" />' % (self.id, i, lenWord)]
                 html += inputHtml
                 # Hidden span with correct answer
                 html += ['<span style="display:none" id="clozeAnswer%s.%s">%s</span>' % (self.id, i, encrypt(missingWord))]
@@ -1660,13 +1672,16 @@ class ClozelangElement(ElementWithResources):
             if text:
                 html.append(text)
             if missingWord:
+                aceptedWords=[]
+                aceptedWords=missingWord.split('|')
+                lenWord=max(len(wrd) for wrd in aceptedWords)
                 words += "'" + missingWord + "',"
                 # The edit box for the user to type into
                 inputHtml = [
                     ' <input type="text" value="" ',
                     '        id="clozelangBlank%s.%s"' % (self.id, i),
 #                    '    autocomplete="off"',
-                    '    style="width:%sem"/>\n' % len(missingWord)]
+                    '    style="width:%sem"/>\n' % lenWord]
                 if self.field.instantMarking:
                     inputHtml.insert(2, '  onKeyUp="onClozelangChange(this)"')
                 html += inputHtml
@@ -2075,7 +2090,9 @@ class SelectOptionElement(Element):
         html  = u"<tr>"
         html += "<td>&nbsp;</td>"
         option_title = _("Option %s") % str(self.index+1)
-        html += u"<td align=\"left\"><b>%s</b>" % option_title
+        html += u"<td align=\"left\">"
+        html += u"<b id='ans%s-editor-label'>%s</b>" % \
+            (self.id, option_title)
         html += common.elementInstruc(self.field.question.optionInstruc)
 
         header = ""
@@ -2261,7 +2278,7 @@ class SelectquestionElement(Element):
         html  = u"<div class=\"iDevice\">\n"
         html += u"<table width='100%'>"
         html += "<tr><td valign='top'>"
-        html += u"<b>" + _("Question:") + " </b>" 
+        html += u"<b id='question"+self.id+"-editor-label'>" + _("Question:") + " </b>" 
         html += common.elementInstruc(self.field.questionInstruc)
         html += "</td>"
         html += "<td valign='top' align='right'>"
@@ -2281,12 +2298,14 @@ class SelectquestionElement(Element):
         and self.questionElement.field_idevice.parentNode is not None:
             this_package = self.questionElement.field_idevice.parentNode.package
 
+        html += "<div>"
         html += common.richTextArea("question"+self.id, 
                        self.questionElement.field.content_w_resourcePaths,
                        package=this_package, 
                        default_prompt = self.questionElement.field.default_prompt)
+        html += "</div>"
 
-        html += u"<table width =\"100%%\">"
+        html += u"<table width =\"100%\">"
         html += u"<thead>"
         html += u"<tr>"
         html += u"<th>%s " % _("Options")

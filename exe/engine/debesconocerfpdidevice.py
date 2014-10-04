@@ -19,7 +19,7 @@ class DebesconocerfpdIdevice(Idevice):
     """
     El iDevice Debes conocer permite al alumnado ampliar conocimientos obligatorios para su aprendizaje
     """
-    persistenceVersion = 7
+    persistenceVersion = 9
     
     def __init__(self, activity = "", answer = ""):
         """
@@ -136,4 +136,20 @@ class DebesconocerfpdIdevice(Idevice):
         self.activityTextArea = TextAreaField(x_(u'You Should Know Text:'), 
                                     self._activityInstruc, self.activity)
         self.activityTextArea.idevice = self
+        
+    def upgradeToVersion8(self):
+        self._upgradeIdeviceToVersion3()
+
+    def upgradeToVersion9(self):
+        if self._title == u"FPD - Debes Conocer":
+            self._title = u"FPD - You Should Know"
+        if self._title == u"Debes Conocer":
+            self._title = u"You Should Know"
+        if self._purpose == u"""Debes conocer es un iDevice que permite al alumnado ampliar conocimientos, siendo estos obligatorios para su aprendizaje.""":
+            self._purpose = u"""You Should Know is an iDevice that helps the student widen her knowledge with core contents."""
+        if self._activityInstruc == u"""Introduce el texto que aparecer&aacute; en este iDevice""":
+            self._activityInstruc = u"""Enter the text that will appear on this iDevice"""
+        if self.activityTextArea._name == u'Texto Debes conocer:':
+            self.activityTextArea._name = u'You Should Know Text:'
+
 # ===========================================================================

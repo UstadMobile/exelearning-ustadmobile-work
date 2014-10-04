@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -- coding: utf-8 --
 # ===========================================================================
 # eXe
@@ -22,6 +22,8 @@
 import os
 import sys
 import optparse
+import json
+import logging
 
 # Make it so we can import our own nevow and twisted etc.
 if os.name == 'posix' and '--standalone' not in sys.argv:
@@ -87,13 +89,17 @@ help:\n%prog -h").encode(sys.stdout.encoding)
                       help=_(u"Generates resource info report to text <output_file> \
 from <input_file> elp package").encode(sys.stdout.encoding))
 
+    parser.add_option("-l", "--checker_logfile",
+                      dest='checker_logfile',
+                      metavar='LOGFILE')
+
     parser.add_option("-x", "--export",
                   action="store", dest="x", metavar="format",
-                  choices=['xml', 'scorm12', 'scorm2004', 'agrega',
+                  choices=['xml', 'scorm12', 'scorm2004',
                            'ims', 'website', 'webzip', 'singlepage',
                            'xliff', 'epub3', 'ustadmobile'],
                   help=_(u"Export <input_file> elp package to optional \
-<output_file> on one of the given formats: xml, scorm12, scorm2004, agrega, ims, \
+<output_file> on one of the given formats: xml, scorm12, scorm2004, ims, \
 website, webzip, singlepage, xliff or epub3.").encode(sys.stdout.encoding))
     parser.add_option("-i", "--import",
                   action="store", dest="i", metavar="format",
@@ -190,6 +196,13 @@ exclusive.').encode(sys.stdout.encoding))
     if len(args) > 2:
         parser.error(_(u'Bad number of arguments supplied').encode(sys.stdout.encoding))
 
+    if options.checker_logfile:
+        logfile = Path(options.checker_logfile)
+        if logfile.abspath().dirname().exists():
+            handler = logging.FileHandler(logfile.abspath(), 'a+')
+            handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+            logging.getLogger('exe.engine.checker').addHandler(handler)
+
     tempdir = TempDirPath()
     if options.set_options:
         try:
@@ -205,6 +218,10 @@ exclusive.').encode(sys.stdout.encoding))
                 name, value = set_option.split('=')
                 names = name.split('.')
                 obj = pkg
+                try:
+                    value = json.loads(value)
+                except:
+                    pass
                 for name in names[:-1]:
                     obj = getattr(obj, name)
                 name = names[-1]
@@ -229,6 +246,7 @@ exclusive.').encode(sys.stdout.encoding))
             pkg.save()
             if options.set_options_write:
                 inputf.move(path)
+                inputf = path
         except:
             print _(u"exe_do: error: Unable to set values from '%s'.\nThe \
 error was:") % (path)

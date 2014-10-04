@@ -271,7 +271,7 @@ class DublinCore(Jellyable, Unjellyable):
         self.date = ''
         self.type = ''
         self.format = ''
-        self.identifier = ''
+        self.identifier = str(uuid.uuid4())
         self.source = ''
         self.language = ''
         self.relation = ''
@@ -394,14 +394,12 @@ class Package(Persistable):
         
         
     def setLomDefaults(self):
-        entry = str(uuid.uuid4())
         self.lom = lomsubs.lomSub.factory()
-        self.lom.addChilds(self.lomDefaults(entry, 'LOMv1.0'))
+        self.lom.addChilds(self.lomDefaults(self.dublinCore.identifier, 'LOMv1.0'))
 
     def setLomEsDefaults(self):
-        entry = str(uuid.uuid4())
         self.lomEs = lomsubs.lomSub.factory()
-        self.lomEs.addChilds(self.lomDefaults(entry, 'LOM-ESv1.0', True))
+        self.lomEs.addChilds(self.lomDefaults(self.dublinCore.identifier, 'LOM-ESv1.0', True))
 
     # Property Handlers
     def set_docType(self,value):
@@ -479,7 +477,7 @@ class Package(Persistable):
                 metadata.set_educational(educational)
         self._lang = toUnicode(value)
         if value in G.application.config.locales:
-            __builtins__['c_'] = G.application.config.locales[value].ugettext
+            __builtins__['c_'] = lambda s: G.application.config.locales[value].ugettext(s) if s else s
 
     def set_author(self, value):
         if self.dublinCore.creator == self._author:
@@ -734,7 +732,7 @@ class Package(Persistable):
                     if value:
                         copyrightAndOtherRestrictions.get_value().set_valueOf_(self.license_map(source, value_str))
                     else:
-                        copyrightAndOtherRestrictions = None
+                        metadata.get_rights().set_copyrightAndOtherRestrictions(None)
             else:
                 if value:
                     src = lomsubs.sourceValueSub()
@@ -778,33 +776,35 @@ class Package(Persistable):
 
     def set_learningResourceType(self, value):
         value_str = value.encode('utf-8')
-        if value:
-            for metadata, source in [(self.lom, 'LOMv1.0'), (self.lomEs, 'LOM-ESv1.0')]:
-                educationals = metadata.get_educational()
-                src = lomsubs.sourceValueSub()
-                src.set_valueOf_(source)
-                src.set_uniqueElementName('source')
-                val = lomsubs.learningResourceTypeValueSub()
-                val.set_valueOf_(self.learningResourceType_map(source, value_str))
-                val.set_uniqueElementName('value')
-                learningResourceType = lomsubs.learningResourceTypeSub(self.learningResourceType_map(source, value_str))
-                learningResourceType.set_source(src)
-                learningResourceType.set_value(val)
-                if educationals:
-                    for educational in educationals:
-                        learningResourceTypes = educational.get_learningResourceType()
-                        found = False
-                        if learningResourceTypes:
-                            for i in learningResourceTypes:
-                                if i.get_value().get_valueOf_() == self.learningResourceType_map(source, self.learningResourceType.encode('utf-8')):
-                                    found = True
-                                    index = learningResourceTypes.index(i)
+        for metadata, source in [(self.lom, 'LOMv1.0'), (self.lomEs, 'LOM-ESv1.0')]:
+            educationals = metadata.get_educational()
+            src = lomsubs.sourceValueSub()
+            src.set_valueOf_(source)
+            src.set_uniqueElementName('source')
+            val = lomsubs.learningResourceTypeValueSub()
+            val.set_valueOf_(self.learningResourceType_map(source, value_str))
+            val.set_uniqueElementName('value')
+            learningResourceType = lomsubs.learningResourceTypeSub(self.learningResourceType_map(source, value_str))
+            learningResourceType.set_source(src)
+            learningResourceType.set_value(val)
+            if educationals:
+                for educational in educationals:
+                    learningResourceTypes = educational.get_learningResourceType()
+                    found = False
+                    if learningResourceTypes:
+                        for i in learningResourceTypes:
+                            if i.get_value().get_valueOf_() == self.learningResourceType_map(source, self.learningResourceType.encode('utf-8')):
+                                found = True
+                                index = learningResourceTypes.index(i)
+                                if value:
                                     educational.insert_learningResourceType(index, learningResourceType)
-                        if not found:
-                            educational.add_learningResourceType(learningResourceType)
-                else:
-                    educational = [lomsubs.educationalSub(learningResourceType=[learningResourceType])]
-                    metadata.set_educational(educational)
+                                else:
+                                    learningResourceTypes.pop(index)
+                    if not found:
+                        educational.add_learningResourceType(learningResourceType)
+            else:
+                educational = [lomsubs.educationalSub(learningResourceType=[learningResourceType])]
+                metadata.set_educational(educational)
         self._learningResourceType = toUnicode(value)
 
     def intendedEndUserRole_map(self, source, value):
@@ -1382,6 +1382,7 @@ class Package(Persistable):
         nstyle=Path(G.application.config.stylesDir/newPackage.style)
         if not nstyle.isdir():
             newPackage.style=G.application.config.defaultStyle       
+        newPackage.lang = newPackage._lang
         return newPackage
 
     def getUserResourcesFiles(self, node):

@@ -36,7 +36,7 @@ class ReflectionfpdmodifIdevice(Idevice):
     A Reflection Idevice presents question/s for the student to think about
     before they look at the answer/s
     """
-    persistenceVersion = 7
+    persistenceVersion = 9
     
     def __init__(self, activity = "", answer = ""):
         """
@@ -203,4 +203,15 @@ to reflect upon.""")
 #                                  self._answerInstruc, self.answer)
 #        self.answerTextArea.idevice = self
 
+    def upgradeToVersion8(self):
+        """
+        Delete icon from system resources
+        """
+        self._upgradeIdeviceToVersion3()
+
+    def upgradeToVersion9(self):
+        if self._title == u"FPD - Reflexiona (sin Retroalimentacion)":
+            self._title = u"FPD - Think About It (without Feedback)"
+        if self._title == u"Reflexiona (sin Retroalimentacion)":
+            self._title = u"Think About It"
 # ===========================================================================

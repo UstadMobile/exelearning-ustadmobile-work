@@ -2632,6 +2632,8 @@ class TextAreaField(FieldWithResources):
         # image paths, either, since this is an upgrade from pre-images!
         
     def upgradeToVersion2(self):
+        if self._instruc == u"""Introduce el texto que aparecer&aacute; en este iDevice""":
+            self._instruc = u"""Enter the text that will appear on this iDevice"""
         self.default_prompt = ""
 
 # ===========================================================================
@@ -2906,12 +2908,12 @@ class ClozeHTMLParser(HTMLParser):
     Separates out gaps from our raw cloze data
     """
 
-    # Default attribute values
+   # Default attribute values
     result = None
     inGap = False
     lastGap = ''
     lastText = ''
-    whiteSpaceRe = re.compile(r'\s+')
+    whiteSpaceRe = re.compile(r'\s')
     paragraphRe = re.compile(r'(\r\n\r\n)([^\r]*)(\1)')
 
     def reset(self):
@@ -2969,25 +2971,16 @@ class ClozeHTMLParser(HTMLParser):
         elif tag.lower() != 'br':
             self.writeTag(tag)
 
+
     def _endGap(self):
         """
         Handles finding the end of gap
         """
         # Tidy up and possibly split the gap
-        gapString = self.lastGap.strip()
-        gapWords = self.whiteSpaceRe.split(gapString)
-        gapSpacers = self.whiteSpaceRe.findall(gapString)
-        if len(gapWords) > len(gapSpacers):
-            gapSpacers.append(None)
-        gaps = zip(gapWords, gapSpacers)
+        gapString = self.lastGap.strip()       
         lastText = self.lastText
-        # Split gaps up on whitespace
-        for gap, text in gaps:
-            if gap == '<br/>':
-                self.result.append((lastText, None))
-            else:
-                self.result.append((lastText, gap))
-            lastText = text
+        # Deixa os espazos
+        self.result.append((lastText, gapString))      
         self.lastGap = ''
         self.lastText = ''
 
@@ -3047,7 +3040,7 @@ class ClozeField(FieldWithResources):
                 "<code>Elephant</code> then both <code>elephant</code> and "
                 "<code>Eliphant</code> will be judged "
                 "<em>\"close enough\"</em> by the algorithm as it only has "
-                "one letter wrong, even if \"Check Capitilization\" is on."
+                "one letter wrong, even if \"Check Capitalization\" is on."
                 "</p>"
                 "<p>If capitalization checking is off in the above example, "
                 "the lowercase <code>e</code> will not be considered a "

@@ -22,6 +22,8 @@ Exports an eXe package as a Epub3 package
 
 import logging
 import re
+import datetime
+import uuid
 from cgi                           import escape
 from zipfile                       import ZipFile, ZIP_DEFLATED, ZIP_STORED
 from exe.webui                     import common
@@ -30,13 +32,20 @@ from exe.engine.error              import Error
 from exe.engine.path               import Path, TempDirPath
 from exe.engine.version            import release
 from exe.export.pages              import Page, uniquifyNames
-from exe.engine.uniqueidgenerator  import UniqueIdGenerator
 from exe                      	   import globals as G
-from exe.engine.persist import encodeObject
-from exe.engine.persistxml import encodeObjectToXML
+from exe.engine.beautifulsoup      import BeautifulSoup
+from htmlentitydefs                import name2codepoint
 
 log = logging.getLogger(__name__)
 
+name2codepoint.pop('amp')
+name2codepoint.pop('lt')
+name2codepoint.pop('gt')
+name2codepoint.pop('quot')
+
+def htmlentitydecode(s):
+    return re.sub('&(%s);' % '|'.join(name2codepoint),
+            lambda m: unichr(name2codepoint[m.group(1)]), s)
 
 # ===========================================================================
 class PublicationEpub3(object):
@@ -56,7 +65,6 @@ class PublicationEpub3(object):
         self.outputDir = outputDir
         self.package = package
         self.pages = pages
-        self.idGenerator = UniqueIdGenerator(package.name, config.exePath)
         self.cover = cover
 
     def save(self, filename):
@@ -95,12 +103,16 @@ class PublicationEpub3(object):
                 continue
 
             ext = epubFile.ext
-            name = epubFile.basename().replace('.', '_')
+            name = epubFile.basename().translate({ord(u'.'): u'_', ord(u'('): u'', ord(u')'): u''})
+            if name[0] in [unicode(i) for i in range(0, 10)]:
+                name = u'_' + name
 
             mimetype, _ = mimetypes.guess_type(epubFile.abspath())
             if not mimetype:
                 if ext and ext == 'webm':
                     mimetype = u'video/webm'
+                else:
+                    mimetype = u'application/octet-stream'
 
             properties = ''
 
@@ -124,8 +136,14 @@ class PublicationEpub3(object):
         lrm = self.package.dublinCore.__dict__.copy()
         xml = u'<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n'
         for key, value in lrm.items():
+            pub_id = ''
+            if key == 'identifier':
+                pub_id = ' id="pub-id"'
+                if not value:
+                    self.package.dublinCore.identifier = value = str(uuid.uuid4())
             if value:
-                xml += u'<dc:%s>%s</dc:%s>\n' % (key, value, key)
+                xml += u'<dc:%s%s>%s</dc:%s>\n' % (key, pub_id, escape(value), key)
+        xml += u'<meta property="dcterms:modified">%s</meta>' % datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
         xml += u'</metadata>\n'
         return xml
 
@@ -134,7 +152,7 @@ class PublicationEpub3(object):
         Returning xml string for items and resources
         """
         xmlStr = u'<spine>\n'
-        xmlStr += u'<itemref idref="cover" linear="no"/>\n'
+        xmlStr += u'<itemref idref="cover"/>\n'
         for page in self.pages:
             if page.name == 'cover':
                 continue
@@ -209,7 +227,7 @@ class NavEpub3(object):
         """
 
         for page in self.pages[1:]:
-            xmlStr += u"<li><a href=\"%s\">%s</a></li>\n" % (page.name + ".xhtml", page.node.title)
+            xmlStr += u"<li><a href=\"%s\">%s</a></li>\n" % (page.name + ".xhtml", escape(page.node.title))
 
         xmlStr += u"""
                         </ol>
@@ -244,6 +262,8 @@ class Epub3Page(Page):
         """
         Returns an XHTML string rendering this page.
         """
+        old_dT = common.getExportDocType()
+        common.setExportDocType('HTML5')
         dT = common.getExportDocType()
         lb = "\n"  # Line breaks
         sectionTag = "div"
@@ -255,8 +275,8 @@ class Epub3Page(Page):
             headerTag = "header"
         html = common.docType()
         lenguaje = G.application.config.locale
-        if self.node.package.dublinCore.language != "":
-            lenguaje = self.node.package.dublinCore.language
+        if self.node.package.lang != "":
+            lenguaje = self.node.package.lang
         html += u"<html lang=\"" + lenguaje + "\" xml:lang=\"" + lenguaje + "\" xmlns=\"http://www.w3.org/1999/xhtml\">" + lb
         html += u"<head>" + lb
         html += u"<title>"
@@ -271,15 +291,15 @@ class Epub3Page(Page):
             else:
                 html += escape(self.node.titleLong)
         html += u" </title>" + lb
-        html += u"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />" + lb
-        if dT != "HTML5" and self.node.package.dublinCore.language != "":
+        html += u'<meta charset="utf-8" />' + lb
+        if dT != "HTML5" and self.node.package.lang != "":
             html += '<meta http-equiv="content-language" content="' + lenguaje + '" />' + lb
         if self.node.package.author != "":
-            html += '<meta name="author" content="' + self.node.package.author + '" />' + lb
+            html += '<meta name="author" content="' + escape(self.node.package.author, True) + '" />' + lb
         html += '<meta name="generator" content="eXeLearning ' + release + ' - exelearning.net" />' + lb
         if self.node.id == '0':
             if self.node.package.description != "":
-                html += '<meta name="description" content="' + self.node.package.description + '" />' + lb
+                html += '<meta name="description" content="' + escape(self.node.package.description, True) + '" />' + lb
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"base.css\" />" + lb
         if common.hasWikipediaIdevice(self.node):
             html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"exe_wikipedia.css\" />" + lb
@@ -329,15 +349,15 @@ class Epub3Page(Page):
                     log.critical("Unable to render iDevice.")
                     raise Error("Unable to render iDevice.")
                 if hasattr(idevice, "isQuiz"):
-                    html += block.renderJavascriptForWeb()
+                    html += htmlentitydecode(block.renderJavascriptForWeb())
                 if idevice.title != "Forum Discussion":
-                    html += self.processInternalLinks(
-                        block.renderView(self.node.package.style))
+                    html += htmlentitydecode(self.processInternalLinks(
+                        block.renderView(self.node.package.style)))
             html += u'</' + articleTag + '>' + lb  # iDevice div
 
         html += u"</" + sectionTag + ">" + lb  # /#main
         html += self.renderLicense()
-        html += self.renderFooter()
+        html += unicode(BeautifulSoup(self.renderFooter(), convertEntities=BeautifulSoup.XHTML_ENTITIES))
         html += u"</div>" + lb  # /#outer
         if style.hasValidConfig:
             html += style.get_extra_body()
@@ -355,6 +375,8 @@ class Epub3Page(Page):
         html = html.replace("application/x-mplayer2\" data=\"resources/", "application/x-mplayer2\" data=\"")
         html = html.replace("audio/x-pn-realaudio-plugin\" data=\"resources/", "audio/x-pn-realaudio-plugin\" data=\"")
         html = html.replace("<param name=\"url\" value=\"resources/", "<param name=\"url\" value=\"")
+
+        common.setExportDocType(old_dT)
         return html
 
     def processInternalLinks(self, html):
@@ -379,7 +401,7 @@ class Epub3Cover(Epub3Page):
       <img id="img-cover" src="%s" alt="%s" />
    </body>
 </html>'''
-        src = ''
+        src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D'
         for idevice in self.node.idevices:
             block = g_blockFactory.createBlock(None, idevice)
             div = block.renderView(self.node.package.style)
@@ -388,7 +410,7 @@ class Epub3Cover(Epub3Page):
                 src = srcs[0]
                 self.cover = src
                 break
-        return html % (src, self.node.package.title)
+        return html % (src, escape(self.node.package.title, True))
 
 
 class Epub3Export(object):
@@ -546,10 +568,10 @@ class Epub3Export(object):
             jsFile = (self.scriptsDir / 'exe_jquery.js')
             jsFile.copyfile(contentPages / 'exe_jquery.js')
 
-        if hasattr(package, 'exportSource') and package.exportSource:
-            (G.application.config.webDir / 'templates' / 'content.xsd').copyfile(outputDir / 'content.xsd')
-            (outputDir / 'content.data').write_bytes(encodeObject(package))
-            (outputDir / 'contentv3.xml').write_bytes(encodeObjectToXML(package))
+#         if hasattr(package, 'exportSource') and package.exportSource:
+#             (G.application.config.webDir / 'templates' / 'content.xsd').copyfile(outputDir / 'content.xsd')
+#             (outputDir / 'content.data').write_bytes(encodeObject(package))
+#             (outputDir / 'contentv3.xml').write_bytes(encodeObjectToXML(package))
 
         if package.license == "license GFDL":
             # include a copy of the GNU Free Documentation Licence
@@ -606,6 +628,9 @@ class Epub3Export(object):
         pageName = re.sub(r"\W", "", pageName)
         if not pageName:
             pageName = u"__"
+
+        if pageName[0] in [unicode(i) for i in range(0, 10)]:
+            pageName = u'_' + pageName
 
         page = Epub3Page(pageName, depth, node)
 

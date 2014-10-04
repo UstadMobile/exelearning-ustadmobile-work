@@ -132,7 +132,7 @@ Ext.define('Ext.ux.IFrame', {
             }
 
             // We need to be sure we remove all our events from the iframe on unload or we're going to LEAK!
-            Ext.EventManager.on(window, 'unload', me.beforeDestroy, me);
+            Ext.EventManager.on(me.getWin(), 'unload', me.beforeDestroy, me);
 
             this.el.unmask();
             this.fireEvent('load', this);
@@ -153,8 +153,6 @@ Ext.define('Ext.ux.IFrame', {
             iframeXY = iframeEl.getXY(),
             eventXY = event.getXY();
 
-        if (event.type == "keypress")
-        	event.type = "keypress";
         // the event from the inner document has XY relative to that document's origin,
         // so adjust it to use the origin of the iframe in the outer document:
         event.xy = [iframeXY[0] + eventXY[0], iframeXY[1] + eventXY[1]];

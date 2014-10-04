@@ -54,10 +54,9 @@ class Config(object):
                    'videoMediaConverter_ogv', 'videoMediaConverter_3gp',
                    'videoMediaConverter_mpg', 'videoMediaConverter_mp4',
                    'videoMediaConverter_avi', 'audioMediaConverter_ogg',
-
                    'audioMediaConverter_au', 'audioMediaConverter_mp3',
                    'audioMediaConverter_wav', 'ffmpegPath'),
-        'user': ('locale', 'lastDir', 'showWizardOnStart', 'showPreferencesOnStart','defaultStyle', 'showIdevicesGrouped','docType'),
+        'user': ('locale', 'lastDir', 'showWizardOnStart', 'showPreferencesOnStart','defaultStyle', 'showIdevicesGrouped','docType', 'editorMode'),
         #Added showWizardOnStart
     }
 
@@ -167,6 +166,8 @@ class Config(object):
         self.showPreferencesOnStart = "1" #Commented for testing
         self.showWizardOnStart = "1"    #Added
         self.showIdevicesGrouped = "1"
+        # tinymce option
+        self.editorMode = 'permissive' 
         # styleSecureMode : if this [user] key is = 0  , exelearning can run python files in styles
         # as websitepage.py , ... ( deactivate secure mode )
         self.styleSecureMode="1"
@@ -467,6 +468,8 @@ class Config(object):
 
         # Load the "user" section
         if self.configParser.has_section('user'):
+            if self.configParser.user.has_option('editorMode'):
+                self.editorMode = self.configParser.user.editorMode
             if self.configParser.user.has_option('docType'):
                 self.docType = self.configParser.user.docType
                 common.setExportDocType(self.configParser.user.docType)
@@ -612,7 +615,7 @@ class Config(object):
                     locale = subDir.basename()
                     log.debug(" loading locale %s" % locale)
                     self.locales[locale].install(unicode=True)
-                    __builtins__['c_'] = self.locales[locale].ugettext
+                    __builtins__['c_'] = lambda s: self.locales[locale].ugettext(s) if s else s
 
 
 

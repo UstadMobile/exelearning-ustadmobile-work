@@ -40,7 +40,7 @@ class ClozeIdevice(Idevice):
     Holds a paragraph with words missing that the student must fill in
     """
     
-    persistenceVersion = 5
+    persistenceVersion = 7
 
     def __init__(self, parentNode=None):
         """
@@ -132,7 +132,9 @@ click on the Hide/Show Word button below.</p>"""),
             default_prompt = x_("""Type the whole text for learners here, 
             then hilight the parts you want to make blank and 
             click Hide/Show Word button below.  Underlined words 
-            get turned into blank boxes to fill in."""))
+            get turned into blank boxes to fill in.
+            More than one possible answer can be defined enclosing them with pipes (|). I.e.: |dog|cat|bird|
+            """))
         self._content.idevice = self
         self.feedback = TextAreaField(x_(u'Feedback'),
             x_(u'Enter any feedback you wish to provide the learner '
@@ -317,6 +319,16 @@ click on the Hide/Show Word button below.</p>"""),
         No action to take
         """
         pass
+
+    def upgradeToVersion6(self):
+        self._content._instruc = x_(u"""<p>Enter the text for the cloze activity in to the cloze field 
+by either pasting text from another source or by typing text directly into the 
+field.</p><p> To select words to hide, double click on the word to select it and 
+click on the Hide/Show Word button below.</p><p>More than one possible answer can be defined enclosing them with pipes (|). I.e.: |dog|cat|bird|</p>""")
         
-    
+    def upgradeToVersion7(self):
+        """
+        Delete icon from system resources
+        """
+        self._upgradeIdeviceToVersion3()
 # ===========================================================================

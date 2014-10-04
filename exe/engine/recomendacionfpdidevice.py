@@ -20,7 +20,7 @@ class RecomendacionfpdIdevice(Idevice):
     """
     El iDevice Recomendacion permite al profesarado recomendar libros, películas, ... útiles para su formación
     """
-    persistenceVersion = 7
+    persistenceVersion = 9
     
     def __init__(self, activity = "", answer = ""):
         """
@@ -137,4 +137,21 @@ class RecomendacionfpdIdevice(Idevice):
         self.activityTextArea = TextAreaField(x_(u'A Piece of Advice Text:'), 
                                     self._activityInstruc, self.activity)
         self.activityTextArea.idevice = self
+
+    def upgradeToVersion8(self):
+        """
+        Delete icon from system resources
+        """
+        self._upgradeIdeviceToVersion3()
+
+    def upgradeToVersion9(self):
+        if self._title == u"FPD - Recomendacion":
+            self._title = u"FPD - A Piece of Advice"
+        if self._purpose == u"""Para saber m&aacute;s es un iDevice que permite al profesarado recomendar libros, películas, ... útiles para su formación.""":
+            self._purpose = u"""A Piece of Advice is an iDevice that permits the teacher give advice on interesting books, films..."""
+        if self._activityInstruc == u"""Introduce el texto que aparecer&aacute; en este iDevice""":
+            self._activityInstruc = u"""Enter the text that will appear on this iDevice"""
+        if self.activityTextArea._name == u'Texto de la recomendaci&oacute;n:':
+            self.activityTextArea._name = u'A Piece of Advice Text:'
+
 # ===========================================================================

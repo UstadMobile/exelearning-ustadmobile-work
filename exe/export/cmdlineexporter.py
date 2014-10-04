@@ -17,7 +17,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # ===========================================================================
-from exe.export.xmlexport import XMLExport
 '''
 @author: Pedro Peña Pérez
 '''
@@ -33,6 +32,7 @@ from exe.export.websiteexport import WebsiteExport
 from exe.export.singlepageexport import SinglePageExport
 from exe.export.xliffexport import XliffExport
 from exe.export.epub3export import Epub3Export
+from exe.export.xmlexport import XMLExport
 
 LOG = logging.getLogger(__name__)
 
@@ -45,7 +45,6 @@ class CmdlineExporter(object):
                   'ims': '.zip',
                   'website': '',
                   'webzip': '.zip',
-                  'ustadmobile' : '',
                   'singlepage': '',
                   'xliff': '.xlf',
                   'epub3': '.epub',
@@ -94,6 +93,7 @@ with a different filename') % outputf
             raise Exception(_(u"Export format not implemented")\
 .encode(sys.stdout.encoding))
 
+
     def export_xml(self, pkg, outputf):
         open(outputf, "w").write(encodeObjectToXML(pkg))
 
@@ -107,13 +107,6 @@ with a different filename') % outputf
     def export_scorm2004(self, pkg, outputf):
         scormExport = ScormExport(self.config, self.styles_dir, outputf,
 'scorm2004')
-        pkg.scowsinglepage = self.options['single-page']
-        pkg.scowwebsite = self.options['website']
-        scormExport.export(pkg)
-
-    def export_agrega(self, pkg, outputf):
-        scormExport = ScormExport(self.config, self.styles_dir, outputf,
-'agrega')
         pkg.scowsinglepage = self.options['single-page']
         pkg.scowwebsite = self.options['website']
         scormExport.export(pkg)

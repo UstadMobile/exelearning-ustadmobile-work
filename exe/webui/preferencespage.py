@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -- coding: utf-8 --
 # ===========================================================================
 # eXe
 # Copyright 2004-2006, University of Auckland
@@ -155,6 +154,7 @@ class PreferencesPage(RenderableResource):
         self.browsersAvalaibles.append((_(u"Default browser in your system"), "None"))
         for browser in self.browsersAvalaibles:
             self.browsers.append({'browser': browser[1], 'text': browser[0]})
+
             
 
     def getChild(self, name, request):
@@ -171,9 +171,10 @@ class PreferencesPage(RenderableResource):
         log.debug("render_GET")
         data = {}
         try:
+            data['editorMode'] = self.config.editorMode
+            data['docType'] = self.config.docType
             data['locale'] = self.config.locale
             data['internalAnchors'] = self.config.internalAnchors
-            data['docType'] = self.config.docType
             browserSelected = "None"
             for bname, item in mywebbrowser._browsers.items():
                 if bname not in browsersHidden:
@@ -205,9 +206,11 @@ class PreferencesPage(RenderableResource):
             internalAnchors = request.args['internalAnchors'][0]
             self.config.internalAnchors = internalAnchors
             self.config.configParser.set('user', 'internalAnchors', internalAnchors)
+            editormodesel = request.args['editorMode'][0]
+            self.config.editorMode=editormodesel
+            self.config.configParser.set('user', 'editorMode', editormodesel)
             doctypesel = request.args['docType'][0]
             self.config.docType = doctypesel
-            common.setExportDocType(doctypesel)
             self.config.configParser.set('user', 'docType', doctypesel)
             browser = request.args['browser'][0]
             if browser == "None":
@@ -235,3 +238,9 @@ class PreferencesPage(RenderableResource):
         It would be the TinyMCE lang
         """
         return self.config.locale
+        
+    def getEditorMode(self):
+        """
+        It would be the TinyMCE lang
+        """
+        return self.config.editorMode

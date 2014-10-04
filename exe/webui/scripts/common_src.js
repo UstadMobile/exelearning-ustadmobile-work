@@ -431,22 +431,66 @@ function toggleClozeAnswers(ident, clear){
 // Shows all answers for a cloze field
 // 'inputs' is an option argument containing a list of the 'input' elements for
 // the field
-function fillClozeInputs(ident, inputs) {
-    if (!inputs) {
-        var inputs = getCloseInputs(ident)
+function fillClozeInputs(e, t) {
+    if (!t) {
+        var t = getCloseInputs(e)
     }
-    for (var i=0; i<inputs.length; i++) {
-        var input = inputs[i];
-        input.value = getClozeAnswer(input);
-        markClozeWord(input, CORRECT);
-        // Toggle the readonlyness of the answers also
-        input.setAttribute('readonly', 'readonly');
+    for (var n = 0; n < t.length; n++) {
+        var r = t[n];
+        
+        var a = getClozeAnswer(r); // Right Answer
+        a = a.trim();
+        var isMultiple = false;
+        
+        // Check if it has more than one right answer: |dog|bird|cat|
+        if (a.indexOf("|")==0 && a.charAt(a.length-1)=="|") {
+            var o = a; // Right answer (to operate with this var)
+            var o = o.substring(1,(o.length-1)); 
+            var as = o.split("|");
+            if (as.length>1) {
+                isMultiple = true;
+                var toShow = ""
+                for (x=0;x<as.length;x++) {
+                    toShow += as[x];
+                    if (x<(as.length-1)) toShow += " — ";
+                    if (as[x]=="") isMultiple = false;
+                }
+            }
+            if (isMultiple) {
+                // Update the field width to display all the answers and save the previous width (the user may want to try again)
+                r.className = "autocomplete-off width-"+r.style.width
+                r.style.width = "auto";
+                a = toShow
+            }
+            
+        }
+        
+        // Show the right answer
+        r.value = a;
+        markClozeWord(r, CORRECT);
+        r.setAttribute("readonly", "readonly")        
     }
 }
 
 // Blanks all the answers for a cloze field
 // 'inputs' is an option argument containing a list of the 'input' elements for
 // the field
+function clearClozeInputs(e, t) {
+    if (!t) {
+        var t = getCloseInputs(e)
+    }
+    for (var n = 0; n < t.length; n++) {
+        var r = t[n];
+        // Reset the field width if it has more than one right answer: |dog|bird|cat|
+        if (r.className.indexOf("autocomplete-off width-")!=-1) {
+            var w = r.className.replace("autocomplete-off width-","");
+            r.style.width = w;
+        }
+        r.value = "";
+        markClozeWord(r, NOT_ATTEMPTED);
+        r.removeAttribute("readonly")
+    }
+}
 function clearClozeInputs(ident, inputs) {
     if (!inputs) {
         var inputs = getCloseInputs(ident)
@@ -571,8 +615,35 @@ function checkClozeWord(ele) {
     // Extract the idevice id and the input number out of the element's id
     var original = getClozeAnswer(ele);
     var answer = original;
-    var guess = ele.value
-    var ident = getClozeIds(ele)[0]
+    answer = answer.trim();
+    var first = answer.indexOf("|");
+    var last = answer.lastIndexOf("|");
+    if(first==0 && last==answer.length-1)
+    {
+        var answers = answer.split("|"); 
+        var answer_i_ok;
+        for (var i in answers) {
+            if(answers[i]!="")
+            {
+                answer_i_ok = checkClozeWordAnswer(ele,answers[i]);
+                if (answer_i_ok != "")
+                    return answers[i];
+            }
+        }
+        return "";
+    }
+    else
+        return checkClozeWordAnswer(ele,answer);
+}
+
+// Returns the corrected word or an empty string agains one of the possible answers
+function checkClozeWordAnswer(ele,original_answer) {
+    original_answer = original_answer.trim();
+    var guess = ele.value;
+    // Extract the idevice id and the input number out of the element's id
+    //var original = getClozeAnswer(ele);
+    var answer = original_answer;
+    var ident = getClozeIds(ele)[0];
     // Read the flags for checking answers
     var strictMarking = eval(document.getElementById(
         'clozeFlag'+ident+'.strictMarking').value);
@@ -580,11 +651,11 @@ function checkClozeWord(ele) {
         'clozeFlag'+ident+'.checkCaps').value);
     if (!checkCaps) {
         guess = guess.toLowerCase();
-        answer = original.toLowerCase();
+        answer = answer.toLowerCase();
     }
     if (guess == answer)
         // You are right!
-        return original
+        return original_answer;
     else if (strictMarking || answer.length <= 4)
         // You are wrong!
         return "";
@@ -603,7 +674,7 @@ function checkClozeWord(ele) {
                 }
             }
             if (misses <= maxMisses) {
-                return answer;
+                return original_answer;
             } else {
                 return "";
             }
@@ -627,7 +698,7 @@ function checkClozeWord(ele) {
                 }
                 if (misses <= maxMisses)
                     // You are right
-                    return answer;
+                    return original_answer;
                 string1 = string1.substr(1);
             }
         }
@@ -1349,7 +1420,6 @@ if(dO.ns4)setTimeout('history.go(0)',300);
 var $exe = {
     init : function(){
         var d = document.body.className;
-        d += ' js';
         $exe.addRoles();
         //iDevice Toggler
         if (d!='exe-single-page js') {
@@ -1359,13 +1429,14 @@ var $exe = {
             } else $exe.iDeviceToggler.init();
         }
         //Load exe_media.js
-        if (document.body.getAttribute('class') != "exe-epub3") {
+        if (d.indexOf("exe-epub3")!=0) {
         	var h=document.body.innerHTML;
         	if(h.indexOf(' class="mediaelement"')!=-1 || h.indexOf(" class='mediaelement")!=-1){
         		$exe.loadMediaPlayer.getPlayer()
         	}         
         }
         $exe.hint.init();
+        $exe.setIframesProtocol();
         
         if(document.location.search.indexOf("exe_content_qunit_test=1") !== -1) {
         	//load required files
@@ -1380,6 +1451,7 @@ var $exe = {
     	$exe.loadScriptsInOrder(scriptList, function() {
     		EXEContentTesting.getInstance().runAfterScriptsLoad();
     	});
+        
     },
     
     runCallback: function(fn, args, thisObj) {
@@ -1532,6 +1604,18 @@ var $exe = {
 				$exe.alignMediaElement(this);
 			});
         }
+    },
+    
+    setIframesProtocol : function(){
+        var p = window.location.protocol;
+        var l = false;
+        if (p!="http" && p!="https") l = true;
+        $("IFRAME").each(
+            function(){
+                var s = $(this).attr("src");
+                if (l && s.indexOf("//")==0) $(this).attr("src","http:"+s);
+            }
+        );
     },
     
     /**

@@ -41,3 +41,7 @@
   background-repeat: no-repeat;
 }​
 
+
+fieldset.collapsed-with-data > legend > div, fieldset.collapsed-with-data > legend > div > bold > i {
+  font-weight: bold;
+}
