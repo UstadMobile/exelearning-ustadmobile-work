@@ -52,6 +52,7 @@ from exe.webui.renderable          import File
 from exe.webui.xliffexportpreferencespage import XliffExportPreferencesPage
 from exe.webui.xliffimportpreferencespage import XliffImportPreferencesPage
 from exe.webui.dirtree import DirTreePage
+from exe.webui.webservice.loginpage import LoginPage
 from exe.webui.session import eXeSite
 from exe import globals as G
 
@@ -79,6 +80,8 @@ class WebServer:
         self.exportustadmobilep = ExportUstadMobilePage(self.root)#Added
         self.loginumcloudp = LoginUMCloudPage(self.root) #Added
         self.idevicep      = IDevicePage(self.root)#Added
+        self.loginpage     =  LoginPage(self.root)
+        
         
         self.xliffexportpreferences = XliffExportPreferencesPage(self.root)
         self.xliffimportpreferences = XliffImportPreferencesPage(self.root)

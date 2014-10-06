@@ -26,7 +26,8 @@ Ext.define('eXe.controller.Toolbar', {
         'eXe.view.forms.ExportUstadMobilePanel', 
         'eXe.view.forms.LoginUMCloudPanel', 
         'eXe.view.forms.LoginCloudPanel', 
-        'eXe.view.forms.ReadabilityBoundariesPanel'], //Added WizardPanel and IDevicePanel and ExportUstadMobilePanel
+        'eXe.view.forms.ReadabilityBoundariesPanel',
+        'eXe.view.forms.WebServiceLoginPanel'],
 	refs: [{
         ref: 'recentMenu',
         selector: '#file_recent_menu'
@@ -755,6 +756,52 @@ Ext.define('eXe.controller.Toolbar', {
             formpanel = preferences.down('form');
         formpanel.load({url: 'preferences', method: 'GET'});
         preferences.show();        
+	},
+	
+	/**
+	 * Login for multi user web service mode - close window when OK
+	 * 
+	 * @param string username username to authenticate
+	 * @param string password password to authenticate
+	 */
+	handleWebServiceLogin: function(username, password) {
+		Ext.Ajax.request({
+			url: '/loginpage',
+			params: {
+				"username" : username,
+				"password" : password
+			},
+			scope: this,
+			success: function(response) {
+				var response = Ext.JSON.decode(response.responseText);
+				if(response['result'] == 200) {
+					Ext.getCmp('webserviceloginwin').close();
+				}else {
+					Ext.Msg.alert(_("Sorry - invalid username or password"));
+				}
+			}
+		});
+	},
+	
+	/**
+	 * Show the login form when running in multi user webapp mode
+	 * 
+	 * @method
+	 */
+	showWebServiceLogin: function() {
+		var webserviceLogin = new Ext.Window({
+			height: 360, 
+	        width: 550, 
+	        modal: true,
+	        id: 'webserviceloginwin',
+	        title: _("Login"),
+	        layout: 'fit',
+	        closable: false,
+	        items: [{
+                xtype: 'webserviceloginp'
+            }]
+		});
+		webserviceLogin.show();
 	},
 	
     // Launch the iDevice Editor Window

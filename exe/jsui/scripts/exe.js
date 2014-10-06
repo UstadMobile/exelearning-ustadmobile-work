@@ -195,14 +195,18 @@ Ext.application({
 		  }, 250);
         
         if(eXe.app.config.appMode === APPMODE_WEBAPP) {
-            alert("You need to login");
+        	if(!eXe.app.config.webservice_user) {
+        		eXe.app.getController('Toolbar').showWebServiceLogin();
+        	}
         }
         
-        if (eXe.app.config.showPreferences)
+        if (eXe.app.config.showPreferences) {
         	eXe.app.getController('Toolbar').toolsPreferences();
+        }
         
-        if (eXe.app.config.showWizard)	//Added
+        if (eXe.app.config.showWizard) {
         	eXe.app.getController('Toolbar').toolsWizard();
+        }
         
         /* Disabled due to new insert menu
 

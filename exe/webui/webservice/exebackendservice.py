@@ -94,4 +94,13 @@ class EXEBackEndService(object):
         """
         return self.backend_provider.authenticate(username, password)
         
+    def authenticate_session(self, session, username, password):
+        auth_result = self.authenticate_user(username, password)
+        if auth_result['result'] == 200:
+            session.webservice_user = auth_result['userid']
+        else:
+            session.webservice_user = None
+            
+        return auth_result
+    
         

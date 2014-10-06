@@ -349,6 +349,12 @@ class MainPage(RenderableLivePage):
                   'pathSep': os.path.sep,
                   'appMode' : G.application.config.appMode
                  }
+        if G.application.config.appMode == "WEBAPP":
+            if self.session.webservice_user is not None:
+                config['webservice_user'] = self.session.webservice_user
+            else:
+                config['webservice_user'] = ""
+        
         G.application.preferencesShowed = True
         G.application.loadErrors = []
         return tags.script(type="text/javascript")["var config = %s" % json.dumps(config)]

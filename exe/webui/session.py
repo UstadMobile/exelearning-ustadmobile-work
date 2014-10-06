@@ -80,6 +80,8 @@ class eXeSession(server.Session):
     def __init__(self, *args, **kwargs):
         server.Session.__init__(self, *args, **kwargs)
         self.packageStore = PackageStore()
+        self.webservice_user = None
+        
 
 
 class eXeSite(appserver.NevowSite):
