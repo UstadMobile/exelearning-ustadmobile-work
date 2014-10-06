@@ -35,3 +35,7 @@ debian/python-intef-exe.debhelper.log
 debian/python-intef-exe.postinst.debhelper
 debian/python-intef-exe.prerm.debhelper
 debian/python-intef-exe.substvars
+
+# files containing credentials
+test-settings.json
+

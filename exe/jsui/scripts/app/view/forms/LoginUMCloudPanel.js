@@ -187,18 +187,6 @@ var loginumcloudpanel = Ext.define('eXe.view.forms.LoginUMCloudPanel', {
                                 
                     ]
                 },
-                	/*
-                	{
-                    	xtype:            'button',
-                        //html:       '<i>Select which Removable USB Drive to export your project</i><br></br>',
-                    	text: _('Reset'),
-                        icon: '/images/edit-clear-2.png',
-                        buttonAlign: 'center',
-                        handler: function(button){
-                   	 		//Something?
-                    		}
-                	},
-                	 */
           ]
         }); //End of ExtApplyIf
         

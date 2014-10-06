@@ -24,6 +24,14 @@ function _(msg) {
     return translations[msg] || msg;
 }
 
+/*
+ *  constants - indicating the run mode for the application
+ *  As per config.py variable appMode
+ */
+var APPMODE_DESKTOP = "DESKTOP";
+var APPMODE_WEBAPP = "WEBAPP";
+
+
 Ext.Loader.setConfig({
     enabled: true,
     paths: { 'Ext.ux': 'jsui/extjs/examples/ux' }
@@ -185,6 +193,10 @@ Ext.application({
 		    Ext.get('loading').hide();
 		    Ext.get('loading-mask').fadeOut();
 		  }, 250);
+        
+        if(eXe.app.config.appMode === APPMODE_WEBAPP) {
+            alert("You need to login");
+        }
         
         if (eXe.app.config.showPreferences)
         	eXe.app.getController('Toolbar').toolsPreferences();

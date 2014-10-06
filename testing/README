@@ -1,6 +1,13 @@
 To run theses tests run them from the base directory (e.g. iteexe)
 when checked out from git do the following:
 
+1. Enter test settings for username/password for auth tests
+
+cp test-settings.default.json test-settings.json
+vi test-settings.json
+
+2. Run the tests
+
 export PYTHONPATH=$(pwd)
 python testing/runtests.py
 

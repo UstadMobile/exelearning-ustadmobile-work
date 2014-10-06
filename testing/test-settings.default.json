@@ -1,0 +1,5 @@
+{
+    "xapi_base" : "http://umcloud1.ustadmobile.com/umlrs",
+    "tincan_valid_user" : "VALIDUSERNAMEHERE",
+    "tincan_valid_pass" : "VALIDPASSWORDHERE"
+}

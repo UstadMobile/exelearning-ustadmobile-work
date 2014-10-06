@@ -43,10 +43,20 @@ x_ = lambda s: s
 
 
 class Config(object):
+    
+    '''
+    Indicates running in Desktop mode
+    '''
+    MODE_DESKTOP = "DESKTOP"
+    
+    '''
+    Indicates running in webapp mode
+    '''
+    MODE_WEBAPP = "WEBAPP"
+    
     """
     The Config class contains the configuration information for eXe.
     """
-
     # Class attributes
     optionNames = {
         'system': ('webDir', 'jsDir', 'port', 'dataDir',
@@ -55,7 +65,7 @@ class Config(object):
                    'videoMediaConverter_mpg', 'videoMediaConverter_mp4',
                    'videoMediaConverter_avi', 'audioMediaConverter_ogg',
                    'audioMediaConverter_au', 'audioMediaConverter_mp3',
-                   'audioMediaConverter_wav', 'ffmpegPath'),
+                   'audioMediaConverter_wav', 'ffmpegPath', 'appMode'),
         'user': ('locale', 'lastDir', 'showWizardOnStart', 
                  'showPreferencesOnStart','defaultStyle', 
                  'showIdevicesGrouped','docType', 'editorMode',
@@ -150,6 +160,9 @@ class Config(object):
         self.stylesDir =Path(self.configDir/'style').abspath()
         #FM: Default Style name
         self.defaultStyle= u"INTEF"
+        
+        #MD: app running mode to be either MODE_DESKTOP or MODE_WEBAPP
+        self.appMode = Config.MODE_DESKTOP
         
         #MD: New readability options settings
         self.readabilityPresetsDir = Path(self.configDir/'readability-presets').abspath()
@@ -367,6 +380,7 @@ class Config(object):
             
             self.port           = int(system.port)
             self.browser        = None if system.browser == u"None" else system.browser
+            self.appMode = system.appMode
             
             
             if not G.application.portable:

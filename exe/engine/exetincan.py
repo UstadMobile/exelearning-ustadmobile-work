@@ -4,6 +4,11 @@ Created on Mar 2, 2014
 @author: mike
 '''
 from exe.webui.common import strip_html_to_plaintext
+import urllib
+import urllib2
+from urllib2 import HTTPError
+import base64
+
 import json
 
 class EXETinCan(object):
@@ -28,6 +33,49 @@ class EXETinCan(object):
         json_str = json_str.replace("&nbsp", "&#160")
         
         return json_str
+    
+class EXETinCanAuthenticator(object):
+    '''
+    Authenticator against TinCan servers
+    '''
+    
+    def __init__(self):
+        pass
+        
+    
+    def authenticate(self, username, password, xapi_url_base):
+        '''
+        Authenticate a user against a TinCan server - returns 200 
+        OK, 403 or 500
+        
+        Parameters
+        ----------
+        username: str 
+            Username to authenticate
+        password: str
+            Password to authenticate
+        xapi_url_base : str
+            The XAPI base location url e.g. http://server/xapi - should
+            NOT have a trailing slash
+        '''
+        
+        credentials = username + ":" + password
+        auth_encoded = "Basic " + base64.b64encode(credentials)
+        
+        headers = {'X-Experience-API-Version': '1.0.1', 
+                   'Authorization': auth_encoded}        
+        
+        url = "%s/statements?limit=1" % xapi_url_base
+        
+        request = urllib2.Request(url, None, headers)
+        
+        try:
+            response = urllib2.urlopen(request)
+            response_code = response.code
+            return response_code
+        except HTTPError as http_error:
+            return http_error.code
+            
     
 
 def summarize_str_tincan(str, max_len = 64):

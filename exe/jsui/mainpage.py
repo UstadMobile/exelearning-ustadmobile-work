@@ -346,7 +346,8 @@ class MainPage(RenderableLivePage):
                   'loadErrors': G.application.loadErrors,
                   'showIdevicesGrouped': G.application.config.showIdevicesGrouped == '1',
                   'authoringIFrameSrc': '%s/authoring?clientHandleId=%s' % (self.package.name, IClientHandle(ctx).handleId),
-                  'pathSep': os.path.sep
+                  'pathSep': os.path.sep,
+                  'appMode' : G.application.config.appMode
                  }
         G.application.preferencesShowed = True
         G.application.loadErrors = []
