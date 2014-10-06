@@ -1410,7 +1410,7 @@ this.idRef.onmouseup=function(){dO.currID=null}
 }
 
 if(dO.ns4)document.captureEvents(Event.MOUSEMOVE);
-document.onmousemove=trckM;
+//document.onmousemove=trckM;
 
 
 window.onresize=function(){

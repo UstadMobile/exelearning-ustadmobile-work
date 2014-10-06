@@ -558,15 +558,6 @@ function loadKeymap() {
 	    authoring = Ext.ComponentQuery.query('#authoring')[0],
 	    keymap = new Ext.util.KeyMap(authoring.getBody(), toolbar.keymap_config);
 }
-/* *********************************** */
-/* WYSIWYG Editor and common settings */
-/* ********************************* */
-
-// Common settings
-var eXeLearning_settings = {
-    wysiwyg_path : "/scripts/tinymce_3.5.7/jscripts/tiny_mce/tiny_mce.js",
-    wysiwyg_settings_path : "/scripts/tinymce_3.5.7_settings.js"
-}
 
 // browse the specified URL in system browser
 function browseURL(e) {
@@ -594,6 +585,7 @@ function getTinyMCELang(lang){
 var exe_tinymce = {
 	
 	chooseImage : function(field_name, url, type, win) {
+		var tinyMCEVersion = 4;
 		
 		var fn = function(local_imagePath) {
 			win.focus();
@@ -636,41 +628,52 @@ var exe_tinymce = {
 			// pass the file information on to the server,
 			// to copy it into the server's "previews" directory:
 			window.parent.nevow_clientToServerEvent('previewTinyMCEimage', this, '', win, win.name, field_name, unescaped_local_imagePath, preview_imageName)
-		
-			// first, clear out any old value in the tinyMCE image filename field:
-			win.document.forms[0].elements[field_name].value = ""; 
-		
-			// PreviewImage is only available for images:
-			if (type == "image") {
-			   win.ImageDialog.showPreviewImage(" ");
-			} else if (type == "media") {
-			   win.window.Media.preview();
-			}    
-		
-			// set the tinyMCE image filename field:
-			win.document.forms[0].elements[field_name].value = full_previewImage_url;
-			// then force its onchange event:
-		
-			// PreviewImage is only available for images:
-			if (type == "image") {
-			   win.ImageDialog.showPreviewImage(full_previewImage_url);
-			}
-			else if (type == "media") {
-			   win.window.Media.preview();
-			}
-		
-			// this onchange works, but it's dirty because it is hardcoding the 
-			// onChange=".." event of that field, and if that were to ever change 
-			// in tinyMCE, then this would be out of sync.
-		
-			// and finally, be sure to update the tinyMCE window's image data:
-			if (win.getImageData) {
-				win.getImageData();
-			} else {
-				if (window.tinyMCE.getImageData) {
-				   window.tinyMCE.getImageData();
+			
+			if(tinyMCEVersion != 4) {
+				
+				
+				// first, clear out any old value in the tinyMCE image filename field:
+				win.document.forms[0].elements[field_name].value = "";
+				
+				// PreviewImage is only available for images:
+				if (type == "image") {
+				   win.ImageDialog.showPreviewImage(" ");
+				} else if (type == "media") {
+				   win.window.Media.preview();
+				}    
+				
+				
+				// set the tinyMCE image filename field:
+				win.document.forms[0].elements[field_name].value = full_previewImage_url;
+				// then force its onchange event:
+			
+				// PreviewImage is only available for images:
+				if (type == "image") {
+				   win.ImageDialog.showPreviewImage(full_previewImage_url);
 				}
+				else if (type == "media") {
+				   win.window.Media.preview();
+				}
+			
+				// this onchange works, but it's dirty because it is hardcoding the 
+				// onChange=".." event of that field, and if that were to ever change 
+				// in tinyMCE, then this would be out of sync.
+			
+				// and finally, be sure to update the tinyMCE window's image data:
+				if (win.getImageData) {
+					win.getImageData();
+				} else {
+					if (window.tinyMCE.getImageData) {
+					   window.tinyMCE.getImageData();
+					}
+				}
+			}else {
+				win.document.getElementById(field_name).value = full_previewImage_url;
 			}
+			
+			
+		
+			
 		}
 		// ask user for image or media, depending on type requested:
 		if (type == "image") {

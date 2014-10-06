@@ -289,22 +289,37 @@ def textArea(name, value="", disabled="", cols="80", rows="8"):
 
 
 def richTextArea(name, value="", width="100%", height=100, package=None, default_prompt = None, default_text = None): 
-    """Adds a editor to a form"""
+    """
+    Adds a editor to a form
+    """
     log.debug(u"richTextArea %s, height=%s" % (value, height))
     # to counter TinyMCE's ampersand-processing:
-    safe_value = value.replace('&','&amp;')
-    if safe_value != value:
-        value = safe_value
-        log.debug(u"richTextArea pre-processed value to: %s" % value)
-    html  = u'<textarea name="%s" ' % name
+    if G.application.config.tinyMCEVersion != "4":
+        safe_value = value.replace('&','&amp;')
+        if safe_value != value:
+            value = safe_value
+            log.debug(u"richTextArea pre-processed value to: %s" % value)
+    
+    area_tag_name = "textarea"
+    name_attr = "name" 
+    if G.application.config.tinyMCEVersion == "4":
+        area_tag_name = "div"
+        name_attr = "id"  
+    
+    html  = u'<%s %s="%s" ' % (area_tag_name, name_attr, name)
     html_js  = '<script type="text/javascript">if (typeof(tinymce_anchors)=="undefined") var tinymce_anchors = [];'
     #For some reason width keeps on changing. So puting a new value and fixing it at 75% rather than 100%
-    width = "75%" #Changed
-    html += u'style=\"width:' + width + '; height:' + str(height) + 'px;" '  
-    #print("The width is: " + width) #Testing..
+    
+    html += u'style=\"width:' + width + '; "'
+    if G.application.config.tinyMCEVersion == "4":
+        html += 'min-height:' + str(height) + 'px;" '  
+    else:
+        html += 'height:' + str(height) + 'px;" '
+    
     default_prompt_class = ""
     default_prompt_attr = ""
     default_text_attr = ""
+    
     
     if default_prompt is not None and default_prompt != "":
         default_prompt_class = " defaultprompt defaultpromptactive"
@@ -315,10 +330,13 @@ def richTextArea(name, value="", width="100%", height=100, package=None, default
         default_text_attr = " data-defaulttext='%s' " % \
             default_text
     
+    
     html += u'class="mceEditor %s" %s ' % (default_prompt_class, \
                                            default_prompt_attr)
     html += default_text_attr
-    html += u'cols="52" rows="8">'
+    if G.application.config.tinyMCEVersion == "3":
+        html += u'cols="52" rows="8"'
+    html += '>'
     ########
     # add exe_tmp_anchor tags 
     # for ALL anchors available in the entire doc!
@@ -355,10 +373,10 @@ def richTextArea(name, value="", width="100%", height=100, package=None, default
     # FieldWithResources' ProcessPreviewed()
     ########
     html += value
-    html += u'</textarea><br/>'
+    html += u'</%s><br/>' % area_tag_name
     html_js  += '</script>'
-    new_html = html+html_js
-    return new_html
+    return html+html_js
+    
 
 
 def image(name, value, width="", height="", alt=None):

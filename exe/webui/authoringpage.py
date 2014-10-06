@@ -32,6 +32,7 @@ from exe.engine.error        import Error
 from exe.webui.renderable    import RenderableResource
 from exe.engine.path         import Path
 from exe                     import globals as G
+import json
 
 log = logging.getLogger(__name__)
 
@@ -134,7 +135,8 @@ class AuthoringPage(RenderableResource):
         html += u'<body onload="onLoadHandler();" class="exe-authoring-page js">\n'
         html += u"""<div id='externalToolbarHolder' 
         style='z-index: 1000; position: fixed; top: 0px; width: 100%; left:0px; border-bottom: 2px solid gray; height: 0px'>"""
-        html += u"<div id='externalToolbarWrapper' class='defaultSkin'>&nbsp;</div>\n"
+        
+        #html += u"<div id='externalToolbarWrapper' class='defaultSkin'>&nbsp;</div>\n"
         html += u"</div>"
         
         html += u"<form method=\"post\" "
@@ -204,7 +206,8 @@ class AuthoringPage(RenderableResource):
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/imgAreaSelect/imgareaselect-default.css\" />"
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/style/%s/content.css\" />" % self.package.style
         html += u"<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/jquery-ui-1.10.4.custom/ui-lightness/jquery-ui-1.10.4.custom.min.css\" />"
-        html += u"<link rel='stylesheet' type='text/css' href='/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/skins/default/ui.css' />"
+        if G.application.config.tinyMCEVersion != "4":
+            html += u"<link rel='stylesheet' type='text/css' href='/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/skins/default/ui.css' />"
         if G.application.config.assumeMediaPlugins: 
             html += u"<script type=\"text/javascript\">var exe_assume_media_plugins = true;</script>\n"
         #JR: anado una variable con el estilo
@@ -215,7 +218,25 @@ class AuthoringPage(RenderableResource):
         html += u"var exe_package_name='"+self.package.name+"';"
         html += 'var exe_export_format="'+common.getExportDocType()+'".toLowerCase();'
         html += 'var exe_editor_mode="'+myPreferencesPage.getEditorMode()+'";'
-        html += '</script>\n'        
+                
+        
+        #MD Set the correct tinymce version to use
+        tinymce_src = None
+        
+        if G.application.config.tinyMCEVersion == "3":
+            tinymce_src = {"wysiwyg_path" : 
+                                "/scripts/tinymce_3.5.7/jscripts/tiny_mce/tiny_mce.js",
+                           "wysiwyg_settings_path" :
+                                "/scripts/tinymce_3.5.7_settings.js"}
+        else:
+            tinymce_src = {"wysiwyg_path" :
+                            "/scripts/tinymce/tinymce.min.js",
+                           "wysiwyg_settings_path" :
+                            "/scripts/tinymce_settings.js"}
+        html += 'var eXeLearning_settings = '
+        html += json.dumps(tinymce_src) + ";\n"
+        
+        html += '</script>\n'
         html += u'<script type="text/javascript" src="../jsui/native.history.js"></script>\n'
         html += u'<script type="text/javascript" src="/scripts/authoring.js"></script>\n'
         html += u'<script type="text/javascript" src="/scripts/exe_jquery.js"></script>\n'

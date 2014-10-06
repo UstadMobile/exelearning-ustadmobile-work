@@ -56,7 +56,10 @@ class Config(object):
                    'videoMediaConverter_avi', 'audioMediaConverter_ogg',
                    'audioMediaConverter_au', 'audioMediaConverter_mp3',
                    'audioMediaConverter_wav', 'ffmpegPath'),
-        'user': ('locale', 'lastDir', 'showWizardOnStart', 'showPreferencesOnStart','defaultStyle', 'showIdevicesGrouped','docType', 'editorMode'),
+        'user': ('locale', 'lastDir', 'showWizardOnStart', 
+                 'showPreferencesOnStart','defaultStyle', 
+                 'showIdevicesGrouped','docType', 'editorMode',
+                 'tinyMCEVersion'),
         #Added showWizardOnStart
     }
 
@@ -166,6 +169,8 @@ class Config(object):
         self.showPreferencesOnStart = "1" #Commented for testing
         self.showWizardOnStart = "1"    #Added
         self.showIdevicesGrouped = "1"
+        self.tinyMCEVersion = "4"
+        
         # tinymce option
         self.editorMode = 'permissive' 
         # styleSecureMode : if this [user] key is = 0  , exelearning can run python files in styles
@@ -485,6 +490,8 @@ class Config(object):
                 self.showPreferencesOnStart = self.configParser.user.showPreferencesOnStart 
             if self.configParser.user.has_option('showWizardOnStart'):              #Added
                 self.showWizardOnStart = self.configParser.user.showWizardOnStart   #Added
+            if self.configParser.user.has_option("tinyMCEVersion"):
+                self.tinyMCEVersion = self.configParser.user.tinyMCEVersion 
             if self.configParser.user.has_option('showIdevicesGrouped'):
                 self.showIdevicesGrouped = self.configParser.user.showIdevicesGrouped
             if self.configParser.user.has_option('locale'):
