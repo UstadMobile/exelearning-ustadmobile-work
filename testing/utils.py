@@ -22,6 +22,7 @@ import sys
 import unittest
 import shutil
 import random
+import json
 
 # Make it easy to import exe stuff
 if '..' not in sys.path:
@@ -340,6 +341,26 @@ class TestSuperTestCase(SuperTestCase):
         Tests that the setup runs.
         To run type: python utils.py
         """
+
+class TestSettingsHelper(object):
+    """
+    Utility to allow a configuration file for unit testing
+    """
+    
+    
+    def __init__(self):
+        pass
+
+    def get_test_settings(self):
+        """
+        Return test settings from test-settings.json in the testing dir
+        """
+        test_dir = os.path.dirname(os.path.realpath(__file__))
+        settings_file = open(os.path.join(test_dir,"test-settings.json"))
+        settings_str = settings_file.read()
+        test_settings = json.loads(settings_str)
+        
+        return test_settings
 
 if __name__ == '__main__':
     unittest.main()

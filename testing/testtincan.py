@@ -6,7 +6,10 @@ Created on Oct 6, 2014
 import unittest
 import json
 import os
+import utils
+
 from exe.engine.exetincan import EXETinCanAuthenticator
+from testing.utils import TestSettingsHelper
 
 class TestTinCan(unittest.TestCase):
     
@@ -15,10 +18,7 @@ class TestTinCan(unittest.TestCase):
 
 
     def testTinCanAuthentication(self):
-        test_dir = os.path.dirname(os.path.realpath(__file__))
-        settings_file = open(os.path.join(test_dir,"test-settings.json"))
-        settings_str = settings_file.read()
-        test_settings = json.loads(settings_str)
+        test_settings = TestSettingsHelper().get_test_settings()
         
         valid_auth_result = EXETinCanAuthenticator().authenticate(
                                    test_settings['tincan_valid_user'], 

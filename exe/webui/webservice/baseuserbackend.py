@@ -19,6 +19,12 @@ class BaseUserBackend(object):
         '''
         Constructor
         '''
+    def set_config(self, config):
+        """
+        Set the configuration parameters (e.g. from settings file)
+        """
+        pass
+    
     
     def authenticate(self, username, password):
         '''

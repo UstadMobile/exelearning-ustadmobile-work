@@ -5,7 +5,8 @@ Created on Oct 6, 2014
 '''
 
 from exe.webui.webservice.baseuserbackend import BaseUserBackend
-from exe.engine.exetincan import EXETinCan
+from exe.engine.exetincan import EXETinCan, EXETinCanAuthenticator 
+
 
 
 class TinCanUserBackend(BaseUserBackend):
@@ -18,15 +19,23 @@ class TinCanUserBackend(BaseUserBackend):
         '''
         Constructor
         '''
+        self.xapi_base = ""
+    
+    def set_config(self, config):
+        """
+        Set the configuration parameters (e.g. from settings file)
+        """
+        self.xapi_base = config["xapi_base"]
         
         
     def authenticate(self, username, password):
         '''
         Authenticate against a tincan server
         '''
-        auth_result = EXETinCan().auth
+        auth_result = EXETinCanAuthenticator().authenticate(
+                                   username, password, self.xapi_base)
         
-        result = {'result' : BaseUserBackend.AUTH_FAIL}
+        result = {'result' : auth_result, "userid" : username}
         
         return result
     
