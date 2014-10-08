@@ -24,10 +24,12 @@ from exe.webui.renderable import RenderableResource
 from twisted.web.resource import Resource
 from exe.engine.path import Path
 from exe import globals as G
+from exe.engine.config import Config
 from urllib import unquote
 import json
 import mimetypes
 import os
+from exe.webui.webservice.exebackendservice import EXEBackEndService
 
 log = logging.getLogger(__name__)
 
@@ -100,10 +102,30 @@ class DirTreePage(RenderableResource):
             return self
         return Resource.getChild(self, path, request)
 
+    def get_dirpath_for_request(self, request, dirpath):
+        """
+        Return the dirpath adjusted if required for the session username
+        e.g. /path/to/userfiles/username
+        """
+        if G.application.config.appMode == Config.MODE_DESKTOP:
+            #get the user root from the webservice
+            return dirpath
+        else:
+            username = request.getSession().webservice_user
+            return  EXEBackEndService.get_instance(\
+                               ).adjust_relative_path_for_user(
+                                               username, dirpath)
+            
+            
+
     def render(self, request):
         if "sendWhat" in request.args:
             if request.args['sendWhat'][0] == 'dirs':
-                pathdir = Path(unquote(request.args['node'][0].decode('utf-8')))
+                path_dir_str = unquote(request.args['node'][0].decode('utf-8'))
+                path_dir_str = self.get_dirpath_for_request(
+                                                request, path_dir_str)
+                pathdir = Path(path_dir_str)
+                
                 l = []
                 if pathdir == '/' and sys.platform[:3] == "win":
                     for d in get_drives():
@@ -128,7 +150,10 @@ class DirTreePage(RenderableResource):
                         except:
                             pass
             elif request.args['sendWhat'][0] == 'both':
-                pathdir = Path(unquote(request.args['dir'][0].decode('utf-8')))
+                pathdir_str = unquote(request.args['dir'][0].decode('utf-8'))
+                pathdir_str = self.get_dirpath_for_request(
+                                               request, pathdir_str)
+                pathdir = Path(pathdir_str)
                 items = []
                 if pathdir == '/' and sys.platform[:3] == "win":
                     for drive in get_drives():
@@ -176,7 +201,9 @@ class DirTreePage(RenderableResource):
             return json.dumps(l).encode('utf-8')
         elif "query" in request.args:
             query = request.args['query'][0]
-            pathdir = Path(unquote(request.args['dir'][0].decode('utf-8')))
+            path_dir_str = unquote(request.args['dir'][0].decode('utf-8'))
+            path_dir_str = self.get_dirpath_for_request(request,path_dir_str)
+            pathdir = Path(path_dir_str)
             items = []
             if pathdir == '/' and sys.platform[:3] == "win":
                 for d in get_drives():

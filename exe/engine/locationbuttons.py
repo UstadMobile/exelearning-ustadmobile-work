@@ -21,11 +21,15 @@
 import sys
 import os
 from exe.engine.path import Path
+from exe.engine.config import Config
+from exe                         import globals as G
 
 
 class LocationButtons(object):
     def __init__(self):
-        if sys.platform[:3] == "win":
+        if G.application.config.appMode == Config.MODE_WEBAPP:
+            self.names_map = {}
+        elif sys.platform[:3] == "win":
             self.names_map = {0: x_('Desktop'),
                          5: x_('My Documents'),
                          40: x_('Home Folder')}

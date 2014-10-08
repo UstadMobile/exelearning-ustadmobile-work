@@ -6,6 +6,8 @@ Created on Oct 6, 2014
 from exe                         import globals as G
 import os
 import json
+from exe.engine.path import Path
+
 
 class EXEBackEndService(object):
     '''
@@ -68,14 +70,20 @@ class EXEBackEndService(object):
         Make the EXEAuthService run
         '''
         if auth_config is None:
-            self.auth_config = EXEBackEndService.load_default_auth_settings()
-        else:
-            self.auth_config = auth_config
-            
+            auth_config = EXEBackEndService.load_default_auth_settings()
+        self.set_config(auth_config)
+        
         backend_class_name = self.auth_config['auth_class_name']
         self.backend_provider = EXEBackEndService.load_backend_class_by_name(
                                                              backend_class_name)
         self.backend_provider.set_config(self.auth_config)
+    
+    def set_config(self, config):
+        if "autocreate_user_path" not in config:
+            config["autocreate_user_path"] = "0"
+        
+        self.auth_config = config
+
     
     def get_provider(self):
         """
@@ -103,4 +111,24 @@ class EXEBackEndService(object):
             
         return auth_result
     
+    def get_base_path_for_user(self, username):
+        """
+        Returns the base directory for the user
+        """
+        dir_path = self.backend_provider.get_base_path_for_user(username)
+        if self.auth_config['autocreate_user_path'] == "1":
+            path_obj = Path(dir_path)
+            if not path_obj.exists():
+                path_obj.makedirs()
+        
+        return dir_path
+    
+    def adjust_relative_path_for_user(self, username, relative_path):
+        base_path = self.get_base_path_for_user(username)
+        
+        #Sanity check
+        if relative_path == "/":
+            relative_path = ""
+
+        return os.path.join(base_path, relative_path)
         

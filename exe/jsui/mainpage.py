@@ -17,6 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # ===========================================================================
+from exe.webui.webservice.exebackendservice import EXEBackEndService
 
 """
 This is the main Javascript page.
@@ -63,6 +64,7 @@ from exe.importers.scanresources import Resources
 from exe.engine.path             import Path, toUnicode, TempDirPath
 from exe.engine.package          import Package
 from exe                         import globals as G
+from exe.engine.config import Config
 from tempfile                    import mkdtemp
 from exe.engine.mimetex          import compile
 from urllib                      import unquote, urlretrieve
@@ -73,6 +75,8 @@ from exe.export.xmlexport import XMLExport
 from exe.engine.lom import lomsubs
 from exe.engine.lom.lomclassification import Classification
 import zipfile
+import copy
+
 log = logging.getLogger(__name__)
 
 
@@ -95,6 +99,8 @@ class MainPage(RenderableLivePage):
         self.putChild("resources", File(package.resourceDir))
 		#styles directory
         #self.putChild("stylecss", File(self.config.stylesDir)
+        
+        self.adjust_config_for_user()
 
         mainjs = Path(self.config.jsDir).joinpath('templates', 'mainpage.html')
         self.docFactory  = loaders.htmlfile(mainjs)
@@ -116,6 +122,12 @@ class MainPage(RenderableLivePage):
 
         self.location_buttons = LocationButtons()
 
+
+    def adjust_config_for_user(self):
+        if G.application.config.appMode == Config.MODE_WEBAPP:
+            import copy
+            new_config = copy.copy(self.config)
+            x = 0 
 
     def child_authoring(self, ctx):
         """Returns the authoring page that corresponds to the url http://127.0.0.1:port/package_name/authoring"""
@@ -624,8 +636,23 @@ class MainPage(RenderableLivePage):
                 msg = u'%s\n%s' % (msg, explanation)
                 client.alert(msg)
                 raise Exception(msg)
+        
+        inputFilename = self.adjust_path_for_user(inputFilename)
+            
         return inputFilename
 
+    def adjust_path_for_user(self, path):
+        """
+        Adjusts the path if running in webapp mode to be for the
+        user's directory.  In desktop mode returns path as is.
+        """
+        if G.application.config.appMode != Config.MODE_WEBAPP:
+            return path
+        else:
+            return EXEBackEndService.get_instance(
+                           ).adjust_relative_path_for_user(
+                           self.session.webservice_user, path)
+    
     def handleSavePackage(self, client, filename=None, onDone=None):
         """
         Save the current package
@@ -668,6 +695,8 @@ class MainPage(RenderableLivePage):
 
     def handleLoadPackage(self, client, filename, filter_func=None):
         """Load the package named 'filename'"""
+        filename = self.adjust_path_for_user(filename)
+        
         package = self._loadPackage(client, filename, newLoad=True)
         self.session.packageStore.addPackage(package)
         self.webServer.root.bindNewPackage(package, self.session)
@@ -1247,6 +1276,7 @@ class MainPage(RenderableLivePage):
         """
         Load the package and insert in current node
         """
+        filename = self.adjust_path_for_user(filename)
         package = self._loadPackage(client, filename, newLoad=True)
         tmpfile = Path(tempfile.mktemp())
         package.save(tmpfile)
@@ -1270,6 +1300,7 @@ class MainPage(RenderableLivePage):
         Create a new package consisting of the current node and export
         'existOk' means the user has been informed of existance and ok'd it
         """
+        filename = self.adjust_path_for_user(filename)
         filename  = Path(filename, 'utf-8')
         saveDir = filename.dirname()
         if saveDir and not saveDir.exists():
@@ -1305,6 +1336,8 @@ class MainPage(RenderableLivePage):
 
     def handleCreateDir(self, client, currentDir, newDir):
         try:
+            currentDir = self.adjust_path_for_user(currentDir)
+            
             d = Path(currentDir, 'utf-8') / newDir
             d.makedirs()
             client.sendScript(u"""eXe.app.getStore('filepicker.DirectoryTree').load({ 

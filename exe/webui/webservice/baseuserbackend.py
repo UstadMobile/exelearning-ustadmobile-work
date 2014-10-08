@@ -35,5 +35,13 @@ class BaseUserBackend(object):
         result = {'result' : BaseUserBackend.AUTH_FAIL}
         
         return result
+    
+    def get_base_path_for_user(self, username):
+        """
+        Should return the path to the base directory for the given
+        user as a string
+        """
+        return None
+    
         
     
