@@ -100,8 +100,6 @@ class MainPage(RenderableLivePage):
 		#styles directory
         #self.putChild("stylecss", File(self.config.stylesDir)
         
-        self.adjust_config_for_user()
-
         mainjs = Path(self.config.jsDir).joinpath('templates', 'mainpage.html')
         self.docFactory  = loaders.htmlfile(mainjs)
 
@@ -267,6 +265,9 @@ class MainPage(RenderableLivePage):
         
         setUpHandler(self.handleReadabilityBoundariesImport,
                      "readabilityBoundariesImport")
+        
+        setUpHandler(self.handleLoadWebUserConfig,
+                     "loadWebUserConfig")
 
         self.idevicePane.client = client
         self.styleMenu.client = client
@@ -334,7 +335,20 @@ class MainPage(RenderableLivePage):
               "eXeReadabilityHelper.importReadabilityBoundariesShow('"
               +basename + "','"
               +in_contents+"')")
-        
+    
+    def get_current_webuser(self):
+        return self.session.webservice_user
+
+    def handleLoadWebUserConfig(self, client):
+        """
+        Load the configuration for this specific user using the
+        backend.
+        """
+        self.config = EXEBackEndService.get_instance().adjust_config_for_user(
+                               self.get_current_webuser(), self.config)
+        client.sendScript(
+            'eXe.app.getController("Toolbar").updateAppConfig(%s)' % \
+            json.dumps(self.get_config_dict()))
 
     def _startWTKPreview(self):
         if not self.package.previewDir:
@@ -350,23 +364,36 @@ class MainPage(RenderableLivePage):
         wtkPreviewThread = WTKPreviewThread(filename, self.package.name)
         wtkPreviewThread.start()
 
-    def render_config(self, ctx, data):
-        config = {'lastDir': G.application.config.lastDir,
+    def get_config_dict(self, ctx = None):
+        """
+        Return a dict of configuration keys needed by the ExtJS app
+        """
+        config = {'lastDir': self.config.lastDir,
                   'locationButtons': self.location_buttons.buttons,
                   'lang': G.application.config.locale.split('_')[0],
                   'showPreferences': G.application.config.showPreferencesOnStart == '1' and not G.application.preferencesShowed,
                   'loadErrors': G.application.loadErrors,
                   'showIdevicesGrouped': G.application.config.showIdevicesGrouped == '1',
-                  'authoringIFrameSrc': '%s/authoring?clientHandleId=%s' % (self.package.name, IClientHandle(ctx).handleId),
                   'pathSep': os.path.sep,
                   'appMode' : G.application.config.appMode
                  }
+        if ctx is not None:
+            config['authoringIFrameSrc'] = '%s/authoring?clientHandleId=%s' % \
+                (self.package.name, IClientHandle(ctx).handleId)
+        
         if G.application.config.appMode == "WEBAPP":
             if self.session.webservice_user is not None:
                 config['webservice_user'] = self.session.webservice_user
             else:
                 config['webservice_user'] = ""
-        
+                
+        return config
+    
+    def render_config(self, ctx, data):
+        """
+        Render ExtJS configuration keys needed inside a script tag
+        """
+        config = self.get_config_dict(ctx)
         G.application.preferencesShowed = True
         G.application.loadErrors = []
         return tags.script(type="text/javascript")["var config = %s" % json.dumps(config)]

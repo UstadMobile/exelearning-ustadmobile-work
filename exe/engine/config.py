@@ -17,6 +17,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # ===========================================================================
 
+
 """
 Config settings loaded from exe.conf
 Is responsible for the system-wide settings we use
@@ -38,6 +39,7 @@ import shutil
 from exe                      import globals as G
 from exe.engine.stylestore  import StyleStore
 from exe.webui import common
+from exe.webui.webservice.exebackendservice import EXEBackEndService
 
 x_ = lambda s: s
 
@@ -138,6 +140,9 @@ class Config(object):
         # Set default values
         # exePath is the whole path and filename of the exe executable
         self.exePath     = Path(sys.argv[0]).abspath()
+        
+        #Related web service user - normally none
+        self.webservice_user = None
         
         #use this to do unit testing etc when we are not really using exe's path
         self.exePathOverride = None
@@ -513,6 +518,46 @@ class Config(object):
                 return
         self.locale = chooseDefaultLocale(self.localeDir)
 
+    def override_settings(self, new_value_sections):
+        """
+        Used to override settings on the fly - e.g. after a webuser
+        logins - load his/her individual settings instead
+        
+        Parameters
+        ----------
+        new_value_sections : dict
+        Dictionary of sections 'user', 'recentProjects'
+        """
+        
+        self.lastDir = "/"
+        
+        if "user" in new_value_sections:
+            user_section = new_value_sections['user']
+            if "lastDir" in user_section:
+                self.lastDir = user_section['lastDir']
+            
+            if "locale" in user_section:
+                self.locale = user_section['locale']
+                
+        if "recentProjects" in new_value_sections:
+            self.recentProjects = new_value_sections['recentProjects'] 
+        else:
+            self.recentProjects = []
+            
+    def get_override_setting_json(self):
+        """
+        For those values which are unique to each web user - get those
+        as a dict ready to be used as JSON
+        """
+        
+        json_vals = {"user" : {}}
+        json_vals['user']['lastDir'] = self.lastDir
+        json_vals['user']['locale'] = self.locale
+        json_vals['recentProjects'] = self.recentProjects
+        
+        return json_vals
+
+
     def onWrite(self, configParser):
         """
         Called just before the config file is written.
@@ -524,6 +569,10 @@ class Config(object):
         recentProjectsSection = self.configParser.addSection('recent_projects')
         for num, path in enumerate(self.recentProjects):
             recentProjectsSection[str(num)] = path
+
+    def onWriteWebUser(self, configParser):
+        EXEBackEndService.get_instance().save_user_preferences(self)
+        
 
     def setupLogging(self):
         """

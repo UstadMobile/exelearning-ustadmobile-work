@@ -776,11 +776,32 @@ Ext.define('eXe.controller.Toolbar', {
 				var response = Ext.JSON.decode(response.responseText);
 				if(response['result'] == 200) {
 					Ext.getCmp('webserviceloginwin').close();
+					nevow_clientToServerEvent('loadWebUserConfig', 
+							this, '');
 				}else {
 					Ext.Msg.alert(_("Sorry - invalid username or password"));
 				}
 			}
 		});
+	},
+	
+	/**
+	 * Update config values from the dictionary given - used after web 
+	 * user logs in
+	 * 
+	 * @param updateConfigVals {Object} containing updated values 
+	 * for eXe.app.config
+	 * @method
+	 */
+	updateAppConfig: function(updateConfigVals) {
+		for(var propName in updateConfigVals) {
+			if(updateConfigVals.hasOwnProperty(propName)) {
+				eXe.app.config[propName] = updateConfigVals[propName];
+			}
+		}
+		
+		Ext.state.Manager.set('filepicker-currentDir', 
+				eXe.app.config.lastDir);
 	},
 	
 	/**

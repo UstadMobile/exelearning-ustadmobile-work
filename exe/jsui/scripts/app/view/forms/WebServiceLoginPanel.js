@@ -35,26 +35,23 @@ var webServiceLoginPanel = Ext.define('eXe.view.forms.WebServiceLoginPanel', {
         Ext.applyIf(me, {
             autoScroll: true,
             trackResetOnLoad: true,
-            //buttonAlign: 'center',
-            url: 'loginumcloudp',		//declared by exportustadmobile.py
-            items: [	//This is the whole Panel start
+            url: 'loginumcloudp',		
+            items: [	//Start of whole panel
                 {	
                      xtype: 'fieldset',
                      defaults: {
                          labelWidth: 200, 
                          anchor: '100%' 
                      },
-                     margin: 10, //Margin from top
-                     items: [	//This is the box area declatationarea
+                     margin: 10, 
+                     items: [	
                          
-                     	{	//This is where we make new additions to the box. 
+                     	{	 
                          	xtype: 'container',
                          	id: 'webservicelogin_userpanel',
-                         	//layout: 'hbox',
-                         	margin: 0, //Maring between Save and the options above it.
-                         	items: [ //This is the box's items within the panel
-                     	       
-                         	         {	//Should be text input (Username)
+                         	margin: 0, 
+                         	items: [ 
+                         	         {	
                                           xtype: 'textfield',
                                           fieldLabel: _('Username'),
                                           height:30,
@@ -98,21 +95,19 @@ var webServiceLoginPanel = Ext.define('eXe.view.forms.WebServiceLoginPanel', {
               {	
 	                xtype: 'fieldset',
 	                defaults: {
-	                    labelWidth: 100, // Width of Label that one selects from options.
-	                    anchor: '100%' // How much % of screen should these options take in that frame.
+	                    labelWidth: 100, 
+	                    anchor: '100%' 
 	                },
-                    margin: 5, //Margin from top
-                    items: [	//This is the box area declatationarea
+                    margin: 5, 
+                    items: [	
                         	{
                             	xtype:            'button',
-                                //html:       '',
-                            	text: _('Login'),
+                                text: _('Login'),
                             	width: 100,
                             	height: 50 ,
                                 icon: '/images/key.png',
                                 buttonAlign: 'center',
                                 handler: function(button){
-                           	 		//Something?
                         	  		var username = Ext.getCmp('webservicelogin_username').getValue();
                         	  		var password = Ext.getCmp('webservicelogin_password').getValue();
                         	  		eXe.app.getController('Toolbar'

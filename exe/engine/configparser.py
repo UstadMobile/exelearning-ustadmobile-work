@@ -47,6 +47,9 @@ class ConfigParser(object):
         self._originalFile = None
         self._onWrite = onWrite
 
+    def set_on_write(self, onWrite):
+        self._onWrite = onWrite
+
     def __getattr__(self, attr):
         """
         Allows access to section objects

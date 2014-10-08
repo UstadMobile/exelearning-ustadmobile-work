@@ -7,7 +7,7 @@ from exe                         import globals as G
 import os
 import json
 from exe.engine.path import Path
-
+import copy
 
 class EXEBackEndService(object):
     '''
@@ -18,6 +18,12 @@ class EXEBackEndService(object):
     Class variable holding a main instance
     """
     _main_instance = None
+    
+    """
+    Relative path from user base directory to save preferences
+    """
+    PREF_PATH = ".exe/exe.conf"
+    
     
     @classmethod
     def get_instance(cls):
@@ -114,6 +120,10 @@ class EXEBackEndService(object):
     def get_base_path_for_user(self, username):
         """
         Returns the base directory for the user
+        Parameters
+        ----------
+        username : str
+        The username to get the base path for
         """
         dir_path = self.backend_provider.get_base_path_for_user(username)
         if self.auth_config['autocreate_user_path'] == "1":
@@ -124,6 +134,16 @@ class EXEBackEndService(object):
         return dir_path
     
     def adjust_relative_path_for_user(self, username, relative_path):
+        """
+        Return the complete path for a path relative to a users base directory
+        
+        Parameters
+        ----------
+        username : str 
+        relative_path : str
+            Path from a user base directory eg. /dir/file.elp  no root
+            file access allowed - all paths are joined to the base
+        """
         base_path = self.get_base_path_for_user(username)
         
         #Sanity check
@@ -131,4 +151,56 @@ class EXEBackEndService(object):
             relative_path = ""
 
         return os.path.join(base_path, relative_path)
+    
+    def get_user_preference_path(self, username):
+        """
+        Return the path to user preferences
+        """
+        return self.adjust_relative_path_for_user(username, 
+                                       EXEBackEndService.PREF_PATH)
+    
+    def adjust_config_for_user(self, username, config):
+        """
+        Return config object adjusted for the user
         
+        Parameters
+        ----------
+        username : str
+        config : Config
+            Main app configuration - will be copied
+        """
+        new_config = copy.copy(config)
+        config_src = self.get_user_preference_path(username)
+        config_path = Path(config_src)
+        user_config_vals = {}
+        if config_path.exists():
+            config_file = open(config_path)
+            user_config_vals = json.load(config_file)
+            config_file.close()
+             
+        new_config.override_settings(user_config_vals)
+        new_config.webservice_user = username
+        new_config.configParser.set_on_write(new_config.onWriteWebUser)
+        
+        return new_config
+    
+    def save_user_preferences(self, config):
+        """
+        Save user specific preferences to the user specific location
+        
+        Parameters
+        ----------
+        config : Config
+            Config that should have the webservice_user set
+        """
+        username = config.webservice_user
+        pref_path = Path(self.get_user_preference_path(username))
+        if not pref_path.parent.isdir():
+            pref_path.parent.makedirs()
+            
+        user_pref_file = open(self.get_user_preference_path(username), "wb")
+        json_vals = config.get_override_setting_json()        
+        json.dump(json_vals, user_pref_file)
+        user_pref_file.close()
+        
+    
