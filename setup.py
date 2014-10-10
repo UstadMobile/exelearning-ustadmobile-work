@@ -80,7 +80,7 @@ any Learning Management System.
       author_email="exe@exelearning.org",
       license="GPL",
       scripts=["exe/exe", "exe/exe_do"],
-      packages=["exe", "exe.webui", "exe.jsui",
+      packages=["exe", "exe.webui", "exe.webui.webservice", "exe.jsui",
                       "exe.engine", "exe.export", "exe.importers", "exe.engine.lom"],
       data_files=g_files.items()
      )
