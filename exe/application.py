@@ -39,6 +39,8 @@ from exe.engine.translate    import installSafeTranslate
 from exe.engine.package      import Package
 from exe.engine              import version
 from exe                     import globals
+from exe.engine.config import Config
+
 import logging
 from twisted.internet import reactor
 
@@ -211,9 +213,13 @@ class Application:
                 launchBrowser(self.config, package.name)
             except:
                 self.webServer.root.packagePath = None
-                launchBrowser(self.config, "")
+                if self.config.appMode == Config.MODE_DESKTOP:
+                    launchBrowser(self.config, "")
         else:
-            launchBrowser(self.config, "")
+            if self.config.appMode == Config.MODE_DESKTOP:
+                launchBrowser(self.config, "")
+            else:
+                print "Running server on % s " % str(self.webServer.config.port)
 
     def usage(self):
         """
