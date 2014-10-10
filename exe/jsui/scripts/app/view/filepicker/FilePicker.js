@@ -88,6 +88,51 @@ Ext.define('eXe.view.filepicker.FilePicker', {
                 buttons[2] = { xtype: 'button', text: _('Select Folder'), itemId: 'filepicker_open' };
                 top_buttons[eXe.app.config.locationButtons.length + 1] = { xtype: 'button', text: _('Create Directory'), itemId: 'filepicker_createdir' };
         		break;
+        	case eXe.view.filepicker.FilePicker.modeOpen:
+        		if(eXe.app.config.appMode == APPMODE_WEBAPP) {
+        			top_buttons[eXe.app.config.locationButtons.length + 1] =
+        			{
+    					xtype: "form",
+    					id: "fileuploadform",
+    					itemId: "fileuploadform",
+    					layout: {
+    						type: "hbox"
+    					},
+    					margin: 0,
+    					items: [{
+		        			        xtype: 'filefield',
+		        			        name: 'upload_file',
+		        			        itemId: "filepicker_upload_file_field",
+		        			        id: "filepicker_upload_file_field",
+		        			        fieldLabel: 'File',
+		        			        labelWidth: 50,
+		        			        msgTarget: 'side',
+		        			        buttonOnly: true,
+		        			        hideLabel: true,
+		        			        anchor: '100%',
+		        			        buttonText: _('Upload File From Computer'),
+		        			    },
+		        			    {
+		        			    	xtype: "hidden",
+		        			    	name: "uploadfileaction",
+		        			    	value : "upload_simple"
+		        			    },
+		        			    {
+		        			    	xtype: "hidden",
+		        			    	name: "upload_file_name",
+		        			    	itemId: "upload_file_name",
+		        			    	id: "upload_file_name",
+		        			    	value: ""
+		        			    },
+		        			    {
+		        			    	xtype: "hidden",
+		        			    	name: "upload_current_dir",
+		        			    	itemId: "upload_current_dir",
+		        			    	id: "upload_current_dir"
+		        			    }
+    					        ]
+        			};	
+        		}
         }
         
         Ext.applyIf(me, {

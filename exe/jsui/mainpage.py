@@ -346,6 +346,8 @@ class MainPage(RenderableLivePage):
         """
         self.config = EXEBackEndService.get_instance().adjust_config_for_user(
                                self.get_current_webuser(), self.config)
+        self.session.webservice_config = self.config
+        
         client.sendScript(
             'eXe.app.getController("Toolbar").updateAppConfig(%s)' % \
             json.dumps(self.get_config_dict()))
@@ -368,7 +370,12 @@ class MainPage(RenderableLivePage):
         """
         Return a dict of configuration keys needed by the ExtJS app
         """
-        config = {'lastDir': self.config.lastDir,
+        myLastDir = self.config.lastDir
+        if G.application.config.appMode != Config.MODE_DESKTOP:
+            if self.session.webservice_config and self.session.webservice_config.lastDir:
+                myLastDir =  self.session.webservice_config.lastDir
+        
+        config = {'lastDir': myLastDir,
                   'locationButtons': self.location_buttons.buttons,
                   'lang': G.application.config.locale.split('_')[0],
                   'showPreferences': G.application.config.showPreferencesOnStart == '1' and not G.application.preferencesShowed,
@@ -680,6 +687,14 @@ class MainPage(RenderableLivePage):
                            ).adjust_relative_path_for_user(
                            self.session.webservice_user, path)
     
+    def abs_path_to_user_path(self, abs_path):
+        if G.application.config.appMode != Config.MODE_WEBAPP:
+            return abs_path
+        else:
+            return EXEBackEndService.get_instance(\
+                          ).abs_path_to_user_path(
+                          self.session.webservice_user, abs_path)
+    
     def handleSavePackage(self, client, filename=None, onDone=None):
         """
         Save the current package
@@ -699,6 +714,7 @@ class MainPage(RenderableLivePage):
         # Then use the last filename that the package was loaded from/saved to
         if not filename:
             filename = self.package.filename
+            filename = self.abs_path_to_user_path(filename)
             assert filename, 'Somehow save was called without a filename on a package that has no default filename.'
         # Add the extension if its not already there and give message if not saved
         filename = self.b4save(client, filename, '.elp', _(u'SAVE FAILED!'))
@@ -927,6 +943,8 @@ class MainPage(RenderableLivePage):
 
         log.debug('handleTinyMCEimageChoice: image local = ' + local_filename 
                 + ', base=' + os.path.basename(local_filename))
+        local_filename = self.adjust_path_for_user(
+                                             local_filename)
 
         webDir     = Path(G.application.tempWebDir)
         previewDir  = webDir.joinpath('previews')
@@ -948,7 +966,11 @@ class MainPage(RenderableLivePage):
         if errors == 0:
             log.debug('handleTinyMCEimageChoice: originally, local_filename='
                     + local_filename)
-            local_filename = unicode(local_filename, 'utf-8')
+            try:
+                local_filename = unicode(local_filename, 'utf-8')
+            except:
+                #string would already be unicode in this case...
+                pass
             log.debug('handleTinyMCEimageChoice: in unicode, local_filename='
                     + local_filename)
 
@@ -970,7 +992,7 @@ class MainPage(RenderableLivePage):
             #preview_filename = toUnicode(preview_filename);
             # but that's okay, cuz preview_filename is now URI safe, right?
             log.debug('URIencoded preview filename=' + preview_filename);
-
+            
             server_filename = previewDir.joinpath(preview_filename);
             log.debug("handleTinyMCEimageChoice copying image from \'"\
                     + local_filename + "\' to \'" \

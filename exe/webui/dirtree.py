@@ -116,15 +116,35 @@ class DirTreePage(RenderableResource):
                                ).adjust_relative_path_for_user(
                                                username, dirpath)
             
-            
+    def abs_to_user_path(self, abspath, request):
+        """
+        Return an absolute path to a relative path for the user
+        if running in WebAppMode, otherwise return the original
+        
+        Parameters
+        abspath : str
+            The absolute path to adjust
+        request : Request
+            Request object used to get session username
+        """
+        if G.application.config.appMode != Config.MODE_WEBAPP:
+            return abspath
+        else:
+            username = request.getSession().webservice_user
+            return EXEBackEndService.get_instance(\
+                      ).abs_path_to_user_path(username, abspath)
 
     def render(self, request):
         if "sendWhat" in request.args:
             if request.args['sendWhat'][0] == 'dirs':
+                #Because this might be absolute and mess up...
+                
+                
                 path_dir_str = unquote(request.args['node'][0].decode('utf-8'))
                 path_dir_str = self.get_dirpath_for_request(
                                                 request, path_dir_str)
                 pathdir = Path(path_dir_str)
+                
                 
                 l = []
                 if pathdir == '/' and sys.platform[:3] == "win":
@@ -146,13 +166,13 @@ class DirTreePage(RenderableResource):
                                         icon = None
                                     else:
                                         icon = '../jsui/extjs/resources/themes/images/gray/grid/hmenu-lock.gif'
-                                    l.append({"realtext": d.name, "text": getname(d), "id": d.abspath(), "icon": icon})
+                                    l.append({"realtext": d.name, "text": getname(d), "id": self.abs_to_user_path(d.abspath(), request), "icon": icon})
                         except:
                             pass
             elif request.args['sendWhat'][0] == 'both':
-                pathdir_str = unquote(request.args['dir'][0].decode('utf-8'))
+                req_pathdir_str = unquote(request.args['dir'][0].decode('utf-8'))
                 pathdir_str = self.get_dirpath_for_request(
-                                               request, pathdir_str)
+                                               request, req_pathdir_str)
                 pathdir = Path(pathdir_str)
                 items = []
                 if pathdir == '/' and sys.platform[:3] == "win":
@@ -166,8 +186,8 @@ class DirTreePage(RenderableResource):
                     if (parent == pathdir):
                         realname = '/'
                     else:
-                        realname = parent.abspath()
-                    items.append({"name": '.', "realname": pathdir.abspath(), "size": pathdir.size, "type": "directory", "modified": int(pathdir.mtime),
+                        realname = self.abs_to_user_path(parent.abspath(), request)
+                    items.append({"name": '.', "realname": self.abs_to_user_path(pathdir.abspath(), request), "size": pathdir.size, "type": "directory", "modified": int(pathdir.mtime),
                                   "is_readable": is_readable(pathdir),
                                   "is_writable": is_writable(pathdir)})
                     items.append({"name": '..', "realname": realname, "size": parent.size, "type": "directory", "modified": int(parent.mtime),
@@ -189,12 +209,16 @@ class DirTreePage(RenderableResource):
                                             pathtype = "link"
                                         else:
                                             pathtype = "None"
-                                        items.append({"name": getname(d), "realname": d.abspath(), "size": d.size, "type": pathtype, "modified": int(d.mtime),
+                                        items.append({"name": getname(d), "realname": self.abs_to_user_path(d.abspath(), request), "size": d.size, "type": pathtype, "modified": int(d.mtime),
                                           "is_readable": is_readable(d),
                                           "is_writable": is_writable(d)})
                             except:
                                 pass
-                        G.application.config.lastDir = pathdir
+                        #this was before just pathdir - check this
+                        if G.application.config.appMode != Config.MODE_WEBAPP:
+                            G.application.config.lastDir = pathdir
+                        else:
+                            self.session.webservice_config.lastDir = req_pathdir_str
                     except:
                         pass
                 l = {"totalCount": len(items), 'results': len(items), 'items': items}
@@ -213,7 +237,7 @@ class DirTreePage(RenderableResource):
                 if (parent == pathdir):
                     realname = '/'
                 else:
-                    realname = parent.abspath()
+                    realname = self.abs_to_user_path(parent.abspath(), request)
                 for d in pathdir.listdir():
                     try:
                         if d.isdir():
@@ -228,7 +252,7 @@ class DirTreePage(RenderableResource):
                         else:
                             pathtype = "None"
                         if d.name.startswith(query):
-                            items.append({"name": getname(d), "realname": d.abspath(), "size": d.size, "type": pathtype, "modified": int(d.mtime),
+                            items.append({"name": getname(d), "realname": self.abs_to_user_path(d.abspath(), request), "size": d.size, "type": pathtype, "modified": int(d.mtime),
                                           "is_readable": is_readable(d),
                                           "is_writable": is_writable(d)})
                     except:
@@ -236,4 +260,16 @@ class DirTreePage(RenderableResource):
 
             l = {"totalCount": len(items), 'results': len(items), 'items': items}
             return json.dumps(l).encode('utf-8')
+        elif "uploadfileaction" in request.args:
+            filename = request.args["upload_file_name"][0]
+            current_dir = request.args["upload_current_dir"][0]
+            save_path = os.path.join(current_dir, filename)
+            file_path =  self.get_dirpath_for_request(
+                                                request, save_path)
+            file = open(file_path, "wb")
+            file.write(request.args['upload_file'][0])
+            file.close()
+            
+            result = {"success" : True}
+            return json.dumps(result).encode('utf-8')
         return ""

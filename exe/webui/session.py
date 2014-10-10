@@ -81,6 +81,7 @@ class eXeSession(server.Session):
         server.Session.__init__(self, *args, **kwargs)
         self.packageStore = PackageStore()
         self.webservice_user = None
+        self.webservice_config = None
         
 
 

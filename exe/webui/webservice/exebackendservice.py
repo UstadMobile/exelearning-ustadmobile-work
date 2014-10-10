@@ -146,11 +146,27 @@ class EXEBackEndService(object):
         """
         base_path = self.get_base_path_for_user(username)
         
-        #Sanity check
-        if relative_path == "/":
-            relative_path = ""
+        #Sanity check - get rid of any separators at the start
+        while len(relative_path) > 0 and relative_path[0] == "/":
+            relative_path = relative_path[1:]
 
         return os.path.join(base_path, relative_path)
+    
+    def abs_path_to_user_path(self, username, abspath):
+        """
+        Strip out the prefix of the users file path
+        
+        Parameters
+        ----------
+        username : str
+            Username to apply to
+        abspath : str
+            Absolute path in a users directory to be adjusted to be 
+            relative
+        """
+        user_path = self.get_base_path_for_user(username)
+        rel_path = Path(user_path).relpathto(abspath)
+        return rel_path
     
     def get_user_preference_path(self, username):
         """

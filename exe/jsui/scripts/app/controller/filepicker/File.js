@@ -74,6 +74,9 @@ Ext.define('eXe.controller.filepicker.File', {
 			},
             '#file_place_field': {
                 specialkey: { fn: this.onSpecialKey, scope: this }
+            },
+            '#filepicker_upload_file_field' : {
+            	change: { fn : this.onUploadFileFromComputer }
             }
 		});
 
@@ -327,6 +330,34 @@ Ext.define('eXe.controller.filepicker.File', {
             }
 		}
 	},
+	
+	/**
+	 * Handle the file upload button once a user has selected
+	 * a file that he/she wishes to upload.  Send to DirTreePage
+	 * 
+	 * @method
+	 */
+	onUploadFileFromComputer: function() {
+		var form = Ext.getCmp("fileuploadform").getForm();
+		var fileName = Ext.getCmp("filepicker_upload_file_field"
+				).getValue();
+		fileName = fileName.split(/(\\|\/)/g).pop();
+		Ext.getCmp("upload_file_name").setValue(fileName);
+		Ext.getCmp("upload_current_dir").setValue(this.currentDir);
+		form.submit({
+			url: "/dirtree",
+			success: function(fp, o) {
+				console.log("uploaded file OK");
+				eXe.app.getStore('filepicker.DirectoryTree').load({ 
+	                callback: function() {
+	                    eXe.app.fireEvent( "dirchange",
+                    		Ext.getCmp("upload_current_dir").getValue());
+	                }
+	            })
+			}
+		});
+	},
+	
 	onCreateDir: function() {
         var store = this.getFilepickerFileStore(),
             record = store.findRecord("name", ".", 0, false, true, true);
