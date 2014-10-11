@@ -168,7 +168,7 @@ class WebServer:
         
         #setup caching files
         static_dirs = ["^\/scripts\/", "^\/images\/", "^\/css\/",
-                       "^\/jsui\/", "^\/style\/"]
+                       "^\/jsui\/", "^\/style\/", ".*\\/resources\\/.*"]
         for sdir in static_dirs:
             File.cache_headers[re.compile(sdir)] = static_cache_params
             x = 0
