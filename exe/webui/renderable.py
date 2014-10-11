@@ -216,12 +216,17 @@ class RenderableResource(_RenderablePage, Resource):
 class File(static.File):
     
     """
-    Dictionary of regular expressions to cache info
+    Dictionary of regular expressions to cache info mapped 
+    as regular expression object to HTTP headers dictionary
     """
     cache_headers = {}
     
     @classmethod
     def get_cache_headers_by_path(cls, uri):
+        """
+        Return the HTTP caching headers to use according to the
+        URI using cache_headers
+        """
         for regex in cls.cache_headers:
             if regex.match(uri):
                 return cls.cache_headers[regex]
@@ -230,14 +235,10 @@ class File(static.File):
     
     def render(self, request):
         """Send a static file
-        
         """
-        x = 0
         
         cache_info = File.get_cache_headers_by_path(request.path)
-        if cache_info is not None:
-            ffs = 42
-            
+        
         if cache_info is None:
             cache_info = {}
         

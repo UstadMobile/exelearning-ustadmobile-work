@@ -167,10 +167,11 @@ class WebServer:
         webDir = self.config.webDir
         
         #setup caching files
-        static_dirs = ["^/\scripts\/", "^/\images\/", "^/\css\/",
-                       "^/\jsui\/", "^/\css\/"]
+        static_dirs = ["^\/scripts\/", "^\/images\/", "^\/css\/",
+                       "^\/jsui\/", "^\/style\/"]
         for sdir in static_dirs:
             File.cache_headers[re.compile(sdir)] = static_cache_params
+            x = 0
         
         
         self.root.putChild("images",      File(webDir+"/images"))
