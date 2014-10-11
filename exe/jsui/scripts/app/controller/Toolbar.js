@@ -499,7 +499,7 @@ Ext.define('eXe.controller.Toolbar', {
 	          width: 550, 
 	          modal: true,
 	          id: 'idevicepwin',
-	          title: _("Insert"),
+	          title: _("Add Widget"),
 	          layout: 'fit',
 	          items: [{
                 xtype: 'idevicep'

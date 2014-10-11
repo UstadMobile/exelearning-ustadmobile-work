@@ -98,7 +98,9 @@ class AuthoringPage(RenderableResource):
         log.debug(u"render_GET "+repr(request))
 
         topNode = self.package.root
-        if request is not None:
+        is_ajax = "mode" in request.args and request.args['mode'][0] == "ajax"
+        
+        if request is not None and is_ajax is not True:
             # Process args
             for key, value in request.args.items():
                 request.args[key] = [unicode(value[0], 'utf8')]
@@ -128,6 +130,9 @@ class AuthoringPage(RenderableResource):
                     
             if request.args["action"][0] == "addidevice":
                 activeClient.call("showIdeviceToolbar")
+                if is_ajax:
+                    return json.dumps({"success" : True})
+            
 
         self.blocks = []
         self.__addBlocks(topNode)
@@ -160,8 +165,11 @@ class AuthoringPage(RenderableResource):
         html += u'</div>\n'
         
         html += "<div class='authoring_button_row'>"
-        html += "<input value='%s' class='insert_button' type='button' onclick=\"submitLink('%s', '%s', %d);\"/>" % \
-                (_("Insert Here"), "addidevice", "authoring", 1)
+        #html += "<input value='%s' class='insert_button' type='button' onclick=\"submitLink('%s', '%s', %d);\"/>" % \
+        #        (_("Insert Here"), "addidevice", "authoring", 1)
+        
+        html += "<input value='%s' class='insert_button' type='button' onclick=\"authoringInsertIdevice();\"/>" % \
+                _("Add Widget")
         html += "</div>"
         
         for block in self.blocks:

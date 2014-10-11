@@ -139,7 +139,7 @@ Ext.define('eXe.view.ui.editToolbar', {
 		                itemId: 'tools_idevicep',
 		                icon: '/images/plusbutton.png',
 		                accesskey: 'w',
-		                text: _('Insert'),
+		                text: _('Add Widget'),
 		                height: 30	
 		            },
 		            {

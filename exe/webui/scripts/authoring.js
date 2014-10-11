@@ -442,6 +442,28 @@ function execute_submitLink(action, object, changed, currentNode)
 	    theForm.submit();
     }
 }
+
+/**
+ * Trigger AJAX to make the main window show the insert idevice options
+ */
+function authoringInsertIdevice() {
+	var theForm = getContentForm();
+	if(theForm) {
+		var clientHandleId = theForm.clientHandleId.value;
+		var theUrl = theForm.getAttribute("action");
+		$.ajax({
+			url : theUrl,
+			data: {
+				"clientHandleId" : clientHandleId,
+				"action" : "addidevice",
+				"mode" : "ajax"
+			}
+		}).done(function(msg) {
+			console.log("asked for add idevice");
+		});
+	}
+}
+
 function submitLink(action, object, changed, currentNode) 
 {
     var ed = "";
