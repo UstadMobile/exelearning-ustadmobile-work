@@ -344,10 +344,12 @@ Ext.define('eXe.controller.filepicker.File', {
 		fileName = fileName.split(/(\\|\/)/g).pop();
 		Ext.getCmp("upload_file_name").setValue(fileName);
 		Ext.getCmp("upload_current_dir").setValue(this.currentDir);
+		Ext.Msg.wait(_('Uploading Image...'));
 		form.submit({
 			url: "/dirtree",
 			success: function(fp, o) {
 				console.log("uploaded file OK");
+				Ext.Msg.hide();
 				eXe.app.getStore('filepicker.DirectoryTree').load({ 
 	                callback: function() {
 	                    eXe.app.fireEvent( "dirchange",
