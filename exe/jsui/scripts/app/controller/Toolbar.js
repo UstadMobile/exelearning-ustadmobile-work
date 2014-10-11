@@ -390,7 +390,11 @@ Ext.define('eXe.controller.Toolbar', {
 	},
     
     browseURL: function(url) {
-        nevow_clientToServerEvent('browseURL', this, '', url);
+        if(eXe.app.config.appMode != APPMODE_WEBAPP) {
+        	nevow_clientToServerEvent('browseURL', this, '', url);
+        }else {
+        	window.open(url, "exe_browse_win");
+        }
     },
     
     processBrowseEvent: function(menu, item, e, eOpts) {
