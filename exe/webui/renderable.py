@@ -36,9 +36,13 @@ from twisted.web.resource import Resource
 from nevow import loaders
 from twisted.web import static
 from nevow.i18n import render as render_i18n
+from datetime import datetime
+import email.utils as eut
+import time
 
 import logging
 log = logging.getLogger(__name__)
+import re
 
 # Constants
 # This constant is used as a special variable like None but this means that an
@@ -190,6 +194,9 @@ class RenderableResource(_RenderablePage, Resource):
     """
     It is a page and renderable, but not live
     """
+    
+    
+    
 
     def __init__(self, parent, package=None, config=None):
         """
@@ -207,9 +214,67 @@ class RenderableResource(_RenderablePage, Resource):
         return Resource.render(self, request)
 
 class File(static.File):
+    
+    """
+    Dictionary of regular expressions to cache info
+    """
+    cache_headers = {}
+    
+    @classmethod
+    def get_cache_headers_by_path(cls, uri):
+        for regex in cls.cache_headers:
+            if regex.match(uri):
+                return cls.cache_headers[regex]
+        
+        return None
+    
     def render(self, request):
-        "Disable cache of static files"
-        request.setHeader('Expires', 'Fri, 25 Nov 1966 08:22:00 EST')
-        request.setHeader("Cache-Control", "no-store, no-cache, must-revalidate")
-        request.setHeader("Pragma", "no-cache")
+        """Send a static file
+        
+        """
+        x = 0
+        
+        cache_info = File.get_cache_headers_by_path(request.path)
+        if cache_info is not None:
+            ffs = 42
+            
+        if cache_info is None:
+            cache_info = {}
+        
+        
+        if "Expires" not in cache_info:
+            request.setHeader('Expires', 'Fri, 25 Nov 1966 08:22:00 EST')
+        elif "Expires" in cache_info and cache_info["Expires"] != "":
+            request.setHeader('Expires', cache_info["expires"])
+       
+        if "Cache-Control" not in cache_info:
+            request.setHeader("Cache-Control", "no-store, no-cache, must-revalidate")
+        elif "Cache-Control" in cache_info and cache_info["Cache-Control"] != "":
+            request.setHeader("Cache-Control", cache_info["Cache-Control"])
+        
+        if "Pragma" not in cache_info and "Cache-Control" not in cache_info:
+            request.setHeader("Pragma", "no-cache")
+        elif "Pragma" in cache_info and cache_info['Pragma'] != "": 
+            request.setHeader("Pragma", cache_info['Pragma'])
+        
+        if "if-modified-since" in request.received_headers:
+            #client_date_str = request.received_headers['if-modified-since']
+            
+            #client_utime = time.mktime(client_time.timetuple())
+            file_mod_time = self.getmtime()
+            client_date_str = request.received_headers['if-modified-since']
+            time_tpl = eut.parsedate(client_date_str)
+            client_mtime = time.mktime(time_tpl)
+            
+            #mktime is always local time - bring it back to GMT by  
+            # taking out timezone modifier
+            client_mtime -= time.timezone
+            
+            if not file_mod_time > client_mtime:
+                request.setResponseCode(304)
+                return ""
+            
+            
+            
+            
         return static.File.render(self, request)

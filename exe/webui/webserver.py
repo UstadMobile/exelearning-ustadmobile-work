@@ -55,6 +55,7 @@ from exe.webui.dirtree import DirTreePage
 from exe.webui.webservice.loginpage import LoginPage
 from exe.webui.session import eXeSite
 from exe import globals as G
+import re
 
 
 import logging
@@ -157,8 +158,21 @@ class WebServer:
         """
         log.debug("start web server running")
         
-        # web resources
+        # web resources - cache for 2hrs without revalidating
+        static_cache_params = {
+                               "Cache-Control": "public, max-age=14400",
+                               "Expires" : ""
+                               }
+        
         webDir = self.config.webDir
+        
+        #setup caching files
+        static_dirs = ["^/\scripts\/", "^/\images\/", "^/\css\/",
+                       "^/\jsui\/", "^/\css\/"]
+        for sdir in static_dirs:
+            File.cache_headers[re.compile(sdir)] = static_cache_params
+        
+        
         self.root.putChild("images",      File(webDir+"/images"))
         self.root.putChild("css",         File(webDir+"/css"))
         self.root.putChild("scripts",     File(webDir+"/scripts"))
