@@ -1920,6 +1920,7 @@ class FieldWithResources(Field):
                                   + "basefile = " + base_file_str)
 
                            shutil.copyfile(file_name_str, base_file_str)
+                           shutil.copystat(file_name_str, base_file_str)
                         
                            # finally, change the name that's used in the 
                            # resource creation in the below GalleryImage
@@ -2131,6 +2132,7 @@ class FieldWithResources(Field):
                                   + "basefile = " + base_file_str)
 
                            shutil.copyfile(file_name_str, base_file_str)
+                           shutil.copystat(file_name_str, base_file_str)
                         
                            # finally, change the name that's used in the 
                            # resource creation in the below GalleryImage

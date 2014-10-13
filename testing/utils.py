@@ -221,6 +221,70 @@ class SuperTestCase(unittest.TestCase):
         return FakeRequest(**kwargs)
 
 
+class TestUtils(object):
+    """
+    Assorted utility methods
+    """
+    
+    """The allowable tolerance for modification times that should be 
+    the same - OS / rounding errors may happen
+    """
+    mtime_tolerance = 1
+    
+    @classmethod
+    def mod_time_diff(cls, path1, path2):
+        """Return the difference in modification time of files"""
+        time_diff = abs(path1.stat().st_mtime - path2.stat().st_mtime)
+        return time_diff
+    
+    @classmethod
+    def mod_time_close_enough(cls, path1, path2):
+        """
+        Return true if the difference between modification times
+        is less than mtime_tolerance
+        """
+        return cls.mod_time_diff(path1, path2) < cls.mtime_tolerance
+    
+    @classmethod
+    def check_copy_list_mod_time(cls, copy_list, test_case = None):
+        """Return a tuple (if all files equal, total file number)
+        
+        Check that the files in the copy list all have the same
+        modification time
+        
+        Parameters
+        copy_list : list
+            copy_list as per package.make_system_copy_list
+        test_case : TestUnit
+            If not None run the assertEquals on it
+        """
+        file_count = 0
+        all_time_equal = True
+        for copy_item in copy_list:
+            src = copy_item[0]
+            dst = copy_item[1]
+            
+            if isinstance(src, Path):
+                #this is a straight file to file copy
+                time_diff = abs(src.stat().st_mtime - dst.stat().st_mtime)
+                all_time_equal = (all_time_equal and time_diff == 0)
+                file_count += 1
+                if test_case is not None:
+                    test_case.assertEquals(time_diff, 0, 
+                       "mtime diff %s / %s is 0.1" % (str(src), str(dst)))
+            else:
+                for src_file in src:
+                    file_count += 1
+                    dst_file = Path(dst/src_file.basename())
+                    time_diff = abs(src_file.stat().st_mtime - 
+                                    dst_file.stat().st_mtime)
+                    all_time_equal = (all_time_equal and time_diff < 0.1)
+                    if test_case is not None:
+                        test_case.assertTrue(time_diff < 0.1, 
+                           "mtime diff %s / %s is < 0.1" % \
+                           (str(src_file), str(dst_file)))
+            return (all_time_equal, file_count)
+
 class HTMLChecker(object):
     """Use this to check html output with xmllint.
     Only works on *nix

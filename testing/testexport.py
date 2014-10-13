@@ -22,6 +22,7 @@ Tests website and scorm exports.
 
 import unittest
 import utils
+from utils import TestUtils
 from exe.engine.package       import Package
 from exe.engine.path          import Path, TempDirPath
 from exe.export.websiteexport import WebsiteExport
@@ -60,8 +61,38 @@ class TestWebsiteExport(unittest.TestCase):
         assert (outdir / 'index.html').isfile()
         # Check that the style sheets have been copied
         for filename in style_dir.files():
+            
+            #Skip the styles config.xml - that should not be included
+            if filename.basename() == "config.xml":
+                continue
+            
             assert ((outdir / filename.basename()).exists(),
                     'Style file "%s" not copied' % (outdir / filename.basename()))
+            #check the modification time is correct
+            f_dst = Path(outdir/filename.basename())
+            f_src = Path(filename)
+            
+            self.assertTrue(
+                TestUtils.mod_time_diff(f_dst, f_src) < 0.1,
+                "Modification time in style dir preserved")
+
+        for res_file in package.resourceDir.files():
+            dst_file = Path(outdir/ res_file.basename())
+            self.assertTrue(dst_file.isfile())
+            
+            self.assertTrue(
+                TestUtils.mod_time_diff(res_file, dst_file) < 0.1,
+                "Resource file %s has same mod time as origin" \
+                % res_file.basename())
+
+        #test that everything that was copied hahs the right mod time
+        copy_list = package.make_system_copy_list(style_dir, 
+                                  G.application.config.webDir/"scripts" , 
+                                  G.application.config.webDir/"templates", 
+                                  G.application.config.webDir/"images", 
+                                  G.application.config.webDir/"css", 
+                                  outdir)
+        TestUtils.check_copy_list_mod_time(copy_list, self)
 
         # Check that each node in the package has had a page made
         pagenodes  = Set([p.node for p in exporter.pages])

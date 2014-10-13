@@ -929,6 +929,16 @@ class Path(unicode):
     def copyfile(self, dst):
         """Wraps shutil.copyfile"""
         return shutil.copyfile(toUnicode(self), toUnicode(dst))
+    
+    def copyfile2(self, dst):
+        """Wraps shutil.copyfile and then performs copystat"""
+        result = shutil.copyfile(toUnicode(self), toUnicode(dst))
+        self.copystat(dst)
+        
+        return result
+    
+    
+    
     def copymode(self, dst):
         """Wraps shutil.copymode"""
         return shutil.copymode(toUnicode(self), toUnicode(dst))
@@ -1037,13 +1047,29 @@ class Path(unicode):
         """
         for fn in fnlist:
             (self / fn).copy(destination)
-
+            
+    def copylist2(self, fnlist, destination):
+        """
+        Given a sequence of relative file names ('fnlist')
+        copies them to 'destination' using copy2 to preserve stats
+        """
+        for fn in fnlist:
+            (self / fn).copy2(destination)
+            
     def copyfiles(self, destination):
         """
         Copies the content of files to 'destination' directory
         """
         for fn in self.files():
             fn.copy(destination)
+            
+    def copyfiles2(self, destination):
+        """
+        Copies the content of files to 'destination' directory
+        copies to destination using the copy2 method to preserve stats
+        """
+        for fn in self.files():
+            fn.copy2(destination)
 
     def setSalt(self, salt):
         self.salt = salt

@@ -11,4 +11,11 @@ vi test-settings.json
 export PYTHONPATH=$(pwd)
 python testing/runtests.py
 
+To run in Eclipse:
+Right click, Select Debug Configurations.  Setup to debug as python
+run (unit test can hang the application) and then set the working
+directory on the arguments tab to:
 
+${workspace_loc:project_name/iteexe}
+
+(e.g. remove the trailing /testing)

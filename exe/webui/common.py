@@ -49,7 +49,7 @@ log = logging.getLogger(__name__)
 def copyFileIfNotInStyle(file, e, outputDir):
     f = (e.imagesDir/file)
     if not (outputDir/file).exists():
-        f.copyfile(outputDir/file)
+        f.copyfile2(outputDir/file)
 def setExportDocType(value):
     global htmlDocType
     htmlDocType=value

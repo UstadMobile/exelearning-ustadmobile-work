@@ -153,6 +153,8 @@ class WebsiteExport(object):
             
 
         thisPage.save(outputDir, prevPage, None, self.pages)
+        
+        
         self.copyFiles(package, outputDir)
         # Zip up the website package
         self.filename.safeSave(self.doZip, _('EXPORT FAILED!\nLast succesful export is %s.'), outputDir)
@@ -216,6 +218,8 @@ class WebsiteExport(object):
             prevPage = thisPage
             thisPage = nextPage
 
+        
+        
         if not self.report:
             thisPage.save(outputDir, prevPage, None, self.pages)
 
@@ -224,167 +228,59 @@ class WebsiteExport(object):
         else:
             self.filename.write_text(self.report, 'utf-8')
 
-
-    def copyFiles(self, package, outputDir):
+    def copyFiles(self, package, outputDir, um_mode = False):
         """
         Copy all the files used by the website.
+        Parameters
+        ----------
+        package : Package
+            package that is being exported
+        outputDir : Path
+            The end directory being exported to
         """
-       
-        if os.path.isdir(self.stylesDir):
-            # Copy the style sheet files to the output dir
-            styleFiles  = [self.stylesDir/'..'/'base.css']
-            styleFiles += [self.stylesDir/'..'/'popup_bg.gif']
-            styleFiles += self.stylesDir.files("*.css")
-            styleFiles += self.stylesDir.files("*.jpg")
-            styleFiles += self.stylesDir.files("*.gif")
-            styleFiles += self.stylesDir.files("*.png")
-            styleFiles += self.stylesDir.files("*.js")
-            styleFiles += self.stylesDir.files("*.html")
-            styleFiles += self.stylesDir.files("*.ico")
-            styleFiles += self.stylesDir.files("*.ttf")
-            styleFiles += self.stylesDir.files("*.eot")
-            styleFiles += self.stylesDir.files("*.otf")
-            styleFiles += self.stylesDir.files("*.woff")
-            self.stylesDir.copylist(styleFiles, outputDir)
-
-        # copy the package's resource files
-        package.resourceDir.copyfiles(outputDir)
-            
-        # copy script files.
-        my_style = G.application.config.styleStore.getStyle(package.style)
-        # jQuery
-        if my_style.hasValidConfig:
-            if my_style.get_jquery() == True:
-                jsFile = (self.scriptsDir/'exe_jquery.js')
-                jsFile.copyfile(outputDir/'exe_jquery.js')
-        else:
-            jsFile = (self.scriptsDir/'exe_jquery.js')
-            jsFile.copyfile(outputDir/'exe_jquery.js')
-            
-        jsFile = (self.scriptsDir/'common.js')
-        jsFile.copyfile(outputDir/'common.js')
-
+        package.resourceDir.copyfiles2(outputDir)
         
-        tinCanFiles = [self.scriptsDir/'tincan.js', \
-               self.scriptsDir/'exe_tincan.js', \
-               self.scriptsDir/'tincan_queue.js']
-        self.scriptsDir.copylist(tinCanFiles, outputDir)
+        copy_list = package.make_system_copy_list(self.stylesDir,
+                              self.scriptsDir, self.templatesDir,
+                              self.imagesDir, self.cssDir, outputDir,
+                              ustad_mobile_mode = um_mode)
+        WebsiteExport.run_copy_list(copy_list)
         
-        #dT = common.getExportDocType()
-        dT=common.getExportDocType();
-        if dT == "HTML5":
-            jsFile = (self.scriptsDir/'exe_html5.js')
-            jsFile.copyfile(outputDir/'exe_html5.js')
-
-        # Incluide eXe's icon if the Style doesn't have one
-        themePath = Path(G.application.config.stylesDir/package.style)
-        themeFavicon = themePath.joinpath("favicon.ico")
-        if not themeFavicon.exists():
-            faviconFile = (self.imagesDir/'favicon.ico')
-            faviconFile.copyfile(outputDir/'favicon.ico')
-        
-        # copy players for media idevices.                
-        hasFlowplayer     = False
-        hasMagnifier      = False
-        hasXspfplayer     = False
-        hasGallery        = False
-        hasWikipedia      = False
-        isBreak           = False
-        hasInstructions   = False
-        hasMediaelement   = False
-        
-        system_scripts = []
-        
-        for page in self.pages:
-            if isBreak:
-                break
-            for idevice in page.node.idevices:
-                if (hasFlowplayer and hasMagnifier and hasXspfplayer and hasGallery and hasWikipedia and hasInstructions and hasMediaelement):
-                    pass
-                    #isBreak = True
-                    #Mike Dawson: don't break anymore.. looking for system scripts
-                    #break
-                if hasattr(idevice, "system_scripts"):
-                    for system_script in idevice.system_scripts:
-                        if system_script not in system_scripts:
-                            system_scripts.append(system_script)
-                                
-                if not hasFlowplayer:
-                    if 'flowPlayer.swf' in idevice.systemResources:
-                        hasFlowplayer = True
-                if not hasMagnifier:
-                    if 'mojomagnify.js' in idevice.systemResources:
-                        hasMagnifier = True
-                if not hasXspfplayer:
-                    if 'xspf_player.swf' in idevice.systemResources:
-                        hasXspfplayer = True
-                if not hasGallery:
-                    hasGallery = common.ideviceHasGallery(idevice)
-                if not hasWikipedia:
-                    if 'WikipediaIdevice' == idevice.klass:
-                        hasWikipedia = True
-                if not hasInstructions:
-                    if 'TrueFalseIdevice' == idevice.klass or 'MultichoiceIdevice' == idevice.klass or 'VerdaderofalsofpdIdevice' == idevice.klass or 'EleccionmultiplefpdIdevice' == idevice.klass:
-                        hasInstructions = True
-                if not hasMediaelement:
-                    hasMediaelement = common.ideviceHasMediaelement(idevice)
-
-        if hasFlowplayer:
-            videofile = (self.templatesDir/'flowPlayer.swf')
-            videofile.copyfile(outputDir/'flowPlayer.swf')
-            controlsfile = (self.templatesDir/'flowplayer.controls.swf')
-            controlsfile.copyfile(outputDir/'flowplayer.controls.swf')
-        if hasMagnifier:
-            videofile = (self.templatesDir/'mojomagnify.js')
-            videofile.copyfile(outputDir/'mojomagnify.js')
-        if hasXspfplayer:
-            videofile = (self.templatesDir/'xspf_player.swf')
-            videofile.copyfile(outputDir/'xspf_player.swf')
-        if hasGallery:
-            imageGalleryCSS = (self.cssDir/'exe_lightbox.css')
-            imageGalleryCSS.copyfile(outputDir/'exe_lightbox.css') 
-            imageGalleryJS = (self.scriptsDir/'exe_lightbox.js')
-            imageGalleryJS.copyfile(outputDir/'exe_lightbox.js') 
-            self.imagesDir.copylist(('exe_lightbox_close.png', 'exe_lightbox_loading.gif', 'exe_lightbox_next.png', 'exe_lightbox_prev.png'), outputDir)
-        if hasWikipedia:
-            wikipediaCSS = (self.cssDir/'exe_wikipedia.css')
-            wikipediaCSS.copyfile(outputDir/'exe_wikipedia.css')
-        if hasInstructions:
-            common.copyFileIfNotInStyle('panel-amusements.png', self, outputDir)
-            common.copyFileIfNotInStyle('stock-stop.png', self, outputDir)
-        if hasMediaelement:
-            mediaelement = (self.scriptsDir/'mediaelement')
-            mediaelement.copyfiles(outputDir)
-            dT = common.getExportDocType()
-            if dT != "HTML5":
-                jsFile = (self.scriptsDir/'exe_html5.js')
-                jsFile.copyfile(outputDir/'exe_html5.js')
-                
-        #handle copying system scripts
-        for system_script in system_scripts:
-            system_script_file = (self.scriptsDir/system_script)
-            system_script_file.copyfile(outputDir/system_script)
-            
-        if self.ustadMobileMode:
-            self.templatesDir.copylist(WebsitePage.getUstadMobileScriptList(), outputDir)
-            self.templatesDir.copylist(WebsitePage.getUstadMobileCSSList(), outputDir)
-            
-        if self.ustadMobileTestMode:        #Added for course test mode in eXe. 
-            print("in seld.ustadMobileTestMode")
-            self.templatesDir.copylist(WebsitePage.getUstadMobileTestScriptList(), outputDir)
-        else:
-            print("Outside of ustadMobileTestMode")
-
         if hasattr(package, 'exportSource') and package.exportSource:
-            (G.application.config.webDir/'templates'/'content.xsd').copyfile(outputDir/'content.xsd')
             (outputDir/'content.data').write_bytes(encodeObject(package))
             (outputDir/'contentv3.xml').write_bytes(encodeObjectToXML(package))
+        
 
-        if package.license == "license GFDL":
-            # include a copy of the GNU Free Documentation Licence
-            (self.templatesDir/'fdl.html').copyfile(outputDir/'fdl.html')
-
-
+    
+    @classmethod
+    def run_copy_list(cls, copy_list):
+        """
+        Copy a list of files - preserve modification times
+        Parameters
+        copy_list : list
+            List of arrays.  Item 0 of each array should be a source,1 
+            should be the dest.  Source can be a list of paths or a path
+            object itself.
+            
+            For a list the dest should be a path representing a directory
+            For an individual path the destination should be a file path
+        """
+        
+        for copy_item in copy_list:
+            src = copy_item[0]
+            dst = copy_item[1]
+            
+            
+            if isinstance(src, Path):
+                #this is a straight file to file copy
+                src.copyfile2(dst)
+            else:
+                #this is a list of files to copy to dst which should be
+                #a directory
+                for src_file in src:
+                    src_file.copyfile2(dst/src_file.basename())
+    
+    
     def generatePages(self, node, depth):
         """
         Recursively generate pages and store in pages member variable

@@ -500,59 +500,86 @@ class XMLExport(WebsiteExport):
             nodeToPageDict.update(childNodeToPageDict)
         
         return nodeToPageDict
-            
+    
+    def make_xml_copy_list(self, package, outputDir):
+        """
+        Returns a list as per Package.make_system_copy_list
+        """
+        file_list = []
+        file_list.append([self.stylesDir.files("icon_*.png"), 
+                          outputDir])
+        
+        file_list.append([self.stylesDir.parent.files("icon_*.png"),
+                          outputDir])
+        
+        file_list.append([self.stylesDir.files("icon_*.gif"),
+                          outputDir])
+        
+        file_list.append([[Path(self.templatesDir/"deviceframe.html"),
+                         Path(self.templatesDir/"mobiledevice.png")],
+                         outputDir])
+        
+        file_list.extend(self.copy_sub_dir_list("ustad-jqmimages", 
+                            "images", ['png', 'gif'], outputDir))
+        
+        file_list.extend(self.copy_sub_dir_list("fontawesome-fonts",
+                         "fonts", ['otf', 'svg', 'eot', 'svg', 'woff', 'ttf'], 
+                          outputDir))
+        
+        file_list.extend(self.copy_sub_dir_list("ustad-locale", "locale", ['js'], 
+                                                outputDir))
+        
+        return file_list
+    
     def copyFilesXML(self, package, outputDir):
-        
-        #copy defined items from the style directory for the mobile output
-        styleFiles = self.stylesDir.files("icon_*.png")
-        self.stylesDir.copylist(styleFiles, outputDir)
-        
-        styleFiles = self.stylesDir.parent.files("icon_*.png")
-        self.stylesDir.copylist(styleFiles, outputDir)
-        
-        styleFiles = self.stylesDir.files("icon_*.gif")
-        self.stylesDir.copylist(styleFiles, outputDir)
-        
-        
-        #copy 
-        self.templatesDir.copylist(["deviceframe.html", "mobiledevice.png"], outputDir)
-        
-        
-        self.copy_sub_dir("ustad-jqmimages", "images", ['png', 'gif'], \
-                          outputDir)
-        self.copy_sub_dir("fontawesome-fonts", "fonts", ['otf', 'svg', 'eot', 'svg', 'woff', 'ttf'], \
-                          outputDir)
-        self.copy_sub_dir("ustad-locale", "locale", ['js'], outputDir)
-        
-        #JQuery Mobile theme files
         """
-        jqmImagesDirSrc = self.templatesDir/"ustad-jqmimages"
-        jqmImagesDirDst = outputDir/"images"
-        if not jqmImagesDirDst.isdir():
-            jqmImagesDirDst.mkdir()
-            
-        jqmImagesDirSrc.copylist(jqmImagesDirSrc.files("*.png"),jqmImagesDirDst)
-        jqmImagesDirSrc.copylist(jqmImagesDirSrc.files("*.gif"),jqmImagesDirDst)
+        Copy files that are needed for UstadMobile usage
         """
+        copy_list= self.make_xml_copy_list(package, outputDir)
+        WebsiteExport.run_copy_list(copy_list)
+        self.copyFiles(package, outputDir, um_mode = True)
         
-        #
+    
+    def copy_sub_dir_list(self, template_src_subdir, target_subdir, extensions, out_dir):
+        """
+        Make a copy list as per Package.make_system_copy_list for all
+        files that match an extension in a sub directory of the 
+        templates directory
         
-        # copy the package's resource files
-        #package.resourceDir.copyfiles(outputDir)
-        self.copyFiles(package, outputDir)
-        
-    """
-    Copy the contents of a subdirectory from templates into a sub directory
-    of the output directory
-    """
-    def copy_sub_dir(self, template_src_subdir, target_subdir, extensions, out_dir):
+        Parameters
+        template_src_subdir : Path
+            The sub directory of templates that we should look in
+        target_subdir : Path
+            The sub directory of the output export directory we are copying to
+        extensions : list
+            list of file extensions to look for without .
+        out_dir
+            the destination directory we are exporting to
+        """
+        result_list = []
         src_dir = self.templatesDir/template_src_subdir
         dst_dir = out_dir/target_subdir
         if not dst_dir.isdir():
             dst_dir.mkdir()
             
         for extension in extensions:
-            src_dir.copylist(src_dir.files("*.%s" % extension), \
+            result_list.append([src_dir.files("*.%s" % extension),
+                               dst_dir])
+        
+        return result_list
+                
+    def copy_sub_dir(self, template_src_subdir, target_subdir, extensions, out_dir):
+        """
+        Copy the contents of a subdirectory from templates into a sub directory
+        of the output directory
+        """
+        src_dir = self.templatesDir/template_src_subdir
+        dst_dir = out_dir/target_subdir
+        if not dst_dir.isdir():
+            dst_dir.mkdir()
+            
+        for extension in extensions:
+            src_dir.copylist2(src_dir.files("*.%s" % extension), \
                              dst_dir)
         
 

@@ -27,6 +27,8 @@ from exe.engine.path          import Path, TempDirPath
 from exe                      import globals as G
 from exe.export.xmlexport     import XMLExport
 from exe.export.exportmediaconverter import ENGINE_IMAGE_SIZES, ENGINE_AUDIO_FORMATS, ENGINE_VIDEO_FORMATS
+from utils import TestUtils
+
 import shutil
 import sys
 
@@ -155,6 +157,12 @@ class TestUstadMobileExport(unittest.TestCase):
         styles_dir = G.application.config.stylesDir / package.style
         xmlExport = XMLExport(G.application.config, styles_dir, outdir)
         xmlExport.export(package)
+        
+        #check that the modification time on our resource files 
+        #are as per original so they can be easily cached
+        xml_copy_list = xmlExport.make_xml_copy_list(package, outdir) 
+        TestUtils.check_copy_list_mod_time(xml_copy_list,self)
+        
         
         mainFolder = Path(outdir/package.name)
         assert mainFolder.exists()

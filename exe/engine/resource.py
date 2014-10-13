@@ -238,7 +238,8 @@ class _Resource(Persistable):
                 storageName = self._fn2ascii(filename)
                 storageName = (self._package.resourceDir/storageName).unique()
                 self._storageName = str(storageName.basename())
-                oldPath.copyfile(self.path)
+                oldPath.copyfile2(self.path)
+                
         if self not in siblings:
             # prevent doubling-up (as might occur when cleaning corrupt files)
             siblings.append(self)

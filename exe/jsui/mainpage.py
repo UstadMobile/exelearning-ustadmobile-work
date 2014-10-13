@@ -999,6 +999,8 @@ class MainPage(RenderableLivePage):
                     + server_filename.abspath() + "\'.");
             shutil.copyfile(local_filename, \
                     server_filename.abspath());
+            shutil.copystat(local_filename, \
+                    server_filename.abspath())
 
             # new optional description file to provide the 
             # actual base filename, such that once it is later processed

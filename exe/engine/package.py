@@ -50,6 +50,7 @@ from exe.engine.persistxml     import encodeObjectToXML, decodeObjectFromXML
 from exe.engine.lom import lomsubs
 from exe.engine.checker import Checker
 from exe.webui import common
+import os
 
 log = logging.getLogger(__name__)
 
@@ -1202,6 +1203,11 @@ class Package(Persistable):
                     outFile.write(zippedFile.read(fn))
                     outFile.flush()
                     outFile.close()
+                    file_info = zippedFile.getinfo(fn)
+                    mod_time =time.mktime(file_info.date_time+(0,0,-1))
+                    os.utime(resourceDir/fn, (time.time(), mod_time))
+                    
+                    
 
         try:
             validxml = False
@@ -1384,7 +1390,223 @@ class Package(Persistable):
             newPackage.style=G.application.config.defaultStyle       
         newPackage.lang = newPackage._lang
         return newPackage
+    
+    def make_node_list(self, start_node):
+        """Return all nodes as a flat list in order"""
+        retval = [start_node]
+        for child in start_node.children:
+            retval += self.make_node_list(child)
+        
+        return retval
+    
+    def make_system_copy_list(self, style_dir, script_dir, template_dir, img_dir, css_dir, out_dir, ustad_mobile_mode = False):
+        """Return a list of dict objects where the mapping (can be 
+        mixed) is either:
+        
+        list of path objects : destination_dir
+        path object : destination_path
+        
+        Parameters
+        ----------
+        style_dir : Path
+            The current style directory
+        script_dir : Path
+            System scripts directory
+        template_dir : Path
+            System templates directory
+        img_dir : Path
+            System image directory
+        out_dir : Path
+            The output directory for the export
+        css_dir : Path
+            The system css directory
+        ustad_mobile_mode : Boolean
+            True if using UstadMobile export, false 
+        """
+        
+        copy_list = []
+        if os.path.isdir(style_dir):
+            # Copy the style sheet files to the output dir
+            styleFiles  = [style_dir/'..'/'base.css']
+            styleFiles += [style_dir/'..'/'popup_bg.gif']
+            styleFiles += style_dir.files("*.css")
+            styleFiles += style_dir.files("*.jpg")
+            styleFiles += style_dir.files("*.gif")
+            styleFiles += style_dir.files("*.png")
+            styleFiles += style_dir.files("*.js")
+            styleFiles += style_dir.files("*.html")
+            styleFiles += style_dir.files("*.ico")
+            styleFiles += style_dir.files("*.ttf")
+            styleFiles += style_dir.files("*.eot")
+            styleFiles += style_dir.files("*.otf")
+            styleFiles += style_dir.files("*.woff")
+            #self.stylesDir.copylist2(styleFiles, outputDir)
+            copy_list.append([styleFiles, out_dir])
 
+            
+        # copy script files.
+        my_style = G.application.config.styleStore.getStyle(self.style)
+        
+        jquery_file = (script_dir/'exe_jquery.js')
+        copy_list.append([jquery_file, Path(out_dir/'exe_jquery.js')])
+        
+        copy_list.append([Path(script_dir/'common.js') , 
+                           Path(out_dir/'common.js')])
+       
+        
+        tinCanFiles = [script_dir/'tincan.js', \
+               script_dir/'exe_tincan.js', \
+               script_dir/'tincan_queue.js']
+        copy_list.append([tinCanFiles, out_dir])
+        
+        
+        #dT = common.getExportDocType()
+        dT=common.getExportDocType();
+        if dT == "HTML5":
+            copy_list.append([Path(script_dir/'exe_html5.js'),
+                          Path(out_dir/'exe_html5.js')])
+
+        # Incluide eXe's icon if the Style doesn't have one
+        themePath = Path(G.application.config.stylesDir/self.style)
+        themeFavicon = themePath.joinpath("favicon.ico")
+        if not themeFavicon.exists():
+            copy_list.append([Path(img_dir/'favicon.ico'),
+                          Path(out_dir/'favicon.ico')])
+        
+        # copy players for media idevices.                
+        hasFlowplayer     = False
+        hasMagnifier      = False
+        hasXspfplayer     = False
+        hasGallery        = False
+        hasWikipedia      = False
+        isBreak           = False
+        hasInstructions   = False
+        hasMediaelement   = False
+        
+        system_scripts = []
+        
+        for node in self.make_node_list(self.root):
+            if isBreak:
+                break
+            for idevice in node.idevices:
+                if (hasFlowplayer and hasMagnifier and hasXspfplayer and hasGallery and hasWikipedia and hasInstructions and hasMediaelement):
+                    pass
+                    #isBreak = True
+                    #Mike Dawson: don't break anymore.. looking for system scripts
+                    #break
+                if hasattr(idevice, "system_scripts"):
+                    for system_script in idevice.system_scripts:
+                        if system_script not in system_scripts:
+                            system_scripts.append(system_script)
+                                
+                if not hasFlowplayer:
+                    if 'flowPlayer.swf' in idevice.systemResources:
+                        hasFlowplayer = True
+                if not hasMagnifier:
+                    if 'mojomagnify.js' in idevice.systemResources:
+                        hasMagnifier = True
+                if not hasXspfplayer:
+                    if 'xspf_player.swf' in idevice.systemResources:
+                        hasXspfplayer = True
+                if not hasGallery:
+                    hasGallery = common.ideviceHasGallery(idevice)
+                if not hasWikipedia:
+                    if 'WikipediaIdevice' == idevice.klass:
+                        hasWikipedia = True
+                if not hasInstructions:
+                    if 'TrueFalseIdevice' == idevice.klass or 'MultichoiceIdevice' == idevice.klass or 'VerdaderofalsofpdIdevice' == idevice.klass or 'EleccionmultiplefpdIdevice' == idevice.klass:
+                        hasInstructions = True
+                if not hasMediaelement:
+                    hasMediaelement = common.ideviceHasMediaelement(idevice)
+
+        if hasFlowplayer:
+            videofile = (template_dir/'flowPlayer.swf')
+            copy_list.append([videofile,  Path(out_dir/'flowPlayer.swf')])
+            
+            controlsfile = (template_dir/'flowplayer.controls.swf')
+            copy_list.append([ controlsfile, 
+                              Path(out_dir/'flowplayer_controls.swf')])
+            
+        if hasMagnifier:
+            magfile = (template_dir/'mojomagnify.js')
+            copy_list.append([magfile, Path(out_dir/'mojomagnify.js')])
+            
+        if hasXspfplayer:
+            xspf_file = (template_dir/'xspf_player.swf')
+            copy_list.append([xspf_file, 
+                              Path(out_dir/'xspf_player.swf')])
+            
+        if hasGallery:
+            imageGalleryCSS = (css_dir/'exe_lightbox.css')
+            copy_list.append([imageGalleryCSS,
+                          Path(out_dir/'exe_lightbox.css')]) 
+            
+            imageGalleryJS = (script_dir/'exe_lightbox.js')
+            copy_list.append([imageGalleryJS,
+                          Path(out_dir/'exe_lightbox.js')])
+            gallery_list = [Path(img_dir/'exe_lightbox_close.png'),
+                             Path(img_dir/'exe_lightbox_loading.gif'),
+                             Path(img_dir/'exe_lightbox_next.png'),
+                             Path(img_dir/'exe_lightbox_prev.png')]
+            copy_list.append([gallery_list, out_dir])
+            #self.imagesDir.copylist2(('exe_lightbox_close.png', 'exe_lightbox_loading.gif', 'exe_lightbox_next.png', 'exe_lightbox_prev.png'), outputDir)
+        if hasWikipedia:
+            wikipediaCSS = (css_dir/'exe_wikipedia.css')
+            copy_list.append([wikipediaCSS,
+                          Path(out_dir/'exe_wikipedia.css')])
+        if hasInstructions:
+            if not Path(style_dir/'panel-amusements.png').exists():
+                copy_list.append([Path(img_dir/'panel-amusements.png'),
+                              Path(out_dir/'panel-amusements.png')])
+            
+            if not Path(style_dir/'stock-stop.png').exists():
+                copy_list.append([Path(img_dir/'stock-stop.png'),
+                              Path(out_dir/'stock-stop.png')])
+            
+        if hasMediaelement:
+            mediaelement = (script_dir/'mediaelement')
+            #mediaelement.copyfiles2(outputDir)
+            copy_list.append([mediaelement.files(), out_dir])
+            dT = common.getExportDocType()
+            
+            #MD: this looks like duplication
+            if dT != "HTML5":
+                html5js = (script_dir/'exe_html5.js')
+                copy_list.append([html5js, Path(out_dir/'exe_html5.js')])
+                
+                
+        #handle copying system scripts
+        sys_script_list = []
+        for system_script in system_scripts:
+            sys_script_list.append(Path(script_dir/system_script))
+        
+        if len(sys_script_list) > 0:
+            copy_list.append([sys_script_list, out_dir])    
+            
+        if ustad_mobile_mode is True:
+            um_files = []
+            from exe.export.websitepage import WebsitePage
+            for um_script in WebsitePage.getUstadMobileScriptList():
+                um_files.append(Path(template_dir/um_script))
+            
+            for um_css in WebsitePage.getUstadMobileCSSList():
+                um_files.append(Path(template_dir/um_css))
+            
+            copy_list.append([um_files,out_dir])
+            
+        if hasattr(self, 'exportSource') and self.exportSource:
+            copy_list.append([
+               (G.application.config.webDir/'templates'/'content.xsd'),
+                    Path(out_dir/'content.xsd')
+                         ])
+            
+        if self.license == "license GFDL":
+            # include a copy of the GNU Free Documentation Licence
+            copy_list.append([(self.templatesDir/'fdl.html'),
+                          Path(out_dir/'fdl.html') ]) 
+        
+        return copy_list
+        
     def getUserResourcesFiles(self, node):
         resourceFiles = set()
         for idevice in node.idevices:
