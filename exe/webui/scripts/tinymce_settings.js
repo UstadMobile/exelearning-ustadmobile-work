@@ -1,6 +1,16 @@
 /*
  * TinyMCE4 Settings for eXe.  Uses inline editing mode, places the
  * toolbar in #externalToolbarHolder at the top of the page.
+ * 
+ * To make the bundle from TinyMCE source code:
+ * 
+ * grunt bundle --themes modern --plugins advlist,autolink,lists,link,image,charmap,print,preview,anchor,searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,contextmenu,paste,textcolor
+ * 
+ * Built from TinyMCE from:
+ * https://github.com/UstadMobile/tinymce
+ * 
+ * Forked to add support for Autoplay and Controls in HTML Media 
+ * 
  */
 
 tinymce.init({
@@ -11,6 +21,7 @@ tinymce.init({
 	fixed_toolbar_container: "#externalToolbarHolder",
 	menubar: false,
     file_browser_callback : exe_tinymce.chooseImage,
+    //see plugin note above if changing
     plugins: [
 	      "advlist autolink lists link image charmap print preview anchor",
 	      "searchreplace visualblocks code fullscreen",

@@ -238,7 +238,7 @@ class AuthoringPage(RenderableResource):
                                 "/scripts/tinymce_3.5.7_settings.js"}
         else:
             tinymce_src = {"wysiwyg_path" :
-                            "/scripts/tinymce/tinymce.min.js",
+                            "/scripts/tinymce/tinymce.full.min.js",
                            "wysiwyg_settings_path" :
                             "/scripts/tinymce_settings.js"}
         html += 'var eXeLearning_settings = '
