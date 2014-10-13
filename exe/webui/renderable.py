@@ -219,17 +219,34 @@ class File(static.File):
     Dictionary of regular expressions to cache info mapped 
     as regular expression object to HTTP headers dictionary
     """
-    cache_headers = {}
+    cache_headers = []
+    
+    @classmethod
+    def append_regex_headerset(cls, regex_str, headerset):
+        """
+        Append to our cache_headers list for the list
+        regex_str : str
+            Regular expression to be matched for sending this headerset
+        headerset : dict
+            Dictionary in the form of Header-name : Value
+        """
+        cls.cache_headers.append([re.compile(regex_str), headerset])
     
     @classmethod
     def get_cache_headers_by_path(cls, uri):
         """
         Return the HTTP caching headers to use according to the
         URI using cache_headers
+        
+        Parameters
+        ----------
+        uri : str
+            The request path to find headers for
         """
-        for regex in cls.cache_headers:
+        for regex_arr in cls.cache_headers:
+            regex = regex_arr[0]
             if regex.match(uri):
-                return cls.cache_headers[regex]
+                return regex_arr[1]
         
         return None
     

@@ -164,14 +164,32 @@ class WebServer:
                                "Expires" : ""
                                }
         
+        # preview parameters
+        preview_cache_params = {
+                                "Cache-Control" : "public, must-revalidate",
+                                "Expires" : ""
+                                }
+        
         webDir = self.config.webDir
         
+        #preview items that can be cached without too much worry
+        preview_cache_ext = ["css", "js"]
+         
         #setup caching files
         static_dirs = ["^\/scripts\/", "^\/images\/", "^\/css\/",
                        "^\/jsui\/", "^\/style\/", ".*\\/resources\\/.*"]
         for sdir in static_dirs:
-            File.cache_headers[re.compile(sdir)] = static_cache_params
-            x = 0
+            File.append_regex_headerset(sdir, static_cache_params)
+        
+        for ext in preview_cache_ext:
+            for preview_type in ["preview", "previewmobile"]:
+                regex_str = ".*\\/%s\\/.*\\.%s$" % (preview_type, ext)
+                File.append_regex_headerset(regex_str, 
+                                            static_cache_params)
+        for preview_type in ["preview", "previewmobile"]:
+            regex_str = ".*\\/%s\\/.*" % preview_type
+            File.append_regex_headerset(regex_str, preview_cache_params)
+                                                    
         
         
         self.root.putChild("images",      File(webDir+"/images"))
