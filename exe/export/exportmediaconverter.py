@@ -67,6 +67,9 @@ class ExportMediaConverter(object):
     currentPackage = None
     autoMediaOnly = False
     
+    #temporary variable - stop commands actually running
+    export_cmds_disabled = True
+    
 
     def __init__(self):
         '''
@@ -432,6 +435,9 @@ class ExportMediaConverter(object):
         
     
     def runConversionCmd(self, inFilePath, targetFormat, conversionCommandBase):
+        if ExportMediaConverter.export_cmds_disabled is True:
+            return 
+        
         workingDir = Path(inFilePath).parent
         mediaName = inFilePath.name
         import os

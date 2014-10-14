@@ -119,6 +119,7 @@ class MainPage(RenderableLivePage):
         G.application.resourceDir=Path(package.resourceDir);
 
         self.location_buttons = LocationButtons()
+        self.exportDownloadPage = None
 
 
     def adjust_config_for_user(self):
@@ -147,13 +148,43 @@ class MainPage(RenderableLivePage):
             self.previewPage = File(self.package.previewDir / self.package.name)
         return self.previewPage
     
+    def child_export_files(self, ctx):
+        if not hasattr(self.package, "export_download_dir"):
+            self.package.export_download_dir = None
+        
+        if not self.package.export_download_dir:
+            self.package.export_download_dir = TempDirPath()
+        
+        if not self.exportDownloadPage:    
+            self.exportDownloadPage = File(self.package.export_download_dir)
+            
+        return self.exportDownloadPage
+    
     def child_previewmobile(self,ctx):
         """Render smartphone preview (UstadMobile)"""
+        """
+        
+        NOTE: This should be using a separate directory to avoid
+        interference
+        
+        if not hasattr(self.package, "previewMobileDir"):
+            self.package.previewMobileDir = None
+            if not 'previewMobileDir' in self.package.nonpersistant:
+                self.package.nonpersistant.append('previewMobileDir')
+        
+        if not self.package.previewMobileDir:
+            stylesDir = self.config.stylesDir / self.package.style
+            self.package.previewMobileDir = TempDirPath()
+            self.exportXML(None, self.package.previewMobileDir, stylesDir)
+            self.previewPage = File(self.package.previewMobileDir / self.package.name)
+        """
+        
         if not self.package.previewDir:
             stylesDir = self.config.stylesDir / self.package.style
             self.package.previewDir = TempDirPath()
             self.exportXML(None, self.package.previewDir, stylesDir)
             self.previewPage = File(self.package.previewDir / self.package.name)
+        
         return self.previewPage
     
     def child_readability_stats(self, ctx):
@@ -671,7 +702,15 @@ class MainPage(RenderableLivePage):
                 client.alert(msg)
                 raise Exception(msg)
         
-        inputFilename = self.adjust_path_for_user(inputFilename)
+        is_tmp_export_path = False
+        
+        #except if we are actually exporting to the download directory
+        if G.application.config.appMode == Config.MODE_WEBAPP and hasattr(self.package, 'export_download_dir'):
+            if inputFilename.parent == self.package.export_download_dir:
+                is_tmp_export_path = True
+        
+        if not is_tmp_export_path:
+            inputFilename = self.adjust_path_for_user(inputFilename)
             
         return inputFilename
 
@@ -1197,7 +1236,18 @@ class MainPage(RenderableLivePage):
         webDir     = Path(self.config.webDir)
         #stylesDir  = webDir.joinpath('style', self.package.style)
         stylesDir  = self.config.stylesDir/self.package.style
-        filename = Path(filename, 'utf-8')
+        
+        if G.application.config.appMode == Config.MODE_WEBAPP:
+            if not hasattr(self.package, "export_download_dir"):
+                self.package.export_download_dir = None
+            
+            if not self.package.export_download_dir:
+                self.package.export_download_dir = TempDirPath()
+            
+            filename = self.package.export_download_dir/self.package.name
+        else:
+            filename = Path(filename, 'utf-8')
+        
         exportDir  = Path(filename).dirname()
         if exportDir and not exportDir.exists():
             client.alert(_(u'Cannot access directory named ') +
@@ -1225,6 +1275,7 @@ class MainPage(RenderableLivePage):
         elif exportType == 'zipFile':
             filename = self.b4save(client, filename, '.zip', _(u'EXPORT FAILED!'))
             self.exportWebZip(client, filename, stylesDir)
+            client.sendScript("alert('your export is ready sir');")
         elif exportType == 'textFile':
             self.exportText(client, filename)
         elif exportType == 'scorm1.2':

@@ -290,7 +290,7 @@ class Package(Persistable):
     """
     #persistenceVersion = 12
     persistenceVersion = 15 #used to be 12 before. +1-ed for course test mode.
-    nonpersistant      = ['resourceDir', 'filename', 'previewDir']
+    nonpersistant      = ['resourceDir', 'filename', 'previewDir', 'previewMobileDir', 'export_download_dir']
     # Name is used in filenames and urls (saving and navigating)
     _name              = '' 
     tempFile           = False # This is set when the package is saved as a temp copy file
@@ -329,6 +329,7 @@ class Package(Persistable):
         self.style         = G.application.config.defaultStyle
         self._isChanged    = False
         self.previewDir    = None
+        self.export_download_dir = None
         self.idevices      = []
         self.dublinCore    = DublinCore()
         self._lang = G.application.config.locale.split('_')[0]
@@ -951,7 +952,11 @@ class Package(Persistable):
             if hasattr(self, 'previewDir'):
                 if self.previewDir:
                     shutil.rmtree(self.previewDir, True)
+            if hasattr(self, 'previewDirMobile'):
+                if self.previewDirMobile:
+                    shutil.rmtree(self.previewDirMobile, True)
         self.previewDir = None
+        self.previewDirMobile = None
 
     # Properties
     isChanged     = property(lambda self: self._isChanged, set_changed)

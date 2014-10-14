@@ -427,7 +427,8 @@ UstadMobileContentZone.prototype = {
         var mediaToStopArr = $(pageSelector).find("audio");
         for(var i = 0; i < mediaToStopArr.length; i++) {
             var mediaToStop = mediaToStopArr.get(i);
-            if(mediaToStop.readyState >= 2 && mediaToStop.currentTime !== 0 && mediaToStop.ended === false) {
+            
+            if(mediaToStop.readyState >= 2 && mediaToStop.currentTime !== 0 && !mediaToStop.ended) {
                 mediaToStop.pause();
             }
         }
@@ -481,7 +482,7 @@ UstadMobileContentZone.prototype = {
             
             var newPageTitle = $(newPageContentParsed).find(
                     "[data-role='header']").text();
-            newPageContentEl.attr('data-title', newPageTitle);
+            newPageContentEl.attr('data-title', newPageTitle.trim());
                         
             console.log("Attempting to preload into DOM:" + this.url);
             console.log("preloadPage: Check existing pageContentEl - must =1; is " + 
@@ -593,7 +594,7 @@ UstadMobileContentZone.prototype = {
         var viewWidth = $(window).width();
         
         //stop what is going on this page now...
-        umObj.pageHide(umObj.contentPageSelectors[dir]);
+        umObj.pageHide(umObj.contentPageSelectors[UstadMobile.MIDDLE]);
         
         $(umObj.contentPageSelectors[UstadMobile.MIDDLE]).css("transform",
             "translateX(" + (movementDir * viewWidth)+ "px)");
@@ -618,7 +619,7 @@ UstadMobileContentZone.prototype = {
             $(umObj.contentPageSelectors[UstadMobile.MIDDLE]).css("position", 
                 "static").css("width", "100%").css("left", "0px");
             
-            $(".ui-page-active").trigger("updatelayout");
+            //$(".ui-page-active").trigger("updatelayout");
             
             $("div[data-role='header'] h3").text(
                 $(nextPageSel).attr("data-title"));

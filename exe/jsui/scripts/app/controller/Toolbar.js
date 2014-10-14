@@ -1174,23 +1174,28 @@ Ext.define('eXe.controller.Toolbar', {
 	            title = _("Export Common Cartridge as");
 	        else
 	            title = _("INVALID VALUE PASSED TO exportPackage");
-
-            var fp = Ext.create("eXe.view.filepicker.FilePicker", {
-	            type: eXe.view.filepicker.FilePicker.modeSave,
-	            title: title,
-	            modal: true,
-	            scope: this,
-	            callback: function(fp) {
-	                if (fp.status == eXe.view.filepicker.FilePicker.returnOk || fp.status == eXe.view.filepicker.FilePicker.returnReplace)
-	                    nevow_clientToServerEvent('exportPackage', this, '', exportType, fp.file.path)
-	            }
-	        });
-	        fp.appendFilters([
-	            { "typename": _("SCORM/IMS/ZipFile"), "extension": "*.txt", "regex": /.*\.zip$/ },
-	            { "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
-	            ]
-	        );
-	        fp.show();            
+	        
+	        if(eXe.app.config.appMode != APPMODE_WEBAPP) {
+	            var fp = Ext.create("eXe.view.filepicker.FilePicker", {
+		            type: eXe.view.filepicker.FilePicker.modeSave,
+		            title: title,
+		            modal: true,
+		            scope: this,
+		            callback: function(fp) {
+		                if (fp.status == eXe.view.filepicker.FilePicker.returnOk || fp.status == eXe.view.filepicker.FilePicker.returnReplace)
+		                    nevow_clientToServerEvent('exportPackage', this, '', exportType, fp.file.path);
+		            }
+		        });
+		        fp.appendFilters([
+		            { "typename": _("SCORM/IMS/ZipFile"), "extension": "*.txt", "regex": /.*\.zip$/ },
+		            { "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
+		            ]
+		        );
+		        fp.show();            
+	        }else {
+	        	//tell the server to make it for us - server will tell us when ready
+	        	nevow_clientToServerEvent('exportPackage', this, '', exportType, '');
+	        }
 	    }
 	},// exportPackage()
     
