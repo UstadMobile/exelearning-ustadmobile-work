@@ -324,13 +324,16 @@ class TextAreaElement(ElementWithResources):
         from exe.export.exportmediaconverter import ExportMediaConverter
         mediaConverter = ExportMediaConverter.getInstance()
         
+        """DISABLED : Due to change of 
         if mediaConverter is not None:
             htmlContentMediaAdapted = mediaConverter.handleAudioVideoTags(self.renderView())
             htmlContentMediaAdapted = mediaConverter.handleImageVersions(htmlContentMediaAdapted)
             return htmlContentMediaAdapted
         else:
             return self.renderView()
+        """
         
+        return self.renderView()
     
 
     """

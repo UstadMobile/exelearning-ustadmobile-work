@@ -163,23 +163,21 @@ class WebsitePage(Page):
         if ustadMobileMode == True:
             onLoadFunction = " onload='_onLoadFunction();' "
         
-        html += u"""<body class="exe-web-site" data-tincan-id="%s" %s>
+        from websiteexport import WebsiteExport
+        
+        
+        html += u"""<body class="exe-web-site" data-tincan-pagename="%s" data-tincan-prefix="%s" %s>
             <script type="text/javascript">
             document.body.className+=" js" 
-            </script>""" % (self.get_tincan_id(), onLoadFunction)
+            </script>""" % (self.name, 
+                            WebsiteExport.current_xapi_prefix, 
+                            onLoadFunction)
         html += lb
         if ustadMobileMode == True:
             #do the header another way
             html += WebsitePage.makeUstadMobileHeader(escape(self.node.titleLong), nextPage, prevPage)
         html += u"<div id=\"content\">"+lb
         
-        html += """<div id='tcdef_%(pageid)s' class='tcdiv'>
-        %(tcdef)s
-        </div>
-        """ % {
-               "pageid" : self.name, 
-               "tcdef" : self.get_tincan_activity_definition()
-           }
         
         html += '<p id="skipNav"><a href="#main" class="sr-av">' + c_('Skip navigation')+'</a></p>'+lb
 
@@ -448,8 +446,7 @@ class WebsitePage(Page):
             html += "<link type=\"text/css\" rel=\"stylesheet\" href=\"%s\"/>\n" \
              % cssName
         
-        html += """<meta name=\"viewport\" content=\"width=device-width, 
-            initial-scale=1\"/> \n"""
+        html += """<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>  \n"""
         
         return html
     

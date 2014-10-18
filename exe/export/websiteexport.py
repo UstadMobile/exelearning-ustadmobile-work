@@ -48,6 +48,7 @@ class WebsiteExport(object):
     current_page = ""
     current_package_name = ""
     current_idevice_id = ""
+    current_xapi_prefix = ""
     
     
     """
@@ -191,6 +192,8 @@ class WebsiteExport(object):
                 outputDir.mkdir()
 
         WebsiteExport.current_package_name = package.name
+        WebsiteExport.current_xapi_prefix = \
+            EXETinCan.get_tincan_prefix_for_pkg(package)
         
         # Import the Website Page class.  If the style has it's own page class
         # use that, else use the default one.

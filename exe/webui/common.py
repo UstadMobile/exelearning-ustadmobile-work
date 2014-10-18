@@ -29,7 +29,7 @@ from exe                       import globals as G
 from exe.engine.path           import Path
 from exe.webui.blockfactory    import g_blockFactory
 from exe.engine.error          import Error
-
+from xml.sax.saxutils import escape
 import re
 
 htmlDocType=''
@@ -1023,3 +1023,12 @@ def strip_html_to_plaintext(html):
     import re
     return re.sub(myRegex, '', html, 0, re.MULTILINE | re.IGNORECASE)
 
+
+def escape_for_attrib(attr_val):
+    """
+    Escape a string so it can be used in an attribute value
+    """
+    return escape(attr_val, {"'" : "&#39;", "\"" : "&#34;"})
+    
+    
+    

@@ -34,6 +34,11 @@ class EXETinCan(object):
         
         return json_str
     
+    @classmethod
+    def get_tincan_prefix_for_pkg(cls, package):
+        """Return the prefix/identifier"""
+        return package.xapi_prefix + "/" + package.dublinCore.identifier
+    
 class EXETinCanAuthenticator(object):
     '''
     Authenticator against TinCan servers

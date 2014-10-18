@@ -65,8 +65,7 @@ class XMLExport(WebsiteExport):
     
     @staticmethod
     def encodeEntities(html):
-        import cgi
-        return  cgi.escape(html)
+        return  common.escape_for_attrib(html)
     
                             
         
@@ -80,6 +79,8 @@ class XMLExport(WebsiteExport):
         outputDir = self.filename
         currentOutputDir = Path(outputDir/package.name)
         WebsiteExport.current_package_name = package.name
+        WebsiteExport.current_xapi_prefix = \
+            EXETinCan.get_tincan_prefix_for_pkg(package)
         
         #Added for course test mode.
         self.ustadMobileTestMode = package.ustadMobileTestMode
@@ -209,7 +210,9 @@ class XMLExport(WebsiteExport):
             </script>
             """
         output += "</head>"
-        output += "<body class=\"exe-web-site\" onload='_onLoadFunction();' >"
+        output += "<body class=\"exe-web-site\" onload='_onLoadFunction();' " \
+            + "data-tincan-prefix=\"%s\">" % WebsiteExport.current_xapi_prefix
+          
         output += WebsitePage.makeUstadMobileHeader(tocTitle, None, None)
         output += self.generateJQueryMobileTOCNode(rootNode, 0)
         output += WebsitePage.makeUstadMobileFooter()
