@@ -164,16 +164,39 @@ EXETinCan.prototype = {
     },
     
     /**
+     * Format an ISO8601 duration for the given number of milliseconds difference
+     * 
+     * @param Number duration the duration to format in milliseconds
+     * @returns String An ISO8601 Duration e.g. PT4H12M05S
+     */
+    formatISO8601Duration: function(duration) {
+        var msPerHour = (1000*60*60);
+        var hours = Math.floor(duration/msPerHour);
+        var durationRemaining = duration % msPerHour;
+
+        var msPerMin = (60*1000);
+        var mins = Math.floor(durationRemaining/msPerMin);
+        durationRemaining = durationRemaining % msPerMin;
+
+        var msPerS = 1000;
+        var secs = Math.floor(durationRemaining / msPerS);
+
+        retVal = "PT" + hours +"H" + mins + "M" + secs + "S";
+        return retVal;
+    },
+    
+    /**
      * Make a TINCAN Statement for user experiencing the page.  Actor must
      * be set.
      * 
      * @param pagename String page identifier (e.g. filename without .html)
      * @param name String Name of activity (e.g. short title) for activity def
      * @param desc String Description of activity for activity def
+     * @param duration the duration the page was used (in milliseconds)
      * 
      * @returns TinCan.Statement statement for input args
      */
-    makePageExperienceStmt : function(pagename, name, desc) {
+    makePageExperienceStmt : function(pagename, name, desc, duration) {
     	var myVerb = new TinCan.Verb({
 			id : "http://adlnet.gov/expapi/verbs/experienced",
 			display: {
@@ -196,9 +219,14 @@ EXETinCan.prototype = {
 			definition : myDefinition
 		});
     	
+    	var myResult = new TinCan.Result({
+    		duration : this.formatISO8601Duration(duration)
+    	});
+    	
     	var stmt = new TinCan.Statement({
 			actor : this.getActor(),
 			verb : myVerb,
+			result : myResult,
 			target : myActivity,
 			},{'storeOriginal' : true});
 		
