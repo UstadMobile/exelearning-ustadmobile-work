@@ -166,11 +166,13 @@ class WebsitePage(Page):
         from websiteexport import WebsiteExport
         
         
-        html += u"""<body class="exe-web-site" data-tincan-pagename="%s" data-tincan-prefix="%s" %s>
+        html += u"""<body class="exe-web-site" data-tincan-pagename="%s" data-tincan-prefix="%s" data-package-title="%s" %s>
             <script type="text/javascript">
             document.body.className+=" js" 
             </script>""" % (self.name, 
-                            WebsiteExport.current_xapi_prefix, 
+                            WebsiteExport.current_xapi_prefix,
+                            common.escape_for_attrib(
+                              WebsiteExport.current_package_title), 
                             onLoadFunction)
         html += lb
         if ustadMobileMode == True:

@@ -186,6 +186,60 @@ EXETinCan.prototype = {
     },
     
     /**
+     * Make a TINCAN launch statement for this ELP file
+     * 
+     * @param launchedID String TinCan ID of activity being launched
+     * @param launchedName String Name of the activity being launched
+     * @param launchedDesc String description of the activity being launched
+     * @param parentID String (optional) Parent TINCAN ID of activity being launched
+     */
+    makeLaunchedStmt : function(launchedID, launchedName, launchedDesc, parentID) {
+    	var myVerb = new TinCan.Verb({
+    		id : "http://adlnet.gov/expapi/verbs/launched",
+    		display : {
+                "en-US": "launched"
+            }
+    	});
+    	
+    	var myDefinition = {
+			type : "http://adlnet.gov/expapi/activities/lesson",
+    		name : {
+    			"en-US" : launchedName 
+    		},
+    		description : {
+    			"en-US" : launchedDesc
+    		}
+    	};
+    	
+    	var myActivity = new TinCan.Activity({
+    		id : launchedID,
+    		definition : myDefinition
+    	});
+    	
+    	var stmtVals = {
+			actor: this.getActor(),
+			verb : myVerb,
+			activity : myActivity
+    	};
+    	
+    	if(typeof parentID !== "undefined") {
+    		//Add contextActivity
+    		stmtVals['context'] = new TinCan.Context({
+    			"contextActivities" : {
+    				"parent" : [ {
+    					"id" : parentID
+    				}]
+    			}
+    		});
+    	}
+    	
+    	var stmt = new TinCan.Statement(stmtVals, 
+    			{'storeOriginal' : true});
+    	return stmt;
+    },
+    
+    
+    /**
      * Make a TINCAN Statement for user experiencing the page.  Actor must
      * be set.
      * 

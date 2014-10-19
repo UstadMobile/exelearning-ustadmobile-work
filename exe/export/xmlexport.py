@@ -81,6 +81,8 @@ class XMLExport(WebsiteExport):
         WebsiteExport.current_package_name = package.name
         WebsiteExport.current_xapi_prefix = \
             EXETinCan.get_tincan_prefix_for_pkg(package)
+        WebsiteExport.current_package_title = \
+            package.title 
         
         #Added for course test mode.
         self.ustadMobileTestMode = package.ustadMobileTestMode
@@ -211,7 +213,9 @@ class XMLExport(WebsiteExport):
             """
         output += "</head>"
         output += "<body class=\"exe-web-site\" onload='_onLoadFunction();' " \
-            + "data-tincan-prefix=\"%s\">" % WebsiteExport.current_xapi_prefix
+            + "data-tincan-prefix=\"%s\" data-package-title=\"%s\">" \
+                % (WebsiteExport.current_xapi_prefix, 
+                   common.escape_for_attrib(WebsiteExport.current_package_title))
           
         output += WebsitePage.makeUstadMobileHeader(tocTitle, None, None)
         output += self.generateJQueryMobileTOCNode(rootNode, 0)

@@ -49,7 +49,7 @@ class WebsiteExport(object):
     current_package_name = ""
     current_idevice_id = ""
     current_xapi_prefix = ""
-    
+    current_package_title = ""
     
     """
     WebsiteExport will export a package as a website of HTML pages
@@ -194,6 +194,8 @@ class WebsiteExport(object):
         WebsiteExport.current_package_name = package.name
         WebsiteExport.current_xapi_prefix = \
             EXETinCan.get_tincan_prefix_for_pkg(package)
+        WebsiteExport.current_package_title = \
+            package.title 
         
         # Import the Website Page class.  If the style has it's own page class
         # use that, else use the default one.
