@@ -219,7 +219,7 @@ EXETinCan.prototype = {
     	var stmtVals = {
 			actor: this.getActor(),
 			verb : myVerb,
-			activity : myActivity
+			target : myActivity
     	};
     	
     	if(typeof parentID !== "undefined") {
