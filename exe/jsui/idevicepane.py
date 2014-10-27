@@ -78,9 +78,15 @@ class IdevicePane(Renderable, Resource):
         log.debug("Process" + repr(request.args))
         if ("action" in request.args and 
             request.args["action"][0] == "AddIdevice"):
-
+            user_info = ""
+            if request.session.webservice_user:
+                user_info = "user=%s" % request.session.webservice_user
+                                                  
+            
             self.package.isChanged = True
             prototype = self.prototypes.get(request.args["object"][0])
+            log.info("User AddIdevice %s idevice=%s" % (user_info,
+                                          prototype.__class__.__name__))
             if prototype:
                 node = self.package.findNode(request.args["currentNode"][0])
                 node.addIdevice(prototype.clone())

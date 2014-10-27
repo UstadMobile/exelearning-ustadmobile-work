@@ -759,6 +759,11 @@ class MainPage(RenderableLivePage):
         filename = self.b4save(client, filename, '.elp', _(u'SAVE FAILED!'))
         try:
             self.package.save(filename) # This can change the package name
+            user_info = ""
+            if self.session.webservice_user:
+                user_info = "user=%s" % self.session.webservice_user
+            
+            log.info("User SavePackage %s to %s" % (user_info, str(filename)))
         except Exception, e:
             client.alert(_('SAVE FAILED!\n%s') % str(e))
             raise

@@ -8,6 +8,9 @@ import os
 import json
 from exe.engine.path import Path
 import copy
+import logging
+
+log = logging.getLogger(__name__)
 
 class EXEBackEndService(object):
     '''
@@ -112,6 +115,7 @@ class EXEBackEndService(object):
         auth_result = self.authenticate_user(username, password)
         if auth_result['result'] == 200:
             session.webservice_user = auth_result['userid']
+            log.info("User Login user=%s" % session.webservice_user)
         else:
             session.webservice_user = None
             
