@@ -5,6 +5,42 @@ $(function() {
     setupTextPrompts();
 });
 
+var EXEAuthoringDefaultPrompts;
+
+
+EXEAuthoringDefaultPrompts = {
+		
+	/**
+	 * Attach the default prompt to a TinyMCE Editor instance
+	 * 
+	 * @param ed TinyMCE_Editor The TinyMCE editor object to work with
+	 */
+	setupTinyMCEEditor: function(ed) {
+		if($("#"+ed.id).hasClass("defaultprompt")) {
+			var defaultPrompt = $("#"+ed.id).attr('data-defaultprompt');
+			var heightSet = "70";//eXe's default
+			heightSet = parseInt($("#"+ed.id).height());
+			var margin = Math.round(heightSet/2)-10;
+			var width = 700;//default
+			var textAreaWidth = $("#" + ed.id).width();
+			if(textAreaWidth) {
+				width = parseInt(textAreaWidth);
+			}
+			
+			var overLayDivHTML =  makeOverlayDiv(ed.id, width, margin, 0, 
+					defaultPrompt, "center");
+			$('#' + ed.id).before(overLayDivHTML);
+			checkMceEditorDefaultOverlay(ed);
+			
+			//attach an event handler to add/remove prompt
+			ed.on("keyup", function() {
+				checkMceEditorDefaultOverlay(ed);
+			});
+		}
+	}
+};
+
+
 /*
  * Function to manage  
  */

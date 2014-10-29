@@ -27,7 +27,12 @@ tinymce.init({
 	      "searchreplace visualblocks code fullscreen",
 	      "insertdatetime media table contextmenu paste textcolor"
 	  ],
-    toolbar: "undo redo | styleselect | fontselect | fontsizeselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | forecolor backcolor "
+    toolbar: "undo redo | styleselect | fontselect | fontsizeselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | forecolor backcolor ",
+	setup: function(ed) {
+		ed.on("init", function(e) {
+			EXEAuthoringDefaultPrompts.setupTinyMCEEditor(ed);
+		});
+	}
 });
 
 $(function() {
