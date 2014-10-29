@@ -1,0 +1,34 @@
+
+Running eXe as a Web Server for remote users:
+
+EXE can run as a desktop app with the UI displayed through the browser
+or can run in WebApp mode to service multiple users over the network.
+
+To use eXe as a web service:
+
+1. Open up exe.conf (in ~/.exe normally or exe/config if running in 
+   standalone mode
+
+2. Change the line appMode = DESKTOP to appMode = WEBAPP and save it
+
+3. Create a file called auth-settings.json in the config directory (
+   same directory where exe.conf is) and put in authentication settings.
+   Currently on the Experience API is supported - e.g.
+
+{
+    "auth_class_name" : "exe.webui.webservice.tincanbackend.TinCanUserBackend",
+    "xapi_base" : "http://umcloud1.ustadmobile.com/umlrs",
+    "user_dir_path" : "/home/ubuntu/exe-users/%(username)s",
+    "autocreate_user_path" : "1"
+}
+
+4. Run eXe - it will by default run on port 51235
+
+5. To run as an upstart job - make sure there is a user on system called
+   exelearning (upstart should run job as this user and have this for 
+   home dir)
+
+sudo cp doc-dir/exelearning-upstart.example.conf /etc/init/exelearning.conf
+sudo service exelearning start
+
+
