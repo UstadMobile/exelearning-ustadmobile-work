@@ -127,12 +127,6 @@ class AuthoringPage(RenderableResource):
                     return "<body onload='location.replace(\"" + request.path + "?clientHandleId=" + activeClient.handleId + "\")'/>"
                 else:
                     log.error("No active client")
-                    
-            if request.args["action"][0] == "addidevice":
-                activeClient.call("showIdeviceToolbar")
-                if is_ajax:
-                    return json.dumps({"success" : True})
-            
 
         self.blocks = []
         self.__addBlocks(topNode)

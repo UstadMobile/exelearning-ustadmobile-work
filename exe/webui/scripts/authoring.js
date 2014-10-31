@@ -447,20 +447,7 @@ function execute_submitLink(action, object, changed, currentNode)
  * Trigger AJAX to make the main window show the insert idevice options
  */
 function authoringInsertIdevice() {
-	var theForm = getContentForm();
-	if(theForm) {
-		var theUrl = theForm.getAttribute("action");
-		$.ajax({
-			url : theUrl,
-			data: {
-				"clientHandleId" : top.nevow_clientHandleId,
-				"action" : "addidevice",
-				"mode" : "ajax"
-			}
-		}).done(function(msg) {
-			console.log("asked for add idevice");
-		});
-	}
+	top.showIdeviceToolbar();
 }
 
 function submitLink(action, object, changed, currentNode) 
