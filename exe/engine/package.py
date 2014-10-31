@@ -1396,6 +1396,32 @@ class Package(Persistable):
         newPackage.lang = newPackage._lang
         return newPackage
     
+    def get_internal_links(self):
+        """Return a dict of internal links for TinyMCE Link List Plugin"""
+        
+        retval = []
+        if hasattr(self, 'anchor_fields') \
+        and self.anchor_fields is not None \
+        and G.application.config.internalAnchors!="disable_all" :
+            for anchor_field in self.anchor_fields: 
+                anchor_field_path = anchor_field.GetFullNodePath()
+                for anchor_name in anchor_field.anchor_names:
+                    full_anchor_name = anchor_field_path + "#" + anchor_name
+                    retval.append({"title" : anchor_name,
+                                   "value" : full_anchor_name})
+            
+        anchor_node_path = self.root.GetFullNodePath() + "#auto_top"
+        retval.append({"title" : self.root.title, 
+                       "value" : anchor_node_path})
+        
+        for this_node in self.root.walkDescendants():
+            anchor_node_path = this_node.GetFullNodePath() + "#auto_top"
+            retval.append({"title" : this_node.title,
+                           "value" : anchor_node_path});
+        
+        return retval
+        
+    
     def make_node_list(self, start_node):
         """Return all nodes as a flat list in order"""
         retval = [start_node]

@@ -1774,8 +1774,7 @@ Ext.define('eXe.controller.Toolbar', {
                             }
                             Ext.getCmp('idevicepwin').close();
                         }
-                    });    
-                    console.log("Found idevice "+ label + " in " + category); 
+                    });
                 }
                 
                 for(categoryName in deviceItemsByCategory) {

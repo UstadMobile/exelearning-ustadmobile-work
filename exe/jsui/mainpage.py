@@ -128,6 +128,9 @@ class MainPage(RenderableLivePage):
             new_config = copy.copy(self.config)
             x = 0 
 
+    def child_authoring_linklist(self, ctx):
+        return json.dumps(self.package.get_internal_links())
+
     def child_authoring(self, ctx):
         """Returns the authoring page that corresponds to the url http://127.0.0.1:port/package_name/authoring"""
         request = inevow.IRequest(ctx)

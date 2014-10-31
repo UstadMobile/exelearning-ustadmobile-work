@@ -4,6 +4,7 @@
  * 
  * To make the bundle from TinyMCE source code:
  * 
+ * grunt --force
  * grunt bundle --themes modern --plugins advlist,autolink,lists,link,image,charmap,print,preview,anchor,searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,contextmenu,paste,textcolor
  * 
  * Built from TinyMCE from:
@@ -12,6 +13,9 @@
  * Forked to add support for Autoplay and Controls in HTML Media 
  * 
  */
+var tinymceLinkListURL = document.location.href.substring(0,
+		document.location.href.lastIndexOf('/')+1)
+		+ "authoring_linklist";
 
 tinymce.init({
 	// General options
@@ -32,7 +36,9 @@ tinymce.init({
 		ed.on("init", function(e) {
 			EXEAuthoringDefaultPrompts.setupTinyMCEEditor(ed);
 		});
-	}
+	},
+	link_list: tinymceLinkListURL,
+	link_list_label: "Link to page"
 });
 
 $(function() {

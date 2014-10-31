@@ -449,12 +449,11 @@ function execute_submitLink(action, object, changed, currentNode)
 function authoringInsertIdevice() {
 	var theForm = getContentForm();
 	if(theForm) {
-		var clientHandleId = theForm.clientHandleId.value;
 		var theUrl = theForm.getAttribute("action");
 		$.ajax({
 			url : theUrl,
 			data: {
-				"clientHandleId" : clientHandleId,
+				"clientHandleId" : top.nevow_clientHandleId,
 				"action" : "addidevice",
 				"mode" : "ajax"
 			}
