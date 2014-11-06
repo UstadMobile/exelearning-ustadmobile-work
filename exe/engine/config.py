@@ -120,7 +120,8 @@ class Config(object):
         'place the objects': [x_('Interactive Activities')],
         'memory match game': [x_('Interactive Activities')],
         'file attachments': [x_('Documents')],
-        'sort items': [x_('Interactive Activities')]
+        'sort items': [x_('Interactive Activities')],
+        'text input' : [x_('Text/Media')]
     }
     
     @classmethod
