@@ -121,7 +121,8 @@ class Config(object):
         'memory match game': [x_('Interactive Activities')],
         'file attachments': [x_('Documents')],
         'sort items': [x_('Interactive Activities')],
-        'text input' : [x_('Text/Media')]
+        'text input' : [x_('Text/Media')],
+        'start/finish scoring' : [x_('Interactive Activities')]
     }
     
     @classmethod

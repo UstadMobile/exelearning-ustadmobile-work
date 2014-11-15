@@ -1,0 +1,21 @@
+HTML Based Idevices
+
+Overview:
+
+These are essentially JQuery Widgets (the same system used by JQueryUI and JQueryMbobile.  This enables the idevice editing to be faster and more user friendly because it does not require submission to the server to add questions etc.  It also lays the groundwork to make editing and remixing of the exported content possible even without eXe.
+
+
+An htmlidevice javascript should:
+
+1. Be located in exe/webui/scripts/htmlidevices/<NAME>/<NAME>.js where <NAME> is something like fooidevice
+
+2. Be able to instantiate a blank editing interface from a div in the form of <div data-idevice-type='fooidevice'></div>
+
+3. Be able to display an editing interface to the user and serialize with idevicehtml method
+
+4. Javascript loaded should know it's own path
+
+5. Be able to list required resources in an array (scripts, css, images, etc).  These resources will be preserved by the container in the same directory as the script itself.
+
+
+

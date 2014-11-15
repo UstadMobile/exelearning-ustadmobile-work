@@ -79,7 +79,7 @@ class IdevicePane(Renderable, Resource):
         if ("action" in request.args and 
             request.args["action"][0] == "AddIdevice"):
             user_info = ""
-            if request.session.webservice_user:
+            if request.session and request.session.webservice_user:
                 user_info = "user=%s" % request.session.webservice_user
                                                   
             

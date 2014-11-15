@@ -2874,7 +2874,7 @@ class QuizQuestionElement(Element):
     def _render_tincan_all(self, desc_max_length=64):
         html = ""
         html += "<div id='tc_ansmap_%s' class='tcdiv'>" % self.id
-        html += "{ answerMap : ["
+        html += "{ \"answerMap\" : ["
         
         #generate a mapping of answer index to id and if the answer is correct
         question_text = exetincan.summarize_str_tincan(self.questionElement.renderView())

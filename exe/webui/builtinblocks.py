@@ -55,6 +55,8 @@ from exe.webui.fileattachblock import FileAttachBlockInc
 from exe.webui.imagemapblock import ImageMapBlock
 from exe.webui.dragndropblock import DragNDropBlock
 from exe.webui.textinputblock import TextInputBlock
+from exe.webui.attemptblock import AttemptBlock
+ 
 
 # JR
 # Necesarios para la FPD

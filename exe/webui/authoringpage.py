@@ -242,6 +242,7 @@ class AuthoringPage(RenderableResource):
         html += u'<script type="text/javascript" src="../jsui/native.history.js"></script>\n'
         html += u'<script type="text/javascript" src="/scripts/authoring.js"></script>\n'
         html += u'<script type="text/javascript" src="/scripts/exe_jquery.js"></script>\n'
+        html += u'<script type="text/javascript" src="/scripts/jquery-ui-1.10.4.custom.min.js"></script>\n'
         html += u'<script type="text/javascript" src="/scripts/exe_lightbox.js"></script>\n'
         html += u'<script type="text/javascript" src="/scripts/common.js"></script>\n'
         html += u'<script type="text/javascript" src="/scripts/jquery.imgareaselect.js"></script>\n'

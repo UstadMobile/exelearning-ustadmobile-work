@@ -139,10 +139,17 @@ UstadMobileContentZone.prototype = {
         //put event handlers on buttons
         $(document).on("pagebeforecreate", function(evt, ui) {
             UstadMobileContentZone.getInstance().checkTOC(evt, ui);
+            if($(evt.target).enhanceIdevicesWithin) {
+                $(evt.target).enhanceIdevicesWithin("");
+            }
         });
         
         $( ":mobile-pagecontainer" ).on("pagecontainershow",
             this.triggerPageShowOnCurrent);
+        
+        $(document).one("pagebeforecreate", function() {
+            UstadMobileContentZone.getInstance().makeLaunchedStatement();
+        });
         
         //TODO: stop links that with http:// - this will crash JQueryMobile
         $(document).on("pagebeforechange", function(evt, ui) {
@@ -164,12 +171,52 @@ UstadMobileContentZone.prototype = {
         this.checkTOC();
     },
     
+    /**
+     * Make a statement that this content block (ELP file) file has been launched
+     * by the user - makes a statement with verb launched, the id of the tincan
+     * prefix.
+     * 
+     */
+    makeLaunchedStatement: function() {
+        var courseTitle = $("BODY").attr("data-package-title");
+        if(!courseTitle) {
+            courseTitle = "Course";
+        }
+        
+        if(EXETinCan.getInstance().getActor()) {
+            var stmt = EXETinCan.getInstance().makeLaunchedStmt(
+                    EXETinCan.getInstance().getTinCanIDURLPrefix(),
+                    courseTitle, courseTitle);
+            EXETinCan.getInstance().recordStatement(stmt);
+        }
+    },
+    
+    /**
+     * Return the active username (e.g. from tincan actor)
+     * 
+     * @returns String current active username
+     */
+    getCurrentUsername: function() {
+        var retVal = null;
+        if(EXETinCan.getInstance().getActor()) {
+            var tcMbox = EXETinCan.getInstance().getActor().mbox;
+            retVal = tcMbox.substring(tcMbox.indexOf(":")+1, 
+                tcMbox.indexOf("@"));
+        }
+        
+        return retVal;
+    },
+    
     checkTOC: function(evt, ui) {
         var pgEl = null;
         if(evt) {
             pgEl = $(evt.target);
         }else {
             pgEl = $(".ui-page-active");
+        }
+        
+        if(pgEl.attr('data-url') && pgEl.attr('data-url').indexOf("exetoc.html") !== -1) {
+            pgEl.attr("id", "exetocpage");
         }
         
         tocClicked = false;
@@ -205,8 +252,23 @@ UstadMobileContentZone.prototype = {
                dataType: "text"
             });
         }else if(pageName === UstadMobile.PAGE_TOC) {
+            var tocURL = UstadMobile.PAGE_TOC;
+            if($("#exetocpage").length) {
+                tocURL = "#exetocpage";
+            }
+            
             $( ":mobile-pagecontainer" ).pagecontainer( "change", 
-                UstadMobile.PAGE_TOC);
+                tocURL);
+        }else if(pageName === UstadMobile.PAGE_FEEDBACK) {
+            
+            /*
+            $( ":mobile-pagecontainer" ).pagecontainer( "change", 
+                UstadMobile.PAGE_FEEDBACK);
+            */
+           //$("#popupDialog").popup();
+           
+           debugger;
+           $(".ui-page-active .ustad_fb_popup").popup("open");
         }
     },
     
@@ -264,6 +326,33 @@ UstadMobileContentZone.prototype = {
                 $(this).attr("data-exefixed", "true");
             }
         };
+        
+        //restore value of textinput
+        contentEl.find(".TextInputIdevice").each(function(index){
+            var questionId = $(this).find(".exetextinput_container").attr(
+                    'data-exetextinput-questionid');
+            
+            if(EXETinCan) {
+                var regVal = EXETinCan.getInstance().getRegistrationVal(
+                        questionId);
+                if(regVal) {
+                    $(this).find("textarea").val(regVal);
+                }
+            }
+        });
+        
+        contentEl.find(".MultiSelectIdevice .question").each(function(index) {
+            var idAttr = $(this).attr("id");
+            var prefix = "taquestion";
+            var questionId = idAttr.substring(prefix.length);
+            if(EXETinCan) {
+                var questionVal = EXETinCan.getInstance().getRegistrationVal(
+                        questionId);
+                if(questionVal) {
+                    $(this).find("#i" + questionVal).attr("checked", "checked");
+                }
+            }
+        });
 
         contentEl.find(".MultichoiceIdevice LABEL, "
                 + ".MultiSelectIdevice LABEL").each(fixItFunction);
@@ -405,20 +494,7 @@ UstadMobileContentZone.prototype = {
             UstadMobile.MIDDLE]);
     },
     
-    /**
-     * Strip .html off the end of a name
-     * 
-     * @param String pageName
-     * @returns pageName without trailing .html if it was there
-     */
-    stripHTMLURLSuffix: function(pageName){
-        var htmlSuffix = ".html";
-        if(pageName.indexOf(htmlSuffix) === pageName.length - htmlSuffix.length) {
-            pageName = pageName.substring(0, pageName.length - htmlSuffix.length);
-        }
-        
-        return pageName;
-    },
+    
     
     /**
      * Things to run when the page is actually displayed for the user
@@ -441,8 +517,12 @@ UstadMobileContentZone.prototype = {
         
         //start time recording for the TinCan API for the page we are about to show
         var pageName = $(pageSelector).attr("data-url");
-        pageName = UstadMobileContentZone.getInstance().stripHTMLURLSuffix(
+        pageName = UstadMobile.getInstance().stripHTMLURLSuffix(
                 pageName);
+        
+        if($exe.updateCurrentPageName) {
+            $exe.updateCurrentPageName($(pageSelector).attr("data-url"));
+        }
         
         UstadMobileContentZone.getInstance().startPageTimeCounter(pageName);
         
@@ -499,6 +579,7 @@ UstadMobileContentZone.prototype = {
      */
     preloadPage: function(pageURL, position) {
         //make a container, local context copy of variable
+        console.log("Preload: Start page " + pageURL + " for position " + position);
         if(position === UstadMobile.LEFT) {
             $("#umBack").css("visibility", "visible");
         }else {
@@ -510,6 +591,7 @@ UstadMobileContentZone.prototype = {
             url: pageURL,
             dataType: "html"
         }).done(function(data, textStatus, jqXHR) {
+            console.log("Preload: AJAX done" + pageURL + " for position " + position);
             var procData = UstadMobileContentZone.getInstance().preProcessMediaTags(data);
             
             var newPageContentParsed = $.parseHTML(procData, document, true);
@@ -526,11 +608,10 @@ UstadMobileContentZone.prototype = {
                     "[data-role='header']").text();
             newPageContentEl.attr('data-title', newPageTitle.trim());
             newPageContentEl.attr('data-url', 
-                UstadMobileContentZone.getInstance().stripHTMLURLSuffix(
+                UstadMobile.getInstance().stripHTMLURLSuffix(
                 pageURL));
                         
-            console.log("Attempting to preload into DOM:" + this.url);
-            console.log("preloadPage: Check existing pageContentEl - must =1; is " + 
+            console.log("Preload: Check existing pageContentEl - must =1; is " + 
                     newPageContentEl.length);
             console.assert(newPageContentEl.length === 1);
             
@@ -540,7 +621,8 @@ UstadMobileContentZone.prototype = {
             newPageContentEl.attr("data-url", this.url);
             
             if(newPageContentEl !== null) {
-                UstadMobileContentZone.getInstance().checkContentNavLinks(newPageContentEl);
+                UstadMobileContentZone.getInstance().checkContentNavLinks(
+                        newPageContentEl);
             }
             //newPageContentEl = newPageContentEl.detach();
             
@@ -569,11 +651,17 @@ UstadMobileContentZone.prototype = {
             $.mobile.pageContainer.find(".ui-page-active .ui-content").prepend(
                     newPageContentEl);
             newPageContentEl.enhanceWithin();
-            
-            console.log("Preloaded page for position: " + pgPos);
-            
+            if(newPageContentEl.enhanceIdevicesWithin) {
+                newPageContentEl.enhanceIdevicesWithin("");
+            }
             UstadMobileContentZone.getInstance().contentPageSelectors[pgPos] =
                     ".ustadcontent[data-url='"+this.url+"']";
+            
+            console.log("Preload: Complete " + this.url + " page for position: " 
+                    + pgPos);
+
+        }).fail(function(jqXHR, textStatus, errorThrown){
+            console.log("Preload: Failed to fetch "  + pageURL + ": " + errorThrown);
         });
     },
     
@@ -615,13 +703,16 @@ UstadMobileContentZone.prototype = {
      * @method
      */
     stopPageTimeCounter: function(pageSelector) {
-        this.pageDurationMS = this.pageOpenUtime - (new Date().getTime());
+        var pageDurationMS = (new Date().getTime()) - this.pageOpenUtime;
         
         var pageTitle = $(pageSelector).attr("data-title");
+        
+        
         if(EXETinCan.getInstance().getActor()) {
             var stmt = EXETinCan.getInstance().makePageExperienceStmt(
-                this.pageOpenXAPIName, pageTitle, pageTitle);
+                this.pageOpenXAPIName, pageTitle, pageTitle, pageDurationMS);
             EXETinCan.getInstance().recordStatement(stmt);
+            EXETinCan.getInstance().recordTextFillInStmts(pageSelector);
         }
     },
     
@@ -753,11 +844,7 @@ UstadMobileContentZone.prototype = {
      * @returns {undefined}
      */
     safePageLoad: function(pageURL) {
-        var newPageId = pageURL;
-        var lastSlash = newPageId.lastIndexOf("/");
-        if(lastSlash !== -1) {
-            newPageId = newPageId.substring(lastSlash+1);
-        }
+        var newPageId = UstadMobile.getInstance().pageURLToID(pageURL);
         
         $.ajax({
             url: pageURL,
@@ -797,11 +884,12 @@ UstadMobileContentZone.prototype = {
             var pageContent = $(pageParsed).find('.ui-content').first();
             pageContent.find("#content").attr("data-title", headerTitle);
             pageContent.find("#content").attr("data-url", 
-                UstadMobileContentZone.getInstance().stripHTMLURLSuffix(
+                UstadMobile.getInstance().stripHTMLURLSuffix(
                         newPageId));
             
             UstadMobileContentZone.getInstance().preProcessPage(pageContent);
             pgEl.append(pageContent);
+            
             pageContent = null;
             
             if(footer) {
@@ -894,6 +982,8 @@ UstadMobileContentZone.prototype = {
                     var pgHref = $(contentSelector).siblings(
                             linkNames[i][1]).attr("href");
                     $(contentSelector).attr(linkNames[i][0], pgHref);
+                    console.log(linkNames[i][0] + " for " + $(contentSelector).attr("data-url")
+                        + " is " + pgHref);
                 }
             }
         }

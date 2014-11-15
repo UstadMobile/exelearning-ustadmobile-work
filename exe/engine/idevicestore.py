@@ -323,7 +323,7 @@ class IdeviceStore:
         from exe.engine.imagemapidevice import ImageMapIdevice
         from exe.engine.dragndropidevice import DragNDropIdevice
         from exe.engine.textinputidevice import TextInputIdevice
-
+        from exe.engine.attemptidevice import AttemptIdevice
         # JRJ
         # Necesarios para la FPD
         # (Necessary for FPD)
@@ -364,6 +364,7 @@ class IdeviceStore:
         factoryExtendedIdevices.append(ImageMapIdevice())
         factoryExtendedIdevices.append(DragNDropIdevice())
         factoryExtendedIdevices.append(TextInputIdevice())
+        factoryExtendedIdevices.append(AttemptIdevice())
         
         factoryExtendedIdevices.append(FreeTextIdevice())
         factoryExtendedIdevices.append(MultichoiceIdevice())

@@ -148,6 +148,16 @@ UstadMobile.ZONE_APP = 0;
 UstadMobile.ZONE_CONTENT = 1;
 
 /**
+ * To use with standardized naming for files related to the app or content zone
+ * e.g. 
+ *  UstadMobile.ZONENAMES[UstadMobile.ZONE_APP] = "app"
+ *  UstadMobile.ZONENAMES[UstadMobile.ZONE_CONTENT] = "content"
+ *  
+ * @type Array
+ */
+UstadMobile.ZONENAMES = ["app", "content"];
+
+/**
  * Constant telling UstadMobile to get the in content menu contents from the
  * content directory itself - use for NodeWebKit
  * 
@@ -168,6 +178,8 @@ UstadMobile.RUNTIME_MENUMODE = "ustad_menumode";
  * @type String
  */
 UstadMobile.URL_CLOSEIFRAME = "/closeiframe";
+
+UstadMobile.URL_TINCAN_QUEUE = "/tincan-queue"
 
 /**
  * Constant: URL to request page cleanup procedure (e.g. ThreadTimer issue)
@@ -209,6 +221,13 @@ UstadMobile.PAGE_ABOUT = "ustadmobile_aboutus.html";
  * @type String
  */
 UstadMobile.PAGE_TOC = "exetoc.html";
+
+/**
+ * Constant - page for showing dialog for sending feedback
+ * 
+ * @type String
+ */
+UstadMobile.PAGE_FEEDBACK = "feedback_dialog.html";
 
 /**
  * Constant - page for login
@@ -476,6 +495,8 @@ UstadMobile.prototype = {
             umObj.initScriptsToLoad.push("ustadmobile-localization.js");
             umObj.initScriptsToLoad.push("ustadmobile-contentzone.js");
         }else {
+            umObj.initScriptsToLoad.push("js/tincan.js");
+            umObj.initScriptsToLoad.push("js/tincan_queue.js");
             umObj.initScriptsToLoad.push("js/ustadmobile-getpackages.js");
             if(UstadMobile.getInstance().isNodeWebkit()) {
                 umObj.initScriptsToLoad.push("js/ustadmobile-http-server.js");
@@ -573,11 +594,10 @@ UstadMobile.prototype = {
         //required to make sure exe created pages show correctly
         console.log("UstadMobile: Running Pre-Init");
         $("body").addClass("js");
+        this.loadPanel();
+        
         if(UstadMobile.getInstance().getZone() === UstadMobile.ZONE_CONTENT) {
             this.loadRuntimeInfo();
-        }else {
-            //App zone - load panel
-            this.loadPanel();
         }
     },
     
@@ -744,7 +764,7 @@ UstadMobile.prototype = {
      */
     getDefaultServer: function() {
         var umServer = new UstadMobileServerSettings("UstadMobile",
-            "http://svr2.ustadmobile.com:8001/xAPI/",
+            "http://umcloud1.ustadmobile.com:8001/umlrs/",
             "http://umcloud1.ustadmobile.com:8010/getcourse/?id=");
         return umServer;
     },
@@ -864,19 +884,22 @@ UstadMobile.prototype = {
     },
     
     /**
+     * Loads the panel for the context (e.g. ustadmobile_panel_ZONENAME.html)
+     * 
+     * Will then setup the menu button on the top left to access the panel
      * 
      * @returns {undefined}
      */
     loadPanel: function() {
         $.ajax({
-            url: "ustadmobile_panel_app.html",
+            url: "ustadmobile_panel_" + UstadMobile.getInstance().getZoneName() 
+                    + ".html",
             dataType: "text"
         }).done(function(data) {
             UstadMobile.getInstance().panelHTML = data;
             $(document).on('pagebeforecreate', 
                 UstadMobile.getInstance().initPanel);
             UstadMobile.getInstance().initPanel();
-            
         }).fail(function() {
             console.log("Panel load failed");
         });
@@ -913,7 +936,10 @@ UstadMobile.prototype = {
             return;
         }
 
-        var thisPgId = pgEl.attr("id");
+        
+        var thisPgId = pgEl.attr("id") || UstadMobile.getInstance().pageURLToID(
+                pgEl.attr('data-url'));
+        
         var newPanelId = "ustad_panel_" + thisPgId;
 
         if(pgEl.children(".ustadpaneldiv").length === 0) {
@@ -922,7 +948,9 @@ UstadMobile.prototype = {
             htmlToAdd += "</div>";
 
             pgEl.prepend(htmlToAdd);
-
+            
+            $("#"+newPanelId).trigger("create");
+            console.log("Appended panel to page");
         }
 
         $("#" + newPanelId).panel({
@@ -931,10 +959,81 @@ UstadMobile.prototype = {
         }).trigger("create");
         $("#" + newPanelId).addClass("ustadpaneldiv");
 
+        if(pgEl.find(".ustad_panel_href").length === 0) {
+            pgEl.find("[data-role='header']").prepend("<a href='#mypanel' "
+                + "data-role='button' data-inline='true' class='ustad_panel_href ui-btn ui-btn-left'>"
+                + "<i class='lIcon fa fa-bars'></i></a>");
+        }
+        
         pgEl.find(".ustad_panel_href").attr("href", "#" + newPanelId);
-
+        
+        if(pgEl.children(".ustad_fb_popup") !== 0) {
+            pgEl.children(".ustad_fb_popup").attr("id", "ustad_fb_" + thisPgId);
+        }
+        
     },
     
+    /**
+     * Update username displayed in header
+     * 
+     * DISABLED : DO NOTHING
+     * 
+     * @param pageSelector String jQuery page selector.  Optional - if ommitted user .ui-page-active
+     */
+    displayUsername: function(pageSelector) {
+        /*
+        alert("display user");
+        debugger;
+        if(typeof pageSelector === "undefined") {
+            pageSelector = ".ui-page-active";
+        }
+        var currentUsername = UstadMobile.getZoneObj().getCurrentUsername();
+        if($(pageSelector).find(".ustad_user_label").length === 0) {
+            $(pageSelector).find("[data-role='header'").append("<div class='ustad_user_label'>"
+                + currentUsername + "</div>");
+        }else {
+            $(pageSelector).find(".ustad_user_label").html(currentUsername);
+        }*/
+    },
+    
+    /**
+     * Turn a page URL into something that can be used as an ID - stip the path, 
+     * query, suffix (e.g. .html)
+     * 
+     * @param String url
+     * @returns url without characters that cannot be used as an ID
+     */
+    pageURLToID: function(url) {
+        var lastSlash = url.lastIndexOf("/");
+        var pageId = ""+url;
+        if(lastSlash !== -1) {
+            pageId = pageId.substring(lastSlash+1);
+        }
+        
+        var queryStart = pageId.indexOf("?");
+        if(queryStart !== -1) {
+            pageId = pageId.substring(0, queryStart);
+        }
+        
+        pageId = UstadMobile.getInstance().stripHTMLURLSuffix(pageId);
+        
+        return pageId;
+    },
+    
+    /**
+     * Strip .html off the end of a name
+     * 
+     * @param String pageName
+     * @returns pageName without trailing .html if it was there
+     */
+    stripHTMLURLSuffix: function(pageName){
+        var htmlSuffix = ".html";
+        if(pageName.indexOf(htmlSuffix) === pageName.length - htmlSuffix.length) {
+            pageName = pageName.substring(0, pageName.length - htmlSuffix.length);
+        }
+        
+        return pageName;
+    },
     
     /**
      * Close the menu panel
@@ -959,6 +1058,16 @@ UstadMobile.prototype = {
             return UstadMobile.ZONE_CONTENT;
         }
     },
+    
+    /**
+     * Gives a string for the name of the current zone - content or app
+     * 
+     * @returns String the name of the current zone "content" or "app"
+     */
+    getZoneName: function() {
+        return UstadMobile.ZONENAMES[UstadMobile.getInstance().getZone()];
+    },
+    
     
     /**
      * Open the specified page - normally pass to the zone Object
@@ -1128,6 +1237,28 @@ UstadMobileUtils.joinPath = function(pathArr, seperator) {
 UstadMobileUtils.debugLog = function(msg) {
     console.log(msg);
 }
+
+/**
+ * Format an ISO8601 duration for the given number of milliseconds difference
+ * 
+ * @param Number duration the duration to format in milliseconds
+ * @returns String An ISO8601 Duration e.g. PT4H12M05S
+ */
+UstadMobileUtils.formatISO8601Duration = function(duration) {
+    var msPerHour = (1000*60*60);
+    var hours = Math.floor(duration/msPerHour);
+    var durationRemaining = duration % msPerHour;
+
+    var msPerMin = (60*1000);
+    var mins = Math.floor(durationRemaining/msPerMin);
+    durationRemaining = durationRemaining % msPerMin;
+
+    var msPerS = 1000;
+    var secs = Math.floor(durationRemaining / msPerS);
+
+    retVal = "PT" + hours +"H" + mins + "M" + secs + "S";
+    return retVal;
+};
 
 /**
  * 

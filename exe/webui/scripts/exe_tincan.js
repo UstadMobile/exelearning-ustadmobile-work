@@ -60,6 +60,16 @@ EXETinCan.getInstance = function() {
 EXETinCan.prototype = {
     
 	/**
+	 * The attempt registration UID to be applied
+	 */
+	registrationUUID : null,
+	
+	/**
+	 * Time that the current registration started
+	 */
+	registrationStartTime : 0,
+		
+	/**
 	 * The proxy destination to send statements to (e.g. queue)
 	 */
 	tinCanProxyURL : null,
@@ -116,7 +126,11 @@ EXETinCan.prototype = {
     },
     
     /**
-	 * 
+     * Get the TinCan URL prefix for this content package
+     * 
+     * @return String TinCan URL prefix e.g. http://www.ustadmobile.com/dir/ELP-ID
+     * 
+	 * @method
 	 */
     getTinCanIDURLPrefix: function() {
     	if($("BODY").attr("data-tincan-prefix")) {
@@ -182,6 +196,149 @@ EXETinCan.prototype = {
         var secs = Math.floor(durationRemaining / msPerS);
 
         retVal = "PT" + hours +"H" + mins + "M" + secs + "S";
+        return retVal;
+    },
+    
+    /**
+     * Start a TinCan registration (attempt tracking) - call to get a
+     * registration statement and then record the statement
+     * 
+     * @return TinCan.Statement with registration
+     */
+    startRegistration: function() {
+    	if(this.getActor()) {
+	    	var stmt = this.makeInitializeRegistrationStmt();
+	    	this.recordStatement(stmt);
+	    	return stmt;
+    	}else {
+    		return null;
+    	}
+    },
+    
+    /**
+     * Make a TinCan initialize statement for attempt tracking -
+     * return the statement
+     */
+    makeInitializeRegistrationStmt: function() {
+    	var startTime = new Date().getTime();
+    	this.registrationUUID = TinCan.Utils.getUUID();
+    	this.registrationStartTime = startTime;
+    	
+    	var myVerb = new TinCan.Verb({
+    		id : "http://adlnet.gov/expapi/verbs/initalized",
+    		display : {
+                "en-US": "initalized"
+            }
+    	});
+	    	
+    	//TODO: change way id is created here
+    	var myActivity = new TinCan.Activity({
+    		id : this.getTinCanIDURLPrefix()+"um_assessment",
+    		definition : {
+    			type : "http://adlnet.gov/expapi/activities/assessment",
+        		name : {
+        			"en-US" : "Start Assessment" 
+        		},
+        		description : {
+        			"en-US" : "Start Assessment"
+        		}
+        	}
+    	});
+    	
+    	var myContext = new TinCan.Context({
+    		"registration" : this.registrationUUID
+    	});
+    	
+    	var stmt = new TinCan.Statement({
+    		 actor : this.getActor(),
+    		 verb: myVerb,
+    		 target : myActivity,
+    		 context : myContext
+    	}, {'storeOriginal' : true});
+    	
+    	return stmt;
+    },
+    
+    
+    /**
+     * Finish the TinCan registration (attempt tracking) - make a 
+     * completed statement
+     * 
+     */
+    finishRegistration: function() {
+    	var stmt = null;
+    	if(this.registrationUUID) {
+    		var endTime = new Date().getTime();
+        	var duration = endTime - this.registrationStartTime;
+        	
+        	if(this.getActor()) {
+        		stmt = this.makeCompleteStatement(duration);
+        		this.recordStatement(stmt);
+        	}
+        	
+        	this.registrationUUID = null;
+    	}
+    	
+    	return stmt;
+    },
+    
+    /**
+     * 
+     */
+    makeCompleteStatement: function(duration) {
+    	var myVerb = new TinCan.Verb({
+    		id : "http://adlnet.gov/expapi/verbs/completed",
+    		display : {
+                "en-US": "completed"
+            }
+    	});
+    	
+    	//TODO: change way id is created here
+    	var myActivity = new TinCan.Activity({
+    		id : this.getTinCanIDURLPrefix()+"um_assessment",
+    		definition : {
+    			type : "http://adlnet.gov/expapi/activities/assessment",
+        		name : {
+        			"en-US" : "Finish Assessment" 
+        		},
+        		description : {
+        			"en-US" : "Finish Assessment"
+        		}
+        	}
+    	});
+    	
+    	var myContext = new TinCan.Context({
+    		"registration" : this.registrationUUID
+    	});
+    	
+    	var myResult = new TinCan.Result({
+    		duration : this.formatISO8601Duration(duration)
+    	});
+    	
+    	var stmt = new TinCan.Statement({
+    		actor: this.getActor(),
+    		verb: myVerb,
+    		target: myActivity,
+    		result : myResult,
+    		context : myContext
+    	}, {'storeOriginal' : true});
+    	
+    	return stmt;
+    },
+    
+    /**
+     * Return the active username (e.g. from tincan actor)
+     * 
+     * @returns String current active username
+     */
+    getCurrentUsername: function() {
+        var retVal = null;
+        if(this.getActor()) {
+            var tcMbox = EXETinCan.getInstance().getActor().mbox;
+            retVal = tcMbox.substring(tcMbox.indexOf(":")+1, 
+                tcMbox.indexOf("@"));
+        }
+        
         return retVal;
     },
     
@@ -286,6 +443,180 @@ EXETinCan.prototype = {
 		
 		return stmt;
     },
+    
+    
+    makeTextFillInStmts : function(selector) {
+    	var tincanIdPrefix =  this.getTinCanIDURLPrefix();
+    	var textStmts = [];
+    	$(selector).find(".exetextinput_container").each(function(index){
+    		var descText = $(this).find(
+				".exetextinput_instructions").text();
+    		descText = descText.replace(/^\s+|\s+$/gm,'');
+    		
+			var nameText = descText;
+			if(nameText.length > 32) {
+				nameText = descText.substring(0, 32);
+			}
+			
+			var questionId = $(this).attr(
+					"data-exetextinput-questionid");
+    		
+			var inputText = $(this).find("textarea").val();
+			
+    		var myVerb = new TinCan.Verb({
+    			id : "http://adlnet.gov/expapi/verbs/answered",
+    			display: {
+    	            "en-US": "answered"
+    	        }
+    		});
+    		
+    		var fullQuestionId =  tincanIdPrefix + "/"
+    			+ $exe.getCurrentPageName() + "/" + questionId;
+    		
+    		var myActivity = new TinCan.Activity({
+    			id : fullQuestionId,
+    			definition :  {
+	        		type : "http://adlnet.gov/expapi/activities/module",
+	        		name : {
+	        			"en-US" : nameText
+	        		},
+	        		description : {
+	        			"en-US" : descText
+	        		}
+    			}
+        	});
+    		
+    		var myResult = new TinCan.Result({
+    			"response" : inputText
+    		});
+    		
+    		var stmtArgs = {
+				verb: myVerb,
+				target : myActivity,
+				result : myResult,
+				actor : EXETinCan.getInstance().getActor()
+    		};
+    		
+    		EXETinCan.getInstance().addRegistration(stmtArgs);
+    		EXETinCan.getInstance().saveRegistrationVal(questionId, inputText);
+    		
+    		var stmt = new TinCan.Statement(stmtArgs, 
+    				{'storeOriginal' : true});
+    		textStmts.push(stmt);
+    	});
+    	
+    	return textStmts;
+    },
+    
+    
+    /**
+     * If there is an active registration, make a new TinCan.Context
+     * object with that included
+     * 
+     * @method
+     * @return {TinCan.Context} context object with registration field set
+     */
+    makeRegistrationContext: function() {
+    	var ctx = null;
+    	if(EXETinCan.getInstance().registrationUUID) {
+			ctx = new TinCan.Context({
+				"registration" : 
+					EXETinCan.getInstance().registrationUUID
+			});
+		}
+    	
+    	return ctx;
+    },
+    
+    /**
+     * If there is a valid registration - add this to the JSON
+     * object.  This both modifies the argument object itself and
+     * returns that value
+     * 
+     * @param stmtArgs {Object} JSON object to be used with Statement contstructor
+     * 
+     * @return stmtArgs {Object} JSON object with context as appropriate
+     * 
+     * @method
+     */
+    addRegistration: function(stmtArgs) {
+    	var ctx = this.makeRegistrationContext();
+    	if(ctx != null) {
+    		stmtArgs['context'] = ctx;
+    	}
+    	
+    	return stmtArgs;
+    },
+    
+    /**
+     * Return an object with the current registration saved values,
+     * or a blank object if there isn't anything yet saved.  
+     * 
+     * @return
+     */
+    getRegistrationVals: function() {
+    	var regObj = {};
+    	if(this.registrationUUID) {
+    		var regStr = localStorage.getItem("regvalues-" 
+    				+ this.registrationUUID);
+    		if(regStr) {
+    			regObj = JSON.parse(regStr);
+    		}
+    	}
+    	
+    	return regObj;
+    },
+    
+    saveRegistrationVals: function(obj) {
+    	if(this.registrationUUID) {
+    		localStorage.setItem("regvalues-" + this.registrationUUID, 
+    				JSON.stringify(obj));
+    	}
+    },
+    
+    /**
+     * Temp function being used to save values during a registered attempt
+     * (if one is currently active)
+     */
+    saveRegistrationVal: function(id, val) {
+    	if(this.registrationUUID) {
+    		var regObj = this.getRegistrationVals();
+    		
+    		regObj[id] = val;
+    		
+    		this.saveRegistrationVals(regObj);
+    		console.log("Save " + id + " = " + val);
+    	}
+    },
+    
+    /**
+     * Get a value for the current attempt registration
+     * Return null if not available
+     * 
+     */
+    getRegistrationVal: function(id) {
+    	var retVal = null;
+    	if(this.registrationUUID) {
+    		var regObj = this.getRegistrationVals();
+    		if(regObj.hasOwnProperty(id)) {
+    			retVal = regObj[id];
+    		}
+    	}
+    	
+    	return retVal;
+    },
+    
+    
+    clearRegistrationVals: function() {
+    	
+    },
+    
+    recordTextFillInStmts: function(selector) {
+    	var textStmts = this.makeTextFillInStmts(selector);
+    	for(var i = 0; i < textStmts.length; i++) {
+    		this.recordStatement(textStmts[i]);
+    	}
+    },
 
     /**
 	 * Turns search query variables into a dictionary - adapted from
@@ -305,17 +636,7 @@ EXETinCan.prototype = {
 		}
         return retVal;
 	},
-	
-	/**
-	 * Register activity definition for a given ideviceid
-	 * 
-	 * @method
-	 * 
-	 */
-	
-    
-    // Methods that will handle core EXE idevice tin can work
-    
+	    
 	/**
 	 * Make a tin can statement for a multi choice item
 	 * 
@@ -330,35 +651,40 @@ EXETinCan.prototype = {
 	 * @return {TinCan.Statement} Statement for MCQ given arguments
 	 */
 	makeMCQTinCanStatement: function(activityDefinition, questionId, responseId, responseIsCorrect) {
-		var myVerb = new TinCan.Verb({
+		var stmtArgs = {};
+		
+		stmtArgs['verb'] = new TinCan.Verb({
 			id : "http://adlnet.gov/expapi/verbs/answered",
 			display: {
 	            "en-US": "answered"
 	        }
 		});
 		
-		var myActivity = new TinCan.Activity({
+		stmtArgs['target'] = new TinCan.Activity({
 			id : this.idActivityPrefix+ "/" + questionId,
 			definition : activityDefinition
 			
 		});
 		
-		var myResult = new TinCan.Result({
+		stmtArgs['result'] = new TinCan.Result({
 			success : responseIsCorrect,
 			response : responseId
 		});
 		
-		var myStmt = new TinCan.Statement({
-			actor : this.getActor(),
-			verb : myVerb,
-			result : myResult,
-			target : myActivity,
-			},{'storeOriginal' : true});
+		stmtArgs['actor'] = this.getActor();
 		
-		this.tinCanQueue.queueStatement(myStmt)
+		this.addRegistration(stmtArgs);
+		
+		var myStmt = new TinCan.Statement(stmtArgs,
+				{'storeOriginal' : true});
+		
+		this.recordStatement(myStmt);
+		this.saveRegistrationVal(questionId, responseId);
+	},
+	
+	restoreValsFromRegistration: function(containerSelector) {
 		
 	}
-	
 	
 }
 

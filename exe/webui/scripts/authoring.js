@@ -1016,3 +1016,16 @@ function activateExternalToolbarForEditor() {
 	});
 }
 
+
+//handle generichtmlidevices - save them to the hidden input
+function saveHtmlIdevicesToInputFields() {
+	$(".idevice_authoring_container").each(function(index) {
+		var ideviceType = $(this).attr("data-idevicetype");
+		var deviceObj = $(this).children("div[data-idevice-type='"+ideviceType+"']");
+		var deviceHtml = deviceObj[ideviceType]("idevicehtml");
+		var deviceId = $(this).attr('data-ideviceid');
+		$("INPUT[name='" + deviceId + "_htmlcontent']").val(deviceHtml);
+	});
+}
+
+beforeSubmitHandlers.push(saveHtmlIdevicesToInputFields);

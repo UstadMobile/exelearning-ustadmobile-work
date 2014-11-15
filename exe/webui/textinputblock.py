@@ -25,6 +25,8 @@ import logging
 from exe.webui.block            import Block
 from exe.webui.element          import TextAreaElement
 from exe.engine.extendedfieldengine import *
+from exe.export.websiteexport import WebsiteExport
+
 from exe.webui import common
 log = logging.getLogger(__name__)
 
@@ -59,25 +61,28 @@ class TextInputBlock(Block):
     def renderHTML(self, preview_mode = False):
         html = ""
         mainDict = self.idevice.mainFieldSet.getRenderDictionary(self.mainElements, "", preview_mode)
+        
+        pagename = WebsiteExport.current_page
+        html += "<div class='exetextinput_container' data-exetextinput-questionid='%s'>\n" % self.id
+        html += "<div class='exetextinput_instructions'>\n"
         html += mainDict['instructions']
+        html += "</div>\n"
+        
         html += """
-        <textarea rows="%(rows)s" cols=%(cols)s"></textarea>
+        <textarea rows="%(rows)s" cols="%(cols)s"></textarea>
         """  % mainDict
+        html += "</div>"
         return html
     
     def renderView(self, style):
         html = common.ideviceHeader(self, style, "view")
         html += self.renderHTML()
-        #html += self.renderViewButtons()
-        #html += "</div>\n"
         html += common.ideviceFooter(self, style, "view")
         return html
     
     def renderPreview(self, style):
         html = common.ideviceHeader(self, style, "preview")
         html += self.renderHTML(preview_mode = True)
-        #html += self.renderViewButtons()
-        #html += "</div>\n"
         html += common.ideviceFooter(self, style, "preview")
         return html
     
