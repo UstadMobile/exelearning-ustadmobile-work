@@ -2469,6 +2469,9 @@ class QuizOptionElement(Element):
         self.feedbackElement = TextAreaElement(field.feedbackTextArea)
         self.feedbackId = "f"+self.id
         self.feedbackElement.id = self.feedbackId
+        
+        self.scoreElement = TextElement(field.scoreTextField)
+        
 
     def process(self, request):
         """
@@ -2485,6 +2488,8 @@ class QuizOptionElement(Element):
         if self.feedbackId in request.args:
             self.feedbackElement.process(request)
                         
+        self.scoreElement.process(request)
+        
         if ("c"+self.field.question.id in request.args \
         and request.args["c"+self.field.question.id][0]==str(self.index) \
         and not is_cancel):
@@ -2601,6 +2606,8 @@ class QuizOptionElement(Element):
                          self.feedbackElement.field.content_w_resourcePaths,
                          package=this_package,
                          default_prompt = self.feedbackElement.field.default_prompt)
+        
+        html += self.scoreElement.renderEdit()
          
         html += "</td></tr>\n"
 
@@ -2609,9 +2616,10 @@ class QuizOptionElement(Element):
     def renderXML(self):
         from exe.export.xmlexport import remove_html_tags
         from exe.export.exportmediaconverter import ExportMediaConverter
-        xml = "<answer iscorrect='%(iscorrect)s' id='%(id)s'> " % { 
+        xml = "<answer iscorrect='%(iscorrect)s' id='%(id)s' score='%(score)s'> " % { 
             "iscorrect" : str(self.field.isCorrect).lower(),
-            "id" : self.answerId }
+            "id" : self.answerId,
+            "score" : self.scoreElement.renderView() }
         
         xml += "\n<![CDATA[\n"
         xml += self.answerElement.renderView()

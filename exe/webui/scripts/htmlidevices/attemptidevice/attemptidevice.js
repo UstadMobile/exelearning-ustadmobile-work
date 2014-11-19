@@ -13,8 +13,6 @@
 		},
 		
 		/**
-		 * FFS a public method FFS
-		 * 
 		 * Generate the html that can be saved by the backend
 		 */
 		idevicehtml: function() {
@@ -36,6 +34,16 @@
 					"value" : 
 						this.editorElement.find(".attemptidevice_buttontext").val()
 				}));
+			}
+			
+			if(this.editorElement.find(".feedback_textarea").val()) {
+				var fbVals = $("<div/>", {
+					"style" : "display: none",
+					"class" : "feedback_vals"
+				});
+				fbVals.html(this.editorElement.find(
+						".feedback_textarea").val());
+				phtmlEl.append(fbVals);
 			}
 			 
 			return phtmlEl[0].outerHTML;
@@ -118,6 +126,20 @@
 			if(this.element.find(".attemptidevice_button").length === 1) {
 				labelInput.val(
 					this.element.find(".attemptidevice_button").attr('value'));
+			}
+			
+			this.editorElement.append(
+					"<div>Feedback to show on finish</div>");
+			var feedbackTextarea = $("<textarea/>", {
+				"class" : "feedback_textarea",
+				"rows" : "5",
+				"cols" : "70"
+			});
+			
+			this.editorElement.append(feedbackTextarea);
+			
+			if(this.element.find(".feedback_vals").length > 0) {
+				feedbackTextarea.val(this.element.find(".feedback_vals").html());
 			}
 		},
 		

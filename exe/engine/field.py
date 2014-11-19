@@ -3612,7 +3612,7 @@ class QuizOptionField(Field):
     Used by the QuizQuestionField, as part of the Multi-Choice iDevice.
     """
 
-    persistenceVersion = 1
+    persistenceVersion = 2
 
     def __init__(self, question, idevice, name="", instruc="", answer_prompt = "", feedback_prompt = ""):
         """
@@ -3632,6 +3632,13 @@ class QuizOptionField(Field):
                                     idevice._feedbackInstruc, u'',
                                     default_prompt = feedback_prompt)
         self.feedbackTextArea.idevice = idevice
+        
+        self.scoreTextField = TextField(x_(u"Score"),
+                                        x_("Score for this answer"), 
+                                        u"")
+        
+        self.scoreTextField.idevice = idevice
+        
 
     def getResourcesField(self, this_resource):
         """
@@ -3681,6 +3688,13 @@ class QuizOptionField(Field):
                                     self.idevice._feedbackInstruc, 
                                     self.feedback)
         self.feedbackTextArea.idevice = self.idevice
+        
+    def upgradeToVersion2(self):
+        self.scoreTextField = TextField(x_(u"Score"),
+                                        x_("Score for this answer"), 
+                                        u"")
+        
+        self.scoreTextField.idevice = self.idevice
 
 #===============================================================================
 
