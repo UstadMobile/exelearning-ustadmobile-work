@@ -208,8 +208,9 @@ class IdeviceStore:
         log.debug("load iDevices")
         idevicesDir = self.config.configDir / 'idevices'
         
-        #if idevicesDir.exists():
-        #    idevicesDir.rmtree()
+        idevicePreserveMarker = idevicesDir/'idevices.preserve'
+        if idevicesDir.exists() and not idevicePreserveMarker.exists():
+            idevicesDir.rmtree()
         
         if not idevicesDir.exists():
             idevicesDir.mkdir()
