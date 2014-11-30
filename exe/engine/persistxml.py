@@ -168,7 +168,7 @@ def encodeObjectToXML(toEncode):
     return document.toprettyxml()
 
 def decodeObjectFromXML(toDecode):
-    document = parseString(toDecode, escapeAttributes=0)
+    document = parseString(toDecode)
     xmlversion = document.firstChild().getAttribute('version')
     if xmlversion == '0.1':
         log.warn("Invalid content.xml version: 0.1")

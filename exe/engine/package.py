@@ -42,7 +42,7 @@ from exe.engine.wikipediaidevice import WikipediaIdevice
 from exe.engine.persist        import Persistable, encodeObject, decodeObjectRaw
 from exe                       import globals as G
 from exe.engine.resource       import Resource
-from twisted.persisted.styles  import doUpgrade
+from twisted.persisted.styles  import doUpgrade, versionedsToUpgrade, upgraded
 from twisted.spread.jelly      import Jellyable, Unjellyable
 from exe.engine.beautifulsoup  import BeautifulSoup
 from exe.engine.field          import Field
@@ -1265,7 +1265,7 @@ class Package(Persistable):
                 else:
                     # even though it was just set above? should not get here:
                     log.error("newPackage resourceDir has NO resourceDir!")
-
+                
                 doUpgrade(newPackage)
 
                 # after doUpgrade, compare the largest found field ID:

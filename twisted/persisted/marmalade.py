@@ -13,13 +13,14 @@ identical.
 
 """
 
-import warnings
-warnings.warn("twisted.persisted.marmalade is deprecated", DeprecationWarning, stacklevel=2)
+#import warnings
+#warnings.warn("twisted.persisted.marmalade is deprecated", DeprecationWarning, stacklevel=2)
 
 import new
 
 from twisted.python.reflect import namedModule, namedClass, namedObject, fullFuncName, qual
 from twisted.persisted.crefutil import NotKnown, _Tuple, _InstanceMethod, _DictKeyAndValue, _Dereference, _Defer
+from twisted.spread.jelly import _newInstance
 
 try:
     from new import instancemethod
@@ -165,7 +166,7 @@ class DOMUnjellier:
                                             im_self,
                                             im_class)
             else:
-                raise TypeError("instance method changed")
+                raise "instance method changed"
         elif node.tagName == "tuple":
             l = []
             tupFunc = tuple
@@ -191,7 +192,7 @@ class DOMUnjellier:
                     if keyMode:
                         kvd = _DictKeyAndValue(d)
                         if not subnode.getAttribute("role") == "key":
-                            raise TypeError("Unjellying Error: key role not set")
+                            raise "Unjellying Error: key role not set"
                         self.unjellyInto(kvd, 0, subnode)
                     else:
                         self.unjellyInto(kvd, 1, subnode)
@@ -201,15 +202,15 @@ class DOMUnjellier:
             className = node.getAttribute("class")
             clasz = namedClass(className)
             if issubclass(clasz, DOMJellyable):
-                retval = instance(clasz, {})
+                retval = _newInstance(clasz, {})
                 retval.unjellyFromDOM(self, node)
             else:
                 state = self.unjellyNode(getValueElement(node))
                 if hasattr(clasz, "__setstate__"):
-                    inst = instance(clasz, {})
+                    inst = _newInstance(clasz, {})
                     inst.__setstate__(state)
                 else:
-                    inst = instance(clasz, state)
+                    inst = _newInstance(clasz, state)
                 retval = inst
         elif node.tagName == "reference":
             refkey = node.getAttribute("key")
@@ -224,7 +225,7 @@ class DOMUnjellier:
                 lambda result, _l: apply(_l, result), nodefunc)
             retval = loaddef
         else:
-            raise TypeError("Unsupported Node Type: %s" % (node.tagName,))
+            raise "Unsupported Node Type: %s" % str(node.tagName)
         if node.hasAttribute("reference"):
             refkey = node.getAttribute("reference")
             ref = self.references.get(refkey)
@@ -328,7 +329,7 @@ class DOMJellier:
                 return node
             node = self.document.createElement("UNNAMED")
             self.prepareElement(node, obj)
-            if objType is types.ListType or __builtin__.__dict__.has_key('object') and isinstance(obj, NodeList):
+            if objType is types.ListType:
                 node.tagName = "list"
                 for subobj in obj:
                     node.appendChild(self.jellyToNode(subobj))
@@ -364,7 +365,7 @@ class DOMJellier:
                     n = self.jellyToNode(state)
                     node.appendChild(n)
             else:
-                raise TypeError("Unsupported type: %s" % (objType.__name__,))
+                raise "Unsupported type: %s" % objType.__name__
         return node
 
     def jelly(self, obj):
