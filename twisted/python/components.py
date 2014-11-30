@@ -44,7 +44,7 @@ from twisted.python import reflect
 globalRegistry = AdapterRegistry()
 
 # Attribute that registerAdapter looks at. Is this supposed to be public?
-ALLOW_DUPLICATES = 0
+ALLOW_DUPLICATES = 1
 
 # Define a function to find the registered adapter factory, using either a
 # version of Zope Interface which has the `registered' method or an older
