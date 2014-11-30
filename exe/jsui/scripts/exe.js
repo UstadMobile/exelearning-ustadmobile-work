@@ -31,6 +31,9 @@ function _(msg) {
 var APPMODE_DESKTOP = "DESKTOP";
 var APPMODE_WEBAPP = "WEBAPP";
 
+/** Reference to outline (ExtJS) */
+
+var outline = null;
 
 Ext.Loader.setConfig({
     enabled: true,
@@ -144,6 +147,13 @@ Ext.application({
         if (location == undefined)
             location = window.top.location.pathname;
         nevow_closeLive('window.top.location = "' + location + '";');
+    },
+    
+    outlineSelectNode: function(currentNodeId) {
+    	outline = eXe.app.getController("Outline"); 
+    	if (outline) {
+    		outline.select(currentNodeId);
+		}
     },
     
     showLoadError: function() {

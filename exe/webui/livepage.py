@@ -25,6 +25,9 @@ from nevow.livepage import LivePage, DefaultClientHandleFactory, _js,\
     ClientHandle, IClientHandle
 from nevow import inevow, tags
 
+from nevow import testutil, context
+from nevow.flat import flatten
+
 log = logging.getLogger(__name__)
 
 def allClients(client1, client2):
@@ -50,12 +53,24 @@ class eXeClientHandle(ClientHandle):
     __implements__ = IClientHandle
 
     def sendScript(self, script, filter_func=None):
+        """
+        Send a script to the client - Note - script should be str not unicode
+        """
+        if not isinstance(script, _js):
+            script = _js(script)
+        #todo: check this is not already an instance of js
         if filter_func:
             for client in nevow.livepage.clientHandleFactory.clientHandles.values():
                 if filter_func(client, self):
-                    ClientHandle.sendScript(client, script)
+                    ClientHandle.send(client, script)
         else:
-            ClientHandle.sendScript(self, script)
+            ClientHandle.send(self, script)
+
+    ## Here is some api your handlers can use to more easily manipulate the
+    ## live page
+    def flt(self, what, quote=True):
+        return flt(what, quote=quote, client=self)
+
 
     def alert(self, what, onDone=None, filter_func=False):
         """Show the user an alert 'what'
@@ -78,12 +93,24 @@ class eXeClientHandleFactory(DefaultClientHandleFactory):
 
     def newClientHandle(self, ctx, refreshInterval, targetTimeoutCount):
         handle = DefaultClientHandleFactory.newClientHandle(self, ctx, refreshInterval, targetTimeoutCount)
-        handle.currentNodeId = ctx.tag.package.currentNode.id
-        handle.packageName = ctx.tag.package.name
+        if hasattr(handle, "tag"): 
+            handle.currentNodeId = ctx.tag.package.currentNode.id
+            handle.packageName = ctx.tag.package.name
+        else:
+            handle.currentNodeId = ctx.package.currentNode.id
+            handle.packageName = ctx.package.name
+            
         log.debug('New client handle %s. Handles %s' % (handle.handleId, self.clientHandles))
         return handle
 
-nevow.livepage.clientHandleFactory = eXeClientHandleFactory()
+#attempt upgrade of nevow
+# It seems in the new version we should really just think about
+# livepage.clientFactory
+
+theClientHandleFactory = eXeClientHandleFactory()
+nevow.livepage.clientHandleFactory = theClientHandleFactory
+nevow.livepage.clientFactory = theClientHandleFactory
+nevow.livepage.theDefaultClientHandleFactory = theClientHandleFactory
 
 class RenderableLivePage(_RenderablePage, LivePage):
     """
@@ -97,6 +124,10 @@ class RenderableLivePage(_RenderablePage, LivePage):
         LivePage.__init__(self)
         _RenderablePage.__init__(self, parent, package, config)
         self.clientHandleFactory = nevow.livepage.clientHandleFactory
+        
+        # new version of nevow wants to think about clientFactory 
+        # NOT clientHandleFactory
+        self.clientFactory = nevow.livepage.clientFactory
 
     def renderHTTP(self, ctx):
         request = inevow.IRequest(ctx)
@@ -105,5 +136,42 @@ class RenderableLivePage(_RenderablePage, LivePage):
         request.setHeader("Pragma", "no-cache")
         return LivePage.renderHTTP(self, ctx)
 
+    
+    #copy from new nevow livepage.py
     def render_liveglue(self, ctx, data):
-        return tags.script(src='/jsui/nevow_glue.js')
+        if not self.cacheable:
+            handleId = "'", self.clientFactory.newClientHandle(
+                self,
+                self.refreshInterval,
+                self.targetTimeoutCount).handleId, "'"
+        else:
+            handleId = 'null'
+
+        return [
+            tags.script(type="text/javascript")[
+                "var nevow_clientHandleId = ", handleId ,";"],
+            tags.script(type="text/javascript",
+                        src='/jsui/nevow_glue.js')
+            ]
+
+def flt(stan, quote=True, client=None):
+    """Flatten some stan to a string suitable for embedding in a javascript
+    string.
+
+    If quote is True, apostrophe, quote, and newline will be quoted
+    """
+
+    fr = testutil.FakeRequest()
+    ctx = context.RequestContext(tag=fr)
+    ctx.remember(client, IClientHandle)
+    ctx.remember(None, inevow.IData)
+    fl = flatten(stan, ctx=ctx)
+    if quote:
+        fl = jquote(fl)
+    return fl
+
+
+def jquote(jscript):
+    return jscript.replace('\\', '\\\\').replace("'", "\\'").replace('\n', '\\n')
+
+    

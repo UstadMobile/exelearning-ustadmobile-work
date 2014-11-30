@@ -94,5 +94,7 @@ class eXeSite(appserver.NevowSite):
         uid = self._mkuid()
         s = eXeSession(self, uid)
         session = self.sessions[uid] = s
-        reactor.callLater(1800, s.checkExpired)
+        
+        s.startCheckingExpiration()
         return session
+

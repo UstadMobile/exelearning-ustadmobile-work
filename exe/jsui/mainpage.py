@@ -120,6 +120,8 @@ class MainPage(RenderableLivePage):
 
         self.location_buttons = LocationButtons()
         self.exportDownloadPage = None
+        
+        self.handlers_name_to_fns = {}
 
 
     def adjust_config_for_user(self):
@@ -229,6 +231,31 @@ class MainPage(RenderableLivePage):
 
         return json.dumps({'success': True, 'data': data})
 
+    """
+    def locateHandler(self, ctx, path, name):
+        ### XXX TODO: Handle path
+        if name in self.handlers_name_to_fns:
+            return self.handlers_name_to_fns[name]
+        else:
+            return getattr(self, 'handle_%s' % (name, ))"""
+
+    def locateHandler(self, ctx, path, name):
+        ### XXX TODO: Handle path
+        """
+        if hasattr(self, 'handle_%s' % (name, )):
+            return getattr(self, 'handle_%s' % (name, ))
+        else:
+            #adapt the naming convention
+            name_adapted = name[0].upper() + name[1:]
+            return getattr(self, "handle" + name_adapted)
+        """
+        if name in self.handlers_name_to_fns:
+            return self.handlers_name_to_fns[name]
+        
+    def handleCloseFinalizer(self, client, callback = None):
+        if callback:
+            return _js(callback)
+
     def goingLive(self, ctx, client):
         """Called each time the page is served/refreshed"""
 #        inevow.IRequest(ctx).setHeader('content-type', 'application/vnd.mozilla.xul+xml')
@@ -239,8 +266,12 @@ class MainPage(RenderableLivePage):
             and store them
             """
             kwargs['identifier'] = name
-            hndlr = handler(func, *args, **kwargs)
-            hndlr(ctx, client) # Stores it
+            #hndlr = handler(func, *args, **kwargs)
+            #hndlr(ctx, client) # Stores it
+            self.handlers_name_to_fns[name] = CallableInstanceMethod(func, client)
+            
+        setUpHandler(self.handleCloseFinalizer, "close")   
+        setUpHandler(self.handle_foobar, "foobar")    
         setUpHandler(self.handleIsPackageDirty,  'isPackageDirty')
         setUpHandler(self.handlePackageFileName, 'getPackageFileName')
         setUpHandler(self.handleSavePackage,     'savePackage')
@@ -419,8 +450,11 @@ class MainPage(RenderableLivePage):
                   'appMode' : G.application.config.appMode
                  }
         if ctx is not None:
+            #clientHandleId = IClientHandle(ctx).handleId
+            #upgrade to nevow attempt
+            clientHandleId = "0"
             config['authoringIFrameSrc'] = '%s/authoring?clientHandleId=%s' % \
-                (self.package.name, IClientHandle(ctx).handleId)
+                (self.package.name, clientHandleId)
         
         if G.application.config.appMode == "WEBAPP":
             if self.session.webservice_user is not None:
@@ -429,6 +463,19 @@ class MainPage(RenderableLivePage):
                 config['webservice_user'] = ""
                 
         return config
+    
+    def handle_close(self, client, callback):
+        client.close(callback)
+    
+    def handle_foobar(self, client, data=None):
+        print "the meaning of life is 42"
+        life = 42
+        from nevow.livepage import _js as js
+        client.send(js("alert('hello world')"))
+    
+        
+        
+        
     
     def render_config(self, ctx, data):
         """
@@ -470,6 +517,7 @@ class MainPage(RenderableLivePage):
         if self.package.isChanged:
             client.sendScript(ifDirty)
         else:
+            #client.sendScript(ifClean)
             client.sendScript(ifClean)
 
 
@@ -1743,4 +1791,27 @@ class MainPage(RenderableLivePage):
             log.error(u'Traceback:\n%s' % traceback.format_exc())
             raise
         return package
+
     
+class CallableInstanceMethod:
+    
+    def __init__(self, callme, client):
+        self.client = client
+        self.callme = callme
+    
+    def __call__(self, *args, **kwargs):
+        arg_arr = list(args)
+        
+        #get rid of javascript context - replace with self
+        arg_arr.pop(0)
+        
+        #most eXe functions have a blank placeholder string
+        if arg_arr[0] == "":
+            del arg_arr[0] 
+        
+        #replace the blank string
+        arg_arr.insert(0, self.client)
+        
+        args2 = tuple(arg_arr)
+        return self.callme(*args2, **kwargs)
+

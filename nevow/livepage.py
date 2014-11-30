@@ -593,7 +593,8 @@ class DefaultClientHandlesResource(object):
     def locateChild(self, ctx, segments):
         handleId = segments[0]
         handlerType = segments[1]
-        client = self.clientFactory.clientHandles[handleId]
+        #client = self.clientFactory.clientHandles[handleId]
+        client = clientFactory.clientHandles[handleId]
 
         return self.clientResources[handlerType](client), segments[2:]
 
