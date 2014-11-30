@@ -1,10 +1,10 @@
 
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
 """
-I am the support module for making a manhole server with mktap.
+I am the support module for making a manhole server with twistd.
 """
 
 from twisted.manhole import service
@@ -12,10 +12,10 @@ from twisted.spread import pb
 from twisted.python import usage, util
 from twisted.cred import portal, checkers
 from twisted.application import strports
-import os, sys
+
 
 class Options(usage.Options):
-    synopsis = "mktap manhole [options]"
+    synopsis = "[options]"
     optParameters = [
            ["user", "u", "admin", "Name of user to allow to log in"],
            ["port", "p", str(pb.portno), "Port to listen on"],
@@ -24,7 +24,10 @@ class Options(usage.Options):
     optFlags = [
         ["tracebacks", "T", "Allow tracebacks to be sent over the network"],
     ]
-    zsh_actions = {"user" : "_users"}
+
+    compData = usage.Completions(
+        optActions={"user": usage.CompleteUsernames()}
+        )
 
     def opt_password(self, password):
         """Required.  '-' will prompt or read a password from stdin.

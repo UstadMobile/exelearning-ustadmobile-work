@@ -2,11 +2,10 @@
 # See LICENSE for details.
 
 from twisted.python import log
-from nevow import loaders
-from nevow import rend
+from zope.interface import implements
+from nevow import loaders, rend, inevow
 from nevow.stan import directive
-from nevow.tags import *
-from nevow import inevow
+from nevow import tags
 
 class VirtualHostList(rend.Page):
     def __init__(self, nvh):
@@ -37,7 +36,7 @@ class VirtualHostList(rend.Page):
 
         link += req.path
 
-        return context.tag[a(href=link)[ host ]]
+        return context.tag[tags.a(href=link)[ host ]]
  
     def render_title(self, context, data):
         req = context.locate(inevow.IRequest)
@@ -45,18 +44,19 @@ class VirtualHostList(rend.Page):
         host = req.getHeader('host')
         return context.tag[ "Virtual Host Listing for %s://%s" % (proto, host) ]
 
+    def render_stylesheet(self, context, data):
+        return tags.style(type="text/css")[self.getStyleSheet()]
+        
     docFactory = loaders.stan(
-        html[
-            head[
-                title(render=render_title),
-                style(type="text/css")[
-                    getStyleSheet
-                ]
+        tags.html[
+            tags.head[
+                tags.title(render=render_title),
+                tags.directive('stylesheet'),
             ],
-            body[
-                h1(render=render_title),
-                ul(data=directive("hostlist"), render=directive("sequence"))[
-                    li(pattern="item", render=render_hostlist)]]])
+            tags.body[
+                tags.h1(render=render_title),
+                tags.ul(data=directive("hostlist"), render=directive("sequence"))[
+                    tags.li(pattern="item", render=render_hostlist)]]])
  
 class NameVirtualHost(rend.Page):
     """I am a resource which represents named virtual hosts. 
@@ -133,7 +133,7 @@ class _VHostMonsterResourcePrepathCleaner:
     segments it needs to remove are not appended to prepath until
     *after* it returns the (resource,segments) tuple.
     """
-    __implements__ = inevow.IResource,
+    implements(inevow.IResource)
     def locateChild(self, ctx, segments):
         request = inevow.IRequest(ctx)
         request.prepath = request.prepath[3:]
@@ -142,7 +142,7 @@ class _VHostMonsterResourcePrepathCleaner:
 _prepathCleaner = _VHostMonsterResourcePrepathCleaner()
 
 class VHostMonsterResource:
-    '''VHostMonster resource that helps to deploy a Nevow site behind a proxy.
+    """VHostMonster resource that helps to deploy a Nevow site behind a proxy.
     
     The main problem when deploying behind a proxy is that the scheme, host name
     and port the user typed into their browser are lost because the proxying web
@@ -173,8 +173,12 @@ class VHostMonsterResource:
 
     This also means your private server should serve the real content at
     /foo/bar, and not at the root of the tree.
-    '''
-    __implements__ = inevow.IResource,
+
+    Warning: anyone who can access a VHostMonsterResource can fake the
+    host name they are contacting. This can lead to cookie stealing or
+    cross site scripting attacks. Never expose /vhost to the Internet.
+    """
+    implements(inevow.IResource)
 
     def locateChild(self, ctx, segments):
 
@@ -201,3 +205,4 @@ class VHostMonsterResource:
             request.uri = request.uri[prefixLen:]
 
             return _prepathCleaner, segments[2:]
+

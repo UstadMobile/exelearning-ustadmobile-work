@@ -1,23 +1,26 @@
 
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 """
-Support module for making a port forwarder with mktap.
+Support module for making a port forwarder with twistd.
 """
 from twisted.protocols import portforward
 from twisted.python import usage
 from twisted.application import strports
 
 class Options(usage.Options):
-    synopsis = "Usage: mktap portforward [options]"
+    synopsis = "[options]"
     longdesc = 'Port Forwarder.'
     optParameters = [
           ["port", "p", "6666","Set the port number."],
           ["host", "h", "localhost","Set the host."],
           ["dest_port", "d", 6665,"Set the destination port."],
     ]
-    zsh_actions = {"host" : "_hosts"}
+
+    compData = usage.Completions(
+        optActions={"host": usage.CompleteHostnames()}
+        )
 
 def makeService(config):
     f = portforward.ProxyFactory(config['host'], int(config['dest_port']))

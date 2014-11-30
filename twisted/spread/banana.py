@@ -1,34 +1,22 @@
 # -*- test-case-name: twisted.test.test_banana -*-
-#
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-
-"""Banana -- s-exp based protocol.
-
-Stability: semi-stable
+"""
+Banana -- s-exp based protocol.
 
 Future Plans: This module is almost entirely stable.  The same caveat applies
 to it as applies to L{twisted.spread.jelly}, however.  Read its future plans
 for more details.
 
-@author: U{Glyph Lefkowitz<mailto:glyph@twistedmatrix.com>}
+@author: Glyph Lefkowitz
 """
 
-__version__ = "$Revision: 1.37 $"[11:-2]
+import copy, cStringIO, struct
 
-from twisted.internet   import protocol
-from twisted.persisted  import styles
-from twisted.python     import log
-from exe                import globals
-
-import types, copy, cStringIO, struct
-import time
-import re
-import os
-import getpass
-import logging
-log = logging.getLogger(__name__)
+from twisted.internet import protocol
+from twisted.persisted import styles
+from twisted.python import log
 
 class BananaError(Exception):
     pass
@@ -42,14 +30,26 @@ def int2b128(integer, stream):
         stream(chr(integer & 0x7f))
         integer = integer >> 7
 
-def b1282int(st, _powersOfOneTwentyEight = []):
+
+def b1282int(st):
+    """
+    Convert an integer represented as a base 128 string into an C{int} or
+    C{long}.
+
+    @param st: The integer encoded in a string.
+    @type st: C{str}
+
+    @return: The integer value extracted from the string.
+    @rtype: C{int} or C{long}
+    """
+    e = 1
     i = 0
-    if len(st) > len(_powersOfOneTwentyEight):
-        _powersOfOneTwentyEight.extend([128 ** n for n in xrange(len(_powersOfOneTwentyEight), len(st))])
-    for place, char in enumerate(st):
-        num = ord(char)
-        i = i + (num * _powersOfOneTwentyEight[place])
+    for char in st:
+        n = ord(char)
+        i += (n * e)
+        e <<= 7
     return i
+
 
 # delimiter characters.
 LIST     = chr(0x80)
@@ -65,10 +65,42 @@ VOCAB    = chr(0x87)
 
 HIGH_BIT_SET = chr(0x80)
 
+def setPrefixLimit(limit):
+    """
+    Set the limit on the prefix length for all Banana connections
+    established after this call.
+
+    The prefix length limit determines how many bytes of prefix a banana
+    decoder will allow before rejecting a potential object as too large.
+
+    @type limit: C{int}
+    @param limit: The number of bytes of prefix for banana to allow when
+    decoding.
+    """
+    global _PREFIX_LIMIT
+    _PREFIX_LIMIT = limit
+setPrefixLimit(64)
+
 SIZE_LIMIT = 640 * 1024   # 640k is all you'll ever need :-)
 
-class Pynana(protocol.Protocol, styles.Ephemeral):
+class Banana(protocol.Protocol, styles.Ephemeral):
     knownDialects = ["pb", "none"]
+
+    prefixLimit = None
+    sizeLimit = SIZE_LIMIT
+
+    def setPrefixLimit(self, limit):
+        """
+        Set the prefix limit for decoding done by this protocol instance.
+
+        @see: L{setPrefixLimit}
+        """
+        self.prefixLimit = limit
+        self._smallestLongInt = -2 ** (limit * 7) + 1
+        self._smallestInt = -2 ** 31
+        self._largestInt = 2 ** 31 - 1
+        self._largestLongInt = 2 ** (limit * 7) - 1
+
 
     def connectionReady(self):
         """Surrogate for connectionMade
@@ -93,21 +125,25 @@ class Pynana(protocol.Protocol, styles.Ephemeral):
                         break
                 else:
                     # I can't speak any of those dialects.
-                    log.msg('error losing')
+                    log.msg("The client doesn't speak any of the protocols "
+                            "offered by the server: disconnecting.")
                     self.transport.loseConnection()
             else:
                 if obj in self.knownDialects:
                     self._selectDialect(obj)
                 else:
                     # the client just selected a protocol that I did not suggest.
-                    log.msg('freaky losing')
+                    log.msg("The client selected a protocol the server didn't "
+                            "suggest and doesn't know: disconnecting.")
                     self.transport.loseConnection()
 
 
     def connectionMade(self):
+        self.setPrefixLimit(_PREFIX_LIMIT)
         self.currentDialect = None
         if not self.isClient:
             self.sendEncoded(self.knownDialects)
+
 
     def gotItem(self, item):
         l = self.listStack
@@ -119,36 +155,9 @@ class Pynana(protocol.Protocol, styles.Ephemeral):
     buffer = ''
 
     def dataReceived(self, chunk):
-
-        cList = 0
-        cString = 0
-        cInt = 0
-        cLongInt = 0 
-        cLongNeg = 0 
-        cNeg = 0
-        cVocab = 0
-        cFloat = 0
-        cInvalid = 0
-
         buffer = self.buffer + chunk
         listStack = self.listStack
         gotItem = self.gotItem
-
-        bufLen = len(buffer)
-        percentDone = 10
-        percentDoneLast = 0
-        updateTimeLast = 0
-
-        try:
-            username = getpass.getuser()
-        except ImportError:
-            username = ''
-        eXeStart = globals.application.tempWebDir
-        eXeStart = re.sub("[\/|\\\\][^\/|\\\\]*$","",eXeStart)
-        eXeStart = eXeStart + '/tmpExeStartupTime.' + username
-        chmodOnceOnly=1
-
-        ##### XXXX xxxx
         while buffer:
             assert self.buffer != buffer, "This ain't right: %s %s" % (repr(self.buffer), repr(buffer))
             self.buffer = buffer
@@ -158,45 +167,20 @@ class Pynana(protocol.Protocol, styles.Ephemeral):
                     break
                 pos = pos + 1
             else:
-                if pos > 64:
-                    raise BananaError("Security precaution: prefix > 64 bytes")
+                if pos > self.prefixLimit:
+                    raise BananaError("Security precaution: more than %d bytes of prefix" % (self.prefixLimit,))
                 return
-        
-            # tracking of percent done
-            updateTime = int (time.time())
-            if(updateTime > updateTimeLast):
-                curBufLen = len(buffer)
-                percentDone = int( (900 * (bufLen - curBufLen)/bufLen) + 100 )
-
-                outStartFH=open(eXeStart, "w")
-                outStartFH.write(`updateTime`)
-                outStartFH.close()
-                if(chmodOnceOnly):
-                    os.chmod(eXeStart,0666)
-                    chmodOnceOnly=0
-
-                if(percentDone > percentDoneLast):
-                    outSplashFH=open(globals.application.tempWebDir + \
-                                       '/splash.dat',"w")
-                    outSplashFH.write(`percentDone`)
-                    outSplashFH.close()
-                    updateTimeLast = updateTime
-                    percentDoneLast = percentDone
-
             num = buffer[:pos]
             typebyte = buffer[pos]
             rest = buffer[pos+1:]
-
-            if len(num) > 64:
-                raise BananaError("Security precaution: longer than 64 bytes worth of prefix")
+            if len(num) > self.prefixLimit:
+                raise BananaError("Security precaution: longer than %d bytes worth of prefix" % (self.prefixLimit,))
             if typebyte == LIST:
                 num = b1282int(num)
                 if num > SIZE_LIMIT:
                     raise BananaError("Security precaution: List too long.")
                 listStack.append((num, []))
                 buffer = rest
-                cList += 1
-
             elif typebyte == STRING:
                 num = b1282int(num)
                 if num > SIZE_LIMIT:
@@ -206,57 +190,38 @@ class Pynana(protocol.Protocol, styles.Ephemeral):
                     gotItem(rest[:num])
                 else:
                     return
-                cString += 1
             elif typebyte == INT:
                 buffer = rest
                 num = b1282int(num)
-                gotItem(int(num))
-                cInt += 1
+                gotItem(num)
             elif typebyte == LONGINT:
                 buffer = rest
                 num = b1282int(num)
-                gotItem(long(num))
-                cLongInt += 1
+                gotItem(num)
             elif typebyte == LONGNEG:
                 buffer = rest
                 num = b1282int(num)
-                gotItem(-long(num))
-                cLongNeg += 1
+                gotItem(-num)
             elif typebyte == NEG:
                 buffer = rest
                 num = -b1282int(num)
                 gotItem(num)
-                cNeg += 1
             elif typebyte == VOCAB:
                 buffer = rest
                 num = b1282int(num)
                 gotItem(self.incomingVocabulary[num])
-                cVocab += 1
             elif typebyte == FLOAT:
                 if len(rest) >= 8:
                     buffer = rest[8:]
                     gotItem(struct.unpack("!d", rest[:8])[0])
                 else:
                     return
-                cFloat += 1
             else:
-                raise NotImplementedError(("Invalid Type %r" % (typebyte,)))
-                cInvalid += 1
-
+                raise NotImplementedError(("Invalid Type Byte %r" % (typebyte,)))
             while listStack and (len(listStack[-1][1]) == listStack[-1][0]):
                 item = listStack.pop()[1]
                 gotItem(item)
         self.buffer = ''
-        log.info('Banana Import Statistics')
-        log.info('cList: ' + `cList`)
-        log.info('cString: ' + `cString`)
-        log.info('cInt: ' + `cInt`)
-        log.info('cLongInt: ' + `cLongInt`)
-        log.info('cLongNeg: ' + `cLongNeg`)
-        log.info('cNeg: ' + `cNeg`)
-        log.info('cVocab: ' + `cVocab`)
-        log.info('cFloat: ' + `cFloat`)
-        log.info('cInvalid: ' + `cInvalid`)
 
 
     def expressionReceived(self, lst):
@@ -321,75 +286,48 @@ class Pynana(protocol.Protocol, styles.Ephemeral):
         self.transport.write(value)
 
     def _encode(self, obj, write):
-        if isinstance(obj, types.ListType) or isinstance(obj, types.TupleType):
+        if isinstance(obj, (list, tuple)):
             if len(obj) > SIZE_LIMIT:
-                raise BananaError, \
-                      "list/tuple is too long to send (%d)" % len(obj)
+                raise BananaError(
+                    "list/tuple is too long to send (%d)" % (len(obj),))
             int2b128(len(obj), write)
             write(LIST)
             for elem in obj:
                 self._encode(elem, write)
-        elif isinstance(obj, types.IntType):
-            if obj >= 0:
+        elif isinstance(obj, (int, long)):
+            if obj < self._smallestLongInt or obj > self._largestLongInt:
+                raise BananaError(
+                    "int/long is too large to send (%d)" % (obj,))
+            if obj < self._smallestInt:
+                int2b128(-obj, write)
+                write(LONGNEG)
+            elif obj < 0:
+                int2b128(-obj, write)
+                write(NEG)
+            elif obj <= self._largestInt:
                 int2b128(obj, write)
                 write(INT)
             else:
-                int2b128(-obj, write)
-                write(NEG)
-        elif isinstance(obj, types.LongType):
-            if obj >= 0l:
                 int2b128(obj, write)
                 write(LONGINT)
-            else:
-                int2b128(-obj, write)
-                write(LONGNEG)
-        elif isinstance(obj, types.FloatType):
+        elif isinstance(obj, float):
             write(FLOAT)
             write(struct.pack("!d", obj))
-        elif isinstance(obj, types.StringType):
+        elif isinstance(obj, str):
             # TODO: an API for extending banana...
-            if (self.currentDialect == "pb") and self.outgoingSymbols.has_key(obj):
+            if self.currentDialect == "pb" and obj in self.outgoingSymbols:
                 symbolID = self.outgoingSymbols[obj]
                 int2b128(symbolID, write)
                 write(VOCAB)
             else:
                 if len(obj) > SIZE_LIMIT:
-                    raise BananaError, \
-                          "string is too long to send (%d)" % len(obj)
+                    raise BananaError(
+                        "string is too long to send (%d)" % (len(obj),))
                 int2b128(len(obj), write)
                 write(STRING)
                 write(obj)
         else:
-            raise BananaError, "could not send object: %s" % repr(obj)
-Banana = Pynana
-
-
-class Canana(Pynana):
-
-    def connectionMade(self):
-        self.state = cBanana.newState()
-        self.cbuf = cBanana.newBuf()
-        Pynana.connectionMade(self)
-
-    def sendEncoded(self, obj):
-        self.cbuf.clear()
-        cBanana.encode(obj, self.cbuf)
-        rv = self.cbuf.get()
-        self.transport.write(rv)
-
-    def dataReceived(self, chunk):
-        buffer = self.buffer + chunk
-        processed = cBanana.dataReceived(self.state, buffer, self.callExpressionReceived)
-        self.buffer = buffer[processed:]
-
-#try:
-#    import cBanana
-#    cBanana.pyb1282int = b1282int
-#    cBanana.pyint2b128 = int2b128
-#except ImportError:
-#    pass
-#else:
-#    Banana = Canana
+            raise BananaError("could not send object: %r" % (obj,))
 
 
 # For use from the interactive interpreter
@@ -407,10 +345,14 @@ def encode(lst):
 
 
 def decode(st):
-    """Decode a banana-encoded string."""
-    l=[]
+    """
+    Decode a banana-encoded string.
+    """
+    l = []
     _i.expressionReceived = l.append
-    _i.dataReceived(st)
-    _i.buffer = ''
-    del _i.expressionReceived
+    try:
+        _i.dataReceived(st)
+    finally:
+        _i.buffer = ''
+        del _i.expressionReceived
     return l[0]

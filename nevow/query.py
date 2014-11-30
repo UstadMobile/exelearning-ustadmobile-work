@@ -3,14 +3,13 @@
 
 """inevow.IQ adapter implementations.
 """
+import twisted.python.components as tpc
 
-import warnings
+from nevow import inevow, stan
+from zope.interface import implements
 
-from nevow import inevow, compy, stan
-
-
-class QueryContext(compy.Adapter):
-    __implements__ = inevow.IQ,
+class QueryContext(tpc.Adapter):
+    implements(inevow.IQ)
 
     def _locatePatterns(self, pattern, default, loop=True):
         if self.original.tag.pattern == pattern:
@@ -28,26 +27,15 @@ class QueryContext(compy.Adapter):
             yield pat
 
     def onePattern(self, pattern):
-        found = False
-        try:
-            found = self.original.tag.onePattern(pattern)
-        except stan.NodeNotFound:
-            pass
-        if self.original.tag.pattern == pattern:
-            if found:
-                raise stan.TooManyNodes, ('pattern', pattern)
-            return self.original.tag.clone(deep=False, clearPattern=True)
-        if not found:
-            raise stan.NodeNotFound, ('pattern', pattern)
-        return found
+        return self.original.tag.onePattern(pattern)
 
 
-class QueryList(compy.Adapter):
+class QueryList(tpc.Adapter):
     def _locatePatterns(self, pattern, default, loop=True):
         produced = []
         for item in self.original:
             try:
-                for x in inevow.IQ(item)._locatePatterns(pattern, None, loop=False):
+                for x in inevow.IQ(stan.Tag("")[item])._locatePatterns(pattern, None, loop=False):
                     produced.append(x)
                     yield x.clone(deep=False, clearPattern=True)
             except stan.NodeNotFound:
@@ -75,18 +63,20 @@ class QueryList(compy.Adapter):
                 yield pat
 
     def onePattern(self, pattern):
-        found = False
+        node = None
         for item in self.original:
             try:
-                oldFound = found
-                found = inevow.IQ(item).onePattern(pattern)
-                if oldFound:
-                    raise stan.TooManyNodes('pattern', pattern)
+                newNode = inevow.IQ(item).onePattern(pattern)
             except stan.NodeNotFound:
                 continue
-        if not found:
+            else:
+                if node is None:
+                    node = newNode
+                else:
+                    raise stan.TooManyNodes('pattern', pattern)
+        if node is None:
             raise stan.NodeNotFound('pattern', pattern)
-        return found
+        return node
 
 
 class QuerySlot(QueryList):
@@ -94,7 +84,7 @@ class QuerySlot(QueryList):
         QueryList.__init__(self, original.children)
 
 
-class QueryNeverFind(compy.Adapter):
+class QueryNeverFind(tpc.Adapter):
     def patternGenerator(self, pattern, default=None):
         raise stan.NodeNotFound, ('pattern', pattern)
 
@@ -108,7 +98,7 @@ class QueryNeverFind(compy.Adapter):
         return []
 
 
-class QueryLoader(compy.Adapter):
+class QueryLoader(tpc.Adapter):
     def patternGenerator(self, pattern, default=None):
         return inevow.IQ(self.original.load()).patternGenerator(pattern, default)
 

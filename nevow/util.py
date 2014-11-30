@@ -1,8 +1,94 @@
 # Copyright (c) 2004 Divmod.
 # See LICENSE for details.
 
+import inspect, os.path
 
-import sys
+class UnexposedMethodError(Exception):
+    """
+    Raised on any attempt to get a method which has not been exposed.
+    """
+
+
+class Expose(object):
+    """
+    Helper for exposing methods for various uses using a simple decorator-style
+    callable.
+
+    Instances of this class can be called with one or more functions as
+    positional arguments.  The names of these functions will be added to a list
+    on the class object of which they are methods.
+
+    @ivar attributeName: The attribute with which exposed methods will be
+    tracked.
+    """
+    def __init__(self, doc=None):
+        self.doc = doc
+
+
+    def __call__(self, *funcObjs):
+        """
+        Add one or more functions to the set of exposed functions.
+
+        This is a way to declare something about a class definition, similar to
+        L{zope.interface.implements}.  Use it like this::
+
+        | magic = Expose('perform extra magic')
+        | class Foo(Bar):
+        |     def twiddle(self, x, y):
+        |         ...
+        |     def frob(self, a, b):
+        |         ...
+        |     magic(twiddle, frob)
+
+        Later you can query the object::
+
+        | aFoo = Foo()
+        | magic.get(aFoo, 'twiddle')(x=1, y=2)
+
+        The call to C{get} will fail if the name it is given has not been
+        exposed using C{magic}.
+
+        @param funcObjs: One or more function objects which will be exposed to
+        the client.
+
+        @return: The first of C{funcObjs}.
+        """
+        if not funcObjs:
+            raise TypeError("expose() takes at least 1 argument (0 given)")
+        for fObj in funcObjs:
+            fObj.exposedThrough = getattr(fObj, 'exposedThrough', [])
+            fObj.exposedThrough.append(self)
+        return funcObjs[0]
+
+
+    def exposedMethodNames(self, instance):
+        """
+        Return an iterator of the names of the methods which are exposed on the
+        given instance.
+        """
+        for k, callable in inspect.getmembers(instance, inspect.isroutine):
+            if self in getattr(callable, 'exposedThrough', []):
+                yield k
+
+
+    _nodefault = object()
+    def get(self, instance, methodName, default=_nodefault):
+        """
+        Retrieve an exposed method with the given name from the given instance.
+
+        @raise UnexposedMethodError: Raised if C{default} is not specified and
+        there is no exposed method with the given name.
+
+        @return: A callable object for the named method assigned to the given
+        instance.
+        """
+        method = getattr(instance, methodName, None)
+        exposedThrough = getattr(method, 'exposedThrough', [])
+        if self not in getattr(method, 'exposedThrough', []):
+            if default is self._nodefault:
+                raise UnexposedMethodError(self, methodName)
+            return default
+        return method
 
 
 def escapeToXML(text, isattrib = False):
@@ -61,125 +147,14 @@ def getPOSTCharset(ctx):
     return 'utf-8'
 
 
-def qual(clazz):
-    return clazz.__module__ + '.' + clazz.__name__
+from twisted.python.reflect import qual, namedAny
+from twisted.python.util import uniquify
 
+from twisted.internet.defer import Deferred, succeed, maybeDeferred, DeferredList
+from twisted.python import failure
+from twisted.python.failure import Failure
+from twisted.python import log
 
-def namedAny(name):
-    """Get a fully named package, module, module-global object, or attribute.
-    """
-    names = name.split('.')
-    topLevelPackage = None
-    moduleNames = names[:]
-    while not topLevelPackage:
-        try:
-            trialname = '.'.join(moduleNames)
-            topLevelPackage = __import__(trialname)
-        except ImportError:
-            # if the ImportError happened in the module being imported,
-            # this is a failure that should be handed to our caller.
-            # count stack frames to tell the difference.
-
-            # string-matching is another technique, but I think it could be
-            # fooled in some funny cases
-            #if sys.exc_info()[1] != "cannot import name %s" % trialname:
-            #    raise
-            import traceback
-            if len(traceback.extract_tb(sys.exc_info()[2])) > 1:
-                raise
-            moduleNames.pop()
-    
-    obj = topLevelPackage
-    for n in names[1:]:
-        obj = getattr(obj, n)
-        
-    return obj
-
-
-def uniquify(lst):
-    """Make the elements of a list unique by inserting them into a dictionary.
-    This must not change the order of the input lst.
-    """
-    dct = {}
-    result = []
-    for k in lst:
-        if not dct.has_key(k): result.append(k)
-        dct[k] = 1
-    return result
-
-
-def allYourBase(classObj, baseClass=None):
-    """allYourBase(classObj, baseClass=None) -> list of all base
-    classes that are subclasses of baseClass, unless it is None,
-    in which case all bases will be added.
-    """
-    l = []
-    accumulateBases(classObj, l, baseClass)
-    return l
-
-
-def accumulateBases(classObj, l, baseClass=None):
-    for base in classObj.__bases__:
-        if baseClass is None or issubclass(base, baseClass):
-            l.append(base)
-        accumulateBases(base, l, baseClass)
-
-
-try:
-
-    from twisted.internet.defer import Deferred, succeed, maybeDeferred, succeed, DeferredList
-    from twisted.python import failure
-    from twisted.python.failure import Failure
-    from twisted.trial.unittest import deferredError
-    from twisted.python import log
-
-except ImportError:
-    class Deferred(object): pass
-    class Failure(object):
-        def __init__(self, e):
-            self.exc = e
-    class DeferredList(object):
-        def __init__(self, l):
-            self.l = l
-
-        def addCallback(self, cb, *args, **kw):
-            cb(self.l, *args, **kw)
-
-        def addErrback(self, eb, *args, **kw):
-            pass
-
-        def addBoth(self, cbeb, *args, **kw):
-            cbeb(self.l, *args, **kw)
-
-    class Logger(object):
-        def msg(self, *args, **kw):
-            for arg in args:
-                print >> sys.stderr, arg
-            for k, v in kw.items():
-                print >> sys.stderr, "%s: %s" % (k, v)
-
-    log = Logger()
-
-try:
-    # work with twisted before retrial
-    from twisted.trial.util import _getDeferredResult
-except ImportError:
-    # and after retrial
-    try:
-        from twisted.trial.util import wait as deferredResult
-    except ImportError:
-        # and with no twisted at all
-        def deferredResult(x): return x
-else:
-    def deferredResult(d, timeout=None):
-        """Waits for a Deferred to arrive, then returns or throws an exception,
-        based on the result.
-        """
-        result = _getDeferredResult(d, timeout)
-        if isinstance(result, failure.Failure):
-            raise result.value
-        else:
-            return result
 
 ## The tests rely on these, but they should be removed ASAP
 def remainingSegmentsFactory(ctx):
@@ -188,3 +163,69 @@ def remainingSegmentsFactory(ctx):
 
 def currentSegmentsFactory(ctx):
     return tuple(ctx.tag.prepath)
+
+class _RandomClazz(object):
+    pass
+class _NamedAnyError(Exception):
+    'Internal error for when importing fails.'
+
+def _namedAnyWithBuiltinTranslation(name):
+    if name == '__builtin__.function':
+        name='types.FunctionType'
+    elif name == '__builtin__.method':
+        return _RandomClazz # Hack
+    elif name == '__builtin__.instancemethod':
+        name='types.MethodType'
+    elif name == '__builtin__.NoneType':
+        name='types.NoneType'
+    elif name == '__builtin__.generator':
+        name='types.GeneratorType'
+    return namedAny(name)
+
+# Import resource_filename from setuptools's pkg_resources module if possible
+# because it handles resources in .zip files. If it's not provide a version
+# that assumes the resource is directly available on the filesystem. 
+try:
+    from pkg_resources import resource_filename
+except ImportError:
+    def resource_filename(modulename, resource_name):
+        modulepath = namedAny(modulename).__file__
+        return os.path.join(os.path.dirname(os.path.abspath(modulepath)), resource_name)
+
+
+
+class CachedFile(object):
+    """
+    Helper for caching operations on files in the filesystem.
+    """
+    def __init__(self, path, loader):
+        """
+        @type path: L{str}
+        @param path: The path to the associated file in the filesystem.
+
+        @param loader: A callable that returns the relevant data; invoked when
+        the cache is empty or stale.
+        """
+
+        self.path = path
+        self.loader = loader
+        self.invalidate()
+
+    def invalidate(self):
+        """
+        Invalidate the cache, forcing a reload from disk at the next attempted
+        load.
+        """
+        self._mtime = None
+
+    def load(self, *args, **kwargs):
+        """
+        Load this file. Any positional or keyword arguments will be passed
+        along to the loader callable, after the path itself.
+        """
+        currentTime = os.path.getmtime(self.path)
+        if self._mtime is None or currentTime != self._mtime:
+            self._cachedObj = self.loader(self.path, *args, **kwargs)
+            self._mtime = currentTime
+
+        return self._cachedObj

@@ -1,8 +1,8 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-#
-"""Service architecture for Twisted
+"""
+Service architecture for Twisted.
 
 Services are arranged in a hierarchy. At the leafs of the hierarchy,
 the services which actually interact with the outside world are started.
@@ -10,19 +10,81 @@ Services can be named or anonymous -- usually, they will be named if
 there is need to access them through the hierarchy (from a parent or
 a sibling).
 
-API Stability: unstable
-
-Maintainer: U{Moshe Zadka<mailto:moshez@twistedmatrix.com>}
+Maintainer: Moshe Zadka
 """
 
-from zope.interface import implements
+from zope.interface import implements, Interface, Attribute
 
+from twisted.python.reflect import namedAny
 from twisted.python import components
 from twisted.internet import defer
 from twisted.persisted import sob
+from twisted.plugin import IPlugin
 
-class IService(components.Interface):
 
+class IServiceMaker(Interface):
+    """
+    An object which can be used to construct services in a flexible
+    way.
+
+    This interface should most often be implemented along with
+    L{twisted.plugin.IPlugin}, and will most often be used by the
+    'twistd' command.
+    """
+    tapname = Attribute(
+        "A short string naming this Twisted plugin, for example 'web' or "
+        "'pencil'. This name will be used as the subcommand of 'twistd'.")
+
+    description = Attribute(
+        "A brief summary of the features provided by this "
+        "Twisted application plugin.")
+
+    options = Attribute(
+        "A C{twisted.python.usage.Options} subclass defining the "
+        "configuration options for this application.")
+
+
+    def makeService(options):
+        """
+        Create and return an object providing
+        L{twisted.application.service.IService}.
+
+        @param options: A mapping (typically a C{dict} or
+        L{twisted.python.usage.Options} instance) of configuration
+        options to desired configuration values.
+        """
+
+
+
+class ServiceMaker(object):
+    """
+    Utility class to simplify the definition of L{IServiceMaker} plugins.
+    """
+    implements(IPlugin, IServiceMaker)
+
+    def __init__(self, name, module, description, tapname):
+        self.name = name
+        self.module = module
+        self.description = description
+        self.tapname = tapname
+
+
+    def options():
+        def get(self):
+            return namedAny(self.module).Options
+        return get,
+    options = property(*options())
+
+
+    def makeService():
+        def get(self):
+            return namedAny(self.module).makeService
+        return get,
+    makeService = property(*makeService())
+
+
+
+class IService(Interface):
     """
     A service.
 
@@ -34,54 +96,65 @@ class IService(components.Interface):
     @ivar running:         Whether the service is running.
     """
 
-    def setName(self, name):
-        """Set the name of the service.
+    def setName(name):
+        """
+        Set the name of the service.
 
         @type name: C{str}
-        @raise L{RuntimeError}: Raised if the service already has a parent.
+        @raise RuntimeError: Raised if the service already has a parent.
         """
 
-    def setServiceParent(self, parent):
-        """Set the parent of the service.
+    def setServiceParent(parent):
+        """
+        Set the parent of the service.  This method is responsible for setting
+        the C{parent} attribute on this service (the child service).
 
-        @type name: C{IServiceCollection}
-        @raise L{RuntimeError}: Raised if the service already has a parent
-        or if the service has a name and the parent already has a child
-        by that name.
+        @type parent: L{IServiceCollection}
+        @raise RuntimeError: Raised if the service already has a parent
+            or if the service has a name and the parent already has a child
+            by that name.
         """
 
-    def disownServiceParent(self):
-        """Remove the parent of the service.
+    def disownServiceParent():
+        """
+        Use this API to remove an L{IService} from an L{IServiceCollection}.
 
-        @rtype: C{Deferred}
-        @return: a deferred which is triggered when the service has
-        finished shutting down. If shutting down is immediate,
-        a value can be returned (usually, None).
+        This method is used symmetrically with L{setServiceParent} in that it
+        sets the C{parent} attribute on the child.
+
+        @rtype: L{Deferred<defer.Deferred>}
+        @return: a L{Deferred<defer.Deferred>} which is triggered when the
+            service has finished shutting down. If shutting down is immediate,
+            a value can be returned (usually, C{None}).
         """
 
-    def startService(self):
-        """Start the the service."""
-
-    def stopService(self):
-        """Stop the the service.
-
-        @rtype: C{Deferred}
-        @return: a deferred which is triggered when the service has
-        finished shutting down. If shutting down is immediate,
-        a value can be returned (usually, None).
+    def startService():
+        """
+        Start the service.
         """
 
-    def privilegedStartService(self):
-        """Do preparation work for starting the service.
+    def stopService():
+        """
+        Stop the service.
+
+        @rtype: L{Deferred<defer.Deferred>}
+        @return: a L{Deferred<defer.Deferred>} which is triggered when the
+            service has finished shutting down. If shutting down is immediate,
+            a value can be returned (usually, C{None}).
+        """
+
+    def privilegedStartService():
+        """
+        Do preparation work for starting the service.
 
         Here things which should be done before changing directory,
-        root or shedding privileges are done."""
+        root or shedding privileges are done.
+        """
 
 
 class Service:
-
     """
-    Base class for services
+    Base class for services.
 
     Most services should inherit from this class. It handles the
     book-keeping reponsibilities of starting and stopping, as well
@@ -96,7 +169,7 @@ class Service:
 
     def __getstate__(self):
         dict = self.__dict__.copy()
-        if dict.has_key("running"):
+        if "running" in dict:
             del dict['running']
         return dict
 
@@ -127,50 +200,63 @@ class Service:
         self.running = 0
 
 
-class IServiceCollection(components.Interface):
 
-    """Collection of services.
+class IServiceCollection(Interface):
+    """
+    Collection of services.
 
     Contain several services, and manage their start-up/shut-down.
     Services can be accessed by name if they have a name, and it
     is always possible to iterate over them.
     """
 
-    def getServiceNamed(self, name):
-        """Get the child service with a given name.
+    def getServiceNamed(name):
+        """
+        Get the child service with a given name.
 
         @type name: C{str}
-        @rtype: C{IService}
-        @raise L{KeyError}: Raised if the service has no child with the
-        given name.
+        @rtype: L{IService}
+        @raise KeyError: Raised if the service has no child with the
+            given name.
         """
 
-    def __iter__(self):
-        """Get an iterator over all child services"""
-
-    def addService(self, service):
-         """Add a child service.
-
-        @type service: C{IService}
-        @raise L{RuntimeError}: Raised if the service has a child with
-        the given name.
+    def __iter__():
+        """
+        Get an iterator over all child services.
         """
 
-    def removeService(self, service):
-        """Remove a child service.
-
-        @type service: C{IService}
-        @raise L{ValueError}: Raised if the given service is not a child.
-        @rtype: C{Deferred}
-        @return: a deferred which is triggered when the service has
-        finished shutting down. If shutting down is immediate,
-        a value can be returned (usually, None).
+    def addService(service):
         """
+        Add a child service.
+
+        Only implementations of L{IService.setServiceParent} should use this
+        method.
+
+        @type service: L{IService}
+        @raise RuntimeError: Raised if the service has a child with
+            the given name.
+        """
+
+    def removeService(service):
+        """
+        Remove a child service.
+
+        Only implementations of L{IService.disownServiceParent} should
+        use this method.
+
+        @type service: L{IService}
+        @raise ValueError: Raised if the given service is not a child.
+        @rtype: L{Deferred<defer.Deferred>}
+        @return: a L{Deferred<defer.Deferred>} which is triggered when the
+            service has finished shutting down. If shutting down is immediate,
+            a value can be returned (usually, C{None}).
+        """
+
 
 
 class MultiService(Service):
-
-    """Straightforward Service Container
+    """
+    Straightforward Service Container.
 
     Hold a collection of services, and manage them in a simplistic
     way. No service will wait for another, but this object itself
@@ -212,7 +298,7 @@ class MultiService(Service):
 
     def addService(self, service):
         if service.name is not None:
-            if self.namedServices.has_key(service.name):
+            if service.name in self.namedServices:
                 raise RuntimeError("cannot have two services with same name"
                                    " '%s'" % service.name)
             self.namedServices[service.name] = service
@@ -234,23 +320,36 @@ class MultiService(Service):
             return None
 
 
-class IProcess(components.Interface):
 
-    """Process running parameters
+class IProcess(Interface):
+    """
+    Process running parameters.
 
     Represents parameters for how processes should be run.
-
-    @ivar processName: the name the process should have in ps (or None)
-    @type processName: C{str}
-    @ivar uid: the user-id the process should run under.
-    @type uid: C{int}
-    @ivar gid: the group-id the process should run under.
-    @type gid: C{int}
     """
+    processName = Attribute(
+        """
+        A C{str} giving the name the process should have in ps (or C{None}
+        to leave the name alone).
+        """)
+
+    uid = Attribute(
+        """
+        An C{int} giving the user id as which the process should run (or
+        C{None} to leave the UID alone).
+        """)
+
+    gid = Attribute(
+        """
+        An C{int} giving the group id as which the process should run (or
+        C{None} to leave the GID alone).
+        """)
+
 
 
 class Process:
-    """Process running parameters
+    """
+    Process running parameters.
 
     Sets up uid/gid in the constructor, and has a default
     of C{None} as C{processName}.
@@ -259,23 +358,25 @@ class Process:
     processName = None
 
     def __init__(self, uid=None, gid=None):
-        """Set uid and gid.
+        """
+        Set uid and gid.
 
         @param uid: The user ID as whom to execute the process.  If
-        this is None, no attempt will be made to change the UID.
+            this is C{None}, no attempt will be made to change the UID.
 
         @param gid: The group ID as whom to execute the process.  If
-        this is None, no attempt will be made to change the GID.
+            this is C{None}, no attempt will be made to change the GID.
         """
         self.uid = uid
         self.gid = gid
 
 
 def Application(name, uid=None, gid=None):
-    """Return a compound class.
+    """
+    Return a compound class.
 
-    Return an object supporting the C{IService}, C{IServiceCollection},
-    C{IProcess} and C{sob.IPersistable} interfaces, with the given
+    Return an object supporting the L{IService}, L{IServiceCollection},
+    L{IProcess} and L{sob.IPersistable} interfaces, with the given
     parameters. Always access the return value by explicit casting to
     one of the interfaces.
     """
@@ -285,33 +386,28 @@ def Application(name, uid=None, gid=None):
     IService(ret).setName(name)
     return ret
 
+
+
 def loadApplication(filename, kind, passphrase=None):
-    """Load Application from file
+    """
+    Load Application from a given file.
+
+    The serialization format it was saved in should be given as
+    C{kind}, and is one of C{pickle}, C{source}, C{xml} or C{python}. If
+    C{passphrase} is given, the application was encrypted with the
+    given passphrase.
 
     @type filename: C{str}
     @type kind: C{str}
     @type passphrase: C{str}
-
-    Load application from a given file. The serialization format it
-    was saved in should be given as C{kind}, and is one of 'pickle', 'source',
-    'xml' or 'python'. If C{passphrase} is given, the application was encrypted
-    with the given passphrase.
     """
     if kind == 'python':
         application = sob.loadValueFromFile(filename, 'application', passphrase)
     else:
         application = sob.load(filename, kind, passphrase)
-    if IService(application, None) is None:
-        from twisted.application import compat
-        application = compat.convert(application)
     return application
 
 
-# add backwards compatible __implements__ attribute
-components.backwardsCompatImplements(Service)
-components.backwardsCompatImplements(MultiService)
-components.backwardsCompatImplements(Process)
-
-
-__all__ = ['IService', 'Service', 'IServiceCollection', 'MultiService',
+__all__ = ['IServiceMaker', 'IService', 'Service',
+           'IServiceCollection', 'MultiService',
            'IProcess', 'Process', 'Application', 'loadApplication']

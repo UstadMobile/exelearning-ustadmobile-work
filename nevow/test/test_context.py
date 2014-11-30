@@ -2,17 +2,20 @@
 # Copyright (c) 2004 Divmod.
 # See LICENSE for details.
 
+import itertools
 import time
+
+import zope.interface as zi
+from twisted.python.components import registerAdapter
 
 from nevow import context
 from nevow import tags
-from nevow import compy
 from nevow import inevow
 
 from nevow.testutil import TestCase
 
 
-class IStuff(compy.Interface): pass
+class IStuff(zi.Interface): pass
 
 
 class TestRememberLocate(TestCase):
@@ -47,10 +50,18 @@ class TestRememberLocate(TestCase):
         ctx = context.WovenContext(parent=factory)
         self.assertEquals(IFoo(ctx), True)
 
+    def test_factoryContextRemembers(self):
+        basectx = TestContext()
+        ctx = context.WovenContext(parent=basectx)
+        bar1 = IBar(ctx)
+        ctx = context.WovenContext(parent=basectx)
+        bar2 = IBar(ctx)
+        self.assertEqual(bar1, bar2)
+
     def test_negativeLocate(self):
         ctx = context.WovenContext()
         self.assertRaises(KeyError, ctx.locate, IFoo)
-        self.assertRaises(compy.CannotAdapt, IFoo, ctx)
+        self.assertRaises(TypeError, IFoo, ctx)
 
     def test_negativeSomething(self):
         factory = TestContext()
@@ -94,13 +105,24 @@ class TestContext(context.FactoryContext):
     """A target for registering adatpters.
     """
 
-
-class IFoo(compy.Interface):
+# IFoo interface/adapter that always adapts to True
+class IFoo(zi.Interface):
     """A dummy interface.
     """
 
-
 dummyAdapter = lambda x: True
 
+registerAdapter(dummyAdapter, TestContext, IFoo)
 
-compy.registerAdapter(dummyAdapter, TestContext, IFoo)
+
+# IBar interface that adapts to an incrementing value
+class IBar(zi.Interface):
+    """A dummy interface.
+    """
+
+nextBar = itertools.count()
+def barFactory(ctx):
+    return nextBar.next()
+
+registerAdapter(barFactory, TestContext, IBar)
+

@@ -17,32 +17,44 @@ Mostly, you'll use the renderers:
  - B{mapping} - publish a dictionary by filling slots
 """
 
+from time import time as now
 from cStringIO import StringIO
-import os.path
-import urllib
+import random
 import warnings
-import traceback
 
-from nevow.context import WovenContext, NodeNotFound, PageContext, RequestContext
-from nevow import compy
-from nevow import inevow
-from nevow import tags
-from nevow import flat
+from zope.interface import implements, providedBy
+
+import twisted.python.components as tpc
+from twisted.python.reflect import qual, accumulateClassList
+
+from nevow.context import WovenContext, NodeNotFound, PageContext
+from nevow import inevow, tags, flat, util, url
 from nevow.util import log
-from nevow import util
 
 import formless
-from formless import iformless
+from formless import iformless, annotate
 
-from time import time as now
-try:
-	import random
-except ImportError:
-	import whrandom as random
+
+def _getPreprocessors(inst):
+    """
+    Accumulate elements from the sequences bound at the C{preprocessors}
+    attribute on all classes in the inheritance hierarchy of the class of
+    C{inst}.  A C{preprocessors} attribute on the given instance overrides
+    all preprocessors from the class inheritance hierarchy.
+    """
+    if 'preprocessors' in vars(inst):
+        return inst.preprocessors
+    preprocessors = []
+    accumulateClassList(
+        inst.__class__,
+        'preprocessors',
+        preprocessors)
+    return preprocessors
+
 
 
 class RenderFactory(object):
-    __implements__ = inevow.IRendererFactory,
+    implements(inevow.IRendererFactory)
 
     def renderer(self, context, name):
         """Return a renderer with the given name.
@@ -53,10 +65,15 @@ class RenderFactory(object):
         if name.find(' ') != -1:
             name, args = name.split(None, 1)
             args = [arg.strip() for arg in args.split(',')]
-        
+
         callable = getattr(self, 'render_%s' % name, None)
         if callable is None:
-            callable = lambda context, data: context.tag[
+            warnings.warn(
+                "Renderer %r missing on %s will result in an exception." % (
+                    name, qual(type(self))),
+                category=DeprecationWarning,
+                stacklevel=1)
+            callable = lambda *a, **kw: context.tag[
                 "The renderer named '%s' was not found in %r." % (name, self)]
 
         if args:
@@ -72,7 +89,7 @@ class RenderFactory(object):
 
 
 class MacroFactory(object):
-    __implements__ = inevow.IMacroFactory,
+    implements(inevow.IMacroFactory)
 
     def macro(self, ctx, name):
         """Return a macro with the given name.
@@ -95,8 +112,14 @@ class MacroFactory(object):
         return callable
 
 
+class DataNotFoundError(Exception):
+    """Raised when a data directive could not be resolved on the page or its
+    original attribute by the DataFactory.
+    """
+
+
 class DataFactory(object):
-    __implements__ = inevow.IContainer,
+    implements(inevow.IContainer)
 
     def child(self, context, n):
         args = []
@@ -112,8 +135,7 @@ class DataFactory(object):
             ## See if our self.original has an IContainer...
             container = inevow.IContainer(self.original, None)
             if container is None:
-                util.log.msg("ERROR: The data named '%s' was not found in %r." % (name, self))
-                callable = lambda context, data: context.tag["The data named '%s' was not found in %r." % (name, self)]
+                raise DataNotFoundError("The data named %r was not found in %r." % (name, self))
             else:
                 ## And delegate to it if so.
                 return container.child(context, n)
@@ -122,19 +144,6 @@ class DataFactory(object):
             return callable(*args)
 
         return callable
-
-
-class LiveEvilChildMixin:
-    """Mixin that provides the LiveEvil child resources."""
-    def child_nevow_liveOutput(self, ctx):
-        from nevow import liveevil
-        self.child_nevow_liveOutput = liveevil.liveOutput
-        return liveevil.liveOutput
-
-    def child_nevow_liveInput(self, ctx):
-        from nevow import liveevil
-        self.child_nevow_liveInput = liveevil.liveInput
-        return liveevil.liveInput
 
 
 class FreeformChildMixin:
@@ -160,13 +169,101 @@ class FreeformChildMixin:
             return util.maybeDeferred(cf.locateConfigurable, ctx, configurableName).addCallback(checkC)
         return NotFound
 
+    def child_freeform_hand(self, ctx):
+        carryoverHand = inevow.IHand(ctx, None)
+        if carryoverHand is not None:
+            inevow.ISession(ctx).setComponent(inevow.IHand, carryoverHand)
+            return carryoverHand
+        return inevow.IHand(inevow.ISession(ctx), None)
+
+
+class ConfigurableMixin(object):
+    """
+    A sane L{IConfigurable} implementation for L{Fragment} and L{Page}. 
+
+    Methods starting with C{bind_} automatically expose corresponding method
+    names.  C{bind_*} should return an L{IBinding} (L{PropertyBinding} or
+    L{MethodBinding}), or, as a shortcut for L{MethodBinding}, a C{list} of
+    two-C{tuples} like this::
+
+        def bind_foo(self, ctx):
+            return [('argName', String()), ('anotherArg', Integer())]
+
+        def foo(self, argName, anotherArg):
+            assert isinstance(argName, str)
+            assert isinstance(anotherArg, int)
+    """
+    implements(iformless.IConfigurable)
+
+    def getBindingNames(self, ctx):
+        """Expose bind_* methods and attributes on this class.
+        """
+        for name in dir(self):
+            if name.startswith('bind_'):
+                yield name[len('bind_'):]
+
+    def getBinding(self, ctx, name):
+        """Massage bind_* methods and attributes into an
+        IBinding. The bind_* method or attribute can either
+        already implement IBinding or be a list of twoples
+        which will be massaged into a MethodBinding as
+        described in the ConfigurableMixin class docstring.
+        """
+        def _get_binding(binding):
+            if callable(binding):
+                binding = util.maybeDeferred(binding, ctx)
+            return binding
+
+        def _convert_list(binding):
+            if isinstance(binding, list):
+                binding = annotate.MethodBinding(
+                    name, annotate.Method(arguments=[
+                    annotate.Argument(n, v, v.id)
+                    for (n, v) in binding]))
+            return binding
+
+        binding = util.maybeDeferred(getattr, self, 'bind_%s' % name)
+        return binding.addCallback(_get_binding).addCallback(_convert_list)
+
+    def getDefault(self, forBinding):
+        """Get a default value for a given binding. If the
+        binding is a Property, get the current value of
+        that property off self. If not, simply return
+        forBinding.default.
+        """
+        ## If it is a Property, get the value off self
+        if not isinstance(forBinding, annotate.Argument):
+            if hasattr(self, forBinding.name):
+                return getattr(self, forBinding.name)
+        return forBinding.default
+
+    def postForm(self, ctx, bindingName, args):
+        """Accept a form post to the given bindingName.
+        The post arguments are given in args.
+
+        This will invoke the IInputProcessor for the
+        binding with the given name. If it succeeds, the
+        property will be modified or the method will have
+        been called. If it fails, a ValidateError exception
+        will be raised.
+        """
+        def _callback(binding):
+            ctx.remember(binding, iformless.IBinding)
+            ctx.remember(self, iformless.IConfigurable)
+            rv = iformless.IInputProcessor(binding).process(ctx, self, args)
+            ctx.remember(rv, inevow.IHand)
+            ctx.remember('%r success.' % bindingName, inevow.IStatusMessage)
+            return rv
+        return util.maybeDeferred(self.getBinding, ctx, 
+                                  bindingName).addCallback(_callback)
+
 
 class ConfigurableFactory:
     """Locates configurables by looking for methods that start with
     configurable_ and end with the name of the configurable. The method
     should take a single arg (other than self) - the current context.
     """
-    __implements__ = iformless.IConfigurableFactory
+    implements(iformless.IConfigurableFactory)
 
     def locateConfigurable(self, context, name):
         """formless.webform.renderForms calls locateConfigurable on the IConfigurableFactory
@@ -185,22 +282,26 @@ class ConfigurableFactory:
         """Configurable factory for use when self is a configurable;
         aka it implements IConfigurable or one or more TypedInterface
         subclasses. Usage:
-        
+
         >>> class IFoo(TypedInterface):
-        ...     def bar(self): pass
+        ...     def bar(): pass
         ...     bar = autocallable(bar)
-        ... 
+        ...
         >>> class Foo(Page):
-        ...     __implements__ = IFoo,
-        ... 
-        ...     def bar(self):
+        ...     implements(IFoo)
+        ...
+        ...     def bar():
         ...         print "bar called through the web!"
-        ... 
+        ...
         ...     def render_forms(self, ctx, data):
         ...         return renderForms() # or renderForms('')
-        ... 
+        ...
         ...     docFactory = stan(render_forms).
         """
+        if filter(lambda x: issubclass(x, annotate.TypedInterface), providedBy(self)):
+            warnings.warn("[0.5] Subclassing TypedInterface to declare annotations is deprecated. Please provide bind_* methods on your Page or Fragment subclass instead.", DeprecationWarning)
+            from formless import configurable
+            return configurable.TypedInterfaceConfigurable(self)
         return self
 
     def configurable_original(self, ctx):
@@ -262,24 +363,15 @@ def originalFactory(ctx):
     return ctx.tag
 
 
-class Fragment(DataFactory, RenderFactory, MacroFactory):
-    """A fragment is a renderer that can be embedded in a stan document and
-    hooks its template (from the docFactory) up to its data_ and render_
-    methods, i.e. it remembers itself as the IRendererFactory and IContainer.
-    
-    Fragment primarily serves as the base for Page, Nevow's web resource, but
-    it can be used for more complex rendering. For instance, a fragment might
-    be used to encapsulate the rendering of a complex piece of data where the
-    template is read from disk and contains standard renderers (sequence,
-    mapping etc) and/or custom render methods.
+class Fragment(DataFactory, RenderFactory, MacroFactory, ConfigurableMixin):
     """
-    __implements__ = (
-        inevow.IRenderer,
-        inevow.IGettable,
-        RenderFactory.__implements__,
-        DataFactory.__implements__,
-        MacroFactory.__implements__)
-    
+    This class is deprecated because it relies on context objects
+    U{which are being removed from Nevow<http://divmod.org/trac/wiki/WitherContext>}.
+
+    @see: L{Element}
+    """
+    implements(inevow.IRenderer, inevow.IGettable)
+
     docFactory = None
     original = None
 
@@ -287,7 +379,6 @@ class Fragment(DataFactory, RenderFactory, MacroFactory):
         if original is not None:
             self.original = original
         self.toremember = []
-        self._context = None
         if docFactory is not None:
             self.docFactory = docFactory
 
@@ -295,7 +386,14 @@ class Fragment(DataFactory, RenderFactory, MacroFactory):
         return self.original
 
     def rend(self, context, data):
+        # Create a new context so the current context is not polluted with
+        # remembrances.
+        context = WovenContext(parent=context)
+
+        # Remember me as lots of things
         self.rememberStuff(context)
+
+        preprocessors = _getPreprocessors(self)
 
         # This tidbit is to enable us to include Page objects inside
         # stan expressions and render_* methods and the like. But
@@ -305,14 +403,31 @@ class Fragment(DataFactory, RenderFactory, MacroFactory):
         self.docFactory.pattern = 'content'
         self.docFactory.precompiledDoc = None
         try:
-            doc = self.docFactory.load(context)
-            self.docFactory.pattern = old
-            self.docFactory.precompiledDoc = None
+            try:
+                doc = self.docFactory.load(context, preprocessors)
+            finally:
+                self.docFactory.pattern = old
+                self.docFactory.precompiledDoc = None
+        except TypeError, e:
+            # Avert your eyes now! I don't want to catch anything but IQ
+            # adaption exceptions here but all I get is TypeError. This whole
+            # section of code is a complete hack anyway so one more won't
+            # matter until it's all removed. ;-).
+            if 'nevow.inevow.IQ' not in str(e):
+                raise
+            doc = self.docFactory.load(context, preprocessors)
         except NodeNotFound:
-            self.docFactory.pattern = old
-            self.docFactory.precompiledDoc = None
-            doc = self.docFactory.load(context)
-        return doc
+            doc = self.docFactory.load(context, preprocessors)
+        else:
+            if old == 'content':
+                warnings.warn(
+                    """[v0.5] Using a Page with a 'content' pattern is
+                               deprecated.""",
+                    DeprecationWarning,
+                    stacklevel=2)
+
+        context.tag = tags.invisible[doc]
+        return context
 
     def remember(self, obj, inter=None):
         """Remember an object for an interface on new PageContexts which are
@@ -332,7 +447,7 @@ class Fragment(DataFactory, RenderFactory, MacroFactory):
         ctx.remember(self, inevow.IData)
 
 
-class ChildLookupMixin(FreeformChildMixin, LiveEvilChildMixin):
+class ChildLookupMixin(FreeformChildMixin):
     ##
     # IResource methods
     ##
@@ -341,13 +456,13 @@ class ChildLookupMixin(FreeformChildMixin, LiveEvilChildMixin):
     def locateChild(self, ctx, segments):
         """Locate a child page of this one. ctx is a
         nevow.context.PageContext representing the parent Page, and segments
-        is a tuple of each element in the URI. An tuple (page, segments) should be 
-        returned, where page is an instance of nevow.rend.Page and segments a tuple 
+        is a tuple of each element in the URI. An tuple (page, segments) should be
+        returned, where page is an instance of nevow.rend.Page and segments a tuple
         representing the remaining segments of the URI. If the child is not found, return
         NotFound instead.
 
         locateChild is designed to be easily overridden to perform fancy lookup tricks.
-        However, the default locateChild is useful, and looks for children in three places, 
+        However, the default locateChild is useful, and looks for children in three places,
         in this order:
 
          - in a dictionary, self.children
@@ -356,7 +471,7 @@ class ChildLookupMixin(FreeformChildMixin, LiveEvilChildMixin):
            can be adapted to IResource. If a method, it should take the context
            and return an object which can be adapted to IResource.
          - by calling self.childFactory(ctx, name). Name is a single string instead
-           of a tuple of strings. This should return an object that can be adapted 
+           of a tuple of strings. This should return an object that can be adapted
            to IResource.
         """
 
@@ -367,7 +482,7 @@ class ChildLookupMixin(FreeformChildMixin, LiveEvilChildMixin):
 
         w = getattr(self, 'child_%s'%segments[0], None)
         if w is not None:
-            if inevow.IResource(w, default=None) is not None:
+            if inevow.IResource(w, None) is not None:
                 return w, segments[1:]
             r = w(ctx)
             if r is not None:
@@ -384,33 +499,25 @@ class ChildLookupMixin(FreeformChildMixin, LiveEvilChildMixin):
         dynamically. Note that higher level interfaces use only locateChild,
         and only nevow.rend.Page.locateChild uses this.
 
-        segment is a string represnting one element of the URI. Request is a
+        segment is a string representing one element of the URI. Request is a
         nevow.appserver.NevowRequest.
 
         The default implementation of this always returns None; it is intended
         to be overridden."""
-        rv = self.getDynamicChild(name, ctx)
-        if rv is not None:
-            warnings.warn("getDynamicChild is deprecated; use childFactory instead.", stacklevel=1)
-        return rv
-
-    def getDynamicChild(self, segment, request):
-        """Deprecated, use childFactory instead. The name is different and the
-        order of the arguments is reversed."""
         return None
 
     def putChild(self, name, child):
         if self.children is None:
             self.children = {}
         self.children[name] = child
-    
+
 
 class Page(Fragment, ConfigurableFactory, ChildLookupMixin):
     """A page is the main Nevow resource and renders a document loaded
     via the document factory (docFactory).
     """
 
-    __implements__ = Fragment.__implements__, inevow.IResource, ConfigurableFactory.__implements__
+    implements(inevow.IResource)
 
     buffered = False
 
@@ -432,7 +539,7 @@ class Page(Fragment, ConfigurableFactory, ChildLookupMixin):
         if self.addSlash and inevow.ICurrentSegments(ctx)[-1] != '':
             request.redirect(request.URLPath().child(''))
             return ''
-            
+
         log.msg(http_render=None, uri=request.uri)
 
         self.rememberStuff(ctx)
@@ -455,7 +562,8 @@ class Page(Fragment, ConfigurableFactory, ChildLookupMixin):
             def finisher(result):
                 return util.maybeDeferred(finishRequest).addCallback(lambda r: result)
 
-        doc = self.docFactory.load(ctx)
+        preprocessors = _getPreprocessors(self)
+        doc = self.docFactory.load(ctx, preprocessors)
         ctx =  WovenContext(ctx, tags.invisible[doc])
 
         return self.flattenFactory(doc, ctx, writer, finisher)
@@ -464,7 +572,7 @@ class Page(Fragment, ConfigurableFactory, ChildLookupMixin):
         Fragment.rememberStuff(self, ctx)
         ctx.remember(self, inevow.IResource)
 
-    def renderString(self):
+    def renderString(self, ctx=None):
         """Render this page outside of the context of a web request, returning
         a Deferred which will result in a string.
 
@@ -477,21 +585,21 @@ class Page(Fragment, ConfigurableFactory, ChildLookupMixin):
         def finisher(result):
             return io.getvalue()
 
-        ctx = PageContext(tag=self)
+        ctx = PageContext(parent=ctx, tag=self)
         self.rememberStuff(ctx)
         doc = self.docFactory.load(ctx)
         ctx =  WovenContext(ctx, tags.invisible[doc])
 
         return self.flattenFactory(doc, ctx, writer, finisher)
 
-    def renderSynchronously(self):
+    def renderSynchronously(self, ctx=None):
         """Render this page synchronously, returning a string result immediately.
         Raise an exception if a Deferred is required to complete the rendering
         process.
         """
         io = StringIO()
 
-        ctx = PageContext(tag=self)
+        ctx = PageContext(parent=ctx, tag=self)
         self.rememberStuff(ctx)
         doc = self.docFactory.load(ctx)
         ctx =  WovenContext(ctx, tags.invisible[doc])
@@ -514,32 +622,60 @@ class Page(Fragment, ConfigurableFactory, ChildLookupMixin):
         # and we're a directoryish resource (addSlash = True)
         if self.addSlash and len(inevow.IRemainingSegments(ctx)) == 1:
             return self
-        
-        # After deprecation is removed, this should return None
-        warnings.warn(
-            "Allowing an empty child ('/') of resources automatically is "
-            "deprecated. If the class '%s' is a directory-index-like resource, "
-            "please add addSlash=True to the class definition." %
-            (self.__class__), DeprecationWarning, 2)
-        
-        return self
+        return None
 
     def webFormPost(self, request, res, configurable, ctx, bindingName, args):
+        """Accept a web form post, either redisplaying the original form (with
+        errors) if validation fails, or redirecting to the appropriate location after
+        the post succeeds. This hook exists specifically for formless.
+
+        New in 0.5, _nevow_carryover_ is only used if an autocallable method
+        returns a result that needs to be carried over.
+
+        New in 0.5, autocallables may return a nevow.url.URL or URLOverlay
+        instance rather than setting IRedirectAfterPost on the request.
+
+        New in 0.5, autocallables may return a Page instance to have that Page
+        instance rendered at the post target URL with no redirects at all. Useful
+        for multi-step wizards.
+        """
         def redirectAfterPost(aspects):
-            redirectAfterPost = request.getComponent(iformless.IRedirectAfterPost, None)
-            if redirectAfterPost is None:
-                ref = request.getHeader('referer') or ''
-            else:
-                ## Use the redirectAfterPost url
-                ref = str(redirectAfterPost)
-            from nevow import url
-            refpath = url.URL.fromString(ref)
-            magicCookie = '%s%s%s' % (now(),request.getClientIP(),random.random())
-            refpath = refpath.replace('_nevow_carryover_', magicCookie)
-            _CARRYOVER[magicCookie] = C = compy.Componentized(aspects)
-            request.redirect(str(refpath))
+            hand = aspects.get(inevow.IHand)
+            refpath = None
+            if hand is not None:
+                if isinstance(hand, Page):
+                    refpath = url.here
+                    if 'freeform_hand' not in inevow.IRequest(ctx).prepath:
+                        refpath = refpath.child('freeform_hand')
+                if isinstance(hand, (url.URL, url.URLOverlay)):
+                    refpath, hand = hand, None
+
+            if refpath is None:
+                redirectAfterPost = request.getComponent(iformless.IRedirectAfterPost, None)
+                if redirectAfterPost is None:
+                    ref = request.getHeader('referer')
+                    if ref:
+                        refpath = url.URL.fromString(ref)
+                    else:
+                        refpath = url.here
+                else:
+                    warnings.warn("[0.5] IRedirectAfterPost is deprecated. Return a URL instance from your autocallable instead.", DeprecationWarning, 2)
+                    ## Use the redirectAfterPost url
+                    ref = str(redirectAfterPost)
+                    refpath = url.URL.fromString(ref)
+
+            if hand is not None or aspects.get(iformless.IFormErrors) is not None:
+                magicCookie = '%s%s%s' % (now(),request.getClientIP(),random.random())
+                refpath = refpath.replace('_nevow_carryover_', magicCookie)
+                _CARRYOVER[magicCookie] = C = tpc.Componentized()
+                for k, v in aspects.iteritems():
+                    C.setComponent(k, v)
+
+            destination = flat.flatten(refpath, ctx)
+            request.redirect(destination)
             from nevow import static
             return static.Data('You posted a form to %s' % bindingName, 'text/plain'), ()
+
         return util.maybeDeferred(
             configurable.postForm, ctx, bindingName, args
         ).addCallback(
@@ -553,7 +689,7 @@ class Page(Fragment, ConfigurableFactory, ChildLookupMixin):
             message = "%s success." % formless.nameToLabel(bindingName)
         else:
             message = result
-            
+
         return redirectAfterPost({inevow.IHand: result, inevow.IStatusMessage: message})
 
     def onPostFailure(self, reason, request, ctx, bindingName, redirectAfterPost):
@@ -570,14 +706,14 @@ def sequence(context, data):
      - header: Rendered at the start, before the first item. If multiple
        header patterns are provided they are rendered together in the
        order they were defined.
-            
+
      - footer: Just like the header only renderer at the end, after the
        last item.
-    
+
      - item: Rendered once for each item in the sequence. If multiple
        item patterns are provided then the pattern is cycled in the
        order defined.
-        
+
      - divider: Rendered once between each item in the sequence. Multiple
        divider patterns are cycled.
 
@@ -603,7 +739,7 @@ def sequence(context, data):
          <td colspan="2"><em>they've all gone!</em></td>
        </tr>
      </table>
-            
+
     """
     tag = context.tag
     headers = tag.allPatterns('header')
@@ -616,7 +752,7 @@ def sequence(context, data):
         ## No divider after the last thing.
         content[-1] = content[-1][0]
     footers = tag.allPatterns('footer')
-    
+
     return tag.clear()[ headers, content, footers ]
 
 
@@ -639,8 +775,8 @@ def mapping(context, data):
 
 def string(context, data):
     return context.tag.clear()[str(data)]
-    
-    
+
+
 def data(context, data):
     """Replace the tag's content with the current data.
     """
@@ -650,22 +786,25 @@ def data(context, data):
 class FourOhFour:
     """A simple 404 (not found) page.
     """
-    __implements__ = inevow.IResource,
+    implements(inevow.IResource)
 
-    notFound = "<html><head><title>Page Not Found</title><head><body>Sorry, but I couldn't find the object you requested.</body></html>"
+    notFound = "<html><head><title>Page Not Found</title></head><body>Sorry, but I couldn't find the object you requested.</body></html>"
     original = None
 
     def locateChild(self, ctx, segments):
         return NotFound
 
     def renderHTTP(self, ctx):
-        from twisted.protocols import http
         inevow.IRequest(ctx).setResponseCode(404)
+        # Look for an application-remembered handler
         try:
             notFoundHandler = ctx.locate(inevow.ICanHandleNotFound)
-            return notFoundHandler.renderHTTP_notFound(PageContext(parent=ctx, tag=notFoundHandler))
         except KeyError, e:
             return self.notFound
+        # Call the application-remembered handler but if there are any errors
+        # then log it and fallback to the standard message.
+        try:
+            return notFoundHandler.renderHTTP_notFound(PageContext(parent=ctx, tag=notFoundHandler))
         except:
             log.err()
             return self.notFound

@@ -2,7 +2,6 @@
 # See LICENSE for details.
 
 from nevow.flat import ten
-from nevow import context
 from nevow import tags
 
 from nevow.testutil import TestCase
@@ -96,3 +95,12 @@ class TestUnicode(TestCase):
     def test_unescaped(self):
         self.assertEquals(ten.flatten(tags.xml(u'<<<%s>>>' % u)), (u'<<<%s>>>' % u).encode('utf8'))
     
+class Registration(TestCase):
+    def testBadRegister(self):
+        try:
+            ten.registerFlattener('adouijwd.dwijd hi mom', '1234567890')
+        except:
+            # Yay
+            pass
+        else:
+            self.fail("Registering invalid flattener names raised no exception")

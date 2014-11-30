@@ -1,9 +1,12 @@
 
+import warnings
+warnings.warn("nevow.zomnesrv is deprecated.", category=DeprecationWarning)
+
 import time
 
 from nevow import wsgi
 
-from twisted.internet import protocol, reactor
+from twisted.internet import protocol
 from twisted.protocols import basic
 from twisted.python import log
 
@@ -91,6 +94,8 @@ class ZomneFactory(protocol.Factory):
     def startFactory(self):
         """Tell the other end that we are done starting up.
         """
+        # Import reactor here to avoid installing default at startup
+        from twisted.internet import reactor
         reactor.connectUNIX('zomne_startup_complete.socket', NotificationFactory())
 
     def log(self, msg):

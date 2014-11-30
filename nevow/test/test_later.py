@@ -2,13 +2,15 @@
 # See LICENSE for details.
 
 
-from nevow import context
-from nevow.tags import *
+from twisted.internet import defer
+
+from nevow import context, inevow
 from nevow import testutil
+from nevow.flat import twist
 from nevow.util import Deferred
 
-from nevow import rend
-from nevow import loaders
+from nevow import rend, loaders, tags
+
 
 
 def deferit(data):
@@ -27,14 +29,13 @@ class RenderHelper(testutil.TestCase):
 
 
 class LaterRenderTest(RenderHelper):
-    
     def setUp(self):
         self.d = Deferred()
         self.d2 = Deferred()
         self.r = rend.Page(
             docFactory=loaders.stan(
-                html(data=self)[
-                    'Hello ', invisible[invisible[invisible[invisible[deferit]]]],
+                tags.html(data=self)[
+                    'Hello ', tags.invisible[tags.invisible[tags.invisible[tags.invisible[deferit]]]],
                     deferdot,
                     ]
                 )
@@ -66,6 +67,50 @@ class LaterRenderTest(RenderHelper):
         self.d2.callback(".")
         self.assertEquals(req.v, '<html>Hello world.</html>')
 
+    def test_renderNestedDeferredCallables(self):
+        """
+        Test flattening of a renderer which returns a Deferred which fires with
+        a renderer which returns a Deferred.
+        """
+        def render_inner(ctx, data):
+            return defer.succeed('')
+
+        def render_outer(ctx, data):
+            return defer.succeed(render_inner)
+
+        ctx = context.WovenContext()
+        ctx.remember(None, inevow.IData)
+
+        out = []
+        d = twist.deferflatten(render_outer, ctx, out.append)
+        def flattened(ign):
+            self.assertEquals(out, [''])
+        d.addCallback(flattened)
+        return d
+
+
+    def test_renderNestedDeferredErrorHandling(self):
+        """
+        Test that flattening a renderer which returns a Deferred which fires
+        with a renderer which raises an exception causes the outermost Deferred
+        to errback.
+        """
+        class NestedException(Exception):
+            pass
+
+        def render_inner(ctx, data):
+            raise NestedException()
+
+        def render_outer(ctx, data):
+            return defer.succeed(render_inner)
+
+        ctx = context.WovenContext()
+        ctx.remember(None, inevow.IData)
+
+        out = []
+        d = twist.deferflatten(render_outer, ctx, out.append)
+        return self.assertFailure(d, NestedException)
+
 
 class LaterDataTest(RenderHelper):
     def data_later(self, context, data):
@@ -78,10 +123,10 @@ class LaterDataTest(RenderHelper):
         self.d = Deferred()
         self.d2 = Deferred()
         self.r = rend.Page(docFactory=loaders.stan(
-            html(data=self.data_later)[
+            tags.html(data=self.data_later)[
                 'Hello ', str, ' and '
                 'goodbye ',str,
-                span(data=self.data_later2, render=str)]))
+                tags.span(data=self.data_later2, render=str)]))
 
     def test_deferredSupport(self):
         req = self.renderIt()
@@ -91,3 +136,35 @@ class LaterDataTest(RenderHelper):
         self.d2.callback(".")
         self.assertEquals(req.v, '<html>Hello world and goodbye world.</html>')
 
+
+class SuperLaterDataTest(RenderHelper):
+    def test_reusedDeferredSupport(self):
+        """
+        Two occurrences of a particular slot are each replaced with the
+        result of the Deferred which is used to fill that slot.
+        """
+        doc = tags.html[
+            tags.slot('foo'), tags.slot('foo')]
+        doc.fillSlots('foo', defer.succeed(tags.span['Foo!!!']))
+        self.r = rend.Page(docFactory=loaders.stan(doc))
+        req = self.renderIt()
+        self.assertEquals(req.v, '<html><span>Foo!!!</span><span>Foo!!!</span></html>')
+
+
+    def test_rendererCalledOnce(self):
+        """
+        Make sure that if a Deferred fires with a render function that the
+        render function is called only once.
+        """
+        calls = []
+        def recorder(ctx, data):
+            calls.append(None)
+            return str(len(calls))
+        doc = tags.html[tags.directive('renderer')]
+        class RendererPage(rend.Page):
+            docFactory = loaders.stan(doc)
+            def render_renderer(self, ctx, data):
+                return defer.succeed(recorder)
+        self.r = RendererPage()
+        req = self.renderIt()
+        self.assertEquals(req.v, '<html>1</html>')

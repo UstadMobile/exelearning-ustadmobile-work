@@ -1,10 +1,19 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
 """
 Serial Port Protocol
 """
+
+# http://twistedmatrix.com/trac/ticket/3725#comment:24
+# Apparently applications use these names even though they should
+# be imported from pyserial
+__all__ = ["serial", "PARITY_ODD", "PARITY_EVEN", "PARITY_NONE",
+           "STOPBITS_TWO", "STOPBITS_ONE", "FIVEBITS",
+           "EIGHTBITS", "SEVENBITS", "SIXBITS",
+# Name this module is actually trying to export
+           "SerialPort"]
 
 # system imports
 import os, sys
@@ -15,8 +24,23 @@ from serial import PARITY_NONE, PARITY_EVEN, PARITY_ODD
 from serial import STOPBITS_ONE, STOPBITS_TWO
 from serial import FIVEBITS, SIXBITS, SEVENBITS, EIGHTBITS
 
-# common code for serial ports
+
+
 class BaseSerialPort:
+    """
+    Base class for Windows and POSIX serial ports.
+
+    @ivar _serialFactory: a pyserial C{serial.Serial} factory, used to create
+        the instance stored in C{self._serial}. Overrideable to enable easier
+        testing.
+
+    @ivar _serial: a pyserial C{serial.Serial} instance used to manage the
+        options on the serial port.
+    """
+
+    _serialFactory = serial.Serial
+
+
     def setBaudRate(self, baudrate):
         if hasattr(self._serial, "setBaudrate"):
             self._serial.setBaudrate(baudrate)
@@ -59,7 +83,5 @@ class SerialPort(BaseSerialPort):
 # replace SerialPort with appropriate serial port
 if os.name == 'posix':
     from twisted.internet._posixserialport import SerialPort
-elif os.name == 'java':
-    from twisted.internet._javaserialport import SerialPort
 elif sys.platform == 'win32':
     from twisted.internet._win32serialport import SerialPort

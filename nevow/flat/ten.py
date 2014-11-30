@@ -5,12 +5,14 @@ from __future__ import generators
 
 import types
 import warnings
+from zope.interface import declarations, interface
 
-from nevow import compy
+import twisted.python.components as tpc
+
 from nevow import inevow
 from nevow import tags
-from nevow import testutil
 from nevow import util
+from nevow.inevow import ISerializable
 
 """
 # NOTE:
@@ -21,11 +23,6 @@ from nevow import util
 # these function may be imported into nevow.flat if Twisted is not installed.
 """
 
-
-_flatteners = {}
-_lazy_flatteners = {}
-
-
 def registerFlattener(flattener, forType):
     """Register a function, 'flattener', which will be invoked when an object of type 'forType'
     is encountered in the stan dom. This function should return or yield strings, or objects
@@ -35,37 +32,19 @@ def registerFlattener(flattener, forType):
     """
     if type(flattener) is str or type(forType) is str:
         assert type(flattener) is str and type(forType) is str, "Must pass both strings or no strings to registerFlattener"
-        _lazy_flatteners[forType] = flattener
-    else:
-        _flatteners[forType] = flattener
+        flattener = util._namedAnyWithBuiltinTranslation(flattener)
+        forType = util._namedAnyWithBuiltinTranslation(forType)
 
+    if not isinstance(forType, interface.InterfaceClass):
+        forType = declarations.implementedBy(forType)
+        
+    tpc.globalRegistry.register([forType], ISerializable, 'nevow.flat', flattener)
 
 def getFlattener(original):
     """Get a flattener function with signature (ctx, original) for the object original.
     """
-    if hasattr(original, '__class__'):
-        klas = original.__class__
-    else:
-        klas = type(original)
+    return tpc.globalRegistry.lookup1(declarations.providedBy(original), ISerializable, 'nevow.flat')
 
-    fromInterfaces = compy.getInterfaces(klas) + [klas]
-    for inter in fromInterfaces:
-        adapter = _flatteners.get(inter, None)
-        if adapter is not None:
-            return adapter
-
-        interQual = util.qual(inter)
-        adapterQual = _lazy_flatteners.get(interQual, None)
-        if adapterQual is not None:
-            adapter = util.namedAny(adapterQual)
-            registerFlattener(adapter, inter)
-            #for fromInter in fromInterfaces:
-            #    registerFlattener(adapter, fromInter)
-            del _lazy_flatteners[interQual]
-            return adapter
-    print "***", fromInterfaces
-
-    
 def getSerializer(obj):
     warnings.warn('getSerializer is deprecated; It has been renamed getFlattener.', stacklevel=2)
     return getFlattener(obj)
@@ -131,7 +110,7 @@ def iterflatten(stan, ctx, writer, shouldYieldItem=None):
                         rest.append(gen)
                         rest.append(iter([partialflatten(ctx, item)]))
                         break
-                        
+
     if straccum:
         writer(tags.raw(''.join(straccum)))
 
@@ -142,7 +121,8 @@ def flatten(stan, ctx=None):
     """
     if ctx is None:
         from nevow.context import RequestContext, PageContext
-        ctx = PageContext(tag=None, parent=RequestContext(tag=testutil.FakeRequest()))
+        from nevow.testutil import FakeRequest
+        ctx = PageContext(tag=None, parent=RequestContext(tag=FakeRequest()))
         ctx.remember(None, inevow.IData)
     result = []
     list(iterflatten(stan, ctx, result.append))
@@ -160,7 +140,7 @@ def precompile(stan, ctx=None):
     from nevow.context import WovenContext
     newctx = WovenContext(precompile=True)
     if ctx is not None:
-        macroFactory = inevow.IMacroFactory(ctx, default=None)
+        macroFactory = inevow.IMacroFactory(ctx, None)
         if macroFactory is not None:
             newctx.remember(macroFactory, inevow.IMacroFactory)
     doc = []

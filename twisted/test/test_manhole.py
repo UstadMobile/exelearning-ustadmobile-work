@@ -1,11 +1,10 @@
 
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
 from twisted.trial import unittest
 from twisted.manhole import service
-from twisted.internet import app
 from twisted.spread.util import LocalAsRemote
 
 class Dummy:
@@ -41,9 +40,6 @@ class DummyManholeClient(LocalAsRemote):
     sync_setZero = setZero
     sync_getMessages = getMessages
 
-class DummyApp(app.Application):
-    name = 'None'
-
 class ManholeTest(unittest.TestCase):
     """Various tests for the manhole service.
 
@@ -64,7 +60,7 @@ class ManholeTest(unittest.TestCase):
         self.client.setZero()
         self.p.perspective_do("int(service is sys.modules['twisted.manhole.service'])")
         msg = self.client.getMessages()[0]
-        self.failUnlessEqual(msg, ('result',"1\n"))
+        self.assertEqual(msg, ('result',"1\n"))
 
     def test_importMain(self):
         """Trying to import __main__"""

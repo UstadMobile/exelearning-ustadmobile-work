@@ -1,11 +1,10 @@
 # -*- test-case-name: twisted.test.test_lockfile -*-
 # Copyright (c) 2005 Divmod, Inc.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-
-"""Lock files.
-
-Currently in a state of flux, API is unstable.
+"""
+Filesystem-based interprocess mutex.
 """
 
 __metaclass__ = type
@@ -14,48 +13,81 @@ import errno, os
 
 from time import time as _uniquefloat
 
-def unique():
-    return str(long(_uniquefloat() * 1000))
+from twisted.python.runtime import platform
 
-try:
+def unique():
+    return str(int(_uniquefloat() * 1000))
+
+from os import rename
+if not platform.isWindows():
+    from os import kill
     from os import symlink
     from os import readlink
     from os import remove as rmlink
-    from os import rename as mvlink
-except:
+    _windows = False
+else:
+    _windows = True
+
+    try:
+        from win32api import OpenProcess
+        import pywintypes
+    except ImportError:
+        kill = None
+    else:
+        ERROR_ACCESS_DENIED = 5
+        ERROR_INVALID_PARAMETER = 87
+
+        def kill(pid, signal):
+            try:
+                OpenProcess(0, 0, pid)
+            except pywintypes.error as e:
+                if e.args[0] == ERROR_ACCESS_DENIED:
+                    return
+                elif e.args[0] == ERROR_INVALID_PARAMETER:
+                    raise OSError(errno.ESRCH, None)
+                raise
+            else:
+                raise RuntimeError("OpenProcess is required to fail.")
+
+    _open = file
+
     # XXX Implement an atomic thingamajig for win32
-    import shutil
     def symlink(value, filename):
         newlinkname = filename+"."+unique()+'.newlink'
         newvalname = os.path.join(newlinkname,"symlink")
         os.mkdir(newlinkname)
-        f = open(newvalname,'wb')
+        f = _open(newvalname,'wcb')
         f.write(value)
         f.flush()
         f.close()
         try:
-            os.rename(newlinkname, filename)
+            rename(newlinkname, filename)
         except:
             os.remove(newvalname)
             os.rmdir(newlinkname)
             raise
 
     def readlink(filename):
-        return open(os.path.join(filename,'symlink'),'rb').read()
+        try:
+            fObj = _open(os.path.join(filename,'symlink'), 'rb')
+        except IOError as e:
+            if e.errno == errno.ENOENT or e.errno == errno.EIO:
+                raise OSError(e.errno, None)
+            raise
+        else:
+            result = fObj.read()
+            fObj.close()
+            return result
 
     def rmlink(filename):
-        shutil.rmtree(filename)
+        os.remove(os.path.join(filename, 'symlink'))
+        os.rmdir(filename)
 
-    def mvlink(src, dest):
-        try:
-            shutil.rmtree(dest)
-        except:
-            pass
-        os.rename(src,dest)
 
 
 class FilesystemLock:
-    """A mutex.
+    """
+    A mutex.
 
     This relies on the filesystem property that creating
     a symlink is an atomic operation and that it will
@@ -63,9 +95,13 @@ class FilesystemLock:
     symlink will release the lock.
 
     @ivar name: The name of the file associated with this lock.
+
     @ivar clean: Indicates whether this lock was released cleanly by its
-    last owner.  Only meaningful after C{lock} has been called and returns
-    True.
+        last owner.  Only meaningful after C{lock} has been called and
+        returns True.
+
+    @ivar locked: Indicates whether the lock is currently held by this
+        object.
     """
 
     clean = None
@@ -74,8 +110,10 @@ class FilesystemLock:
     def __init__(self, name):
         self.name = name
 
+
     def lock(self):
-        """Acquire this lock.
+        """
+        Acquire this lock.
 
         @rtype: C{bool}
         @return: True if the lock is acquired, false otherwise.
@@ -83,31 +121,63 @@ class FilesystemLock:
         @raise: Any exception os.symlink() may raise, other than
         EEXIST.
         """
-        try:
-            pid = readlink(self.name)
-        except (OSError, IOError), e:
-            if e.errno != errno.ENOENT:
-                raise
-            self.clean = True
-        else:
-            if not hasattr(os, 'kill'):
-                return False
+        clean = True
+        while True:
             try:
-                os.kill(int(pid), 0)
-            except (OSError, IOError), e:
-                if e.errno != errno.ESRCH:
-                    raise
-                rmlink(self.name)
-                self.clean = False
-            else:
-                return False
+                symlink(str(os.getpid()), self.name)
+            except OSError as e:
+                if _windows and e.errno in (errno.EACCES, errno.EIO):
+                    # The lock is in the middle of being deleted because we're
+                    # on Windows where lock removal isn't atomic.  Give up, we
+                    # don't know how long this is going to take.
+                    return False
+                if e.errno == errno.EEXIST:
+                    try:
+                        pid = readlink(self.name)
+                    except OSError as e:
+                        if e.errno == errno.ENOENT:
+                            # The lock has vanished, try to claim it in the
+                            # next iteration through the loop.
+                            continue
+                        raise
+                    except IOError as e:
+                        if _windows and e.errno == errno.EACCES:
+                            # The lock is in the middle of being
+                            # deleted because we're on Windows where
+                            # lock removal isn't atomic.  Give up, we
+                            # don't know how long this is going to
+                            # take.
+                            return False
+                        raise
+                    try:
+                        if kill is not None:
+                            kill(int(pid), 0)
+                    except OSError as e:
+                        if e.errno == errno.ESRCH:
+                            # The owner has vanished, try to claim it in the next
+                            # iteration through the loop.
+                            try:
+                                rmlink(self.name)
+                            except OSError as e:
+                                if e.errno == errno.ENOENT:
+                                    # Another process cleaned up the lock.
+                                    # Race them to acquire it in the next
+                                    # iteration through the loop.
+                                    continue
+                                raise
+                            clean = False
+                            continue
+                        raise
+                    return False
+                raise
+            self.locked = True
+            self.clean = clean
+            return True
 
-        symlink(str(os.getpid()), self.name)
-        self.locked = True
-        return True
 
     def unlock(self):
-        """Release this lock.
+        """
+        Release this lock.
 
         This deletes the directory with the given name.
 

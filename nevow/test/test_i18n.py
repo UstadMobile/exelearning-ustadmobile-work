@@ -1,9 +1,12 @@
+from zope.interface import implements
+
 from twisted.trial import unittest
 from cStringIO import StringIO
 from nevow import inevow, flat, context, tags, loaders, rend
 from nevow import i18n
+from nevow.testutil import FakeRequest
 
-def mockTranslator(s, domain=None):
+def mockTranslator(s, languages=None, domain=None):
     args = {}
     if domain is not None:
         args['domain'] = domain
@@ -91,12 +94,7 @@ class Format(unittest.TestCase):
         r = flat.ten.flatten(s, None)
         self.assertEquals(r, "MOCK()[foo bar baz]")
 
-class FakeRequest(object):
-    __implements__ = inevow.IRequest,
-    def __init__(self, headers):
-        self.headers = headers
-    def getHeader(self, key):
-        return self.headers.get(key, None)
+
 
 class Languages(unittest.TestCase):
     def test_noLanguages(self):
@@ -170,21 +168,19 @@ class Render(unittest.TestCase):
         def finisher(result):
             return io.getvalue()
 
-        d = page.flattenFactory(doc, ctx, writer, finisher)
-        r = unittest.deferredResult(d, 1)
-        return r
+        return page.flattenFactory(doc, ctx, writer, finisher)
 
     def test_empty(self):
-        r = self.makePage([''])
-        self.assertEquals(r, 'MOCK()[]')
+        return self.makePage(['']).addCallback(
+            lambda r: self.assertEquals(r, 'MOCK()[]'))
 
     def test_simple(self):
-        r = self.makePage(['foo'])
-        self.assertEquals(r, 'MOCK()[foo]')
+        return self.makePage(['foo']).addCallback(
+            lambda r: self.assertEquals(r, 'MOCK()[foo]'))
 
     def test_stan(self):
-        r = self.makePage([tags.p['You should really avoid tags in i18n input.']])
-        self.assertEquals(r, 'MOCK()[<p>You should really avoid tags in i18n input.</p>]')
+        return self.makePage([tags.p['You should really avoid tags in i18n input.']]).addCallback(
+            lambda r: self.assertEquals(r, 'MOCK()[<p>You should really avoid tags in i18n input.</p>]'))
 
 class InterpolateTests:
     def test_mod_string(self):
@@ -194,6 +190,20 @@ class InterpolateTests:
     def test_mod_unicode(self):
         self.check('foo %s', u'bar',
                    'foo bar')
+
+    def test_mod_int(self):
+        self.check('foo %d', 42,
+                   'foo 42')
+
+    def test_mod_float(self):
+        self.check('foo %.3f', 42.0,
+                   'foo 42.000')
+
+    def test_mod_char(self):
+        self.check('foo %c', 42,
+                   'foo *')
+        self.check('foo %c', '*',
+                   'foo *')
 
     # Tuples are a special case, 'foo %s' % ('bar', 'baz') does not
     # work. Also, 'foo %s %s' only works with tuples.
@@ -228,6 +238,18 @@ class InterpolateTests:
         self.check('foo %(bar)s %(baz)s', {'bar': 1, 'baz': 2},
                    "foo 1 2")
 
+    def test_mod_dict_two_as_ints(self):
+        self.check('foo %(bar)d %(baz)d', {'bar': 1, 'baz': 2},
+                   "foo 1 2")
+
+    def test_mod_dict_two_as_floats(self):
+        self.check('foo %(bar).1f %(baz).1f', {'bar': 1.2, 'baz': 2.3},
+                   "foo 1.2 2.3")
+
+    def test_mod_dict_two_as_chars(self):
+        self.check('foo %(bar)c %(baz)c', {'bar': 52, 'baz': '2'},
+                   "foo 4 2")
+
 class InterpolateMixin:
     def setUp(self):
         self._ = i18n.Translator(translator=mockTranslator)
@@ -245,8 +267,8 @@ class Repr(InterpolateMixin, unittest.TestCase, InterpolateTests):
 
     def check(self, fmt, args, *wants):
         InterpolateMixin.check(self, fmt, args,
-                               "PlaceHolder(translator=%r, original=%r) %% %r" % \
-                               (mockTranslator, fmt, args))
+                               "PlaceHolder(*%r, translator=%r) %% %r" % \
+                               ((fmt,), mockTranslator, args))
 
 class Str(InterpolateMixin, unittest.TestCase, InterpolateTests):
     def mangle(self, s):
@@ -254,8 +276,8 @@ class Str(InterpolateMixin, unittest.TestCase, InterpolateTests):
 
     def check(self, fmt, args, *wants):
         InterpolateMixin.check(self, fmt, args,
-                               "PlaceHolder(translator=%r, original=%r) %% %r" % \
-                               (mockTranslator, fmt, args))
+                               "PlaceHolder(*%r, translator=%r) %% %r" % \
+                               ((fmt,), mockTranslator, args))
 
 class Interpolation(InterpolateMixin, unittest.TestCase, InterpolateTests):
     def mangle(self, s):
@@ -266,3 +288,32 @@ class Interpolation(InterpolateMixin, unittest.TestCase, InterpolateTests):
         InterpolateMixin.check(self, fmt, args,
                                *['MOCK()[%s]' % x for x in wants])
 
+class UNGettext(unittest.TestCase):
+    def test_simple(self):
+        s1 = i18n.ungettext('%d foo', '%d foos', 1)
+        s2 = i18n.ungettext('%d foo', '%d foos', 42)
+
+    def test_simple_flat_one(self):
+        s = i18n.ungettext('%d foo', '%d foos', 1)
+        r = flat.ten.flatten(s, None)
+        self.assertEquals(r, '%d foo')
+
+    def test_simple_flat_many(self):
+        s = i18n.ungettext('%d foo', '%d foos', 42)
+        r = flat.ten.flatten(s, None)
+        self.assertEquals(r, '%d foos')
+
+    def test_simple_flat_many(self):
+        s = i18n.ungettext('%d foo', '%d foos', 42)
+        r = flat.ten.flatten(s, None)
+        self.assertEquals(r, '%d foos')
+
+    def test_format_one(self):
+        s = i18n.ungettext('%d foo', '%d foos', 1) % 1
+        r = flat.ten.flatten(s, None)
+        self.assertEquals(r, "1 foo")
+
+    def test_format_many(self):
+        s = i18n.ungettext('%d foo', '%d foos', 42) % 42
+        r = flat.ten.flatten(s, None)
+        self.assertEquals(r, "42 foos")

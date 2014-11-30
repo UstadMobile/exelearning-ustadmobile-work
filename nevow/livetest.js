@@ -12,12 +12,21 @@ var loadNotify = function() {
     loadObservers = [];
 }
 
+var numPassed = 0;
+var numFailed = 0;
+
 var passed = function(whichTest) {
+    numPassed += 1;
     document.getElementById('test-'+whichTest).className = 'test-passes';
+    document.getElementById('test-passes').innerHTML = numPassed;
 }
 
-var failed = function(whichTest) {
-    document.getElementById('test-'+whichTest).className = 'test-failures';
+var failed = function(whichTest, text) {
+    numFailed += 1;
+    var testRow = document.getElementById('test-'+whichTest)
+    testRow.className = 'test-failures';
+    testRow.childNodes[0].title = text;
+    document.getElementById('test-failures').innerHTML = numFailed;
 }
 
 var setContentLocation = function(newLocation) {

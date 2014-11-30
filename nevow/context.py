@@ -6,20 +6,16 @@ from __future__ import generators
 
 import warnings
 
-from nevow import compy, stan
+from nevow import stan
 from nevow.inevow import IData, IRequest
 from nevow.stan import Unset
 from nevow.util import qual
 
+from zope.interface import providedBy
 # TTT: Move to web2.context
 
 def megaGetInterfaces(adapter):
-    adrs = [qual(x) for x in compy.getInterfaces(adapter)]
-    ## temporarily turn this off till we need it
-    if False: #hasattr(adapter, '_adapterCache'):
-        adrs.extend(adapter._adapterCache.keys())
-    return adrs
-
+    return [qual(x) for x in providedBy(adapter)]
 
 dataqual = qual(IData)
 
@@ -30,13 +26,13 @@ class WebContext(object):
     parent = None
     locateHook = None
 
-    # XXX: can we get rid of these 4 somehow?
+    # XXX: can we get rid of these somehow?
     isAttrib = property(lambda self: False)
     inURL = property(lambda self: False)
+    inJS = property(lambda self: False)
+    inJSSingleQuoteString = property(lambda self: False)
+
     precompile = property(lambda self: False)
-    def xwith(self, tag):
-        warnings.warn("use WovenContext(parent, tag) instead", DeprecationWarning, stacklevel=2)
-        return WovenContext(self, tag)
 
     def arg(self, get, default=None):
         """Placeholder until I can find Jerub's implementation of this
@@ -108,6 +104,7 @@ class WebContext(object):
             if locateHook is not None:
                 result = locateHook(interface)
                 if result is not None:
+                    currentContext.remember(result, interface)
                     return result
 
             contextParent = currentContext.parent
@@ -159,35 +156,43 @@ class WebContext(object):
 
     def clone(self, deep=True, cloneTags=True):
         ## don't clone the tags of parent contexts. I *hope* code won't be
-        ## trying to modify parent tags so this should not be necessary.
-        ## However, *do* clone the parent contexts themselves.
-        ## This is necessary for chain(), as it mutates top-context.parent.
+        ## trying to modify parent tags so this should not be necessary.  We
+        ## used to also clone parent contexts, but that is insanely expensive.
+        ## The only code that actually required that behavior is
+        ## ContextSerializer, which is the only caller of context.chain.  So
+        ## instead of doing the clone here, now we do it there.
 
-        if self.parent:
-            parent=self.parent.clone(cloneTags=False)
+        if self.parent is not None:
+            if deep:
+                parent = self.parent.clone(cloneTags=False)
+            else:
+                parent = self.parent
         else:
-            parent=None
+            parent = None
+
         if cloneTags:
             tag = self.tag.clone(deep=deep)
         else:
             tag = self.tag
+
         if self._remembrances is not None:
-            remembrances=self._remembrances.copy()
+            remembrances = self._remembrances.copy()
         else:
-            remembrances=None
+            remembrances = None
+
         return type(self)(
-            parent = parent,
-            tag = tag,
+            parent=parent,
+            tag=tag,
             remembrances=remembrances,
         )
 
-    def getComponent(self, interface, registry=None, default=None):
+    def __conform__(self, interface):
         """Support IFoo(ctx) syntax.
         """
         try:
             return self.locate(interface)
         except KeyError:
-            return default
+            return None
 
     def __repr__(self):
         rstr = ''
@@ -195,38 +200,28 @@ class WebContext(object):
             rstr = ', remembrances=%r' % self._remembrances
         return "%s(tag=%r%s)" % (self.__class__.__name__, self.tag, rstr)
 
+
 class FactoryContext(WebContext):
     """A context which allows adapters to be registered against it so that an object
     can be lazily created and returned at render time. When ctx.locate is called
     with an interface for which an adapter is registered, that adapter will be used
     and the result returned.
     """
-    cache = None
+    inLocate = 0
+    
     def locateHook(self, interface):
-        if self.cache is None:
-            self.cache = {}
-        else:
-            adapter = self.cache.get(interface, None)
-            if adapter is not None:
-                return adapter
 
         ## Prevent infinite recursion from interface(self) calling self.getComponent calling self.locate
-        ## Shadow the class getComponent
-        def shadow(interface, registry=None, default=None):
-            if registry:
-                return registry.getAdapter(self, interface, default)
-            return default
-        self.getComponent = shadow
+        self.inLocate += 1
         adapter = interface(self, None)
-        ## Remove shadowing
-        if getattr(self, 'getComponent', None) is shadow:
-            del self.getComponent
+        self.inLocate -= 1
+        
+        return adapter
 
-        if adapter is not None:
-            self.cache[interface] = adapter
-            return adapter
-        return None
-
+    def __conform__(self, interface):
+        if self.inLocate:
+            return None
+        return WebContext.__conform__(self, interface)
 
 class SiteContext(FactoryContext):
     """A SiteContext is created and installed on a NevowSite upon initialization.
@@ -276,13 +271,17 @@ class WovenContext(WebContext):
     isAttrib = False
     inURL = False
     precompile = False
+    inJS = False
+    inJSSingleQuoteString = False
 
-    def __init__(self, parent=None, tag=None, precompile=None, remembrances=None, key=None, isAttrib=None, inURL=None):
+    def __init__(self, parent=None, tag=None, precompile=None, remembrances=None, key=None, isAttrib=None, inURL=None, inJS=None, inJSSingleQuoteString=None):
         WebContext.__init__(self, parent, tag, remembrances)
         if self.parent:
             self.precompile = parent.precompile
             self.isAttrib = parent.isAttrib
             self.inURL = parent.inURL
+            self.inJS = parent.inJS
+            self.inJSSingleQuoteString = parent.inJSSingleQuoteString
 
         if self.tag is not None:
             if self.tag.remember is not Unset:
@@ -304,6 +303,8 @@ class WovenContext(WebContext):
         if precompile is not None: self.precompile = precompile
         if isAttrib is not None: self.isAttrib = isAttrib
         if inURL is not None: self.inURL = inURL
+        if inJS is not None: self.inJS = inJS
+        if inJSSingleQuoteString is not None: self.inJSSingleQuoteString = inJSSingleQuoteString
 
     def __repr__(self):
         rstr = ''
@@ -334,104 +335,4 @@ class WovenContext(WebContext):
         cloned.isAttrib = self.isAttrib
         cloned.inURL = self.inURL
         return cloned
-
-
-requestWarning = (
-    "All inevow.IResource APIs now take a Context object instead of the Request; "
-    "Please adapt the context to IRequest before attempting to access attributes of "
-    "the request.")
-
-
-def getFromRequest(name):
-    def get(self):
-        warnings.warn(requestWarning, stacklevel=2)
-        return getattr(self.locate(IRequest), name)
-    return property(get)
-
-
-def setOnRequest(name):
-    def get(self):
-        warnings.warn(requestWarning, stacklevel=2)
-        return getattr(self.locate(IRequest), name)
-
-    def set(self, new):
-        warnings.warn(requestWarning, stacklevel=2)
-        setattr(self.locate(IRequest), name, new)
-
-    return property(get, set)
-
-
-toSetOnRequest = ['args', 'content', 'fields', 'isSecure', 'method', 'path', 'postpath', 'prepath', 'receieved_headers', 'setupSession', 'session', 'uri']
-
-
-for x in toSetOnRequest:
-    setattr(PageContext, x, setOnRequest(x))
-
-
-toGetFromRequest = ['URLPath',
- 'addCookie',
- 'appRootURL',
- 'channel',
- 'childLink',
- 'chunked',
- 'client',
- 'clientproto',
- 'code',
- 'code_message',
- 'connectionLost',
- 'cookies',
- 'etag',
- 'finish',
- 'finished',
- 'getAllHeaders',
- 'getClient',
- 'getClientIP',
- 'getCookie',
- 'getHeader',
- 'getHost',
- 'getPassword',
- 'getRequestHostname',
- 'getRootURL',
- 'getSession',
- 'getUser',
- 'gotLength',
- 'handleContentChunk',
- 'headers',
- 'host',
- 'isSecure',
- 'lastModified',
- 'noLongerQueued',
- 'notifications',
- 'notifyFinish',
- 'parseCookies',
- 'path',
- 'prePathURL',
- 'processingFailed',
- 'producer',
- 'queued',
- 'received_cookies',
- 'redirect',
- 'registerProducer',
- 'rememberRootURL',
- 'removeComponent',
- 'sentLength',
- 'setAdapter',
- 'setComponent',
- 'setETag',
- 'setHeader',
- 'setHost',
- 'setLastModified',
- 'setResponseCode',
- 'sibLink',
- 'site',
- 'stack',
- 'startedWriting',
- 'transport',
- 'unregisterProducer',
- 'unsetComponent',
- 'uri',
- 'write']
-
-
-for x in toGetFromRequest:
-    setattr(PageContext, x, getFromRequest(x))
+        

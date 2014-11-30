@@ -1,9 +1,8 @@
 # -*- test-case-name: twisted.web.test.test_xml -*-
 #
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-# 
 
 """
 *S*mall, *U*ncomplicated *X*ML.
@@ -21,12 +20,18 @@ does not:
     option, they're not on by default).
 """
 
-from twisted.internet.protocol import Protocol, FileWrapper
+from twisted.internet.protocol import Protocol
 from twisted.python.reflect import prefixedMethodNames
 
 
+
+# Elements of the three-tuples in the state table.
+BEGIN_HANDLER = 0
+DO_HANDLER = 1
+END_HANDLER = 2
+
 identChars = '.-_:'
-lenientIdentChars = identChars + ';+#/%~' 
+lenientIdentChars = identChars + ';+#/%~'
 
 def nop(*args, **kw):
     "Do nothing."
@@ -34,12 +39,12 @@ def nop(*args, **kw):
 
 def unionlist(*args):
     l = []
-    for x in args: 
+    for x in args:
         l.extend(x)
     d = dict([(x, 1) for x in l])
     return d.keys()
-    
-    
+
+
 def zipfndict(*args, **kw):
     default = kw.get('default', nop)
     d = {}
@@ -47,7 +52,7 @@ def zipfndict(*args, **kw):
         d[key] = tuple([x.get(key, default) for x in args])
     return d
 
-        
+
 def prefixedMethodClassDict(clazz, prefix):
     return dict([(name, getattr(clazz, prefix + name)) for name in prefixedMethodNames(clazz, prefix)])
 
@@ -55,7 +60,7 @@ def prefixedMethodClassDict(clazz, prefix):
 def prefixedMethodObjDict(obj, prefix):
     return dict([(name, getattr(obj, prefix + name)) for name in prefixedMethodNames(obj.__class__, prefix)])
 
-    
+
 class ParseError(Exception):
 
     def __init__(self, filename, line, col, message):
@@ -76,6 +81,11 @@ class XMLParser(Protocol):
     beExtremelyLenient = 0
     _prepend = None
 
+    # _leadingBodyData will sometimes be set before switching to the
+    # 'bodydata' state, when we "accidentally" read a byte of bodydata
+    # in a different state.
+    _leadingBodyData = None
+
     def connectionMade(self):
         self.lineno = 1
         self.colno = 0
@@ -91,15 +101,16 @@ class XMLParser(Protocol):
 
     def _buildStateTable(self):
         '''Return a dictionary of begin, do, end state function tuples'''
-        # _buildStateTable leaves something to be desired
-        # but it does what it does.. probably slowly, 
-        # so I'm doing some evil caching so it doesn't get called
-        # more than once per class.
+        # _buildStateTable leaves something to be desired but it does what it
+        # does.. probably slowly, so I'm doing some evil caching so it doesn't
+        # get called more than once per class.
         stateTable = getattr(self.__class__, '__stateTable', None)
         if stateTable is None:
-            stateTable = self.__class__.__stateTable = zipfndict(*[prefixedMethodObjDict(self, prefix) for prefix in ('begin_', 'do_', 'end_')])
+            stateTable = self.__class__.__stateTable = zipfndict(
+                *[prefixedMethodObjDict(self, prefix)
+                  for prefix in ('begin_', 'do_', 'end_')])
         return stateTable
-        
+
     def _decode(self, data):
         if 'UTF-16' in self.encodings or 'UCS-2' in self.encodings:
             assert not len(data) & 1, 'UTF-16 must come in pairs for now'
@@ -121,8 +132,7 @@ class XMLParser(Protocol):
         # lenient behavior, because those may not have </script>
         # -radix
 
-        if (self.tagName == 'script'
-            and not self.tagAttributes.has_key('src')):
+        if (self.tagName == 'script' and 'src' not in self.tagAttributes):
             # we do this ourselves rather than having begin_waitforendscript
             # becuase that can get called multiple times and we don't want
             # bodydata to get reset other than the first time.
@@ -130,7 +140,7 @@ class XMLParser(Protocol):
             return 'waitforendscript'
         return 'bodydata'
 
-        
+
 
     def dataReceived(self, data):
         stateTable = self._buildStateTable()
@@ -147,7 +157,7 @@ class XMLParser(Protocol):
             self.state = 'begin'
         if self.encodings:
             data = self._decode(data)
-        # bring state, lineno, colno into local scope 
+        # bring state, lineno, colno into local scope
         lineno, colno = self.lineno, self.colno
         curState = self.state
         # replace saveMark with a nested scope function
@@ -178,6 +188,15 @@ class XMLParser(Protocol):
         # state doesn't make sense if there's an exception..
         self.state = curState
 
+
+    def connectionLost(self, reason):
+        """
+        End the last state we were in.
+        """
+        stateTable = self._buildStateTable()
+        stateTable[self.state][END_HANDLER]()
+
+
     # state methods
 
     def do_begin(self, byte):
@@ -185,6 +204,7 @@ class XMLParser(Protocol):
             return
         if byte != '<':
             if self.beExtremelyLenient:
+                self._leadingBodyData = byte
                 return 'bodydata'
             self._parseError("First char of document [%r] wasn't <" % (byte,))
         return 'tagstart'
@@ -232,7 +252,8 @@ class XMLParser(Protocol):
                 self.endtag = 1
         elif byte in '!?':
             if self.tagName:
-                self._parseError("Invalid character in tag-name")
+                if not self.beExtremelyLenient:
+                    self._parseError("Invalid character in tag-name")
             else:
                 self.tagName += byte
                 self.termtag = 1
@@ -242,20 +263,20 @@ class XMLParser(Protocol):
             else:
                 self._parseError("Invalid '[' in tag-name")
         else:
-	    if self.beExtremelyLenient:
-		self.bodydata = '<'
-		return 'unentity'
+            if self.beExtremelyLenient:
+                self.bodydata = '<'
+                return 'unentity'
             self._parseError('Invalid tag character: %r'% byte)
 
     def begin_unentity(self, byte):
-	self.bodydata += byte
+        self.bodydata += byte
 
     def do_unentity(self, byte):
-	self.bodydata += byte
-	return 'bodydata'
+        self.bodydata += byte
+        return 'bodydata'
 
     def end_unentity(self):
-	self.gotText(self.bodydata)
+        self.gotText(self.bodydata)
 
     def begin_expectcdata(self, byte):
         self.cdatabuf = byte
@@ -358,6 +379,9 @@ class XMLParser(Protocol):
                     self.gotTagEnd(self.tagName)
                     return 'bodydata'
                 return self.maybeBodyData()
+            # something is really broken. let's leave this attribute where it
+            # is and move on to the next thing
+            return
         self._parseError("Invalid attribute name: %r %r" % (self.attrname, byte))
 
     def do_beforeattrval(self, byte):
@@ -453,16 +477,23 @@ class XMLParser(Protocol):
         if self._after_slash_closed:
             self._parseError("Mal-formed")#XXX When does this happen??
         if byte != '>':
-            self._parseError("No data allowed after '/'")
+            if self.beExtremelyLenient:
+                return
+            else:
+                self._parseError("No data allowed after '/'")
         self._after_slash_closed = 1
         self.gotTagStart(self.tagName, self.tagAttributes)
         self.gotTagEnd(self.tagName)
         # don't need maybeBodyData here because there better not be
         # any javascript code after a <script/>... we'll see :(
-        return 'bodydata' 
+        return 'bodydata'
 
     def begin_bodydata(self, byte):
-        self.bodydata = ''
+        if self._leadingBodyData:
+            self.bodydata = self._leadingBodyData
+            del self._leadingBodyData
+        else:
+            self.bodydata = ''
 
     def do_bodydata(self, byte):
         if byte == '<':
@@ -528,7 +559,7 @@ class XMLParser(Protocol):
     def begin_entityref(self, byte):
         self.erefbuf = ''
         self.erefextra = '' # extra bit for lenient mode
-    
+
     def do_entityref(self, byte):
         if byte.isspace() or byte == "<":
             if self.beExtremelyLenient:
@@ -557,9 +588,9 @@ class XMLParser(Protocol):
         self.erefextra = None
     do_spacebodydata = do_bodydata
     end_spacebodydata = end_bodydata
-    
+
     # Sorta SAX-ish API
-    
+
     def gotTagStart(self, name, attributes):
         '''Encountered an opening tag.
 
@@ -603,23 +634,3 @@ class XMLParser(Protocol):
 
         Default behaviour is to print.'''
         print 'end', name
-
-if __name__ == '__main__':
-    from cStringIO import StringIO
-    testDocument = '''
-    
-    <!DOCTYPE ignore all this shit, hah its malformed!!!!@$>
-    <?xml version="suck it"?>
-    <foo>
-    &#65;
-    <bar />
-    <baz boz="buz">boz &zop;</baz>
-    <![CDATA[ foo bar baz ]]>
-    </foo>
-    '''
-    x = XMLParser()
-    x.makeConnection(FileWrapper(StringIO()))
-    # fn = "/home/glyph/Projects/Twisted/doc/howto/ipc10paper.html"
-    fn = "/home/glyph/gruesome.xml"
-    # testDocument = open(fn).read()
-    x.dataReceived(testDocument)

@@ -2,10 +2,17 @@
 #  1. make exception renderer work (currently the code is in appserver.py)
 # - srid
 
-import os, sys, socket, math, time
+import warnings
+warnings.warn("nevow.wsgi is deprecated.", category=DeprecationWarning)
+
+import sys, socket, math, time
 import cgi # for FieldStorage
 import types
 from urllib import unquote, quote
+
+from zope.interface import implements
+
+from twisted.web.http import stringToDatetime
 
 from nevow import context, flat, inevow, util
 from nevow import __version__ as nevowversion
@@ -34,8 +41,8 @@ class NevowWSGISite(object):
         res = inevow.IResource(self.resource)
         pageContext = context.PageContext(tag=res, parent=ctx)
         return self.handleSegment(
-                res.locateChild(pageContext, path),
-                ctx.tag, path, pageContext)
+            res.locateChild(pageContext, path),
+            ctx.tag, path, pageContext)
 
     def handleSegment(self, result, request, path, pageContext):
         if result is errorMarker:
@@ -89,8 +96,13 @@ def createWSGIApplication(page, rootURL=None):
     siteCtx = context.SiteContext(tag=None)
     def application(environ, start_response):
         request = WSGIRequest(environ, start_response)
-        if rootURL:
-            request.rememberRootURL(rootURL)
+        prefixURL = rootURL
+        if prefixURL is None:
+            # Try to guess
+            proto = request.isSecure() and 'https://' or 'http://'
+            server = environ['SERVER_NAME']
+            prefixURL = proto + server + environ.get('SCRIPT_NAME', '/')
+        request.rememberRootURL(prefixURL)
         site = NevowWSGISite(request, page)
         request.site = site
         result = request.process()
@@ -98,7 +110,7 @@ def createWSGIApplication(page, rootURL=None):
         if not request.headersSent:
             request.write('') # send headers now
         if isinstance(result, str):
-            yield result
+            yield str(result) # work around wsgiref using StringType 
         elif isinstance(result, util.Deferred):
             ## So we can use the wsgi module if twisted is installed
             ## TODO use render synchronously instead maybe? I'm pretty
@@ -116,7 +128,8 @@ def createWSGIApplication(page, rootURL=None):
     
 # TODO: convert interface comments
 class WSGIRequest(object):
-    __implements__ = inevow.IRequest,
+    implements(inevow.IRequest)
+    
     """A HTTP request.
 
     Subclasses should override the process() method to determine how

@@ -1,4 +1,4 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 # 
@@ -18,9 +18,7 @@ wxPython's methods.
 On Windows the Twisted event loop might block when dialogs are open
 or menus are selected.
 
-API Stability: stable
-
-Maintainer: U{Itamar Shtull-Trauring<mailto:twisted@itamarst.org>}
+Maintainer: Itamar Shtull-Trauring
 """
 
 import warnings

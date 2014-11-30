@@ -1,30 +1,28 @@
 # -*- test-case-name: twisted.test.test_threadpool -*-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-
 """
-twisted.threadpool: a pool of threads to which we dispatch tasks.
+twisted.python.threadpool: a pool of threads to which we dispatch tasks.
 
-In most cases you can just use reactor.callInThread and friends
+In most cases you can just use C{reactor.callInThread} and friends
 instead of creating a thread pool directly.
 """
 
-# System Imports
-import Queue
+from __future__ import division, absolute_import
+
+try:
+    from Queue import Queue
+except ImportError:
+    from queue import Queue
+import contextlib
 import threading
-import threadable
 import copy
-import sys
 
-# Twisted Imports
-from twisted.python import log, runtime, context
-class WorkerStop:
-    pass
-WorkerStop = WorkerStop()
+from twisted.python import log, context, failure
 
-# initialize threading
-threadable.init(1)
+
+WorkerStop = object()
 
 
 class ThreadPool:
@@ -32,66 +30,70 @@ class ThreadPool:
     This class (hopefully) generalizes the functionality of a pool of
     threads to which work can be dispatched.
 
-    dispatch(), dispatchWithCallback() and stop() should only be called from
-    a single thread, unless you make a subclass where stop() and
-    _startSomeWorkers() are synchronized.
+    L{callInThread} and L{stop} should only be called from
+    a single thread, unless you make a subclass where L{stop} and
+    L{_startSomeWorkers} are synchronized.
+
+    @ivar started: Whether or not the thread pool is currently running.
+    @type started: L{bool}
+    @ivar threads: List of workers currently running in this thread pool.
+    @type threads: L{list}
     """
-    __inited = 0
     min = 5
     max = 20
-    joined = 0
-    started = 0
+    joined = False
+    started = False
     workers = 0
     name = None
 
+    threadFactory = threading.Thread
+    currentThread = staticmethod(threading.currentThread)
+
     def __init__(self, minthreads=5, maxthreads=20, name=None):
-        """Create a new threadpool.
+        """
+        Create a new threadpool.
 
         @param minthreads: minimum number of threads in the pool
-
         @param maxthreads: maximum number of threads in the pool
         """
         assert minthreads >= 0, 'minimum is negative'
         assert minthreads <= maxthreads, 'minimum is greater than maximum'
-        self.q = Queue.Queue(0)
+        self.q = Queue(0)
         self.min = minthreads
         self.max = maxthreads
         self.name = name
-        if runtime.platform.getType() != "java":
-            self.waiters = []
-            self.threads = []
-            self.working = []
-        else:
-            self.waiters = ThreadSafeList()
-            self.threads = ThreadSafeList()
-            self.working = ThreadSafeList()
+        self.waiters = []
+        self.threads = []
+        self.working = []
+
 
     def start(self):
-        """Start the threadpool.
         """
-        self.joined = 0
-        self.started = 1
+        Start the threadpool.
+        """
+        self.joined = False
+        self.started = True
         # Start some threads.
         self.adjustPoolsize()
 
+
     def startAWorker(self):
-        self.workers = self.workers + 1
+        self.workers += 1
         name = "PoolThread-%s-%s" % (self.name or id(self), self.workers)
-        try:
-            firstJob = self.q.get(0)
-        except Queue.Empty:
-            firstJob = None
-        newThread = threading.Thread(target=self._worker, name=name, args=(firstJob,))
+        newThread = self.threadFactory(target=self._worker, name=name)
         self.threads.append(newThread)
         newThread.start()
 
+
     def stopAWorker(self):
         self.q.put(WorkerStop)
-        self.workers = self.workers-1
+        self.workers -= 1
+
 
     def __setstate__(self, state):
         self.__dict__ = state
         ThreadPool.__init__(self, self.min, self.max)
+
 
     def __getstate__(self):
         state = {}
@@ -99,75 +101,140 @@ class ThreadPool:
         state['max'] = self.max
         return state
 
+
     def _startSomeWorkers(self):
-        while (
-            self.workers < self.max and # Don't create too many
-            len(self.waiters) < self.q.qsize() # but create enough
-            ):
+        neededSize = self.q.qsize() + len(self.working)
+        # Create enough, but not too many
+        while self.workers < min(self.max, neededSize):
             self.startAWorker()
 
-    def dispatch(self, owner, func, *args, **kw):
-        """Dispatch a function to be a run in a thread.
-        """
-        self.callInThread(func,*args,**kw)
 
     def callInThread(self, func, *args, **kw):
+        """
+        Call a callable object in a separate thread.
+
+        @param func: callable object to be called in separate thread
+
+        @param *args: positional arguments to be passed to C{func}
+
+        @param **kw: keyword args to be passed to C{func}
+        """
+        self.callInThreadWithCallback(None, func, *args, **kw)
+
+
+    def callInThreadWithCallback(self, onResult, func, *args, **kw):
+        """
+        Call a callable object in a separate thread and call C{onResult}
+        with the return value, or a L{twisted.python.failure.Failure}
+        if the callable raises an exception.
+
+        The callable is allowed to block, but the C{onResult} function
+        must not block and should perform as little work as possible.
+
+        A typical action for C{onResult} for a threadpool used with a
+        Twisted reactor would be to schedule a
+        L{twisted.internet.defer.Deferred} to fire in the main
+        reactor thread using C{.callFromThread}.  Note that C{onResult}
+        is called inside the separate thread, not inside the reactor thread.
+
+        @param onResult: a callable with the signature C{(success, result)}.
+            If the callable returns normally, C{onResult} is called with
+            C{(True, result)} where C{result} is the return value of the
+            callable. If the callable throws an exception, C{onResult} is
+            called with C{(False, failure)}.
+
+            Optionally, C{onResult} may be C{None}, in which case it is not
+            called at all.
+
+        @param func: callable object to be called in separate thread
+
+        @param *args: positional arguments to be passed to C{func}
+
+        @param **kwargs: keyword arguments to be passed to C{func}
+        """
         if self.joined:
             return
         ctx = context.theContextTracker.currentContext().contexts[-1]
-        o = (ctx, func, args, kw)
+        o = (ctx, func, args, kw, onResult)
         self.q.put(o)
         if self.started:
             self._startSomeWorkers()
 
-    def _runWithCallback(self, callback, errback, func, args, kwargs):
-        try:
-            result = apply(func, args, kwargs)
-        except:
-            errback(sys.exc_info()[1])
-        else:
-            callback(result)
 
-    def dispatchWithCallback(self, owner, callback, errback, func, *args, **kw):
-        """Dispatch a function, returning the result to a callback function.
-
-        The callback function will be called in the thread - make sure it is
-        thread-safe.
+    @contextlib.contextmanager
+    def _workerState(self, stateList, workerThread):
         """
-        self.callInThread(self._runWithCallback, callback, errback, func, args, kw)
+        Manages adding and removing this worker from a list of workers
+        in a particular state.
 
-    def _worker(self, o):
-        ct = threading.currentThread()
-        while 1:
-            if o is WorkerStop:
-                break
-            elif o is not None:
-                self.working.append(ct)
-                ctx, function, args, kwargs = o
+        @param stateList: the list managing workers in this state
+
+        @param workerThread: the thread the worker is running in, used to
+            represent the worker in stateList
+        """
+        stateList.append(workerThread)
+        try:
+            yield
+        finally:
+            stateList.remove(workerThread)
+
+
+    def _worker(self):
+        """
+        Method used as target of the created threads: retrieve a task to run
+        from the threadpool, run it, and proceed to the next task until
+        threadpool is stopped.
+        """
+        ct = self.currentThread()
+        o = self.q.get()
+        while o is not WorkerStop:
+            with self._workerState(self.working, ct):
+                ctx, function, args, kwargs, onResult = o
+                del o
+
                 try:
-                    context.call(ctx, function, *args, **kwargs)
+                    result = context.call(ctx, function, *args, **kwargs)
+                    success = True
                 except:
-                    context.call(ctx, log.deferr)
-                self.working.remove(ct)
-                del o, ctx, function, args, kwargs
-            self.waiters.append(ct)
-            o = self.q.get()
-            self.waiters.remove(ct)
+                    success = False
+                    if onResult is None:
+                        context.call(ctx, log.err)
+                        result = None
+                    else:
+                        result = failure.Failure()
+
+                del function, args, kwargs
+
+            if onResult is not None:
+                try:
+                    context.call(ctx, onResult, success, result)
+                except:
+                    context.call(ctx, log.err)
+
+            del ctx, onResult, result
+
+            with self._workerState(self.waiters, ct):
+                o = self.q.get()
 
         self.threads.remove(ct)
 
+
     def stop(self):
-        """Shutdown the threads in the threadpool."""
-        self.joined = 1
+        """
+        Shutdown the threads in the threadpool.
+        """
+        self.joined = True
+        self.started = False
         threads = copy.copy(self.threads)
-        for thread in range(self.workers):
+        while self.workers:
             self.q.put(WorkerStop)
-            self.workers = self.workers-1
+            self.workers -= 1
 
         # and let's just make sure
         # FIXME: threads that have died before calling stop() are not joined.
         for thread in threads:
             thread.join()
+
 
     def adjustPoolsize(self, minthreads=None, maxthreads=None):
         if minthreads is None:
@@ -192,33 +259,9 @@ class ThreadPool:
         # Start some threads if there is a need.
         self._startSomeWorkers()
 
+
     def dumpStats(self):
         log.msg('queue: %s'   % self.q.queue)
         log.msg('waiters: %s' % self.waiters)
         log.msg('workers: %s' % self.working)
         log.msg('total: %s'   % self.threads)
-
-
-class ThreadSafeList:
-    """In Jython 2.1 lists aren't thread-safe, so this wraps it."""
-
-    def __init__(self):
-        self.lock = threading.Lock()
-        self.l = []
-
-    def append(self, i):
-        self.lock.acquire()
-        try:
-            self.l.append(i)
-        finally:
-            self.lock.release()
-
-    def remove(self, i):
-        self.lock.acquire()
-        try:
-            self.l.remove(i)
-        finally:
-            self.lock.release()
-
-    def __len__(self):
-        return len(self.l)

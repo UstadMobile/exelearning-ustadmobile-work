@@ -1,6 +1,5 @@
 
 from zope.interface import implements
-from twisted.python.components import backwardsCompatImplements
 
 from twisted.trial.itrial import IReporter
 from twisted.plugin import IPlugin
@@ -16,7 +15,6 @@ class _Reporter(object):
         self.shortOpt = shortOpt
         self.klass = klass
 
-backwardsCompatImplements(_Reporter)
 
 Tree = _Reporter("Tree Reporter",
                  "twisted.trial.reporter",
@@ -53,3 +51,9 @@ Timing = _Reporter("Timing Reporter",
                    shortOpt=None,
                    klass="TimingTextReporter")
 
+Subunit = _Reporter("Subunit Reporter",
+                    "twisted.trial.reporter",
+                    description="subunit output",
+                    longOpt="subunit",
+                    shortOpt=None,
+                    klass="SubunitReporter")

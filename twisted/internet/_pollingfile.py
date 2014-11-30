@@ -1,17 +1,21 @@
-# -*- test-case-name: twisted.web2.test -*-
-"""
+# -*- test-case-name: twisted.internet.test.test_pollingfile -*-
+# Copyright (c) Twisted Matrix Laboratories.
+# See LICENSE for details.
 
+"""
 Implements a simple polling interface for file descriptors that don't work with
 select() - this is pretty much only useful on Windows.
-
 """
 
 from zope.interface import implements
 
-from twisted.internet.interfaces import IConsumer, IProducer
+from twisted.internet.interfaces import IConsumer, IPushProducer
+
 
 MIN_TIMEOUT = 0.000000001
 MAX_TIMEOUT = 0.1
+
+
 
 class _PollableResource:
     active = True
@@ -19,8 +23,11 @@ class _PollableResource:
     def activate(self):
         self.active = True
 
+
     def deactivate(self):
         self.active = False
+
+
 
 class _PollingTimer:
     # Everything is private here because it is really an implementation detail.
@@ -98,7 +105,7 @@ import pywintypes
 
 class _PollableReadPipe(_PollableResource):
 
-    implements(IProducer)
+    implements(IPushProducer)
 
     def __init__(self, pipe, receivedCallback, lostCallback):
         # security attributes for pipes
@@ -107,8 +114,9 @@ class _PollableReadPipe(_PollableResource):
         self.lostCallback = lostCallback
 
     def checkWork(self):
-        numBytesRead = 0
         finished = 0
+        fullDataRead = []
+
         while 1:
             try:
                 buffer, bytesToRead, result = win32pipe.PeekNamedPipe(self.pipe, 1)
@@ -116,15 +124,17 @@ class _PollableReadPipe(_PollableResource):
                 if not bytesToRead:
                     break
                 hr, data = win32file.ReadFile(self.pipe, bytesToRead, None)
-                numBytesRead += len(data)
-                self.receivedCallback(data)
+                fullDataRead.append(data)
             except win32api.error:
                 finished = 1
                 break
 
+        dataBuf = ''.join(fullDataRead)
+        if dataBuf:
+            self.receivedCallback(dataBuf)
         if finished:
             self.cleanup()
-        return numBytesRead
+        return len(dataBuf)
 
     def cleanup(self):
         self.deactivate()
@@ -137,6 +147,15 @@ class _PollableReadPipe(_PollableResource):
             # You can't close std handles...?
             pass
 
+    def stopProducing(self):
+        self.close()
+
+    def pauseProducing(self):
+        self.deactivate()
+
+    def resumeProducing(self):
+        self.activate()
+
 
 FULL_BUFFER_SIZE = 64 * 1024
 
@@ -147,7 +166,7 @@ class _PollableWritePipe(_PollableResource):
     def __init__(self, writePipe, lostCallback):
         self.disconnecting = False
         self.producer = None
-        self.producerPaused = 0
+        self.producerPaused = False
         self.streamingProducer = 0
         self.outQueue = []
         self.writePipe = writePipe
@@ -166,13 +185,13 @@ class _PollableWritePipe(_PollableResource):
 
     def bufferFull(self):
         if self.producer is not None:
-            self.producerPaused = 1
+            self.producerPaused = True
             self.producer.pauseProducing()
 
     def bufferEmpty(self):
         if self.producer is not None and ((not self.streamingProducer) or
                                           self.producerPaused):
-            self.producer.producerPaused = 0
+            self.producer.producerPaused = False
             self.producer.resumeProducing()
             return True
         return False
@@ -190,7 +209,9 @@ class _PollableWritePipe(_PollableResource):
         FileDescriptor provides some infrastructure for producer methods.
         """
         if self.producer is not None:
-            raise RuntimeError("Cannot register producer %s, because producer %s was never unregistered." % (producer, self.producer))
+            raise RuntimeError(
+                "Cannot register producer %s, because producer %s was never "
+                "unregistered." % (producer, self.producer))
         if not self.active:
             producer.stopProducing()
         else:
@@ -213,15 +234,38 @@ class _PollableWritePipe(_PollableResource):
             pass
         self.lostCallback()
 
+
     def writeSequence(self, seq):
+        """
+        Append a C{list} or C{tuple} of bytes to the output buffer.
+
+        @param seq: C{list} or C{tuple} of C{str} instances to be appended to
+            the output buffer.
+
+        @raise TypeError: If C{seq} contains C{unicode}.
+        """
+        if unicode in map(type, seq):
+            raise TypeError("Unicode not allowed in output buffer.")
         self.outQueue.extend(seq)
 
+
     def write(self, data):
+        """
+        Append some bytes to the output buffer.
+
+        @param data: C{str} to be appended to the output buffer.
+        @type data: C{str}.
+
+        @raise TypeError: If C{data} is C{unicode} instead of C{str}.
+        """
+        if isinstance(data, unicode):
+            raise TypeError("Unicode not allowed in output buffer.")
         if self.disconnecting:
             return
         self.outQueue.append(data)
         if sum(map(len, self.outQueue)) > FULL_BUFFER_SIZE:
             self.bufferFull()
+
 
     def checkWork(self):
         numBytesWritten = 0
@@ -254,5 +298,3 @@ class _PollableWritePipe(_PollableResource):
             if not resumed and self.disconnecting:
                 self.writeConnectionLost()
         return numBytesWritten
-
-

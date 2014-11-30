@@ -1,30 +1,25 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-#
-from twisted.trial import unittest, util
-from twisted.application import service, compat, internet, app
+"""
+Tests for L{twisted.application} and its interaction with
+L{twisted.persisted.sob}.
+"""
+
+import copy, os, pickle
+from StringIO import StringIO
+
+from twisted.trial import unittest
+from twisted.application import service, internet, app
 from twisted.persisted import sob
-from twisted.python import components
-from twisted.python import log
-from twisted.python.runtime import platformType
-from twisted.internet import utils, interfaces, defer
+from twisted.python import usage
+from twisted.internet import interfaces, defer
 from twisted.protocols import wire, basic
 from twisted.internet import protocol, reactor
-import copy, os, pickle, sys, warnings
+from twisted.application import reactors
+from twisted.test.proto_helpers import MemoryReactor
+from twisted.python.test.modules_helpers import TwistedModulesMixin
 
-try:
-    from twisted.web import microdom
-    gotMicrodom = True
-except ImportError:
-    import warnings
-    warnings.warn("Not testing xml persistence as twisted.web.microdom "
-                  "not available")
-    gotMicrodom = False
-
-
-oldAppSuppressions = [util.suppress(message='twisted.internet.app is deprecated',
-                                    category=DeprecationWarning)]
 
 class Dummy:
     processName=None
@@ -34,30 +29,30 @@ class TestService(unittest.TestCase):
     def testName(self):
         s = service.Service()
         s.setName("hello")
-        self.failUnlessEqual(s.name, "hello")
+        self.assertEqual(s.name, "hello")
 
     def testParent(self):
         s = service.Service()
         p = service.MultiService()
         s.setServiceParent(p)
-        self.failUnlessEqual(list(p), [s])
-        self.failUnlessEqual(s.parent, p)
+        self.assertEqual(list(p), [s])
+        self.assertEqual(s.parent, p)
 
     def testApplicationAsParent(self):
         s = service.Service()
         p = service.Application("")
         s.setServiceParent(p)
-        self.failUnlessEqual(list(service.IServiceCollection(p)), [s])
-        self.failUnlessEqual(s.parent, service.IServiceCollection(p))
+        self.assertEqual(list(service.IServiceCollection(p)), [s])
+        self.assertEqual(s.parent, service.IServiceCollection(p))
 
     def testNamedChild(self):
         s = service.Service()
         p = service.MultiService()
         s.setName("hello")
         s.setServiceParent(p)
-        self.failUnlessEqual(list(p), [s])
-        self.failUnlessEqual(s.parent, p)
-        self.failUnlessEqual(p.getServiceNamed("hello"), s)
+        self.assertEqual(list(p), [s])
+        self.assertEqual(s.parent, p)
+        self.assertEqual(p.getServiceNamed("hello"), s)
 
     def testDoublyNamedChild(self):
         s = service.Service()
@@ -79,11 +74,11 @@ class TestService(unittest.TestCase):
         s = service.Service()
         p = service.MultiService()
         s.setServiceParent(p)
-        self.failUnlessEqual(list(p), [s])
-        self.failUnlessEqual(s.parent, p)
+        self.assertEqual(list(p), [s])
+        self.assertEqual(s.parent, p)
         s.disownServiceParent()
-        self.failUnlessEqual(list(p), [])
-        self.failUnlessEqual(s.parent, None)
+        self.assertEqual(list(p), [])
+        self.assertEqual(s.parent, None)
 
     def testRunning(self):
         s = service.Service()
@@ -93,7 +88,7 @@ class TestService(unittest.TestCase):
         s.stopService()
         self.assert_(not s.running)
 
-    def testRunningChildren(self):
+    def testRunningChildren1(self):
         s = service.Service()
         p = service.MultiService()
         s.setServiceParent(p)
@@ -106,7 +101,7 @@ class TestService(unittest.TestCase):
         self.assert_(not s.running)
         self.assert_(not p.running)
 
-    def testRunningChildren(self):
+    def testRunningChildren2(self):
         s = service.Service()
         def checkRunning():
             self.assert_(s.running)
@@ -230,33 +225,20 @@ class TestLoading(unittest.TestCase):
     def test_simpleStoreAndLoad(self):
         a = service.Application("hello")
         p = sob.IPersistable(a)
-        for style in 'xml source pickle'.split():
-            if style == 'xml' and not gotMicrodom:
-                continue
+        for style in 'source pickle'.split():
             p.setStyle(style)
             p.save()
             a1 = service.loadApplication("hello.ta"+style[0], style)
             self.assertEqual(service.IService(a1).name, "hello")
-        open("hello.tac", 'w').writelines([
+        f = open("hello.tac", 'w')
+        f.writelines([
         "from twisted.application import service\n",
         "application = service.Application('hello')\n",
         ])
+        f.close()
         a1 = service.loadApplication("hello.tac", 'python')
         self.assertEqual(service.IService(a1).name, "hello")
 
-    def test_implicitConversion(self):
-        a = Dummy()
-        a.__dict__ = {'udpConnectors': [], 'unixConnectors': [],
-                      '_listenerDict': {}, 'name': 'dummy',
-                      'sslConnectors': [], 'unixPorts': [],
-                      '_extraListeners': {}, 'sslPorts': [], 'tcpPorts': [],
-                      'services': {}, 'gid': 0, 'tcpConnectors': [],
-                      'extraConnectors': [], 'udpPorts': [], 'extraPorts': [],
-                      'uid': 0}
-        pickle.dump(a, open("file.tap", 'wb'))
-        a1 = service.loadApplication("file.tap", "pickle", None)
-        self.assertEqual(service.IService(a1).name, "dummy")
-        self.assertEqual(list(service.IServiceCollection(a1)), [])
 
 
 class TestAppSupport(unittest.TestCase):
@@ -265,11 +247,12 @@ class TestAppSupport(unittest.TestCase):
         self.assertEqual(app.getPassphrase(0), None)
 
     def testLoadApplication(self):
+        """
+        Test loading an application file in different dump format.
+        """
         a = service.Application("hello")
-        baseconfig = {'file': None, 'xml': None, 'source': None, 'python':None}
-        for style in 'source xml pickle'.split():
-            if style == 'xml' and not gotMicrodom:
-                continue
+        baseconfig = {'file': None, 'source': None, 'python':None}
+        for style in 'source pickle'.split():
             config = baseconfig.copy()
             config[{'pickle': 'file'}.get(style, style)] = 'helloapplication'
             sob.IPersistable(a).setStyle(style)
@@ -278,21 +261,19 @@ class TestAppSupport(unittest.TestCase):
             self.assertEqual(service.IService(a1).name, "hello")
         config = baseconfig.copy()
         config['python'] = 'helloapplication'
-        open("helloapplication", 'w').writelines([
+        f = open("helloapplication", 'w')
+        f.writelines([
         "from twisted.application import service\n",
         "application = service.Application('hello')\n",
         ])
+        f.close()
         a1 = app.getApplication(config, None)
         self.assertEqual(service.IService(a1).name, "hello")
 
     def test_convertStyle(self):
         appl = service.Application("lala")
-        for instyle in 'xml source pickle'.split():
-            if instyle == 'xml' and not gotMicrodom:
-                continue
-            for outstyle in 'xml source pickle'.split():
-                if outstyle == 'xml' and not gotMicrodom:
-                    continue
+        for instyle in 'source pickle'.split():
+            for outstyle in 'source pickle'.split():
                 sob.IPersistable(appl).setStyle(instyle)
                 sob.IPersistable(appl).save(filename="converttest")
                 app.convertStyle("converttest", instyle, None,
@@ -300,138 +281,22 @@ class TestAppSupport(unittest.TestCase):
                 appl2 = service.loadApplication("converttest.out", outstyle)
                 self.assertEqual(service.IService(appl2).name, "lala")
 
-    def test_getLogFile(self):
-        os.mkdir("logfiledir")
-        l = app.getLogFile(os.path.join("logfiledir", "lala"))
-        self.assertEqual(l.path,
-                         os.path.abspath(os.path.join("logfiledir", "lala")))
-        self.assertEqual(l.name, "lala")
-        self.assertEqual(l.directory, os.path.abspath("logfiledir"))
 
     def test_startApplication(self):
         appl = service.Application("lala")
         app.startApplication(appl, 0)
         self.assert_(service.IService(appl).running)
 
-class TestInternet(unittest.TestCase):
 
-    def testUNIX(self):
-        if not interfaces.IReactorUNIX(reactor, None):
-            raise unittest.SkipTest, "This reactor does not support UNIX domain sockets"
-        s = service.MultiService()
-        c = compat.IOldApplication(s)
-        factory = protocol.ServerFactory()
-        factory.protocol = TestEcho
-        TestEcho.d = defer.Deferred()
-        if os.path.exists('.hello.skt'):
-            os.remove('hello.skt')
-        c.listenUNIX('./hello.skt', factory)
-        class Foo(basic.LineReceiver):
-            def connectionMade(self):
-                self.transport.write('lalala\r\n')
-            def lineReceived(self, line):
-                self.factory.line = line
-                self.transport.loseConnection()
-        factory = protocol.ClientFactory()
-        factory.protocol = Foo
-        factory.line = None
-        c.connectUNIX('./hello.skt', factory)
-        s.privilegedStartService()
-        s.startService()
-        util.spinWhile(lambda :factory.line is None)
-        util.wait(defer.maybeDeferred(s.stopService))
-        self.assertEqual(factory.line, 'lalala')
+class Foo(basic.LineReceiver):
+    def connectionMade(self):
+        self.transport.write('lalala\r\n')
+    def lineReceived(self, line):
+        self.factory.line = line
+        self.transport.loseConnection()
+    def connectionLost(self, reason):
+        self.factory.d.callback(self.factory.line)
 
-        # Cleanup the reactor
-        util.wait(TestEcho.d)
-    testUNIX.suppress = oldAppSuppressions
-
-    def testTCP(self):
-        s = service.MultiService()
-        c = compat.IOldApplication(s)
-        factory = protocol.ServerFactory()
-        factory.protocol = TestEcho
-        TestEcho.d = defer.Deferred()
-        c.listenTCP(0, factory)
-        s.privilegedStartService()
-        s.startService()
-        num = list(s)[0]._port.getHost().port
-        class Foo(basic.LineReceiver):
-            def connectionMade(self):
-                self.transport.write('lalala\r\n')
-            def lineReceived(self, line):
-                self.factory.line = line
-                self.transport.loseConnection()
-        factory = protocol.ClientFactory()
-        factory.protocol = Foo
-        factory.line = None
-        c.connectTCP('127.0.0.1', num, factory)
-        util.spinWhile(lambda :factory.line is None)
-        util.wait(defer.maybeDeferred(s.stopService))
-        self.assertEqual(factory.line, 'lalala')
-
-        # Cleanup the reactor
-        util.wait(TestEcho.d)
-    testTCP.suppress = oldAppSuppressions
-
-    def testCalling(self):
-        s = service.MultiService()
-        c = compat.IOldApplication(s)
-        c.listenWith(None)
-        self.assertEqual(list(s)[0].args[0], None)
-        c.listenTCP(None, None)
-        self.assertEqual(list(s)[1].args[:2], (None,)*2)
-        c.listenSSL(None, None, None)
-        self.assertEqual(list(s)[2].args[:3], (None,)*3)
-        c.listenUDP(None, None)
-        self.assertEqual(list(s)[3].args[:2], (None,)*2)
-        c.listenUNIX(None, None)
-        self.assertEqual(list(s)[4].args[:2], (None,)*2)
-        for ch in s:
-            self.assert_(ch.privileged)
-        c.connectWith(None)
-        self.assertEqual(list(s)[5].args[0], None)
-        c.connectTCP(None, None, None)
-        self.assertEqual(list(s)[6].args[:3], (None,)*3)
-        c.connectSSL(None, None, None, None)
-        self.assertEqual(list(s)[7].args[:4], (None,)*4)
-        c.connectUDP(None, None, None)
-        self.assertEqual(list(s)[8].args[:3], (None,)*3)
-        c.connectUNIX(None, None)
-        self.assertEqual(list(s)[9].args[:2], (None,)*2)
-        self.assertEqual(len(list(s)), 10)
-        for ch in s:
-            self.failIf(ch.kwargs)
-            self.assertEqual(ch.name, None)
-    testCalling.suppress = oldAppSuppressions
-
-    def testUnlistenersCallable(self):
-        s = service.MultiService()
-        c = compat.IOldApplication(s)
-        self.assert_(callable(c.unlistenTCP))
-        self.assert_(callable(c.unlistenUNIX))
-        self.assert_(callable(c.unlistenUDP))
-        self.assert_(callable(c.unlistenSSL))
-    testUnlistenersCallable.suppress = oldAppSuppressions
-
-    def testServices(self):
-        s = service.MultiService()
-        c = compat.IOldApplication(s)
-        ch = service.Service()
-        ch.setName("lala")
-        ch.setServiceParent(c)
-        self.assertEqual(c.getServiceNamed("lala"), ch)
-        ch.disownServiceParent()
-        self.assertEqual(list(s), [])
-    testServices.suppress = oldAppSuppressions
-
-    def testInterface(self):
-        s = service.MultiService()
-        c = compat.IOldApplication(s)
-        for key in compat.IOldApplication.__dict__.keys():
-            if callable(getattr(compat.IOldApplication, key)):
-                self.assert_(callable(getattr(c, key)))
-    testInterface.suppress = oldAppSuppressions
 
 class DummyApp:
     processName = None
@@ -440,73 +305,6 @@ class DummyApp:
     def removeService(self, service):
         del self.services[service.name]
 
-
-class TestConvert(unittest.TestCase):
-
-    def testSimpleInternet(self):
-        # XXX - replace this test with one that does the same thing, but
-        # with no web dependencies.
-        if not gotMicrodom:
-            raise unittest.SkipTest("Need twisted.web to run this test.")
-        s = "(dp0\nS'udpConnectors'\np1\n(lp2\nsS'unixConnectors'\np3\n(lp4\nsS'twisted.internet.app.Application.persistenceVersion'\np5\nI12\nsS'name'\np6\nS'web'\np7\nsS'sslConnectors'\np8\n(lp9\nsS'sslPorts'\np10\n(lp11\nsS'tcpPorts'\np12\n(lp13\n(I8080\n(itwisted.web.server\nSite\np14\n(dp16\nS'resource'\np17\n(itwisted.web.demo\nTest\np18\n(dp19\nS'files'\np20\n(lp21\nsS'paths'\np22\n(dp23\nsS'tmpl'\np24\n(lp25\nS'\\n    Congratulations, twisted.web appears to work!\\n    <ul>\\n    <li>Funky Form:\\n    '\np26\naS'self.funkyForm()'\np27\naS'\\n    <li>Exception Handling:\\n    '\np28\naS'self.raiseHell()'\np29\naS'\\n    </ul>\\n    '\np30\nasS'widgets'\np31\n(dp32\nsS'variables'\np33\n(dp34\nsS'modules'\np35\n(lp36\nsS'children'\np37\n(dp38\nsbsS'logPath'\np39\nNsS'timeOut'\np40\nI43200\nsS'sessions'\np41\n(dp42\nsbI5\nS''\np43\ntp44\nasS'unixPorts'\np45\n(lp46\nsS'services'\np47\n(dp48\nsS'gid'\np49\nI1000\nsS'tcpConnectors'\np50\n(lp51\nsS'extraConnectors'\np52\n(lp53\nsS'udpPorts'\np54\n(lp55\nsS'extraPorts'\np56\n(lp57\nsS'persistStyle'\np58\nS'pickle'\np59\nsS'uid'\np60\nI1000\ns."
-        d = pickle.loads(s)
-        a = Dummy()
-        a.__dict__ = d
-        appl = compat.convert(a)
-        self.assertEqual(service.IProcess(appl).uid, 1000)
-        self.assertEqual(service.IProcess(appl).gid, 1000)
-        self.assertEqual(service.IService(appl).name, "web")
-        services = list(service.IServiceCollection(appl))
-        self.assertEqual(len(services), 1)
-        s = services[0]
-        self.assertEqual(s.parent, service.IServiceCollection(appl))
-        self.assert_(s.privileged)
-        self.assert_(isinstance(s, internet.TCPServer))
-        args = s.args
-        self.assertEqual(args[0], 8080)
-        self.assertEqual(args[3], '')
-
-    def testSimpleUNIX(self):
-        # XXX - replace this test with one that does the same thing, but
-        # with no web dependencies.
-        if not interfaces.IReactorUNIX(reactor, None):
-            raise unittest.SkipTest, "This reactor does not support UNIX domain sockets"
-        if not gotMicrodom:
-            raise unittest.SkipTest("Need twisted.web to run this test.")
-        s = "(dp0\nS'udpConnectors'\np1\n(lp2\nsS'unixConnectors'\np3\n(lp4\nsS'twisted.internet.app.Application.persistenceVersion'\np5\nI12\nsS'name'\np6\nS'web'\np7\nsS'sslConnectors'\np8\n(lp9\nsS'sslPorts'\np10\n(lp11\nsS'tcpPorts'\np12\n(lp13\nsS'unixPorts'\np14\n(lp15\n(S'/home/moshez/.twistd-web-pb'\np16\n(itwisted.spread.pb\nBrokerFactory\np17\n(dp19\nS'objectToBroker'\np20\n(itwisted.web.distrib\nResourcePublisher\np21\n(dp22\nS'twisted.web.distrib.ResourcePublisher.persistenceVersion'\np23\nI2\nsS'site'\np24\n(itwisted.web.server\nSite\np25\n(dp26\nS'resource'\np27\n(itwisted.web.static\nFile\np28\n(dp29\nS'ignoredExts'\np30\n(lp31\nsS'defaultType'\np32\nS'text/html'\np33\nsS'registry'\np34\n(itwisted.web.static\nRegistry\np35\n(dp36\nS'twisted.web.static.Registry.persistenceVersion'\np37\nI1\nsS'twisted.python.components.Componentized.persistenceVersion'\np38\nI1\nsS'_pathCache'\np39\n(dp40\nsS'_adapterCache'\np41\n(dp42\nS'twisted.internet.interfaces.IServiceCollection'\np43\n(itwisted.internet.app\nApplication\np44\n(dp45\ng1\ng2\nsg3\ng4\nsg5\nI12\nsg6\ng7\nsg8\ng9\nsg10\ng11\nsg12\ng13\nsg14\ng15\nsS'extraPorts'\np46\n(lp47\nsS'gid'\np48\nI1053\nsS'tcpConnectors'\np49\n(lp50\nsS'extraConnectors'\np51\n(lp52\nsS'udpPorts'\np53\n(lp54\nsS'services'\np55\n(dp56\nsS'persistStyle'\np57\nS'pickle'\np58\nsS'delayeds'\np59\n(lp60\nsS'uid'\np61\nI1053\nsbssbsS'encoding'\np62\nNsS'twisted.web.static.File.persistenceVersion'\np63\nI6\nsS'path'\np64\nS'/home/moshez/public_html.twistd'\np65\nsS'type'\np66\ng33\nsS'children'\np67\n(dp68\nsS'processors'\np69\n(dp70\nS'.php3'\np71\nctwisted.web.twcgi\nPHP3Script\np72\nsS'.rpy'\np73\nctwisted.web.script\nResourceScript\np74\nsS'.php'\np75\nctwisted.web.twcgi\nPHPScript\np76\nsS'.cgi'\np77\nctwisted.web.twcgi\nCGIScript\np78\nsS'.epy'\np79\nctwisted.web.script\nPythonScript\np80\nsS'.trp'\np81\nctwisted.web.trp\nResourceUnpickler\np82\nssbsS'logPath'\np83\nNsS'sessions'\np84\n(dp85\nsbsbsS'twisted.spread.pb.BrokerFactory.persistenceVersion'\np86\nI3\nsbI5\nI438\ntp87\nasg55\ng56\nsg48\nI1053\nsg49\ng50\nsg51\ng52\nsg53\ng54\nsg46\ng47\nsg57\ng58\nsg61\nI1053\nsg59\ng60\ns."
-        d = pickle.loads(s)
-        a = Dummy()
-        a.__dict__ = d
-        appl = compat.convert(a)
-        self.assertEqual(service.IProcess(appl).uid, 1053)
-        self.assertEqual(service.IProcess(appl).gid, 1053)
-        self.assertEqual(service.IService(appl).name, "web")
-        services = list(service.IServiceCollection(appl))
-        self.assertEqual(len(services), 1)
-        s = services[0]
-        self.assertEqual(s.parent, service.IServiceCollection(appl))
-        self.assert_(s.privileged)
-        self.assert_(isinstance(s, internet.UNIXServer))
-        args = s.args
-        self.assertEqual(args[0], '/home/moshez/.twistd-web-pb')
-
-    def testSimpleService(self):
-        a = DummyApp()
-        a.__dict__ = {'udpConnectors': [], 'unixConnectors': [],
-                      '_listenerDict': {}, 'name': 'dummy',
-                      'sslConnectors': [], 'unixPorts': [],
-                      '_extraListeners': {}, 'sslPorts': [], 'tcpPorts': [],
-                      'services': {}, 'gid': 0, 'tcpConnectors': [],
-                      'extraConnectors': [], 'udpPorts': [], 'extraPorts': [],
-                      'uid': 0}
-        s = service.Service()
-        s.setName("lala")
-        s.setServiceParent(a)
-        appl = compat.convert(a)
-        services = list(service.IServiceCollection(appl))
-        self.assertEqual(len(services), 1)
-        s1 = services[0]
-        self.assertEqual(s, s1)
 
 class TimerTarget:
     def __init__(self):
@@ -529,38 +327,51 @@ class TestInternet2(unittest.TestCase):
         t = internet.TCPServer(0, factory)
         t.setServiceParent(s)
         num = t._port.getHost().port
-        class Foo(basic.LineReceiver):
-            def connectionMade(self):
-                self.transport.write('lalala\r\n')
-            def lineReceived(self, line):
-                self.factory.line = line
-                self.transport.loseConnection()
         factory = protocol.ClientFactory()
+        factory.d = defer.Deferred()
         factory.protocol = Foo
         factory.line = None
         internet.TCPClient('127.0.0.1', num, factory).setServiceParent(s)
-        util.spinWhile(lambda :factory.line is None)
-        self.assertEqual(factory.line, 'lalala')
+        factory.d.addCallback(self.assertEqual, 'lalala')
+        factory.d.addCallback(lambda x : s.stopService())
+        factory.d.addCallback(lambda x : TestEcho.d)
+        return factory.d
 
-        # Cleanup the reactor
-        util.wait(defer.maybeDeferred(s.stopService))
-        util.wait(TestEcho.d)
 
-    def testUDP(self):
+    def test_UDP(self):
+        """
+        Test L{internet.UDPServer} with a random port: starting the service
+        should give it valid port, and stopService should free it so that we
+        can start a server on the same port again.
+        """
         if not interfaces.IReactorUDP(reactor, None):
-            raise unittest.SkipTest, "This reactor does not support UDP sockets"
+            raise unittest.SkipTest("This reactor does not support UDP sockets")
         p = protocol.DatagramProtocol()
-        t = internet.TCPServer(0, p)
+        t = internet.UDPServer(0, p)
         t.startService()
         num = t._port.getHost().port
-        l = []
-        defer.maybeDeferred(t.stopService).addCallback(l.append)
-        util.spinWhile(lambda :not l)
-        t = internet.TCPServer(num, p)
-        t.startService()
-        l = []
-        defer.maybeDeferred(t.stopService).addCallback(l.append)
-        util.spinWhile(lambda :not l)
+        self.assertNotEquals(num, 0)
+        def onStop(ignored):
+            t = internet.UDPServer(num, p)
+            t.startService()
+            return t.stopService()
+        return defer.maybeDeferred(t.stopService).addCallback(onStop)
+
+
+    def test_deprecatedUDPClient(self):
+        """
+        L{internet.UDPClient} is deprecated since Twisted-13.1.
+        """
+        internet.UDPClient
+        warningsShown = self.flushWarnings([self.test_deprecatedUDPClient])
+        self.assertEqual(1, len(warningsShown))
+        self.assertEqual(
+                "twisted.application.internet.UDPClient was deprecated in "
+                "Twisted 13.1.0: It relies upon IReactorUDP.connectUDP "
+                "which was removed in Twisted 10. "
+                "Use twisted.application.internet.UDPServer instead.",
+                warningsShown[0]['message'])
+
 
     def testPrivileged(self):
         factory = protocol.ServerFactory()
@@ -570,24 +381,17 @@ class TestInternet2(unittest.TestCase):
         t.privileged = 1
         t.privilegedStartService()
         num = t._port.getHost().port
-        class Foo(basic.LineReceiver):
-            def connectionMade(self):
-                self.transport.write('lalala\r\n')
-            def lineReceived(self, line):
-                self.factory.line = line
-                self.transport.loseConnection()
         factory = protocol.ClientFactory()
+        factory.d = defer.Deferred()
         factory.protocol = Foo
         factory.line = None
         c = internet.TCPClient('127.0.0.1', num, factory)
         c.startService()
-        util.spinWhile(lambda :factory.line is None)
-        self.assertEqual(factory.line, 'lalala')
-
-        # Cleanup the reactor
-        util.wait(defer.maybeDeferred(c.stopService))
-        util.wait(defer.maybeDeferred(t.stopService))
-        util.wait(TestEcho.d)
+        factory.d.addCallback(self.assertEqual, 'lalala')
+        factory.d.addCallback(lambda x : c.stopService())
+        factory.d.addCallback(lambda x : t.stopService())
+        factory.d.addCallback(lambda x : TestEcho.d)
+        return factory.d
 
     def testConnectionGettingRefused(self):
         factory = protocol.ServerFactory()
@@ -596,13 +400,12 @@ class TestInternet2(unittest.TestCase):
         t.startService()
         num = t._port.getHost().port
         t.stopService()
-        l = []
+        d = defer.Deferred()
         factory = protocol.ClientFactory()
-        factory.clientConnectionFailed = lambda *args: l.append(None)
+        factory.clientConnectionFailed = lambda *args: d.callback(None)
         c = internet.TCPClient('127.0.0.1', num, factory)
         c.startService()
-        util.spinWhile(lambda :not l)
-        self.assertEqual(l, [None])
+        return d
 
     def testUNIX(self):
         # FIXME: This test is far too dense.  It needs comments.
@@ -616,30 +419,26 @@ class TestInternet2(unittest.TestCase):
         TestEcho.d = defer.Deferred()
         t = internet.UNIXServer('echo.skt', factory)
         t.setServiceParent(s)
-        class Foo(basic.LineReceiver):
-            def connectionMade(self):
-                self.transport.write('lalala\r\n')
-            def lineReceived(self, line):
-                self.factory.line = line
-                self.transport.loseConnection()
         factory = protocol.ClientFactory()
         factory.protocol = Foo
+        factory.d = defer.Deferred()
         factory.line = None
         internet.UNIXClient('echo.skt', factory).setServiceParent(s)
-        util.spinWhile(lambda :factory.line is None)
-        self.assertEqual(factory.line, 'lalala')
-        util.wait(defer.maybeDeferred(s.stopService))
-        util.wait(TestEcho.d)
+        factory.d.addCallback(self.assertEqual, 'lalala')
+        factory.d.addCallback(lambda x : s.stopService())
+        factory.d.addCallback(lambda x : TestEcho.d)
+        factory.d.addCallback(self._cbTestUnix, factory, s)
+        return factory.d
 
+    def _cbTestUnix(self, ignored, factory, s):
         TestEcho.d = defer.Deferred()
         factory.line = None
+        factory.d = defer.Deferred()
         s.startService()
-        util.spinWhile(lambda :factory.line is None)
-        self.assertEqual(factory.line, 'lalala')
-
-        # Cleanup the reactor
-        util.wait(defer.maybeDeferred(s.stopService))
-        util.wait(TestEcho.d)
+        factory.d.addCallback(self.assertEqual, 'lalala')
+        factory.d.addCallback(lambda x : s.stopService())
+        factory.d.addCallback(lambda x : TestEcho.d)
+        return factory.d
 
     def testVolatile(self):
         if not interfaces.IReactorUNIX(reactor, None):
@@ -676,35 +475,10 @@ class TestInternet2(unittest.TestCase):
         t.stopService()
         self.failIf(t.running)
         factory = protocol.ClientFactory()
-        l = []
-        factory.clientConnectionFailed = lambda *args: l.append(None)
+        d = defer.Deferred()
+        factory.clientConnectionFailed = lambda *args: d.callback(None)
         reactor.connectUNIX('echo.skt', factory)
-        util.spinWhile(lambda :not l)
-        self.assertEqual(l, [None])
-
-    def testTimer(self):
-        l = []
-        t = internet.TimerService(1, l.append, "hello")
-        t.startService()
-        util.spinWhile(lambda :not l, timeout=30)
-        t.stopService()
-        self.failIf(t.running)
-        self.assertEqual(l, ["hello"])
-        l.pop()
-
-        # restart the same TimerService
-        t.startService()
-        util.spinWhile(lambda :not l, timeout=30)
-
-        t.stopService()
-        self.failIf(t.running)
-        self.assertEqual(l, ["hello"])
-        l.pop()
-        t = internet.TimerService(0.01, l.append, "hello")
-        t.startService()
-        util.spinWhile(lambda :len(l) < 10, timeout=30)
-        t.stopService()
-        self.assertEqual(l, ["hello"]*10)
+        return d
 
     def testPickledTimer(self):
         target = TimerTarget()
@@ -717,49 +491,406 @@ class TestInternet2(unittest.TestCase):
         self.failIf(t.running)
 
     def testBrokenTimer(self):
-        t = internet.TimerService(1, lambda: 1 / 0)
+        d = defer.Deferred()
+        t = internet.TimerService(1, lambda: 1 // 0)
+        oldFailed = t._failed
+        def _failed(why):
+            oldFailed(why)
+            d.callback(None)
+        t._failed = _failed
         t.startService()
-        util.spinWhile(lambda :t._loop.running, timeout=30)
-        t.stopService()
-        self.assertEquals([ZeroDivisionError],
-                          [o.value.__class__ for o in log.flushErrors(ZeroDivisionError)])
+        d.addCallback(lambda x : t.stopService)
+        d.addCallback(lambda x : self.assertEqual(
+            [ZeroDivisionError],
+            [o.value.__class__ for o in self.flushLoggedErrors(ZeroDivisionError)]))
+        return d
 
-    def testEverythingThere(self):
+
+    def test_everythingThere(self):
+        """
+        L{twisted.application.internet} dynamically defines a set of
+        L{service.Service} subclasses that in general have corresponding
+        reactor.listenXXX or reactor.connectXXX calls.
+        """
         trans = 'TCP UNIX SSL UDP UNIXDatagram Multicast'.split()
         for tran in trans[:]:
-            if not getattr(interfaces, "IReactor"+tran)(reactor, None):
+            if not getattr(interfaces, "IReactor" + tran)(reactor, None):
                 trans.remove(tran)
-        if interfaces.IReactorArbitrary(reactor, None) is not None:
-            trans.insert(0, "Generic")
         for tran in trans:
             for side in 'Server Client'.split():
                 if tran == "Multicast" and side == "Client":
                     continue
-                self.assert_(hasattr(internet, tran+side))
-                method = getattr(internet, tran+side).method
+                self.assertTrue(hasattr(internet, tran + side))
+                method = getattr(internet, tran + side).method
                 prefix = {'Server': 'listen', 'Client': 'connect'}[side]
-                self.assert_(hasattr(reactor, prefix+method) or
+                self.assertTrue(hasattr(reactor, prefix + method) or
                         (prefix == "connect" and method == "UDP"))
-                o = getattr(internet, tran+side)()
+                o = getattr(internet, tran + side)()
                 self.assertEqual(service.IService(o), o)
 
 
-class TestCompat(unittest.TestCase):
+    def test_importAll(self):
+        """
+        L{twisted.application.internet} dynamically defines L{service.Service}
+        subclasses. This test ensures that the subclasses exposed by C{__all__}
+        are valid attributes of the module.
+        """
+        for cls in internet.__all__:
+            self.assertTrue(
+                hasattr(internet, cls),
+                '%s not importable from twisted.application.internet' % (cls,))
 
-    def testService(self):
-        # test old services with new application
-        s = service.MultiService()
-        c = compat.IOldApplication(s)
-        from twisted.internet.app import ApplicationService
-        svc = ApplicationService("foo", serviceParent=c)
-        self.assertEquals(c.getServiceNamed("foo"), svc)
-        self.assertEquals(s.getServiceNamed("foo").name, "foo")
-        c.removeService(svc)
-    testService.suppress = oldAppSuppressions
 
-    def testOldApplication(self):
-        from twisted.internet import app as oapp
-        application = oapp.Application("HELLO")
-        oapp.MultiService("HELLO", application)
-        compat.convert(application)
-    testOldApplication.suppress = oldAppSuppressions
+    def test_reactorParametrizationInServer(self):
+        """
+        L{internet._AbstractServer} supports a C{reactor} keyword argument
+        that can be used to parametrize the reactor used to listen for
+        connections.
+        """
+        reactor = MemoryReactor()
+
+        factory = object()
+        t = internet.TCPServer(1234, factory, reactor=reactor)
+        t.startService()
+        self.assertEqual(reactor.tcpServers.pop()[:2], (1234, factory))
+
+
+    def test_reactorParametrizationInClient(self):
+        """
+        L{internet._AbstractClient} supports a C{reactor} keyword arguments
+        that can be used to parametrize the reactor used to create new client
+        connections.
+        """
+        reactor = MemoryReactor()
+
+        factory = protocol.ClientFactory()
+        t = internet.TCPClient('127.0.0.1', 1234, factory, reactor=reactor)
+        t.startService()
+        self.assertEqual(
+            reactor.tcpClients.pop()[:3], ('127.0.0.1', 1234, factory))
+
+
+    def test_reactorParametrizationInServerMultipleStart(self):
+        """
+        Like L{test_reactorParametrizationInServer}, but stop and restart the
+        service and check that the given reactor is still used.
+        """
+        reactor = MemoryReactor()
+
+        factory = protocol.Factory()
+        t = internet.TCPServer(1234, factory, reactor=reactor)
+        t.startService()
+        self.assertEqual(reactor.tcpServers.pop()[:2], (1234, factory))
+        t.stopService()
+        t.startService()
+        self.assertEqual(reactor.tcpServers.pop()[:2], (1234, factory))
+
+
+    def test_reactorParametrizationInClientMultipleStart(self):
+        """
+        Like L{test_reactorParametrizationInClient}, but stop and restart the
+        service and check that the given reactor is still used.
+        """
+        reactor = MemoryReactor()
+
+        factory = protocol.ClientFactory()
+        t = internet.TCPClient('127.0.0.1', 1234, factory, reactor=reactor)
+        t.startService()
+        self.assertEqual(
+            reactor.tcpClients.pop()[:3], ('127.0.0.1', 1234, factory))
+        t.stopService()
+        t.startService()
+        self.assertEqual(
+            reactor.tcpClients.pop()[:3], ('127.0.0.1', 1234, factory))
+
+
+
+class TestTimerBasic(unittest.TestCase):
+
+    def testTimerRuns(self):
+        d = defer.Deferred()
+        self.t = internet.TimerService(1, d.callback, 'hello')
+        self.t.startService()
+        d.addCallback(self.assertEqual, 'hello')
+        d.addCallback(lambda x : self.t.stopService())
+        d.addCallback(lambda x : self.failIf(self.t.running))
+        return d
+
+    def tearDown(self):
+        return self.t.stopService()
+
+    def testTimerRestart(self):
+        # restart the same TimerService
+        d1 = defer.Deferred()
+        d2 = defer.Deferred()
+        work = [(d2, "bar"), (d1, "foo")]
+        def trigger():
+            d, arg = work.pop()
+            d.callback(arg)
+        self.t = internet.TimerService(1, trigger)
+        self.t.startService()
+        def onFirstResult(result):
+            self.assertEqual(result, 'foo')
+            return self.t.stopService()
+        def onFirstStop(ignored):
+            self.failIf(self.t.running)
+            self.t.startService()
+            return d2
+        def onSecondResult(result):
+            self.assertEqual(result, 'bar')
+            self.t.stopService()
+        d1.addCallback(onFirstResult)
+        d1.addCallback(onFirstStop)
+        d1.addCallback(onSecondResult)
+        return d1
+
+    def testTimerLoops(self):
+        l = []
+        def trigger(data, number, d):
+            l.append(data)
+            if len(l) == number:
+                d.callback(l)
+        d = defer.Deferred()
+        self.t = internet.TimerService(0.01, trigger, "hello", 10, d)
+        self.t.startService()
+        d.addCallback(self.assertEqual, ['hello'] * 10)
+        d.addCallback(lambda x : self.t.stopService())
+        return d
+
+
+class FakeReactor(reactors.Reactor):
+    """
+    A fake reactor with a hooked install method.
+    """
+
+    def __init__(self, install, *args, **kwargs):
+        """
+        @param install: any callable that will be used as install method.
+        @type install: C{callable}
+        """
+        reactors.Reactor.__init__(self, *args, **kwargs)
+        self.install = install
+
+
+
+class PluggableReactorTestCase(TwistedModulesMixin, unittest.TestCase):
+    """
+    Tests for the reactor discovery/inspection APIs.
+    """
+
+    def setUp(self):
+        """
+        Override the L{reactors.getPlugins} function, normally bound to
+        L{twisted.plugin.getPlugins}, in order to control which
+        L{IReactorInstaller} plugins are seen as available.
+
+        C{self.pluginResults} can be customized and will be used as the
+        result of calls to C{reactors.getPlugins}.
+        """
+        self.pluginCalls = []
+        self.pluginResults = []
+        self.originalFunction = reactors.getPlugins
+        reactors.getPlugins = self._getPlugins
+
+
+    def tearDown(self):
+        """
+        Restore the original L{reactors.getPlugins}.
+        """
+        reactors.getPlugins = self.originalFunction
+
+
+    def _getPlugins(self, interface, package=None):
+        """
+        Stand-in for the real getPlugins method which records its arguments
+        and returns a fixed result.
+        """
+        self.pluginCalls.append((interface, package))
+        return list(self.pluginResults)
+
+
+    def test_getPluginReactorTypes(self):
+        """
+        Test that reactor plugins are returned from L{getReactorTypes}
+        """
+        name = 'fakereactortest'
+        package = __name__ + '.fakereactor'
+        description = 'description'
+        self.pluginResults = [reactors.Reactor(name, package, description)]
+        reactorTypes = reactors.getReactorTypes()
+
+        self.assertEqual(
+            self.pluginCalls,
+            [(reactors.IReactorInstaller, None)])
+
+        for r in reactorTypes:
+            if r.shortName == name:
+                self.assertEqual(r.description, description)
+                break
+        else:
+            self.fail("Reactor plugin not present in getReactorTypes() result")
+
+
+    def test_reactorInstallation(self):
+        """
+        Test that L{reactors.Reactor.install} loads the correct module and
+        calls its install attribute.
+        """
+        installed = []
+        def install():
+            installed.append(True)
+        fakeReactor = FakeReactor(install,
+                                  'fakereactortest', __name__, 'described')
+        modules = {'fakereactortest': fakeReactor}
+        self.replaceSysModules(modules)
+        installer = reactors.Reactor('fakereactor', 'fakereactortest', 'described')
+        installer.install()
+        self.assertEqual(installed, [True])
+
+
+    def test_installReactor(self):
+        """
+        Test that the L{reactors.installReactor} function correctly installs
+        the specified reactor.
+        """
+        installed = []
+        def install():
+            installed.append(True)
+        name = 'fakereactortest'
+        package = __name__
+        description = 'description'
+        self.pluginResults = [FakeReactor(install, name, package, description)]
+        reactors.installReactor(name)
+        self.assertEqual(installed, [True])
+
+
+    def test_installReactorReturnsReactor(self):
+        """
+        Test that the L{reactors.installReactor} function correctly returns
+        the installed reactor.
+        """
+        reactor = object()
+        def install():
+            from twisted import internet
+            self.patch(internet, 'reactor', reactor)
+        name = 'fakereactortest'
+        package = __name__
+        description = 'description'
+        self.pluginResults = [FakeReactor(install, name, package, description)]
+        installed = reactors.installReactor(name)
+        self.assertIdentical(installed, reactor)
+
+
+    def test_installReactorMultiplePlugins(self):
+        """
+        Test that the L{reactors.installReactor} function correctly installs
+        the specified reactor when there are multiple reactor plugins.
+        """
+        installed = []
+        def install():
+            installed.append(True)
+        name = 'fakereactortest'
+        package = __name__
+        description = 'description'
+        fakeReactor = FakeReactor(install, name, package, description)
+        otherReactor = FakeReactor(lambda: None,
+                                   "otherreactor", package, description)
+        self.pluginResults = [otherReactor, fakeReactor]
+        reactors.installReactor(name)
+        self.assertEqual(installed, [True])
+
+
+    def test_installNonExistentReactor(self):
+        """
+        Test that L{reactors.installReactor} raises L{reactors.NoSuchReactor}
+        when asked to install a reactor which it cannot find.
+        """
+        self.pluginResults = []
+        self.assertRaises(
+            reactors.NoSuchReactor,
+            reactors.installReactor, 'somereactor')
+
+
+    def test_installNotAvailableReactor(self):
+        """
+        Test that L{reactors.installReactor} raises an exception when asked to
+        install a reactor which doesn't work in this environment.
+        """
+        def install():
+            raise ImportError("Missing foo bar")
+        name = 'fakereactortest'
+        package = __name__
+        description = 'description'
+        self.pluginResults = [FakeReactor(install, name, package, description)]
+        self.assertRaises(ImportError, reactors.installReactor, name)
+
+
+    def test_reactorSelectionMixin(self):
+        """
+        Test that the reactor selected is installed as soon as possible, ie
+        when the option is parsed.
+        """
+        executed = []
+        INSTALL_EVENT = 'reactor installed'
+        SUBCOMMAND_EVENT = 'subcommands loaded'
+
+        class ReactorSelectionOptions(usage.Options, app.ReactorSelectionMixin):
+            def subCommands(self):
+                executed.append(SUBCOMMAND_EVENT)
+                return [('subcommand', None, lambda: self, 'test subcommand')]
+            subCommands = property(subCommands)
+
+        def install():
+            executed.append(INSTALL_EVENT)
+        self.pluginResults = [
+            FakeReactor(install, 'fakereactortest', __name__, 'described')
+        ]
+
+        options = ReactorSelectionOptions()
+        options.parseOptions(['--reactor', 'fakereactortest', 'subcommand'])
+        self.assertEqual(executed[0], INSTALL_EVENT)
+        self.assertEqual(executed.count(INSTALL_EVENT), 1)
+        self.assertEqual(options["reactor"], "fakereactortest")
+
+
+    def test_reactorSelectionMixinNonExistent(self):
+        """
+        Test that the usage mixin exits when trying to use a non existent
+        reactor (the name not matching to any reactor), giving an error
+        message.
+        """
+        class ReactorSelectionOptions(usage.Options, app.ReactorSelectionMixin):
+            pass
+        self.pluginResults = []
+
+        options = ReactorSelectionOptions()
+        options.messageOutput = StringIO()
+        e = self.assertRaises(usage.UsageError, options.parseOptions,
+                              ['--reactor', 'fakereactortest', 'subcommand'])
+        self.assertIn("fakereactortest", e.args[0])
+        self.assertIn("help-reactors", e.args[0])
+
+
+    def test_reactorSelectionMixinNotAvailable(self):
+        """
+        Test that the usage mixin exits when trying to use a reactor not
+        available (the reactor raises an error at installation), giving an
+        error message.
+        """
+        class ReactorSelectionOptions(usage.Options, app.ReactorSelectionMixin):
+            pass
+        message = "Missing foo bar"
+        def install():
+            raise ImportError(message)
+
+        name = 'fakereactortest'
+        package = __name__
+        description = 'description'
+        self.pluginResults = [FakeReactor(install, name, package, description)]
+
+        options = ReactorSelectionOptions()
+        options.messageOutput = StringIO()
+        e =  self.assertRaises(usage.UsageError, options.parseOptions,
+                               ['--reactor', 'fakereactortest', 'subcommand'])
+        self.assertIn(message, e.args[0])
+        self.assertIn("help-reactors", e.args[0])

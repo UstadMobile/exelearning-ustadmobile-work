@@ -1,59 +1,68 @@
 # -*- test-case-name: twisted.test.test_ssl -*-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
+"""
+This module implements Transport Layer Security (TLS) support for Twisted.  It
+requires U{PyOpenSSL <https://pypi.python.org/pypi/pyOpenSSL>}.
 
-"""SSL transport. Requires PyOpenSSL (http://pyopenssl.sf.net).
+If you wish to establish a TLS connection, please use one of the following
+APIs:
 
-SSL connections require a ContextFactory so they can create SSL contexts.
-End users should only use the ContextFactory classes directly - for SSL
-connections use the reactor.connectSSL/listenSSL and so on, as documented
-in IReactorSSL.
+    - SSL endpoints for L{servers
+      <twisted.internet.endpoints.SSL4ServerEndpoint>} and L{clients
+      <twisted.internet.endpoints.SSL4ClientEndpoint>}
 
-All server context factories should inherit from ContextFactory, and all
-client context factories should inherit from ClientContextFactory. At the
-moment this is not enforced, but in the future it might be.
+    - L{startTLS <twisted.internet.interfaces.ITLSTransport.startTLS>}
 
-API Stability: stable
+    - L{connectSSL <twisted.internet.interfaces.IReactorSSL.connectSSL>}
 
-Future Plans:
-    - split module so reactor-specific classes are in a separate module
-    - support for switching TCP into SSL
-    - more options
+    - L{listenSSL <twisted.internet.interfaces.IReactorSSL.listenSSL>}
 
-Maintainer: U{Itamar Shtull-Trauring<mailto:twisted@itamarst.org>}
+These APIs all require a C{contextFactory} argument that specifies their
+security properties, such as certificate, private key, certificate authorities
+to verify the peer, allowed TLS protocol versions, cipher suites, and so on.
+The recommended value for this argument is a L{CertificateOptions} instance;
+see its documentation for an explanation of the available options.
+
+The C{contextFactory} name is a bit of an anachronism now, as context factories
+have been replaced with "connection creators", but these objects serve the same
+role.
+
+Be warned that implementing your own connection creator (i.e.: value for the
+C{contextFactory}) is both difficult and dangerous; the Twisted team has worked
+hard to make L{CertificateOptions}' API comprehensible and unsurprising, and
+the Twisted team is actively maintaining it to ensure that it becomes more
+secure over time.
+
+If you are really absolutely sure that you want to take on the risk of
+implementing your own connection creator based on the pyOpenSSL API, see the
+L{server connection creator
+<twisted.internet.interfaces.IOpenSSLServerConnectionCreator>} and L{client
+connection creator
+<twisted.internet.interfaces.IOpenSSLServerConnectionCreator>} interfaces.
+
+Developers using Twisted, please ignore the L{Port}, L{Connector}, and
+L{Client} classes defined here, as these are details of certain reactors' TLS
+implementations, exposed by accident (and remaining here only for compatibility
+reasons).  If you wish to establish a TLS connection, please use one of the
+APIs listed above.
+
+@note: "SSL" (Secure Sockets Layer) is an antiquated synonym for "TLS"
+    (Transport Layer Security).  You may see these terms used interchangeably
+    throughout the documentation.
 """
 
-# If something goes wrong, most notably an OpenSSL import failure,
-# sys.modules['twisted.internet.ssl'] will be bound to a partially
-# initialized module object.  This is wacko, but we will take advantage
-# of it to publish whether or not SSL is available.
-# See the end of this module for the other half of this solution.
-
-# The correct idiom to import this module is thus:
-
-# try:
-#    from twisted.internet import ssl
-# except ImportError:
-#    # happens the first time the interpreter tries to import it
-#    ssl = None
-# if ssl and not ssl.supported:
-#    # happens second and later times
-#    ssl = None
-
-supported = False
+from __future__ import division, absolute_import
 
 # System imports
 from OpenSSL import SSL
-import socket
-from zope.interface import implements, implementsOnly, implementedBy
+supported = True
 
-# sibling imports
-import tcp, interfaces
+from zope.interface import implementer, implementer_only, implementedBy
 
 # Twisted imports
-from twisted.python import log, components
-from twisted.internet import base, address
+from twisted.internet import tcp, interfaces
 
 
 class ContextFactory:
@@ -67,9 +76,18 @@ class ContextFactory:
 
 
 class DefaultOpenSSLContextFactory(ContextFactory):
+    """
+    L{DefaultOpenSSLContextFactory} is a factory for server-side SSL context
+    objects.  These objects define certain parameters related to SSL
+    handshakes and the subsequent connection.
+
+    @ivar _contextFactory: A callable which will be used to create new
+        context objects.  This is typically L{SSL.Context}.
+    """
+    _context = None
 
     def __init__(self, privateKeyFileName, certificateFileName,
-                 sslmethod=SSL.SSLv23_METHOD):
+                 sslmethod=SSL.SSLv23_METHOD, _contextFactory=SSL.Context):
         """
         @param privateKeyFileName: Name of a file containing a private key
         @param certificateFileName: Name of a file containing a certificate
@@ -78,25 +96,38 @@ class DefaultOpenSSLContextFactory(ContextFactory):
         self.privateKeyFileName = privateKeyFileName
         self.certificateFileName = certificateFileName
         self.sslmethod = sslmethod
+        self._contextFactory = _contextFactory
+
+        # Create a context object right now.  This is to force validation of
+        # the given parameters so that errors are detected earlier rather
+        # than later.
         self.cacheContext()
 
+
     def cacheContext(self):
-        ctx = SSL.Context(self.sslmethod)
-        ctx.use_certificate_file(self.certificateFileName)
-        ctx.use_privatekey_file(self.privateKeyFileName)
-        self._context = ctx
+        if self._context is None:
+            ctx = self._contextFactory(self.sslmethod)
+            # Disallow SSLv2!  It's insecure!  SSLv3 has been around since
+            # 1996.  It's time to move on.
+            ctx.set_options(SSL.OP_NO_SSLv2)
+            ctx.use_certificate_file(self.certificateFileName)
+            ctx.use_privatekey_file(self.privateKeyFileName)
+            self._context = ctx
+
 
     def __getstate__(self):
         d = self.__dict__.copy()
         del d['_context']
         return d
 
+
     def __setstate__(self, state):
         self.__dict__ = state
-        self.cacheContext()
+
 
     def getContext(self):
-        """Create an SSL context.
+        """
+        Return an SSL context.
         """
         return self._context
 
@@ -105,97 +136,108 @@ class ClientContextFactory:
     """A context factory for SSL clients."""
 
     isClient = 1
-    method = SSL.SSLv3_METHOD
+
+    # SSLv23_METHOD allows SSLv2, SSLv3, and TLSv1.  We disable SSLv2 below,
+    # though.
+    method = SSL.SSLv23_METHOD
+
+    _contextFactory = SSL.Context
 
     def getContext(self):
-        return SSL.Context(self.method)
+        ctx = self._contextFactory(self.method)
+        # See comment in DefaultOpenSSLContextFactory about SSLv2.
+        ctx.set_options(SSL.OP_NO_SSLv2)
+        return ctx
 
 
+
+@implementer_only(interfaces.ISSLTransport,
+                 *[i for i in implementedBy(tcp.Client)
+                   if i != interfaces.ITLSTransport])
 class Client(tcp.Client):
-    """I am an SSL client."""
+    """
+    I am an SSL client.
+    """
 
-    implementsOnly(interfaces.ISSLTransport,
-                   *[i for i in implementedBy(tcp.Client) if i != interfaces.ITLSTransport])
-    
     def __init__(self, host, port, bindAddress, ctxFactory, connector, reactor=None):
         # tcp.Client.__init__ depends on self.ctxFactory being set
         self.ctxFactory = ctxFactory
         tcp.Client.__init__(self, host, port, bindAddress, connector, reactor)
-
-    def getHost(self):
-        """Returns the address from which I am connecting."""
-        h, p = self.socket.getsockname()
-        return address.IPv4Address('TCP', h, p, 'SSL')
-
-    def getPeer(self):
-        """Returns the address that I am connected."""
-        return address.IPv4Address('TCP', self.addr[0], self.addr[1], 'SSL')
 
     def _connectDone(self):
         self.startTLS(self.ctxFactory)
         self.startWriting()
         tcp.Client._connectDone(self)
 
-components.backwardsCompatImplements(Client)
 
 
+@implementer(interfaces.ISSLTransport)
 class Server(tcp.Server):
-    """I am an SSL server.
+    """
+    I am an SSL server.
     """
 
-    implements(interfaces.ISSLTransport)
-    
-    def getHost(self):
-        """Return server's address."""
-        h, p = self.socket.getsockname()
-        return address.IPv4Address('TCP', h, p, 'SSL')
+    def __init__(self, *args, **kwargs):
+        tcp.Server.__init__(self, *args, **kwargs)
+        self.startTLS(self.server.ctxFactory)
 
-    def getPeer(self):
-        """Return address of peer."""
-        h, p = self.client
-        return address.IPv4Address('TCP', h, p, 'SSL')
-
-components.backwardsCompatImplements(Server)
 
 
 class Port(tcp.Port):
-    """I am an SSL port."""
-    _socketShutdownMethod = 'sock_shutdown'
-    
+    """
+    I am an SSL port.
+    """
     transport = Server
+
+    _type = 'TLS'
 
     def __init__(self, port, factory, ctxFactory, backlog=50, interface='', reactor=None):
         tcp.Port.__init__(self, port, factory, backlog, interface, reactor)
         self.ctxFactory = ctxFactory
 
-    def createInternetSocket(self):
-        """(internal) create an SSL socket
+
+    def _getLogPrefix(self, factory):
         """
-        sock = tcp.Port.createInternetSocket(self)
-        return SSL.Connection(self.ctxFactory.getContext(), sock)
-
-    def _preMakeConnection(self, transport):
-        # *Don't* call startTLS here
-        # The transport already has the SSL.Connection object from above
-        transport._startTLS()
-        return tcp.Port._preMakeConnection(self, transport)
+        Override the normal prefix to include an annotation indicating this is a
+        port for TLS connections.
+        """
+        return tcp.Port._getLogPrefix(self, factory) + ' (TLS)'
 
 
-class Connector(base.BaseConnector):
+
+class Connector(tcp.Connector):
     def __init__(self, host, port, factory, contextFactory, timeout, bindAddress, reactor=None):
-        self.host = host
-        self.port = port
-        self.bindAddress = bindAddress
         self.contextFactory = contextFactory
-        base.BaseConnector.__init__(self, factory, timeout, reactor)
+        tcp.Connector.__init__(self, host, port, factory, timeout, bindAddress, reactor)
+
+        # Force some parameter checking in pyOpenSSL.  It's better to fail now
+        # than after we've set up the transport.
+        contextFactory.getContext()
+
 
     def _makeTransport(self):
         return Client(self.host, self.port, self.bindAddress, self.contextFactory, self, self.reactor)
 
-    def getDestination(self):
-        return address.IPv4Address('TCP', self.host, self.port, 'SSL')
- 
 
-__all__ = ["ContextFactory", "DefaultOpenSSLContextFactory", "ClientContextFactory"]
 
-supported = True
+from twisted.internet._sslverify import (
+    KeyPair, DistinguishedName, DN, Certificate,
+    CertificateRequest, PrivateCertificate,
+    OpenSSLAcceptableCiphers as AcceptableCiphers,
+    OpenSSLCertificateOptions as CertificateOptions,
+    OpenSSLDiffieHellmanParameters as DiffieHellmanParameters,
+    platformTrust, OpenSSLDefaultPaths, VerificationError,
+    optionsForClientTLS,
+)
+
+__all__ = [
+    "ContextFactory", "DefaultOpenSSLContextFactory", "ClientContextFactory",
+
+    'DistinguishedName', 'DN',
+    'Certificate', 'CertificateRequest', 'PrivateCertificate',
+    'KeyPair',
+    'AcceptableCiphers', 'CertificateOptions', 'DiffieHellmanParameters',
+    'platformTrust', 'OpenSSLDefaultPaths',
+
+    'VerificationError', 'optionsForClientTLS',
+]

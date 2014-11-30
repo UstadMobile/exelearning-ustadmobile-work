@@ -5,25 +5,26 @@
 """I deal with static resources.
 """
 
-from __future__ import nested_scopes
-
 # System Imports
-import os, stat, string
+import os, string, time
 import cStringIO
 import traceback
 import warnings
-import types
 StringIO = cStringIO
 del cStringIO
-import urllib
+from zope.interface import implements
 
-# Sibling Imports
-from twisted.web import error
+try:
+    from twisted.web.resource import NoResource, ForbiddenResource
+except ImportError:
+    from twisted.web.error import NoResource, ForbiddenResource
 from twisted.web.util import redirectTo
 
-# Twisted Imports
-from twisted.protocols import http
-from twisted.python import threadable, log, components, failure, filepath
+try:
+    from twisted.web import http
+except ImportError:
+    from twisted.protocols import http
+from twisted.python import threadable, log, components, filepath
 from twisted.internet import abstract
 from twisted.spread import pb
 from twisted.python.util import InsensitiveDict
@@ -32,33 +33,47 @@ from twisted.python.runtime import platformType
 from nevow import appserver, dirlist, inevow, rend
 
 
-dangerousPathError = error.NoResource("Invalid request URL.")
+dangerousPathError = NoResource("Invalid request URL.")
 
 def isDangerous(path):
     return path == '..' or '/' in path or os.sep in path
 
 class Data:
-    __implements__ = inevow.IResource
-    
     """
     This is a static, in-memory resource.
     """
-    
-    def __init__(self, data, type):
+    implements(inevow.IResource)
+
+    def __init__(self, data, type, expires=None):
         self.data = data
         self.type = type
-        
+        self.expires = expires
+
+
+    def time(self):
+        """
+        Return the current time as a float.
+
+        The default implementation simply uses L{time.time}.  This is mainly
+        provided as a hook for tests to override.
+        """
+        return time.time()
+
+
     def locateChild(self, ctx, segments):
         return appserver.NotFound
+
 
     def renderHTTP(self, ctx):
         request = inevow.IRequest(ctx)
         request.setHeader("content-type", self.type)
         request.setHeader("content-length", str(len(self.data)))
+        if self.expires is not None:
+            request.setHeader("expires",
+                              http.datetimeToString(self.time() + self.expires))
         if request.method == "HEAD":
             return ''
         return self.data
-
 
 def staticHTML(someString):
     return Data(someString, 'text/html')
@@ -114,6 +129,8 @@ def loadMimeTypes(mimetype_locations=['/etc/mime.types']):
             '.xul':   'application/vnd.mozilla.xul+xml',
             '.py':    'text/plain',
             '.patch': 'text/plain',
+            '.pjpeg': 'image/pjpeg',
+            '.tac':   'text/x-python',
         }
     )
     # Users can override these mime-types by loading them out configuration
@@ -153,7 +170,7 @@ class File:
     return the contents of /tmp/foo/bar.html .
     """
 
-    __implements__ = inevow.IResource
+    implements(inevow.IResource)
 
     contentTypes = loadMimeTypes()
 
@@ -286,7 +303,7 @@ class File:
         except IOError, e:
             import errno
             if e[0] == errno.EACCES:
-                return error.ForbiddenResource().render(request)
+                return ForbiddenResource().render(request)
             else:
                 raise
 
@@ -307,7 +324,7 @@ class File:
                 if end:
                     end = int(end)
                 else:
-                    end = fsize
+                    end = fsize-1
                 request.setResponseCode(http.PARTIAL_CONTENT)
                 request.setHeader('content-range',"bytes %s-%s/%s" % (
                     str(start), str(end), str(fsize)))
@@ -396,7 +413,7 @@ threadable.synchronize(FileTransfer)
 """
 
 class ASISProcessor:
-    __implements__ = inevow.IResource
+    implements(inevow.IResource)
     
     def __init__(self, path, registry=None):
         self.path = path
@@ -408,4 +425,4 @@ class ASISProcessor:
         return File(self.path, registry=self.registry)
 
     def locateChild(self, ctx, segments):
-        return NotFound
+        return appserver.NotFound

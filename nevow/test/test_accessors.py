@@ -6,9 +6,9 @@ from nevow.accessors import convertToData, NoAccessor
 from nevow import context
 from nevow import inevow
 from nevow.stan import directive
-from nevow.tags import invisible
+from nevow.tags import invisible, slot
+from nevow.flat import precompile
 from nevow import rend
-from nevow import compy
 from nevow.testutil import TestCase
 
 
@@ -51,6 +51,8 @@ class TestBasics(Base):
 thefoo = "foo"
 
 class Factory(rend.DataFactory):
+    original = None
+    
     def data_foo(self, context, data):
         return thefoo
 
@@ -90,6 +92,9 @@ class TestThroughDirective(Base):
             directive('factory'), directive('0'), directive('factory')
         )
         self.assertEquals(f, convertToData(directive('0'), ctx))
+        
+    def test_missing(self):
+        self.assertRaises(rend.DataNotFoundError, self.makeContext, directive('missing'))
 
 
 class APage(rend.Page):
@@ -116,3 +121,19 @@ class TestPageData(Base):
         # IContainer on the Page should delegate to IContainer(self.original) if no data_ method
         self.assertEquals('world', convertToData(directive('hello'), ctx))
 
+
+
+class SlotAccessorTestCase(TestCase):
+    def _accessorTest(self, obj):
+        ctx = context.WovenContext()
+        ctx.fillSlots('slotname', 'foo')
+        data = inevow.IGettable(obj).get(ctx)
+        self.assertEqual(data, 'foo')
+
+
+    def test_slotAccessor(self):
+        return self._accessorTest(slot('slotname'))
+
+
+    def test_precompiledSlotAccessor(self):
+        return self._accessorTest(precompile(slot('slotname'))[0])

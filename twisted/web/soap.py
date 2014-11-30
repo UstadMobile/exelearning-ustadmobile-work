@@ -1,15 +1,14 @@
 # -*- test-case-name: twisted.web.test.test_soap -*-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
-"""SOAP support for twisted.web.
+"""
+SOAP support for twisted.web.
 
 Requires SOAPpy 0.10.1 or later.
 
-API Stability: unstable
-
-Maintainer: U{Itamar Shtull-Trauring<mailto:twisted@itamarst.org}
+Maintainer: Itamar Shtull-Trauring
 
 Future plans:
 SOAPContext support of some kind.
@@ -22,7 +21,6 @@ import SOAPpy
 # twisted imports
 from twisted.web import server, resource, client
 from twisted.internet import defer
-from twisted.python import log, failure
 
 
 class SOAPPublisher(resource.Resource):
@@ -34,7 +32,7 @@ class SOAPPublisher(resource.Resource):
     """
 
     isLeaf = 1
-    
+
     # override to change the encoding used for responses
     encoding = "UTF-8"
 
@@ -42,17 +40,12 @@ class SOAPPublisher(resource.Resource):
         """Lookup published SOAP function.
 
         Override in subclasses. Default behaviour - publish methods
-        starting with soap_, if they have true attribute useKeywords
-        they are expected to accept keywords.
-        
-        @return: tuple (callable, useKeywords), or (None, None) if not found.
+        starting with soap_.
+
+        @return: callable or None if not found.
         """
-        function = getattr(self, "soap_%s" % functionName, None)
-        if function:
-            return function, getattr(function, "useKeywords", False)
-        else:
-            return None
-    
+        return getattr(self, "soap_%s" % functionName, None)
+
     def render(self, request):
         """Handle a SOAP command."""
         data = request.content.read()
@@ -67,8 +60,8 @@ class SOAPPublisher(resource.Resource):
         if callable(kwargs):
             kwargs = kwargs()
 
-        function, useKeywords = self.lookupFunction(methodName)
-        
+        function = self.lookupFunction(methodName)
+
         if not function:
             self._methodNotFound(request, methodName)
             return server.NOT_DONE_YET
@@ -86,11 +79,11 @@ class SOAPPublisher(resource.Resource):
         return server.NOT_DONE_YET
 
     def _methodNotFound(self, request, methodName):
-        response = SOAPpy.buildSOAP(SOAPpy.faultType("%s:Client" % SOAPpy.NS.ENV_T,
-                                                 "Method %s not found" % methodName),
-                                  encoding=self.encoding)
+        response = SOAPpy.buildSOAP(SOAPpy.faultType("%s:Client" %
+            SOAPpy.NS.ENV_T, "Method %s not found" % methodName),
+            encoding=self.encoding)
         self._sendResponse(request, response, status=500)
-    
+
     def _gotResult(self, result, request, methodName):
         if not isinstance(result, SOAPpy.voidType):
             result = {"Result": result}
@@ -103,7 +96,8 @@ class SOAPPublisher(resource.Resource):
         if isinstance(e, SOAPpy.faultType):
             fault = e
         else:
-            fault = SOAPpy.faultType("%s:Server" % SOAPpy.NS.ENV_T, "Method %s failed." % methodName)
+            fault = SOAPpy.faultType("%s:Server" % SOAPpy.NS.ENV_T,
+                "Method %s failed." % methodName)
         response = SOAPpy.buildSOAP(fault, encoding=self.encoding)
         self._sendResponse(request, response, status=500)
 
@@ -149,7 +143,7 @@ class Proxy:
             return result[0]
         else:
             return result
-        
+
     def callRemote(self, method, *args, **kwargs):
         payload = SOAPpy.buildSOAP(args=args, kw=kwargs, method=method,
                                    header=self.header, namespace=self.namespace)
@@ -157,3 +151,4 @@ class Proxy:
                               headers={'content-type': 'text/xml',
                                        'SOAPAction': method}
                               ).addCallback(self._cbGotResult)
+

@@ -1,4 +1,4 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 """Implement standard (and unused) TCP protocols.
@@ -12,7 +12,6 @@ from zope.interface import implements
 
 # twisted import
 from twisted.internet import protocol, interfaces
-from twisted.python import components
 
 
 class Echo(protocol.Protocol):
@@ -47,8 +46,6 @@ class Chargen(protocol.Protocol):
 
     def stopProducing(self):
         pass
-
-components.backwardsCompatImplements(Chargen)
 
 
 class QOTD(protocol.Protocol):

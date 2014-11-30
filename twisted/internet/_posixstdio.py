@@ -1,18 +1,16 @@
+# -*- test-case-name: twisted.test.test_stdio -*-
 
 """Standard input/out/err support.
 
-API Stability: unstable (pending deprecation in favor of a reactor-based API)
-
-Future Plans:
+Future Plans::
 
     support for stderr, perhaps
     Rewrite to use the reactor instead of an ad-hoc mechanism for connecting
         protocols to transport.
 
-Maintainer: U{James Y Knight <mailto:foom@fuhm.net>}
+Maintainer: James Y Knight
 """
 
-import warnings
 from zope.interface import implements
 
 from twisted.internet import process, error, interfaces
@@ -24,23 +22,27 @@ class PipeAddress(object):
 
 
 class StandardIO(object):
-    implements(interfaces.ITransport, interfaces.IProducer, interfaces.IConsumer, interfaces.IHalfCloseableDescriptor)
+    implements(interfaces.ITransport, interfaces.IProducer,
+               interfaces.IConsumer, interfaces.IHalfCloseableDescriptor)
+
     _reader = None
     _writer = None
     disconnected = False
     disconnecting = False
 
-    def __init__(self, proto, stdin=0, stdout=1):
-        from twisted.internet import reactor
+    def __init__(self, proto, stdin=0, stdout=1, reactor=None):
+        if reactor is None:
+            from twisted.internet import reactor
         self.protocol = proto
 
-        self._reader=process.ProcessReader(reactor, self, 'read', stdin)
+        self._writer = process.ProcessWriter(reactor, self, 'write', stdout)
+        self._reader = process.ProcessReader(reactor, self, 'read', stdin)
         self._reader.startReading()
-        self._writer=process.ProcessWriter(reactor, self, 'write', stdout)
-        self._writer.startReading()
         self.protocol.makeConnection(self)
 
     # ITransport
+
+    # XXX Actually, see #3597.
     def loseWriteConnection(self):
         if self._writer is not None:
             self._writer.loseConnection()
@@ -155,13 +157,6 @@ class StandardIO(object):
     def resumeProducing(self):
         if self._reader is not None:
             self._reader.resumeProducing()
-
-    # Stupid compatibility:
-    def closeStdin(self):
-        """Compatibility only, don't use. Same as loseWriteConnection."""
-        warnings.warn("This function is deprecated, use loseWriteConnection instead.",
-                      category=DeprecationWarning, stacklevel=2)
-        self.loseWriteConnection()
 
     def stopReading(self):
         """Compatibility only, don't use. Call pauseProducing."""

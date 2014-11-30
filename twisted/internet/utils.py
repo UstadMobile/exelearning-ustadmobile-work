@@ -1,18 +1,25 @@
 # -*- test-case-name: twisted.test.test_iutils -*-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-"""Utility methods."""
+"""
+Utility methods.
+"""
+
+from __future__ import division, absolute_import
 
 import sys, warnings
+from functools import wraps
 
 from twisted.internet import protocol, defer
-from twisted.python import failure, util as tputil
+from twisted.python import failure
+from twisted.python.compat import _PY3, reraise
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+if not _PY3:
+    try:
+        import cStringIO as StringIO
+    except ImportError:
+        import StringIO
 
 def _callProtocolWithDeferred(protocol, executable, args, env, path, reactor=None):
     if reactor is None:
@@ -24,7 +31,42 @@ def _callProtocolWithDeferred(protocol, executable, args, env, path, reactor=Non
     return d
 
 
+
+class _UnexpectedErrorOutput(IOError):
+    """
+    Standard error data was received where it was not expected.  This is a
+    subclass of L{IOError} to preserve backward compatibility with the previous
+    error behavior of L{getProcessOutput}.
+
+    @ivar processEnded: A L{Deferred} which will fire when the process which
+        produced the data on stderr has ended (exited and all file descriptors
+        closed).
+    """
+
+    def __init__(self, text, processEnded):
+        IOError.__init__(self, "got stderr: %r" % (text,))
+        self.processEnded = processEnded
+
+
+
 class _BackRelay(protocol.ProcessProtocol):
+    """
+    Trivial protocol for communicating with a process and turning its output
+    into the result of a L{Deferred}.
+
+    @ivar deferred: A L{Deferred} which will be called back with all of stdout
+        and, if C{errortoo} is true, all of stderr as well (mixed together in
+        one string).  If C{errortoo} is false and any bytes are received over
+        stderr, this will fire with an L{_UnexpectedErrorOutput} instance and
+        the attribute will be set to C{None}.
+
+    @ivar onProcessEnded: If C{errortoo} is false and bytes are received over
+        stderr, this attribute will refer to a L{Deferred} which will be called
+        back when the process ends.  This C{Deferred} is also associated with
+        the L{_UnexpectedErrorOutput} which C{deferred} fires with earlier in
+        this case so that users can determine when the process has actually
+        ended, in addition to knowing when bytes have been received via stderr.
+    """
 
     def __init__(self, deferred, errortoo=0):
         self.deferred = deferred
@@ -36,7 +78,9 @@ class _BackRelay(protocol.ProcessProtocol):
 
     def errReceivedIsBad(self, text):
         if self.deferred is not None:
-            self.deferred.errback(failure.Failure(IOError("got stderr: %r" % text)))
+            self.onProcessEnded = defer.Deferred()
+            err = _UnexpectedErrorOutput(text, self.onProcessEnded)
+            self.deferred.errback(failure.Failure(err))
             self.deferred = None
             self.transport.loseConnection()
 
@@ -49,17 +93,21 @@ class _BackRelay(protocol.ProcessProtocol):
     def processEnded(self, reason):
         if self.deferred is not None:
             self.deferred.callback(self.s.getvalue())
+        elif self.onProcessEnded is not None:
+            self.onProcessEnded.errback(reason)
 
 
-def getProcessOutput(executable, args=(), env={}, path='.', reactor=None,
+
+def getProcessOutput(executable, args=(), env={}, path=None, reactor=None,
                      errortoo=0):
-    """Spawn a process and return its output as a deferred returning a string.
+    """
+    Spawn a process and return its output as a deferred returning a string.
 
     @param executable: The file name to run and get the output of - the
                        full path should be used.
 
     @param args: the command line arguments to pass to the process; a
-                 sequence of strings. The first string should *NOT* be the
+                 sequence of strings. The first string should B{NOT} be the
                  executable's name.
 
     @param env: the environment variables to pass to the processs; a
@@ -69,9 +117,14 @@ def getProcessOutput(executable, args=(), env={}, path='.', reactor=None,
                  current directory.
 
     @param reactor: the reactor to use - defaults to the default reactor
-    @param errortoo: if 1, capture stderr too
+
+    @param errortoo: If true, include stderr in the result.  If false, if
+        stderr is received the returned L{Deferred} will errback with an
+        L{IOError} instance with a C{processEnded} attribute.  The
+        C{processEnded} attribute refers to a L{Deferred} which fires when the
+        executed process ends.
     """
-    return _callProtocolWithDeferred(lambda d: 
+    return _callProtocolWithDeferred(lambda d:
                                         _BackRelay(d, errortoo=errortoo),
                                      executable, args, env, path,
                                      reactor)
@@ -86,7 +139,7 @@ class _ValueGetter(protocol.ProcessProtocol):
         self.deferred.callback(reason.value.exitCode)
 
 
-def getProcessValue(executable, args=(), env={}, path='.', reactor=None):
+def getProcessValue(executable, args=(), env={}, path=None, reactor=None):
     """Spawn a process and return its exit code as a Deferred."""
     return _callProtocolWithDeferred(_ValueGetter, executable, args, env, path,
                                     reactor)
@@ -100,7 +153,7 @@ class _EverythingGetter(protocol.ProcessProtocol):
         self.errBuf = StringIO.StringIO()
         self.outReceived = self.outBuf.write
         self.errReceived = self.errBuf.write
-    
+
     def processEnded(self, reason):
         out = self.outBuf.getvalue()
         err = self.errBuf.getvalue()
@@ -111,7 +164,8 @@ class _EverythingGetter(protocol.ProcessProtocol):
         else:
             self.deferred.callback((out, err, code))
 
-def getProcessOutputAndValue(executable, args=(), env={}, path='.', 
+
+def getProcessOutputAndValue(executable, args=(), env={}, path=None,
                              reactor=None):
     """Spawn a process and returns a Deferred that will be called back with
     its output (from stdout and stderr) and it's exit code as (out, err, code)
@@ -120,6 +174,7 @@ def getProcessOutputAndValue(executable, args=(), env={}, path='.',
     """
     return _callProtocolWithDeferred(_EverythingGetter, executable, args, env, path,
                                     reactor)
+
 
 def _resetWarningFilters(passthrough, addedFilters):
     for f in addedFilters:
@@ -145,7 +200,7 @@ def runWithWarningsSuppressed(suppressedWarnings, f, *a, **kw):
     except:
         exc_info = sys.exc_info()
         _resetWarningFilters(None, addedFilters)
-        raise exc_info[0], exc_info[1], exc_info[2]
+        reraise(exc_info[1], exc_info[2])
     else:
         if isinstance(result, defer.Deferred):
             result.addBoth(_resetWarningFilters, addedFilters)
@@ -160,13 +215,21 @@ def suppressWarnings(f, *suppressedWarnings):
     invoking C{f} and unsuppresses them afterwards.  If f returns a Deferred,
     warnings will remain suppressed until the Deferred fires.
     """
+    @wraps(f)
     def warningSuppressingWrapper(*a, **kw):
         return runWithWarningsSuppressed(suppressedWarnings, f, *a, **kw)
-    return tputil.mergeFunctionMetadata(f, warningSuppressingWrapper)
+    return warningSuppressingWrapper
 
 
 __all__ = [
     "runWithWarningsSuppressed", "suppressWarnings",
-
     "getProcessOutput", "getProcessValue", "getProcessOutputAndValue",
     ]
+
+if _PY3:
+    __all3__ = ["runWithWarningsSuppressed", "suppressWarnings"]
+    for name in __all__[:]:
+        if name not in __all3__:
+            __all__.remove(name)
+            del globals()[name]
+    del name, __all3__

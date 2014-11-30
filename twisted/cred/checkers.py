@@ -1,30 +1,27 @@
 # -*- test-case-name: twisted.test.test_newcred -*-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-from __future__ import generators
 
 import os
 
-from zope import interface
+from zope.interface import implements, Interface, Attribute
 
 from twisted.internet import defer
-from twisted.python import components, failure, log
+from twisted.python import failure, log
 from twisted.cred import error, credentials
 
-try:
-    from twisted.cred import pamauth
-except ImportError: # PyPAM is missing
-    pamauth = None
 
-class ICredentialsChecker(components.Interface):
-    """I check sub-interfaces of ICredentials.
 
-    @cvar credentialInterfaces: A list of sub-interfaces of ICredentials which
-    specifies which I may check.
+class ICredentialsChecker(Interface):
+    """
+    An object that can check sub-interfaces of ICredentials.
     """
 
-    def requestAvatarId(self, credentials):
+    credentialInterfaces = Attribute(
+        'A list of sub-interfaces of ICredentials which specifies which I may check.')
+
+
+    def requestAvatarId(credentials):
         """
         @param credentials: something which implements one of the interfaces in
         self.credentialInterfaces.
@@ -33,7 +30,11 @@ class ICredentialsChecker(components.Interface):
         avatar, an empty tuple to specify an authenticated anonymous user
         (provided as checkers.ANONYMOUS) or fire a Failure(UnauthorizedLogin).
         Alternatively, return the result itself.
+
+        @see: L{twisted.cred.credentials}
         """
+
+
 
 # A note on anonymity - We do not want None as the value for anonymous
 # because it is too easy to accidentally return it.  We do not want the
@@ -49,29 +50,29 @@ ANONYMOUS = ()
 
 
 class AllowAnonymousAccess:
-    interface.implements(ICredentialsChecker)
+    implements(ICredentialsChecker)
     credentialInterfaces = credentials.IAnonymous,
 
     def requestAvatarId(self, credentials):
         return defer.succeed(ANONYMOUS)
 
-components.backwardsCompatImplements(AllowAnonymousAccess)
 
 class InMemoryUsernamePasswordDatabaseDontUse:
-    """An extremely simple credentials checker.
-    
+    """
+    An extremely simple credentials checker.
+
     This is only of use in one-off test programs or examples which don't
     want to focus too much on how credentials are verified.
-    
+
     You really don't want to use this for anything else.  It is, at best, a
     toy.  If you need a simple credentials checker for a real application,
     see L{FilePasswordDB}.
     """
 
-    interface.implements(ICredentialsChecker)
+    implements(ICredentialsChecker)
 
     credentialInterfaces = (credentials.IUsernamePassword,
-        credentials.IUsernameHashedPassword)
+                            credentials.IUsernameHashedPassword)
 
     def __init__(self, **users):
         self.users = users
@@ -94,7 +95,6 @@ class InMemoryUsernamePasswordDatabaseDontUse:
         else:
             return defer.fail(error.UnauthorizedLogin())
 
-components.backwardsCompatImplements(InMemoryUsernamePasswordDatabaseDontUse)
 
 class FilePasswordDB:
     """A file-based, text-based username/password database.
@@ -109,7 +109,7 @@ class FilePasswordDB:
     IUsernameHashedPassword credentials will be checkable as well.
     """
 
-    interface.implements(ICredentialsChecker)
+    implements(ICredentialsChecker)
 
     cache = False
     _credCache = None
@@ -232,7 +232,7 @@ class FilePasswordDB:
         except KeyError:
             return defer.fail(error.UnauthorizedLogin())
         else:
-            up = credentials.IUsernamePassword(c, default=None)
+            up = credentials.IUsernamePassword(c, None)
             if self.hash:
                 if up is not None:
                     h = self.hash(up.username, up.password, p)
@@ -242,22 +242,26 @@ class FilePasswordDB:
             else:
                 return defer.maybeDeferred(c.checkPassword, p
                     ).addCallback(self._cbPasswordMatch, u)
-components.backwardsCompatImplements(FilePasswordDB)
+
+
 
 class PluggableAuthenticationModulesChecker:
-    interface.implements(ICredentialsChecker)
+    implements(ICredentialsChecker)
     credentialInterfaces = credentials.IPluggableAuthenticationModules,
     service = 'Twisted'
-    
-    def requestAvatarId(self, credentials):
-        if not pamauth:
-            return defer.fail(error.UnauthorizedLogin())
-        d = pamauth.pamAuthenticate(self.service, credentials.username,
-                                    credentials.pamConversion)
-        d.addCallback(lambda x: credentials.username)
-        return d
 
-components.backwardsCompatImplements(PluggableAuthenticationModulesChecker)
+    def requestAvatarId(self, credentials):
+        try:
+            from twisted.cred import pamauth
+        except ImportError: # PyPAM is missing
+            return defer.fail(error.UnauthorizedLogin())
+        else:
+            d = pamauth.pamAuthenticate(self.service, credentials.username,
+                                        credentials.pamConversion)
+            d.addCallback(lambda x: credentials.username)
+            return d
+
+
 
 # For backwards compatibility
 # Allow access as the old name.

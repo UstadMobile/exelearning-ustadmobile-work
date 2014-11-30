@@ -1,18 +1,16 @@
 
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
 """I hold HTML generation helpers.
 """
 
-#t.w imports
-from twisted.web import resource
+from cgi import escape
 
-import traceback, string
+from twisted.python import log
+from twisted.python.compat import NativeStringIO as StringIO
 
-from cStringIO import StringIO
-from microdom import escape
 
 def PRE(text):
     "Wrap <pre> tags around some text and HTML-escape it."
@@ -37,11 +35,12 @@ def linkList(lst):
 def output(func, *args, **kw):
     """output(func, *args, **kw) -> html string
     Either return the result of a function (which presumably returns an
-    HTML-legal string) or an HTMLized traceback describing why that function
-    didn't run.
+    HTML-legal string) or a sparse HTMLized error message and a message
+    in the server log.
     """
     try:
-        return apply(func, args, kw)
+        return func(*args, **kw)
     except:
-        io = StringIO()
-        return PRE(io.getvalue())
+        log.msg("Error calling %r:" % (func,))
+        log.err()
+        return PRE("An error occurred.")

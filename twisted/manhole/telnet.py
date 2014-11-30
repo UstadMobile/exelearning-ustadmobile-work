@@ -1,4 +1,4 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
@@ -11,7 +11,6 @@ from twisted.python import log, failure
 
 # system imports
 import string, copy, sys
-from cStringIO import StringIO
 
 
 class Shell(telnet.Telnet):
@@ -74,7 +73,6 @@ class Shell(telnet.Telnet):
                         self.write('\r\n>>> ')
                         return
                 except:
-                    io = StringIO()
                     failure.Failure().printTraceback(file=self)
                     log.deferr()
                     self.write('\r\n>>> ')

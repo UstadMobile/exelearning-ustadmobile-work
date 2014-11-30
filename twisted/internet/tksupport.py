@@ -1,12 +1,11 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
-"""This module integrates Tkinter with twisted.internet's mainloop.
+"""
+This module integrates Tkinter with twisted.internet's mainloop.
 
-API Stability: semi-stable
-
-Maintainer: U{Itamar Shtull-Trauring<mailto:twisted@itamarst.org>}
+Maintainer: Itamar Shtull-Trauring
 
 To use, do::
 
@@ -21,6 +20,13 @@ stop Twisted::
 
     | root.protocol('WM_DELETE_WINDOW', reactor.stop)
 
+When using Aqua Tcl/Tk on Mac OS X the standard Quit menu item in
+your application might become unresponsive without the additional
+fix::
+
+    | root.createcommand("::tk::mac::Quit", reactor.stop)
+
+@see: U{Tcl/TkAqua FAQ for more info<http://wiki.tcl.tk/12987>}
 """
 
 # system imports

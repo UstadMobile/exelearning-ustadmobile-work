@@ -1,5 +1,5 @@
 
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
@@ -19,7 +19,7 @@ except ImportError:
     import StringIO
 
 # Twisted Imports
-from twisted.persisted import styles, aot
+from twisted.persisted import styles, aot, crefutil
 
 
 class VersionTestCase(unittest.TestCase):
@@ -85,8 +85,8 @@ class VersionTestCase(unittest.TestCase):
         ClassWithCustomHash.upgradeToVersion1 = lambda self: setattr(self, 'upgraded', True)
         v1, v2 = pickle.loads(pkl)
         styles.doUpgrade()
-        self.assertEquals(v1.unique, 'v1')
-        self.assertEquals(v2.unique, 'v2')
+        self.assertEqual(v1.unique, 'v1')
+        self.assertEqual(v2.unique, 'v2')
         self.failUnless(v1.upgraded)
         self.failUnless(v2.upgraded)
     
@@ -112,6 +112,69 @@ class VersionTestCase(unittest.TestCase):
         styles.doUpgrade()
         self.failUnless(x.y.upgraded)
 
+
+
+class VersionedSubClass(styles.Versioned):
+    pass
+
+
+
+class SecondVersionedSubClass(styles.Versioned):
+    pass
+
+
+
+class VersionedSubSubClass(VersionedSubClass):
+    pass
+
+
+
+class VersionedDiamondSubClass(VersionedSubSubClass, SecondVersionedSubClass):
+    pass
+
+
+
+class AybabtuTests(unittest.TestCase):
+    """
+    L{styles._aybabtu} gets all of classes in the inheritance hierarchy of its
+    argument that are strictly between L{Versioned} and the class itself.
+    """
+
+    def test_aybabtuStrictEmpty(self):
+        """
+        L{styles._aybabtu} of L{Versioned} itself is an empty list.
+        """
+        self.assertEqual(styles._aybabtu(styles.Versioned), [])
+
+
+    def test_aybabtuStrictSubclass(self):
+        """
+        There are no classes I{between} L{VersionedSubClass} and L{Versioned},
+        so L{styles._aybabtu} returns an empty list.
+        """
+        self.assertEqual(styles._aybabtu(VersionedSubClass), [])
+
+
+    def test_aybabtuSubsubclass(self):
+        """
+        With a sub-sub-class of L{Versioned}, L{styles._aybabtu} returns a list
+        containing the intervening subclass.
+        """
+        self.assertEqual(styles._aybabtu(VersionedSubSubClass),
+                         [VersionedSubClass])
+
+
+    def test_aybabtuStrict(self):
+        """
+        For a diamond-shaped inheritance graph, L{styles._aybabtu} returns a
+        list containing I{both} intermediate subclasses.
+        """
+        self.assertEqual(
+            styles._aybabtu(VersionedDiamondSubClass),
+            [VersionedSubSubClass, VersionedSubClass, SecondVersionedSubClass])
+
+
+
 class MyEphemeral(styles.Ephemeral):
 
     def __init__(self, x):
@@ -122,13 +185,13 @@ class EphemeralTestCase(unittest.TestCase):
 
     def testEphemeral(self):
         o = MyEphemeral(3)
-        self.assertEquals(o.__class__, MyEphemeral)
-        self.assertEquals(o.x, 3)
+        self.assertEqual(o.__class__, MyEphemeral)
+        self.assertEqual(o.x, 3)
         
         pickl = pickle.dumps(o)
         o = pickle.loads(pickl)
         
-        self.assertEquals(o.__class__, styles.Ephemeral)
+        self.assertEqual(o.__class__, styles.Ephemeral)
         self.assert_(not hasattr(o, 'x'))
 
 
@@ -157,152 +220,33 @@ class B:
 def funktion():
     pass
 
-try:
-    from twisted.persisted import marmalade
-except ImportError:
-    pass
-else:
-    class Marmaladeable(marmalade.DOMJellyable):
-
-        jellyDOMVersion = 1
-
-        def __init__(self, integer, instance, name, sequence):
-            self.integer = integer
-            self.instance = instance
-            self.sequence = sequence
-            self.name = name
-
-        def jellyToDOM_1(self, jellier, element):
-            from twisted.python.reflect import qual
-            element.setAttribute("integer", str(self.integer))
-            element.setAttribute("instance", qual(self.instance.__class__)) # not l33t enough
-            element.setAttribute("name", str(self.name))
-            # oops forgot self.sequence
-
-        def unjellyFromDOM_1(self, unjellier, element):
-            from twisted.python.reflect import namedClass
-            self.integer = int(element.getAttribute("integer"))
-            self.instance = namedClass(element.getAttribute("instance"))()
-            self.name = element.getAttribute("name")
-            # just give us any ol' list
-            self.sequence = [self.instance, self.instance]
-
-        def jellyToDOM_2(self, jellier, element):
-            element.setAttribute("integer", str(self.integer))
-            element.setAttribute("name", str(self.name))
-            instanceNode = jellier.jellyToNode(self.instance) # l33ter!
-            instanceNode.setAttribute("parent:role", "instance")
-            element.appendChild(instanceNode)
-            i = 0
-            for seqel in self.sequence:
-                seqNode = jellier.jellyToNode(seqel)
-                seqNode.setAttribute("parent:role", "sequence:%d" % i)
-                element.appendChild(seqNode)
-                i = i + 1
-
-        def unjellyFromDOM_2(self, unjellier, element):
-            self.integer = int(element.getAttribute("integer"))
-            self.name = element.getAttribute("name")
-
-            # Note to people reading this as an example: if you don't use
-            # "unjellyInto", and instead use "unjellyFromNode", it will appear to
-            # work.  _however_, it will also have some really surprising results
-            # when you have references in your application; i.e. you will get
-            # _Dereference instances in places where you thought you should have
-            # references to back-referenced data.  I am working on making this
-            # simpler.
-            from twisted.web.microdom import Element
-            self.sequence = []
-            i = 0
-            for node in element.childNodes:
-                if isinstance(node, Element):
-                    if node.getAttribute("parent:role") == 'instance':
-                        unjellier.unjellyAttribute(self, "instance", node)
-                    else:
-                        self.sequence.append(None)
-                        unjellier.unjellyLater(node).addCallback(
-                            self.gotSequenceItem, i)
-                        i = i + 1
-
-        def gotSequenceItem(self, seqitem, num):
-            self.sequence[num] = seqitem
-
-
-    class MarmaladeTestCase(unittest.TestCase):
-
-        def testMarmaladeable(self):
-            m = Marmaladeable(1, B(), "testing", [1, 2, 3])
-            s = marmalade.jellyToXML(m)
-            u = marmalade.unjellyFromXML(s)
-            assert u.sequence == [u.instance, u.instance]
-            u.sequence.append(u.instance)
-            u.jellyDOMVersion = 2
-            s2 = marmalade.jellyToXML(u)
-            u2 = marmalade.unjellyFromXML(s2)
-            self.assertEquals( u2.sequence,  [u2.instance, u2.instance, u2.instance])
-
-        def testCopyReg(self):
-            s = "foo_bar"
-            sio = StringIO.StringIO()
-            sio.write(s)
-            assert marmalade.unjellyFromXML(marmalade.jellyToXML({1:sio}))[1].getvalue() == s
-
-        def testMethodSelfIdentity(self):
-            a = A()
-            b = B()
-            a.bmethod = b.bmethod
-            b.a = a
-            im_ = marmalade.unjellyFromXML(marmalade.jellyToXML(b)).a.bmethod
-            self.assertEquals(im_.im_class, im_.im_self.__class__)
-
-        def testBasicIdentity(self):
-            # Anyone wanting to make this datastructure more complex, and thus this
-            # test more comprehensive, is welcome to do so.
-            dj = marmalade.DOMJellier().jellyToNode
-            d = {'hello': 'world', "method": dj}
-            l = [1, 2, 3,
-                 "he\tllo\n\n\"x world!",
-                 u"goodbye \n\t\u1010 world!",
-                 1, 1.0, 100 ** 100l, unittest, marmalade.DOMJellier, d,
-                 funktion,
-                 True, False,
-                 (2, 4, [2]),
-                 ]
-            t = tuple(l)
-            l.append(l)
-            l.append(t)
-            l.append(t)
-            uj = marmalade.unjellyFromXML(marmalade.jellyToXML([l, l]))
-            assert uj[0] is uj[1]
-            assert uj[1][0:5] == l[0:5]
-
 class PicklingTestCase(unittest.TestCase):
     """Test pickling of extra object types."""
     
     def testModule(self):
         pickl = pickle.dumps(styles)
         o = pickle.loads(pickl)
-        self.assertEquals(o, styles)
+        self.assertEqual(o, styles)
     
     def testClassMethod(self):
         pickl = pickle.dumps(Pickleable.getX)
         o = pickle.loads(pickl)
-        self.assertEquals(o, Pickleable.getX)
+        self.assertEqual(o, Pickleable.getX)
     
     def testInstanceMethod(self):
         obj = Pickleable(4)
         pickl = pickle.dumps(obj.getX)
         o = pickle.loads(pickl)
-        self.assertEquals(o(), 4)
-        self.assertEquals(type(o), type(obj.getX))
+        self.assertEqual(o(), 4)
+        self.assertEqual(type(o), type(obj.getX))
     
     def testStringIO(self):
         f = StringIO.StringIO()
         f.write("abc")
         pickl = pickle.dumps(f)
         o = pickle.loads(pickl)
-        self.assertEquals(type(o), type(f))
-        self.assertEquals(f.getvalue(), "abc")
+        self.assertEqual(type(o), type(f))
+        self.assertEqual(f.getvalue(), "abc")
 
 
 class EvilSourceror:
@@ -321,7 +265,7 @@ class AOTTestCase(unittest.TestCase):
     def testSimpleTypes(self):
         obj = (1, 2.0, 3j, True, slice(1, 2, 3), 'hello', u'world', sys.maxint + 1, None, Ellipsis)
         rtObj = aot.unjellyFromSource(aot.jellyToSource(obj))
-        self.assertEquals(obj, rtObj)
+        self.assertEqual(obj, rtObj)
 
     def testMethodSelfIdentity(self):
         a = A()
@@ -329,7 +273,39 @@ class AOTTestCase(unittest.TestCase):
         a.bmethod = b.bmethod
         b.a = a
         im_ = aot.unjellyFromSource(aot.jellyToSource(b)).a.bmethod
-        self.assertEquals(im_.im_class, im_.im_self.__class__)
+        self.assertEqual(im_.im_class, im_.im_self.__class__)
+
+
+    def test_methodNotSelfIdentity(self):
+        """
+        If a class change after an instance has been created,
+        L{aot.unjellyFromSource} shoud raise a C{TypeError} when trying to
+        unjelly the instance.
+        """
+        a = A()
+        b = B()
+        a.bmethod = b.bmethod
+        b.a = a
+        savedbmethod = B.bmethod
+        del B.bmethod
+        try:
+            self.assertRaises(TypeError, aot.unjellyFromSource,
+                              aot.jellyToSource(b))
+        finally:
+            B.bmethod = savedbmethod
+
+
+    def test_unsupportedType(self):
+        """
+        L{aot.jellyToSource} should raise a C{TypeError} when trying to jelly
+        an unknown type.
+        """
+        try:
+            set
+        except:
+            from sets import Set as set
+        self.assertRaises(TypeError, aot.jellyToSource, set())
+
 
     def testBasicIdentity(self):
         # Anyone wanting to make this datastructure more complex, and thus this
@@ -372,6 +348,30 @@ class AOTTestCase(unittest.TestCase):
         assert oj.a is oj
         assert oj.a.b is oj.b
         assert oj.c is not oj.c.c
+
+
+class CrefUtilTestCase(unittest.TestCase):
+    """
+    Tests for L{crefutil}.
+    """
+
+    def test_dictUnknownKey(self):
+        """
+        L{crefutil._DictKeyAndValue} only support keys C{0} and C{1}.
+        """
+        d = crefutil._DictKeyAndValue({})
+        self.assertRaises(RuntimeError, d.__setitem__, 2, 3)
+
+
+    def test_deferSetMultipleTimes(self):
+        """
+        L{crefutil._Defer} can be assigned a key only one time.
+        """
+        d = crefutil._Defer()
+        d[0] = 1
+        self.assertRaises(RuntimeError, d.__setitem__, 0, 1)
+
+
 
 testCases = [VersionTestCase, EphemeralTestCase, PicklingTestCase]
 

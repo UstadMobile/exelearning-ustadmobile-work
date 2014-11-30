@@ -1,34 +1,65 @@
-# -*- test-case-name: "nevow.test.test_url" -*-
-# Copyright (c) 2004 Divmod.
+# -*- test-case-name: nevow.test.test_url -*-
+# Copyright (c) 2004-2007 Divmod.
 # See LICENSE for details.
 
-"""URL parsing, construction and rendering.
+"""
+URL parsing, construction and rendering.
 """
 
-from __future__ import generators
 import weakref
-
-from nevow import inevow
-from nevow.stan import raw
-from nevow.flat import flatten, serialize
-from nevow.context import WovenContext
-
 import urlparse
 import urllib
+
+from zope.interface import implements
+
 from twisted.web.util import redirectTo
+
+from nevow import inevow, flat
+from nevow.stan import raw
+from nevow.flat import serialize
+from nevow.context import WovenContext
 
 def _uqf(query):
     for x in query.split('&'):
         if '=' in x:
-            yield tuple( [raw(urllib.unquote(s)) for s in x.split('=')] )
+            yield tuple( [urllib.unquote_plus(s) for s in x.split('=', 1)] )
         elif x:
-            yield (raw(urllib.unquote(x)), None)
+            yield (urllib.unquote_plus(x), None)
 unquerify = lambda query: list(_uqf(query))
 
 
 class URL(object):
-    
-    def __init__(self, scheme='http', netloc='localhost', pathsegs=None, querysegs=None, fragment=''):
+    """
+    Represents a URL and provides a convenient API for modifying its parts.
+
+    A URL is split into a number of distinct parts: scheme, netloc (domain
+    name), path segments, query parameters and fragment identifier.
+
+    Methods are provided to modify many of the parts of the URL, especially
+    the path and query parameters. Values can be passed to methods as-is;
+    encoding and escaping is handled automatically.
+
+    There are a number of ways to create a URL:
+        - Standard Python creation, i.e. __init__.
+        - fromString, a class method that parses a string.
+        - fromContext, a class method that creates a URL to represent the
+          current URL in the path traversal process.
+
+    URL instances can be used in a stan tree or to fill template slots. They can
+    also be used as a redirect mechanism - simply return an instance from an
+    IResource method. See URLRedirectAdapter for details.
+
+    URL subclasses with different constructor signatures should override
+    L{cloneURL} to ensure that the numerous instance methods which return
+    copies do so correctly.  Additionally, the L{fromString}, L{fromContext}
+    and L{fromRequest} class methods need overriding.
+
+    @type fragment: C{str}
+    @ivar fragment: The fragment portion of the URL, decoded.
+    """
+
+    def __init__(self, scheme='http', netloc='localhost', pathsegs=None,
+                 querysegs=None, fragment=None):
         self.scheme = scheme
         self.netloc = netloc
         if pathsegs is None:
@@ -37,9 +68,24 @@ class URL(object):
         if querysegs is None:
             querysegs = []
         self._querylist = querysegs
+        if fragment is None:
+            fragment = ''
         self.fragment = fragment
 
-    path = property(lambda self: '/'.join(self._qpathlist))
+
+    def path():
+        def get(self):
+            return '/'.join([
+                    # Note that this set of safe things is pretty arbitrary.
+                    # It is this particular set in order to match that used by
+                    # nevow.flat.flatstan.StringSerializer, so that url.path
+                    # will give something which is contained by flatten(url).
+                    urllib.quote(seg, safe="-_.!*'()") for seg in self._qpathlist])
+        doc = """
+        The path portion of the URL.
+        """
+        return get, None, None, doc
+    path = property(*path())
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -60,7 +106,20 @@ class URL(object):
         )
 
     def _pathMod(self, newpathsegs, newqueryparts):
-        return self.__class__(self.scheme, self.netloc, newpathsegs, newqueryparts, self.fragment)
+        return self.cloneURL(self.scheme,
+                             self.netloc,
+                             newpathsegs,
+                             newqueryparts,
+                             self.fragment)
+
+
+    def cloneURL(self, scheme, netloc, pathsegs, querysegs, fragment):
+        """
+        Make a new instance of C{self.__class__}, passing along the given
+        arguments to its constructor.
+        """
+        return self.__class__(scheme, netloc, pathsegs, querysegs, fragment)
+
 
     ## class methods used to build URL objects ##
 
@@ -68,17 +127,17 @@ class URL(object):
         scheme, netloc, path, query, fragment = urlparse.urlsplit(st)
         u = klass(
             scheme, netloc,
-            [raw(urllib.unquote(seg)) for seg in path.split('/')[1:]],
-            unquerify(query), fragment)
+            [urllib.unquote(seg) for seg in path.split('/')[1:]],
+            unquerify(query), urllib.unquote(fragment))
         return u
     fromString = classmethod(fromString)
 
     def fromRequest(klass, request):
-        import warnings
-        warnings.warn(
-            "[v0.4] URL.fromRequest will change behaviour soon. Use fromContext instead",
-            DeprecationWarning,
-            stacklevel=2)
+        """
+        Create a new L{URL} instance which is the same as the URL represented
+        by C{request} except that it includes only the path segments which have
+        already been processed.
+        """
         uri = request.prePathURL()
         if '?' in request.uri:
             uri += '?' + request.uri.split('?')[-1]
@@ -96,7 +155,7 @@ class URL(object):
     fromContext = classmethod(fromContext)
 
     ## path manipulations ##
-    
+
     def pathList(self, unquote=False, copy=True):
         result = self._qpathlist
         if unquote:
@@ -104,7 +163,7 @@ class URL(object):
         if copy:
             result = result[:]
         return result
-    
+
     def sibling(self, path):
         """Construct a url where the given path segment is a sibling of this url
         """
@@ -133,14 +192,6 @@ class URL(object):
             stacklevel=2)
         return self.parentdir()
 
-    def here(self):
-        import warnings
-        warnings.warn(
-            "URL.here() is deprecated, please use URL.curdir() instead!",
-            DeprecationWarning,
-            stacklevel=2)
-        return self.curdir()
-    
     def curdir(self):
         """Construct a url which is a logical equivalent to '.'
         of the current url. For example:
@@ -186,26 +237,27 @@ class URL(object):
 
     def click(self, href):
         """Build a path by merging 'href' and this path.
-        
+
         Return a path which is the URL where a browser would presumably
         take you if you clicked on a link with an 'href' as given.
         """
         scheme, netloc, path, query, fragment = urlparse.urlsplit(href)
-        
+
         if (scheme, netloc, path, query, fragment) == ('', '', '', '', ''):
             return self
-            
-        query = unquerify(query)            
-            
+
+        query = unquerify(query)
+
         if scheme:
             if path and path[0] == '/':
                 path = path[1:]
-            return URL(scheme, netloc, map(raw, path.split('/')), query, fragment)
+            return self.cloneURL(
+                scheme, netloc, map(raw, path.split('/')), query, fragment)
         else:
             scheme = self.scheme
-            
+
         if not netloc:
-            netloc = self.netloc 
+            netloc = self.netloc
             if not path:
                 path = self.path
                 if not query:
@@ -221,8 +273,9 @@ class URL(object):
                     path = '/'.join(l)
 
         path = normURLPath(path)
-        return URL(scheme, netloc, map(raw, path.split('/')), query, fragment)
-        
+        return self.cloneURL(
+            scheme, netloc, map(raw, path.split('/')), query, fragment)
+
     ## query manipulation ##
 
     def queryList(self, copy=True):
@@ -232,7 +285,7 @@ class URL(object):
         return self._querylist
 
     # FIXME: here we call str() on query arg values: is this right?
-    
+
     def add(self, name, value=None):
         """Add a query argument with the given value
         None indicates that the argument has no value
@@ -242,10 +295,11 @@ class URL(object):
         return self._pathMod(self.pathList(copy=False), q)
 
     def replace(self, name, value=None):
-        """Remove all existing occurrances of the query
-        argument 'name', *if it exists*, then add the argument 
-        with the given value.
-        None indicates that the argument has no value
+        """
+        Remove all existing occurrences of the query argument 'name', *if it
+        exists*, then add the argument with the given value.
+
+        C{None} indicates that the argument has no value.
         """
         ql = self.queryList(False)
         ## Preserve the original position of the query key in the list
@@ -262,7 +316,7 @@ class URL(object):
         """Remove all query arguments with the given name
         """
         return self._pathMod(
-            self.pathList(copy=False), 
+            self.pathList(copy=False),
             filter(
                 lambda x: x[0] != name, self.queryList(False)))
 
@@ -295,34 +349,42 @@ class URL(object):
         if port is not None and port != defaultPort:
             netloc = '%s:%d' % (netloc, port)
 
-        return self.__class__(scheme, netloc, self._qpathlist, self._querylist, self.fragment)
-            
+        return self.cloneURL(
+            scheme, netloc, self._qpathlist, self._querylist, self.fragment)
+
     ## fragment/anchor manipulation
-    
+
     def anchor(self, anchor=None):
-        '''Modify the fragment/anchor and return a new URL. An anchor of
-        None (the default) or '' (the empty string) will the current anchor.
-        '''
-        return self.__class__(self.scheme, self.netloc, self._qpathlist, self._querylist, anchor)
-    
+        """
+        Modify the fragment/anchor and return a new URL. An anchor of
+        C{None} (the default) or C{''} (the empty string) will remove the
+        current anchor.
+        """
+        return self.cloneURL(
+            self.scheme, self.netloc, self._qpathlist, self._querylist, anchor)
+
     ## object protocol override ##
-    
+
     def __str__(self):
-        return flatten(self)
+        return str(flat.flatten(self))
 
     def __repr__(self):
         return (
-            'URL(scheme=%r, netloc=%r, pathsegs=%r, querysegs=%r, fragment=%r)'
-            % (self.scheme, self.netloc, self._qpathlist, self._querylist, self.fragment))
+            '%s(scheme=%r, netloc=%r, pathsegs=%r, querysegs=%r, fragment=%r)'
+            % (self.__class__,
+               self.scheme,
+               self.netloc,
+               self._qpathlist,
+               self._querylist,
+               self.fragment))
 
 
 def normURLPath(path):
-    '''Normalise the URL path by resolving segments of '.' and ',,'.
-    '''
-    
+    """
+    Normalise the URL path by resolving segments of '.' and '..'.
+    """
     segs = []
-    addEmpty = False
-    
+
     pathSegs = path.split('/')
 
     for seg in pathSegs:
@@ -333,24 +395,24 @@ def normURLPath(path):
                 segs.pop()
         else:
             segs.append(seg)
-            
-    if pathSegs[-1:] in (['.'],['..']): 
+
+    if pathSegs[-1:] in (['.'],['..']):
         segs.append('')
-    
+
     return '/'.join(segs)
 
-    
+
 class URLOverlay(object):
     def __init__(self, urlaccessor, doc=None, dolater=None, keep=None):
         """A Proto like object for abstractly specifying urls in stan trees.
 
         @param urlaccessor: a function which takes context and returns a URL
-        
+
         @param doc: a a string documenting this URLOverlay instance's usage
 
         @param dolater: a list of tuples of (command, args, kw) where
-        command is a string, args is a tuple and kw is a dict; when the 
-        URL is returned from urlaccessor during rendering, these 
+        command is a string, args is a tuple and kw is a dict; when the
+        URL is returned from urlaccessor during rendering, these
         methods will be applied to the URL in order
         """
         if doc is not None:
@@ -390,7 +452,7 @@ for cmd in [
 def hereaccessor(context):
     return URL.fromContext(context).clear()
 here = URLOverlay(
-    hereaccessor, 
+    hereaccessor,
     "A lazy url construction object representing the current page's URL. "
     "The URL which will be used will be determined at render time by "
     "looking at the request. Any query parameters will be "
@@ -440,28 +502,43 @@ root = URLOverlay(rootaccessor,
 
 
 def URLSerializer(original, context):
+    """
+    Serialize the given L{URL}.
+
+    Unicode path, query and fragment components are handled according to the
+    IRI standard (RFC 3987).
+    """
+    def _maybeEncode(s):
+        if isinstance(s, unicode):
+            s = s.encode('utf-8')
+        return s
     urlContext = WovenContext(parent=context, precompile=context.precompile, inURL=True)
     if original.scheme:
+        # TODO: handle Unicode (see #2409)
         yield "%s://%s" % (original.scheme, original.netloc)
     for pathsegment in original._qpathlist:
         yield '/'
-        yield serialize(pathsegment, urlContext)
+        yield serialize(_maybeEncode(pathsegment), urlContext)
     query = original._querylist
     if query:
         yield '?'
         first = True
         for key, value in query:
             if not first:
-                yield '&'
+                # xhtml can't handle unescaped '&'
+                if context.isAttrib is True:
+                    yield '&amp;'
+                else:
+                    yield '&'
             else:
                 first = False
-            yield serialize(key, urlContext)
+            yield serialize(_maybeEncode(key), urlContext)
             if value is not None:
                 yield '='
-                yield serialize(value, urlContext)
+                yield serialize(_maybeEncode(value), urlContext)
     if original.fragment:
         yield "#"
-        yield serialize(original.fragment, urlContext)
+        yield serialize(_maybeEncode(original.fragment), urlContext)
 
 
 def URLOverlaySerializer(original, context):
@@ -484,7 +561,7 @@ def URLOverlaySerializer(original, context):
 
 
 class URLGenerator:
-    #__implements__ = IURLGenerator,
+    #implements(IURLGenerator)
 
     def __init__(self):
         self._objmap = weakref.WeakKeyDictionary()
@@ -511,10 +588,30 @@ class URLGenerator:
 
 
 class URLRedirectAdapter:
-    """Adapt URL objects so that trying to render one causes a HTTP
-    redirect.
     """
-    __implements__ = inevow.IResource,
+    Adapter for URL and URLOverlay instances that results in an HTTP
+    redirect.
+
+    Whenever a URL or URLOverlay instance is returned from locateChild or
+    renderHTTP an HTTP response is generated that causes a redirect to
+    the adapted URL. Any remaining segments of the current request are
+    consumed.
+
+    Note that URLOverlay instances are lazy so their use might not be entirely
+    obvious when returned from locateChild, i.e. url.here means the request's
+    URL and not the URL of the resource that is self.
+
+    Here are some examples::
+
+        def renderHTTP(self, ctx):
+            # Redirect to my immediate parent
+            return url.here.up()
+
+        def locateChild(self, ctx, segments):
+            # Redirect to the URL of this resource
+            return url.URL.fromContext(ctx)
+    """
+    implements(inevow.IResource)
 
     def __init__(self, original):
         self.original = original
@@ -523,9 +620,15 @@ class URLRedirectAdapter:
         return self, ()
 
     def renderHTTP(self, ctx):
-        # The URL may have deferred parts so flatten it
-        u = flatten(self.original, ctx)
-        # It might also be relative so resolve it against the current URL
-        # and flatten it again.
-        u = flatten(URL.fromContext(ctx).click(u), ctx)
-        return redirectTo(u, inevow.IRequest(ctx))
+        # The URL may contain deferreds so we need to flatten it using
+        # flattenFactory that will collect the bits into the bits list and
+        # call flattened to finish.
+        bits = []
+        def flattened(spam):
+            # Join the bits to make a complete URL.
+            u = ''.join(bits)
+            # It might also be relative so resolve it against the current URL
+            # and flatten it again.
+            u = flat.flatten(URL.fromContext(ctx).click(u), ctx)
+            return redirectTo(u, inevow.IRequest(ctx))
+        return flat.flattenFactory(self.original, ctx, bits.append, flattened)

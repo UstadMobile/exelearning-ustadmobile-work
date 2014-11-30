@@ -2,13 +2,14 @@
 # See LICENSE for details.
 
 from __future__ import generators
-from types import StringTypes
-import types
-import warnings
+
+import urllib, warnings
+
+from twisted.python import log, failure
 
 from nevow import util
-from nevow.stan import Proto, Tag, xml, directive, Unset, invisible
-from nevow.inevow import IRenderer, IRendererFactory, IGettable, IData, IMacroFactory
+from nevow.stan import directive, Unset, invisible, _PrecompiledSlot
+from nevow.inevow import ICanHandleException, IData, IMacroFactory, IRenderer, IRendererFactory
 from nevow.flat import precompile, serialize
 from nevow.accessors import convertToData
 from nevow.context import WovenContext
@@ -62,6 +63,11 @@ def TagSerializer(original, context, contextIsMine=False):
         ## the actual parentage hierarchy.
         nestedcontext = WovenContext(precompile=context.precompile, isAttrib=context.isAttrib)
         
+        # If necessary, remember the MacroFactory onto the new context chain.
+        macroFactory = IMacroFactory(context, None)
+        if macroFactory is not None:
+            nestedcontext.remember(macroFactory, IMacroFactory)
+
         original = original.clone(deep=False)
         if not contextIsMine:
             context = WovenContext(context, original)
@@ -128,14 +134,37 @@ def EntitySerializer(original, context):
         return '&%s;' % original.name
     return '&#%s;' % original.num
 
+def _jsSingleQuoteQuote(quotable):
+    return quotable.replace(
+        "\\", "\\\\").replace(
+        "'", r"\'").replace(
+        "\n", "\\n").replace(
+        "\r", "\\r")
+
+def RawSerializer(original, context):
+    if context.inJSSingleQuoteString:
+        return _jsSingleQuoteQuote(original)
+    return original
+
 
 def StringSerializer(original, context):
+    # Quote the string as necessary. URLs need special quoting - only
+    # alphanumeric and a few punctation characters are valid.
+    # Otherwise we use normal XML escaping rules but also replacing "
+    # in an attribute because Nevow always uses "..." for values.
+    if context.inURL:
+        # The magic string "-_.!*'()" also appears in url.py.  Thinking about
+        # changing this?  Change that, too.
+        return urllib.quote(original, safe="-_.!*'()")
     ## quote it
+    if context.inJS:
+        original = _jsSingleQuoteQuote(original)
+        if not context.inJSSingleQuoteString:
+            original = "'%s'" % (original, )
     if context.isAttrib:
-        return original.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;")
-    elif context.inURL:
-        import urllib
-        return urllib.quote(original)
+        return original.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+    elif context.inJS:
+        return original
     else:
         return original.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
@@ -146,11 +175,24 @@ def NoneWarningSerializer(original, context):
         return ''
     elif context.inURL:
         return ''
+    elif context.inJS:
+        return ''
     return '<span style="font-size: xx-large; font-weight: bold; color: red; border: thick solid red;">None</span>'
 
 
 def StringCastSerializer(original, context):
+    if context.inJS:
+        return str(original)
     return StringSerializer(str(original), context)
+
+
+
+def BooleanSerializer(original, context):
+    if context.inJS:
+        if original:
+            return 'true'
+        return 'false'
+    return str(original)
 
 
 def ListSerializer(original, context):
@@ -160,10 +202,6 @@ def ListSerializer(original, context):
 
 def XmlSerializer(original, context):
     return original.content
-
-
-def RawSerializer(original, context):
-    return original
 
 
 PASS_SELF = object()
@@ -179,6 +217,7 @@ def FunctionSerializer_nocontext(original):
     if argcount == 3:
         return PASS_SELF
     return False
+
 
 def FunctionSerializer(original, context, nocontextfun=FunctionSerializer_nocontext):
     if context.precompile:
@@ -197,14 +236,7 @@ def FunctionSerializer(original, context, nocontextfun=FunctionSerializer_nocont
                     result = original(context, data)
         except StopIteration:
             raise RuntimeError, "User function %r raised StopIteration." % original
-        serialized = serialize(result, context)
-        if isinstance(serialized, (util.Deferred)):
-            return serialized.addCallback(lambda r: serialize(r, context))
-        return serialized
-
-
-def DeferredSerializer(original, context):
-    return original
+        return serialize(result, context)
 
 
 def MethodSerializer(original, context):
@@ -222,45 +254,106 @@ def RendererSerializer(original, context):
         return code is None or code.co_argcount == 2
     return FunctionSerializer(original.rend, context, nocontext)
 
+
 def DirectiveSerializer(original, context):
     if context.precompile:
         return original
-    
+
     rendererFactory = context.locate(IRendererFactory)
     renderer = rendererFactory.renderer(context, original.name)
     return serialize(renderer, context)
 
+
 def SlotSerializer(original, context):
+    """
+    Serialize a slot.
+
+    If the value is already available in the given context, serialize and
+    return it.  Otherwise, if this is a precompilation pass, return a new
+    kind of slot which captures the current render context, so that any
+    necessary quoting may be performed.  Otherwise, raise an exception
+    indicating that the slot cannot be serialized.
+    """
     if context.precompile:
         try:
-            return serialize(context.locateSlotData(original.name), context)
+            data = context.locateSlotData(original.name)
         except KeyError:
-            original.children = precompile(original.children, context)
-        return original
+            return _PrecompiledSlot(
+                original.name,
+                precompile(original.children, context),
+                original.default,
+                context.isAttrib,
+                context.inURL,
+                context.inJS,
+                context.inJSSingleQuoteString,
+                original.filename,
+                original.lineNumber,
+                original.columnNumber)
+        else:
+            return serialize(data, context)
     try:
         data = context.locateSlotData(original.name)
     except KeyError:
         if original.default is None:
             raise
-        return serialize(original.default, context)
+        data = original.default
     return serialize(data, context)
 
+
+def PrecompiledSlotSerializer(original, context):
+    """
+    Serialize a pre-compiled slot.
+
+    Return the serialized value of the slot or raise a KeyError if it has no
+    value.
+    """
+    # Precompilation should _not_ be happening at this point, but Nevow is very
+    # sloppy about precompiling multiple times, so sometimes we are in a
+    # precompilation context.  In this case, there is nothing to do, just
+    # return the original object.  The case which seems to exercise this most
+    # often is the use of a pattern as the stan document given to the stan
+    # loader.  The pattern has already been precompiled, but the stan loader
+    # precompiles it again.  This case should be eliminated by adding a loader
+    # for precompiled documents.
+    if context.precompile:
+        warnings.warn(
+            "[v0.9.9] Support for multiple precompilation passes is deprecated.",
+            PendingDeprecationWarning)
+        return original
+
+    try:
+        data = context.locateSlotData(original.name)
+    except KeyError:
+        if original.default is None:
+            raise
+        data = original.default
+    originalContext = context.clone(deep=False)
+    originalContext.isAttrib = original.isAttrib
+    originalContext.inURL = original.inURL
+    originalContext.inJS = original.inJS
+    originalContext.inJSSingleQuoteString = original.inJSSingleQuoteString
+    return serialize(data, originalContext)
+
+
 def ContextSerializer(original, context):
+    """
+    Serialize the given context's tag in that context.
+    """
     originalContext = original.clone(deep=False)
     originalContext.precompile = context and context.precompile or False
+    if originalContext.parent is not None:
+        originalContext.parent = originalContext.parent.clone(cloneTags=False)
     originalContext.chain(context)
     try:
         return TagSerializer(originalContext.tag, originalContext, contextIsMine=True)
-    except Exception, e:
-        handler = context.locate(inevow.ICanHandleException)
+    except:
+        f = failure.Failure()
+        handler = context.locate(ICanHandleException)
         if handler:
-            return handler.renderInlineError(context, util.Failure(e))
+            return handler.renderInlineError(context, f)
         else:
-            log.err(e)
+            log.err(f)
             return """<div style="border: 1px dashed red; color: red; clear: both">[[ERROR]]</div>"""
-                              
-
-
 
 
 def CommentSerializer(original, context):
@@ -274,4 +367,20 @@ def DocFactorySerializer(original, ctx):
     """Serializer for document factories.
     """
     return serialize(original.load(ctx), ctx)
+
+
+def FailureSerializer(original, ctx):
+    from nevow import failure
+    return serialize(failure.formatFailure(original), ctx)
+
+
+def inlineJSSerializer(original, ctx):
+    from nevow import livepage
+    from nevow.tags import script, xml
+    theJS = livepage.js(original.children)
+    new = livepage.JavascriptContext(ctx, invisible[theJS])
+    return serialize(script(type="text/javascript")[
+        xml('\n//<![CDATA[\n'),
+        serialize(theJS, new),
+        xml('\n//]]>\n')], ctx)
 

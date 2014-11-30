@@ -1,5 +1,5 @@
 
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
@@ -30,8 +30,9 @@ class FileSenderTestCase(unittest.TestCase):
         s = BufferingServer()
         c = FileSendingClient(StringIO.StringIO(testStr))
         
-        loopback.loopbackTCP(s, c)
-        self.assertEquals(s.buffer, testStr)
+        d = loopback.loopbackTCP(s, c)
+        d.addCallback(lambda x : self.assertEqual(s.buffer, testStr))
+        return d
 
     def testSendingEmptyFile(self):
         fileSender = basic.FileSender()

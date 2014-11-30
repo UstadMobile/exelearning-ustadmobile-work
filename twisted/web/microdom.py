@@ -1,11 +1,9 @@
 # -*- test-case-name: twisted.web.test.test_xml -*-
-#
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-#
-
-"""Micro Document Object Model: a partial DOM implementation with SUX.
+"""
+Micro Document Object Model: a partial DOM implementation with SUX.
 
 This is an implementation of what we consider to be the useful subset of the
 DOM.  The chief advantage of this library is that, not being burdened with
@@ -20,37 +18,46 @@ sample of XML.
 Microdom mainly focuses on working with HTML and XHTML.
 """
 
-from __future__ import nested_scopes
-
 # System Imports
-import copy, re
+import re
 from cStringIO import StringIO
-
-# Twisted Imports
-from twisted.web.sux import XMLParser, ParseError
-from twisted.python import reflect
-from twisted.python.util import InsensitiveDict
 
 # create NodeList class
 from types import ListType as NodeList
 from types import StringTypes, UnicodeType
-import sys
-dictsAreNotSequences=0
-try:
-    'x' in {}
-except TypeError:
-    dictsAreNotSequences = 1
+
+# Twisted Imports
+from twisted.web.sux import XMLParser, ParseError
+from twisted.python.util import InsensitiveDict
+
 
 def getElementsByTagName(iNode, name):
+    """
+    Return a list of all child elements of C{iNode} with a name matching
+    C{name}.
+
+    Note that this implementation does not conform to the DOM Level 1 Core
+    specification because it may return C{iNode}.
+
+    @param iNode: An element at which to begin searching.  If C{iNode} has a
+        name matching C{name}, it will be included in the result.
+
+    @param name: A C{str} giving the name of the elements to return.
+
+    @return: A C{list} of direct or indirect child elements of C{iNode} with
+        the name C{name}.  This may include C{iNode}.
+    """
     matches = []
     matches_append = matches.append # faster lookup. don't do this at home
-    slice=[iNode]
+    slice = [iNode]
     while len(slice)>0:
         c = slice.pop(0)
         if c.nodeName == name:
             matches_append(c)
         slice[:0] = c.childNodes
     return matches
+
+
 
 def getElementsByTagNameNoCase(iNode, name):
     name = name.lower()
@@ -96,7 +103,9 @@ class MismatchedTags(Exception):
         self.endCol) = filename, expect, got, begLine, begCol, endLine, endCol
 
     def __str__(self):
-        return "expected </%s>, got </%s> line: %s col: %s, began line: %s col: %s" % (self.expect, self.got, self.endLine, self.endCol, self.begLine, self.begCol)
+        return ("expected </%s>, got </%s> line: %s col: %s, began line: %s col: %s"
+                % (self.expect, self.got, self.endLine, self.endCol, self.begLine,
+                   self.begCol))
 
 
 class Node(object):
@@ -106,19 +115,28 @@ class Node(object):
         self.parentNode = parentNode
         self.childNodes = []
 
-    def __hash__(self):
-        return id(self)
+    def isEqualToNode(self, other):
+        """
+        Compare this node to C{other}.  If the nodes have the same number of
+        children and corresponding children are equal to each other, return
+        C{True}, otherwise return C{False}.
 
-    def isEqualToNode(self, n):
-        for a, b in zip(self.childNodes, n.childNodes):
+        @type other: L{Node}
+        @rtype: C{bool}
+        """
+        if len(self.childNodes) != len(other.childNodes):
+            return False
+        for a, b in zip(self.childNodes, other.childNodes):
             if not a.isEqualToNode(b):
-                return 0
-        return 1
+                return False
+        return True
 
-    def writexml(self, stream, indent='', addindent='', newl='', strip=0, nsprefixes={}, namespace=''):
+    def writexml(self, stream, indent='', addindent='', newl='', strip=0,
+                 nsprefixes={}, namespace=''):
         raise NotImplementedError()
 
-    def toxml(self, indent='', addindent='', newl='', strip=0, nsprefixes={}, namespace=''):
+    def toxml(self, indent='', addindent='', newl='', strip=0, nsprefixes={},
+              namespace=''):
         s = StringIO()
         self.writexml(s, indent, addindent, newl, strip, nsprefixes, namespace)
         rv = s.getvalue()
@@ -139,34 +157,88 @@ class Node(object):
         else:
             return 0
 
+
     def appendChild(self, child):
-        assert isinstance(child, Node)
+        """
+        Make the given L{Node} the last child of this node.
+
+        @param child: The L{Node} which will become a child of this node.
+
+        @raise TypeError: If C{child} is not a C{Node} instance.
+        """
+        if not isinstance(child, Node):
+            raise TypeError("expected Node instance")
         self.childNodes.append(child)
         child.parentNode = self
 
+
     def insertBefore(self, new, ref):
+        """
+        Make the given L{Node} C{new} a child of this node which comes before
+        the L{Node} C{ref}.
+
+        @param new: A L{Node} which will become a child of this node.
+
+        @param ref: A L{Node} which is already a child of this node which
+            C{new} will be inserted before.
+
+        @raise TypeError: If C{new} or C{ref} is not a C{Node} instance.
+
+        @return: C{new}
+        """
+        if not isinstance(new, Node) or not isinstance(ref, Node):
+            raise TypeError("expected Node instance")
         i = self.childNodes.index(ref)
         new.parentNode = self
         self.childNodes.insert(i, new)
         return new
 
+
     def removeChild(self, child):
+        """
+        Remove the given L{Node} from this node's children.
+
+        @param child: A L{Node} which is a child of this node which will no
+            longer be a child of this node after this method is called.
+
+        @raise TypeError: If C{child} is not a C{Node} instance.
+
+        @return: C{child}
+        """
+        if not isinstance(child, Node):
+            raise TypeError("expected Node instance")
         if child in self.childNodes:
             self.childNodes.remove(child)
             child.parentNode = None
         return child
 
     def replaceChild(self, newChild, oldChild):
-        assert isinstance(newChild, Node)
-        #if newChild.parentNode:
-        #    newChild.parentNode.removeChild(newChild)
-        assert oldChild.parentNode is self, 'oldChild (%s): oldChild.parentNode (%s) != self (%s)' % (oldChild, oldChild.parentNode, self)
+        """
+        Replace a L{Node} which is already a child of this node with a
+        different node.
+
+        @param newChild: A L{Node} which will be made a child of this node.
+
+        @param oldChild: A L{Node} which is a child of this node which will
+            give up its position to C{newChild}.
+
+        @raise TypeError: If C{newChild} or C{oldChild} is not a C{Node}
+            instance.
+
+        @raise ValueError: If C{oldChild} is not a child of this C{Node}.
+        """
+        if not isinstance(newChild, Node) or not isinstance(oldChild, Node):
+            raise TypeError("expected Node instance")
+        if oldChild.parentNode is not self:
+            raise ValueError("oldChild is not a child of this node")
         self.childNodes[self.childNodes.index(oldChild)] = newChild
         oldChild.parentNode = None
         newChild.parentNode = self
 
+
     def lastChild(self):
         return self.childNodes[-1]
+
 
     def firstChild(self):
         if len(self.childNodes):
@@ -205,21 +277,33 @@ class Document(Node):
     doctype = None
 
     def isEqualToDocument(self, n):
-        return (self.doctype == n.doctype) and self.isEqualToNode(n)
+        return (self.doctype == n.doctype) and Node.isEqualToNode(self, n)
+    isEqualToNode = isEqualToDocument
 
     def get_documentElement(self):
         return self.childNodes[0]
     documentElement=property(get_documentElement)
 
-    def appendChild(self, c):
-        assert not self.childNodes, "Only one element per document."
-        Node.appendChild(self, c)
+    def appendChild(self, child):
+        """
+        Make the given L{Node} the I{document element} of this L{Document}.
 
-    def writexml(self, stream, indent='', addindent='', newl='', strip=0, nsprefixes={}, namespace=''):
+        @param child: The L{Node} to make into this L{Document}'s document
+            element.
+
+        @raise ValueError: If this document already has a document element.
+        """
+        if self.childNodes:
+            raise ValueError("Only one element per document.")
+        Node.appendChild(self, child)
+
+    def writexml(self, stream, indent='', addindent='', newl='', strip=0,
+                 nsprefixes={}, namespace=''):
         stream.write('<?xml version="1.0"?>' + newl)
         if self.doctype:
             stream.write("<!DOCTYPE "+self.doctype+">" + newl)
-        self.documentElement.writexml(stream, indent, addindent, newl, strip, nsprefixes, namespace)
+        self.documentElement.writexml(stream, indent, addindent, newl, strip,
+                                      nsprefixes, namespace)
 
     # of dubious utility (?)
     def createElement(self, name, **kw):
@@ -257,8 +341,10 @@ class EntityReference(Node):
         if not isinstance(n, EntityReference):
             return 0
         return (self.eref == n.eref) and (self.nodeValue == n.nodeValue)
+    isEqualToNode = isEqualToEntityReference
 
-    def writexml(self, stream, indent='', addindent='', newl='', strip=0, nsprefixes={}, namespace=''):
+    def writexml(self, stream, indent='', addindent='', newl='', strip=0,
+                 nsprefixes={}, namespace=''):
         stream.write(self.nodeValue)
 
     def cloneNode(self, deep=0, parent=None):
@@ -273,12 +359,14 @@ class CharacterData(Node):
 
     def isEqualToCharacterData(self, n):
         return self.value == n.value
+    isEqualToNode = isEqualToCharacterData
 
 
 class Comment(CharacterData):
     """A comment node."""
 
-    def writexml(self, stream, indent='', addindent='', newl='', strip=0, nsprefixes={}, namespace=''):
+    def writexml(self, stream, indent='', addindent='', newl='', strip=0,
+                 nsprefixes={}, namespace=''):
         val=self.data
         if isinstance(val, UnicodeType):
             val=val.encode('utf8')
@@ -294,10 +382,22 @@ class Text(CharacterData):
         CharacterData.__init__(self, data, parentNode)
         self.raw = raw
 
+
+    def isEqualToNode(self, other):
+        """
+        Compare this text to C{text}.  If the underlying values and the C{raw}
+        flag are the same, return C{True}, otherwise return C{False}.
+        """
+        return (
+            CharacterData.isEqualToNode(self, other) and
+            self.raw == other.raw)
+
+
     def cloneNode(self, deep=0, parent=None):
         return Text(self.nodeValue, parent, self.raw)
 
-    def writexml(self, stream, indent='', addindent='', newl='', strip=0, nsprefixes={}, namespace=''):
+    def writexml(self, stream, indent='', addindent='', newl='', strip=0,
+                 nsprefixes={}, namespace=''):
         if self.raw:
             val = self.nodeValue
             if not isinstance(val, StringTypes):
@@ -321,15 +421,18 @@ class CDATASection(CharacterData):
     def cloneNode(self, deep=0, parent=None):
         return CDATASection(self.nodeValue, parent)
 
-    def writexml(self, stream, indent='', addindent='', newl='', strip=0, nsprefixes={}, namespace=''):
+    def writexml(self, stream, indent='', addindent='', newl='', strip=0,
+                 nsprefixes={}, namespace=''):
         stream.write("<![CDATA[")
         stream.write(self.nodeValue)
         stream.write("]]>")
 
-_nextid = iter(xrange(0, sys.maxint)).next
-
-def genprefix():
-    return 'p' + str(_nextid())
+def _genprefix():
+    i = 0
+    while True:
+        yield  'p' + str(i)
+        i = i + 1
+genprefix = _genprefix().next
 
 class _Attr(CharacterData):
     "Support class for getAttributeNode."
@@ -339,12 +442,11 @@ class Element(Node):
     preserveCase = 0
     caseInsensitive = 1
     nsprefixes = None
-    namespace = ''
 
     def __init__(self, tagName, attributes=None, parentNode=None,
-                        filename=None, markpos=None,
-                        caseInsensitive=1, preserveCase=0,
-                 namespace='', escapeAttributes=1):
+                 filename=None, markpos=None,
+                 caseInsensitive=1, preserveCase=0,
+                 namespace=None):
         Node.__init__(self, parentNode)
         self.preserveCase = preserveCase or not caseInsensitive
         self.caseInsensitive = caseInsensitive
@@ -354,12 +456,11 @@ class Element(Node):
             self.attributes = {}
         else:
             self.attributes = attributes
-            if escapeAttributes:
-                for k, v in self.attributes.items():
-                    self.attributes[k] = unescape(v)
+            for k, v in self.attributes.items():
+                self.attributes[k] = unescape(v)
 
         if caseInsensitive:
-            self.attributes = InsensitiveDict(self.attributes, 
+            self.attributes = InsensitiveDict(self.attributes,
                                               preserve=preserveCase)
 
         self.endTagName = self.nodeName = self.tagName = tagName
@@ -380,8 +481,23 @@ class Element(Node):
 
     def isEqualToElement(self, n):
         if self.caseInsensitive:
-            return (self.attributes == n.attributes) and (self.nodeName.lower() == n.nodeName.lower())
+            return ((self.attributes == n.attributes)
+                    and (self.nodeName.lower() == n.nodeName.lower()))
         return (self.attributes == n.attributes) and (self.nodeName == n.nodeName)
+
+
+    def isEqualToNode(self, other):
+        """
+        Compare this element to C{other}.  If the C{nodeName}, C{namespace},
+        C{attributes}, and C{childNodes} are all the same, return C{True},
+        otherwise return C{False}.
+        """
+        return (
+            self.nodeName.lower() == other.nodeName.lower() and
+            self.namespace == other.namespace and
+            self.attributes == other.attributes and
+            Node.isEqualToNode(self, other))
+
 
     def cloneNode(self, deep=0, parent=None):
         clone = Element(
@@ -423,21 +539,29 @@ class Element(Node):
         if name in self.attributes:
             del self.attributes[name]
 
-    def removeAttribute_has_key(self, name):
-        if self.attributes.has_key(name):
-            del self.attributes[name]
-
     def hasAttribute(self, name):
         return name in self.attributes
 
-    def hasAttribute_has_key(self, name):
-        return self.attributes.has_key(name)
 
-    if dictsAreNotSequences:
-        hasAttribute = hasAttribute_has_key
-        removeAttribute = removeAttribute_has_key
+    def writexml(self, stream, indent='', addindent='', newl='', strip=0,
+                 nsprefixes={}, namespace=''):
+        """
+        Serialize this L{Element} to the given stream.
 
-    def writexml(self, stream, indent='', addindent='', newl='', strip=0, nsprefixes={}, namespace=''):
+        @param stream: A file-like object to which this L{Element} will be
+            written.
+
+        @param nsprefixes: A C{dict} mapping namespace URIs as C{str} to
+            prefixes as C{str}.  This defines the prefixes which are already in
+            scope in the document at the point at which this L{Element} exists.
+            This is essentially an implementation detail for namespace support.
+            Applications should not try to use it.
+
+        @param namespace: The namespace URI as a C{str} which is the default at
+            the point in the document at which this L{Element} exists.  This is
+            essentially an implementation detail for namespace support.
+            Applications should not try to use it.
+        """
         # write beginning
         ALLOWSINGLETON = ('img', 'br', 'hr', 'base', 'meta', 'link', 'param',
                           'area', 'input', 'col', 'basefont', 'isindex',
@@ -457,7 +581,8 @@ class Element(Node):
         if self.nsprefixes:
             newprefixes = self.nsprefixes.copy()
             for ns in nsprefixes.keys():
-                del newprefixes[ns]
+                if ns in newprefixes:
+                    del newprefixes[ns]
         else:
              newprefixes = {}
 
@@ -466,15 +591,39 @@ class Element(Node):
             begin = [newl, indent] + begin
         bext = begin.extend
         writeattr = lambda _atr, _val: bext((' ', _atr, '="', escape(_val), '"'))
-        if namespace != self.namespace and self.namespace:
-            if nsprefixes.has_key(self.namespace):
+
+        # Make a local for tracking what end tag will be used.  If namespace
+        # prefixes are involved, this will be changed to account for that
+        # before it's actually used.
+        endTagName = self.endTagName
+
+        if namespace != self.namespace and self.namespace is not None:
+            # If the current default namespace is not the namespace of this tag
+            # (and this tag has a namespace at all) then we'll write out
+            # something related to namespaces.
+            if self.namespace in nsprefixes:
+                # This tag's namespace already has a prefix bound to it.  Use
+                # that prefix.
                 prefix = nsprefixes[self.namespace]
-                bext(prefix+':'+self.tagName)
+                bext(prefix + ':' + self.tagName)
+                # Also make sure we use it for the end tag.
+                endTagName = prefix + ':' + self.endTagName
             else:
+                # This tag's namespace has no prefix bound to it.  Change the
+                # default namespace to this tag's namespace so we don't need
+                # prefixes.  Alternatively, we could add a new prefix binding.
+                # I'm not sure why the code was written one way rather than the
+                # other. -exarkun
                 bext(self.tagName)
                 writeattr("xmlns", self.namespace)
+                # The default namespace just changed.  Make sure any children
+                # know about this.
+                namespace = self.namespace
         else:
+            # This tag has no namespace or its namespace is already the default
+            # namespace.  Nothing extra to do here.
             bext(self.tagName)
+
         j = ''.join
         for attr, val in self.attributes.iteritems():
             if isinstance(attr, tuple):
@@ -505,15 +654,16 @@ class Element(Node):
                 if self.tagName in BLOCKELEMENTS and \
                    self.tagName in FORMATNICELY:
                     w(j((newl, newindent)))
-                child.writexml(stream, newindent, addindent, newl, strip, downprefixes, self.namespace)
+                child.writexml(stream, newindent, addindent, newl, strip,
+                               downprefixes, namespace)
             if self.tagName in BLOCKELEMENTS:
                 w(j((newl, indent)))
-            w(j(("</", self.endTagName, '>')))
-            
+            w(j(('</', endTagName, '>')))
         elif self.tagName.lower() not in ALLOWSINGLETON:
-            w(j(('></', self.endTagName, '>')))
+            w(j(('></', endTagName, '>')))
         else:
             w(" />")
+
 
     def __repr__(self):
         rep = "Element(%s" % repr(self.nodeName)
@@ -562,7 +712,7 @@ class MicroDOMParser(XMLParser):
     # TD, HEAD, BASE, META, HTML all have optional closing tags
 
     soonClosers = 'area link br img hr input base meta'.split()
-    laterClosers = {'p': ['p'],
+    laterClosers = {'p': ['p', 'dt'],
                     'dt': ['dt','dd'],
                     'dd': ['dt', 'dd'],
                     'li': ['li'],
@@ -580,9 +730,10 @@ class MicroDOMParser(XMLParser):
                     }
 
 
-    def __init__(self, beExtremelyLenient=0, caseInsensitive=1, preserveCase=0, soonClosers=soonClosers, laterClosers=laterClosers, escapeAttributes=1):
+    def __init__(self, beExtremelyLenient=0, caseInsensitive=1, preserveCase=0,
+                 soonClosers=soonClosers, laterClosers=laterClosers):
         self.elementstack = []
-        d = {'xmlns': 'xmlns', '':''}
+        d = {'xmlns': 'xmlns', '': None}
         dr = _reverseDict(d)
         self.nsstack = [(d,None,dr)]
         self.documents = []
@@ -590,7 +741,6 @@ class MicroDOMParser(XMLParser):
         self.beExtremelyLenient = beExtremelyLenient
         self.caseInsensitive = caseInsensitive
         self.preserveCase = preserveCase or not caseInsensitive
-        self.escapeAttributes = escapeAttributes
         self.soonClosers = soonClosers
         self.laterClosers = laterClosers
         # self.indentlevel = 0
@@ -609,7 +759,7 @@ class MicroDOMParser(XMLParser):
             return None
 
     COMMENT = re.compile(r"\s*/[/*]\s*")
-    
+
     def _fixScriptElement(self, el):
         # this deals with case where there is comment or CDATA inside
         # <script> tag and we want to do the right thing with it
@@ -628,7 +778,7 @@ class MicroDOMParser(XMLParser):
             if match:
                 prefix = match.group()
                 oldvalue = oldvalue[len(prefix):]
-            
+
             # now see if contents are actual node and comment or CDATA
             try:
                 e = parseString("<a>%s</a>" % oldvalue).childNodes[0]
@@ -642,7 +792,7 @@ class MicroDOMParser(XMLParser):
                 if prefix:
                     el.childNodes.append(Text(prefix))
                 el.childNodes.append(e)
-    
+
     def gotDoctype(self, doctype):
         self._mddoctype = doctype
 
@@ -650,11 +800,15 @@ class MicroDOMParser(XMLParser):
         # print ' '*self.indentlevel, 'start tag',name
         # self.indentlevel += 1
         parent = self._getparent()
-        if (self.beExtremelyLenient and isinstance(parent, Element) and
-            self.laterClosers.has_key(parent.tagName) and
-            name in self.laterClosers[parent.tagName]):
-            self.gotTagEnd(parent.tagName)
-            parent = self._getparent()
+        if (self.beExtremelyLenient and isinstance(parent, Element)):
+            parentName = parent.tagName
+            myName = name
+            if self.caseInsensitive:
+                parentName = parentName.lower()
+                myName = myName.lower()
+            if myName in self.laterClosers.get(parentName, []):
+                self.gotTagEnd(parent.tagName)
+                parent = self._getparent()
         attributes = _unescapeDict(attributes)
         namespaces = self.nsstack[-1][0]
         newspaces = {}
@@ -673,18 +827,17 @@ class MicroDOMParser(XMLParser):
             ksplit = k.split(':', 1)
             if len(ksplit) == 2:
                 pfx, tv = ksplit
-                if pfx != 'xml' and namespaces.has_key(pfx):
+                if pfx != 'xml' and pfx in namespaces:
                     attributes[namespaces[pfx], tv] = v
                     del attributes[k]
         el = Element(name, attributes, parent,
                      self.filename, self.saveMark(),
                      caseInsensitive=self.caseInsensitive,
                      preserveCase=self.preserveCase,
-                     namespace=namespaces.get(''),
-                     escapeAttributes=self.escapeAttributes)
+                     namespace=namespaces.get(''))
         revspaces = _reverseDict(newspaces)
         el.addPrefixes(revspaces)
-        
+
         if newspaces:
             rscopy = self.nsstack[-1][2].copy()
             rscopy.update(revspaces)
@@ -772,8 +925,9 @@ class MicroDOMParser(XMLParser):
             self.documents.append(el)
         if self.beExtremelyLenient and el.tagName == "script":
             self._fixScriptElement(el)
-    
+
     def connectionLost(self, reason):
+        XMLParser.connectionLost(self, reason) # This can cause more events!
         if self.elementstack:
             if self.beExtremelyLenient:
                 self.documents.append(self.elementstack[0])
@@ -806,17 +960,14 @@ def parse(readable, *args, **kwargs):
     if mdp.beExtremelyLenient:
         if len(mdp.documents) == 1:
             d = mdp.documents[0]
+            if not isinstance(d, Element):
+                el = Element("html")
+                el.appendChild(d)
+                d = el
         else:
-            d = None
-            for el in mdp.documents:
-                if isinstance(el, Element):
-                    if d is not None:
-                        d = None
-                        break
-                    d = el
-            if d is None:
-                d = Element("html")
-                d.childNodes[:] = mdp.documents
+            d = Element("html")
+            for child in mdp.documents:
+                d.appendChild(child)
     else:
         d = mdp.documents[0]
     doc = Document(d)

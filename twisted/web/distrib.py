@@ -1,35 +1,32 @@
-# -*- test-case-name: twisted.web.test.test_web -*-
-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# -*- test-case-name: twisted.web.test.test_distrib -*-
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-
-"""Distributed web servers.
+"""
+Distributed web servers.
 
 This is going to have to be refactored so that argument parsing is done
 by each subprocess and not by the main web server (i.e. GET, POST etc.).
 """
 
 # System Imports
-import types, os, copy, string, cStringIO
-if (os.sys.platform != 'win32') and (os.name != 'java'):
+import types, os, copy, cStringIO
+try:
     import pwd
+except ImportError:
+    pwd = None
+
+from xml.dom.minidom import Element, Text
 
 # Twisted Imports
 from twisted.spread import pb
-from twisted.web import http
+from twisted.spread.banana import SIZE_LIMIT
+from twisted.web import http, resource, server, html, static
+from twisted.web.http_headers import Headers
 from twisted.python import log
 from twisted.persisted import styles
-from twisted.web.woven import page
-from twisted.internet import address
+from twisted.internet import address, reactor
 
-# Sibling Imports
-import resource
-import server
-import error
-import html
-import static
-from server import NOT_DONE_YET
 
 class _ReferenceableProducerWrapper(pb.Referenceable):
     def __init__(self, producer):
@@ -46,23 +43,54 @@ class _ReferenceableProducerWrapper(pb.Referenceable):
 
 
 class Request(pb.RemoteCopy, server.Request):
+    """
+    A request which was received by a L{ResourceSubscription} and sent via
+    PB to a distributed node.
+    """
     def setCopyableState(self, state):
+        """
+        Initialize this L{twisted.web.distrib.Request} based on the copied
+        state so that it closely resembles a L{twisted.web.server.Request}.
+        """
         for k in 'host', 'client':
             tup = state[k]
             addrdesc = {'INET': 'TCP', 'UNIX': 'UNIX'}[tup[0]]
-            addr = {'TCP': lambda: address.IPv4Address(addrdesc, tup[1], tup[2], _bwHack='INET'),
-                        'UNIX': lambda: address.UNIXAddress(tup[1])}[addrdesc]()
+            addr = {'TCP': lambda: address.IPv4Address(addrdesc,
+                                                       tup[1], tup[2]),
+                    'UNIX': lambda: address.UNIXAddress(tup[1])}[addrdesc]()
             state[k] = addr
+        state['requestHeaders'] = Headers(dict(state['requestHeaders']))
         pb.RemoteCopy.setCopyableState(self, state)
         # Emulate the local request interface --
         self.content = cStringIO.StringIO(self.content_data)
-        self.write            = self.remote.remoteMethod('write')
         self.finish           = self.remote.remoteMethod('finish')
         self.setHeader        = self.remote.remoteMethod('setHeader')
         self.addCookie        = self.remote.remoteMethod('addCookie')
         self.setETag          = self.remote.remoteMethod('setETag')
         self.setResponseCode  = self.remote.remoteMethod('setResponseCode')
         self.setLastModified  = self.remote.remoteMethod('setLastModified')
+
+        # To avoid failing if a resource tries to write a very long string
+        # all at once, this one will be handled slightly differently.
+        self._write = self.remote.remoteMethod('write')
+
+
+    def write(self, bytes):
+        """
+        Write the given bytes to the response body.
+
+        @param bytes: The bytes to write.  If this is longer than 640k, it
+            will be split up into smaller pieces.
+        """
+        start = 0
+        end = SIZE_LIMIT
+        while True:
+            self._write(bytes[start:end])
+            start += SIZE_LIMIT
+            end += SIZE_LIMIT
+            if start >= len(bytes):
+                break
+
 
     def registerProducer(self, producer, streaming):
         self.remote.callRemote("registerProducer",
@@ -76,14 +104,14 @@ class Request(pb.RemoteCopy, server.Request):
         log.err(failure)
 
 
-pb.setCopierForClass(server.Request, Request)
+pb.setUnjellyableForClass(server.Request, Request)
 
 class Issue:
     def __init__(self, request):
         self.request = request
 
     def finished(self, result):
-        if result != NOT_DONE_YET:
+        if result != server.NOT_DONE_YET:
             assert isinstance(result, types.StringType),\
                    "return value not a string"
             self.request.write(result)
@@ -93,10 +121,10 @@ class Issue:
         #XXX: Argh. FIXME.
         failure = str(failure)
         self.request.write(
-            error.ErrorPage(http.INTERNAL_SERVER_ERROR,
-                            "Server Connection Lost",
-                            "Connection to distributed server lost:" +
-                            html.PRE(failure)).
+            resource.ErrorPage(http.INTERNAL_SERVER_ERROR,
+                               "Server Connection Lost",
+                               "Connection to distributed server lost:" +
+                               html.PRE(failure)).
             render(self.request))
         self.request.finish()
         log.msg(failure)
@@ -137,7 +165,8 @@ class ResourceSubscription(resource.Resource):
         self.pending = []
 
     def notConnected(self, msg):
-        """I can't connect to a publisher; I'll now reply to all pending requests.
+        """I can't connect to a publisher; I'll now reply to all pending
+        requests.
         """
         log.msg("could not connect to distributed web service: %s" % msg)
         self.waiting = 0
@@ -162,14 +191,30 @@ class ResourceSubscription(resource.Resource):
             self.pending.append(request)
             if not self.waiting:
                 self.waiting = 1
-                pb.getObjectAt(self.host, self.port, 10).addCallbacks(self.connected, self.notConnected)
+                bf = pb.PBClientFactory()
+                timeout = 10
+                if self.host == "unix":
+                    reactor.connectUNIX(self.port, bf, timeout)
+                else:
+                    reactor.connectTCP(self.host, self.port, bf, timeout)
+                d = bf.getRootObject()
+                d.addCallbacks(self.connected, self.notConnected)
 
         else:
             i = Issue(request)
             self.publisher.callRemote('request', request).addCallbacks(i.finished, i.failed)
-        return NOT_DONE_YET
+        return server.NOT_DONE_YET
+
+
 
 class ResourcePublisher(pb.Root, styles.Versioned):
+    """
+    L{ResourcePublisher} exposes a remote API which can be used to respond
+    to request.
+
+    @ivar site: The site which will be used for resource lookup.
+    @type site: L{twisted.web.server.Site}
+    """
     def __init__(self, site):
         self.site = site
 
@@ -185,12 +230,30 @@ class ResourcePublisher(pb.Root, styles.Versioned):
     def getPerspectiveNamed(self, name):
         return self
 
+
     def remote_request(self, request):
+        """
+        Look up the resource for the given request and render it.
+        """
         res = self.site.getResourceFor(request)
         log.msg( request )
-        return res.render(request)
+        result = res.render(request)
+        if result is not server.NOT_DONE_YET:
+            request.write(result)
+            request.finish()
+        return server.NOT_DONE_YET
 
-class UserDirectory(page.Page):
+
+
+class UserDirectory(resource.Resource):
+    """
+    A resource which lists available user resources and serves them as
+    children.
+
+    @ivar _pwd: An object like L{pwd} which is used to enumerate users and
+        their home directories.
+    """
+
     userDirName = 'public_html'
     userSocketName = '.twistd-web-pb'
 
@@ -199,7 +262,7 @@ class UserDirectory(page.Page):
     <head>
     <title>twisted.web.distrib.UserDirectory</title>
     <style>
-    
+
     a
     {
         font-family: Lucida, Verdana, Helvetica, Arial, sans-serif;
@@ -225,44 +288,61 @@ class UserDirectory(page.Page):
         font-family: Lucida, Verdana, Helvetica, Arial, sans-serif;
         color: #000;
     }
-    
     </style>
-    <base view="Attributes" model="base" />
     </head>
 
     <body>
     <h1>twisted.web.distrib.UserDirectory</h1>
 
-    <ul view="List" model="directory">
-            <li pattern="listItem"><a view="Link" /> </li>
-    </ul>
+    %(users)s
 </body>
 </html>
-    """
+"""
 
-    def wmfactory_base(self, request):
-        return {'href':request.prePathURL()}
+    def __init__(self, userDatabase=None):
+        resource.Resource.__init__(self)
+        if userDatabase is None:
+            userDatabase = pwd
+        self._pwd = userDatabase
 
-    def wmfactory_directory(self, request):
-        m = []
-        for user in pwd.getpwall():
-            pw_name, pw_passwd, pw_uid, pw_gid, pw_gecos, pw_dir, pw_shell \
-                     = user
-            realname = string.split(pw_gecos,',')[0]
+
+    def _users(self):
+        """
+        Return a list of two-tuples giving links to user resources and text to
+        associate with those links.
+        """
+        users = []
+        for user in self._pwd.getpwall():
+            name, passwd, uid, gid, gecos, dir, shell = user
+            realname = gecos.split(',')[0]
             if not realname:
-                realname = pw_name
-            if os.path.exists(os.path.join(pw_dir, self.userDirName)):
-                m.append({
-                        'href':'%s/'%pw_name,
-                        'text':'%s (file)'%realname
-                })
-            twistdsock = os.path.join(pw_dir, self.userSocketName)
+                realname = name
+            if os.path.exists(os.path.join(dir, self.userDirName)):
+                users.append((name, realname + ' (file)'))
+            twistdsock = os.path.join(dir, self.userSocketName)
             if os.path.exists(twistdsock):
-                linknm = '%s.twistd' % pw_name
-                m.append({
-                        'href':'%s/'%linknm,
-                        'text':'%s (twistd)'%realname})
-        return m
+                linkName = name + '.twistd'
+                users.append((linkName, realname + ' (twistd)'))
+        return users
+
+
+    def render_GET(self, request):
+        """
+        Render as HTML a listing of all known users with links to their
+        personal resources.
+        """
+        listing = Element('ul')
+        for link, text in self._users():
+            linkElement = Element('a')
+            linkElement.setAttribute('href', link + '/')
+            textNode = Text()
+            textNode.data = text
+            linkElement.appendChild(textNode)
+            item = Element('li')
+            item.appendChild(linkElement)
+            listing.appendChild(item)
+        return self.template % {'users': listing.toxml()}
+
 
     def getChild(self, name, request):
         if name == '':
@@ -278,13 +358,16 @@ class UserDirectory(page.Page):
             sub = 0
         try:
             pw_name, pw_passwd, pw_uid, pw_gid, pw_gecos, pw_dir, pw_shell \
-                     = pwd.getpwnam(username)
+                     = self._pwd.getpwnam(username)
         except KeyError:
-            return error.NoResource()
+            return resource.NoResource()
         if sub:
             twistdsock = os.path.join(pw_dir, self.userSocketName)
             rs = ResourceSubscription('unix',twistdsock)
             self.putChild(name, rs)
             return rs
         else:
-            return static.File(os.path.join(pw_dir, self.userDirName))
+            path = os.path.join(pw_dir, self.userDirName)
+            if not os.path.exists(path):
+                return resource.NoResource()
+            return static.File(path)

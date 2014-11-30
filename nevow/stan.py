@@ -22,8 +22,7 @@ prototypes for all of the XHTML element types.
 """
 
 from __future__ import generators
-import warnings
-import sys
+from zope.interface import implements
 
 from nevow import inevow
 
@@ -50,26 +49,26 @@ class Proto(str):
 
 class xml(object):
     """XML content marker.
-    
+
     xml contains content that is already correct XML and should not be escaped
     to make it XML-safe. xml can contain unicode content and will be encoded to
     utf-8 when flattened.
     """
     __slots__ = ['content']
-    
+
     def __init__(self, content):
         self.content = content
-        
+
     def __repr__(self):
         return '<xml %r>' % self.content
 
 
 class raw(str):
     """Raw content marker.
-    
+
     Raw content is never altered in any way. It is a sequence of bytes that will
     be passed through unchanged to the XML output.
-    
+
     You probably don't want this - look at xml first.
     """
     __slots__ = []
@@ -87,20 +86,50 @@ class directive(object):
     __slots__ = ['name']
     def __init__(self, name):
         self.name = name
-        
+
+
     def __repr__(self):
         return "directive('%s')" % self.name
 
 
-class slot(object):
-    """Marker for slot insertion in a template
-    """
-    __slots__ = ['name', 'children', 'default']
+    def __hash__(self):
+        return hash((directive, self.name))
 
-    def __init__(self, name, default=None):
+
+    def __cmp__(self, other):
+        if isinstance(other, directive):
+            return cmp(self.name, other.name)
+        return NotImplemented
+
+
+
+class slot(object):
+    """
+    Marker for markup insertion in a template.
+
+    @type filename: C{str} or C{NoneType}
+    @ivar filename: The name of the XML file from which this tag was parsed.
+        If it was not parsed from an XML file, C{None}.
+
+    @type lineNumber: C{int} or C{NoneType}
+    @ivar lineNumber: The line number on which this tag was encountered in the
+        XML file from which it was parsed.  If it was not parsed from an XML
+        file, C{None}.
+
+    @type columnNumber: C{int} or C{NoneType}
+    @ivar columnNumber: The column number at which this tag was encountered in
+        the XML file from which it was parsed.  If it was not parsed from an
+        XML file, C{None}.
+    """
+    __slots__ = ['name', 'children', 'default', 'filename', 'lineNumber', 'columnNumber']
+
+    def __init__(self, name, default=None, filename=None, lineNumber=None, columnNumber=None):
         self.name = name
         self.children = []
         self.default = default
+        self.filename = filename
+        self.lineNumber = lineNumber
+        self.columnNumber = columnNumber
 
     def __repr__(self):
         return "slot('%s')" % self.name
@@ -121,20 +150,90 @@ class slot(object):
         raise NotImplementedError, "Stan slot instances are not iterable."
 
 
-class Tag(object):
-    """Tag instances represent XML tags with a tag name, attributes,
-    and children. Tag instances can be constructed using the Prototype
-    tags in the 'tags' module, or may be constructed directly with a tag
-    name. Tags have two special methods, __call__ and __getitem__,
-    which make representing trees of XML natural using pure python
-    syntax. See the docstrings for these methods for more details.
+
+class _PrecompiledSlot(object):
     """
-    __implements__ = inevow.IQ,
+    Marker for slot insertion into a template which has been precompiled.
+
+    This differs from a normal slot in that it captures some attributes of its
+    context at precompilation time so that it can be rendered properly (as
+    these attributes are typically lost during precompilation).
+
+    @type filename: C{str} or C{NoneType}
+    @ivar filename: The name of the XML file from which this tag was parsed.
+        If it was not parsed from an XML file, C{None}.
+
+    @type lineNumber: C{int} or C{NoneType}
+    @ivar lineNumber: The line number on which this tag was encountered in the
+        XML file from which it was parsed.  If it was not parsed from an XML
+        file, C{None}.
+
+    @type columnNumber: C{int} or C{NoneType}
+    @ivar columnNumber: The column number at which this tag was encountered in
+        the XML file from which it was parsed.  If it was not parsed from an
+        XML file, C{None}.
+    """
+    __slots__ = [
+        'name', 'children', 'default', 'isAttrib',
+        'inURL', 'inJS', 'inJSSingleQuoteString',
+        'filename', 'lineNumber', 'columnNumber']
+
+    def __init__(self, name, children, default, isAttrib, inURL, inJS, inJSSingleQuoteString, filename, lineNumber, columnNumber):
+        self.name = name
+        self.children = children
+        self.default = default
+        self.isAttrib = isAttrib
+        self.inURL = inURL
+        self.inJS = inJS
+        self.inJSSingleQuoteString = inJSSingleQuoteString
+        self.filename = filename
+        self.lineNumber = lineNumber
+        self.columnNumber = columnNumber
+
+
+    def __repr__(self):
+        return (
+            '_PrecompiledSlot('
+            '%r, isAttrib=%r, inURL=%r, inJS=%r, '
+            'inJSSingleQuoteString=%r)') % (
+            self.name, self.isAttrib, self.inURL, self.inJS,
+            self.inJSSingleQuoteString)
+
+
+
+class Tag(object):
+    """
+    Tag instances represent XML tags with a tag name, attributes, and
+    children. Tag instances can be constructed using the Prototype tags in the
+    'tags' module, or may be constructed directly with a tag name. Tags have
+    two special methods, __call__ and __getitem__, which make representing
+    trees of XML natural using pure python syntax. See the docstrings for these
+    methods for more details.
+
+    @type filename: C{str} or C{NoneType}
+    @ivar filename: The name of the XML file from which this tag was parsed.
+        If it was not parsed from an XML file, C{None}.
+
+    @type lineNumber: C{int} or C{NoneType}
+    @ivar lineNumber: The line number on which this tag was encountered in the
+        XML file from which it was parsed.  If it was not parsed from an XML
+        file, C{None}.
+
+    @type columnNumber: C{int} or C{NoneType}
+    @ivar columnNumber: The column number at which this tag was encountered in
+        the XML file from which it was parsed.  If it was not parsed from an
+        XML file, C{None}.
+    """
+    implements(inevow.IQ)
 
     specials = ['data', 'render', 'remember', 'pattern', 'key', 'macro']
 
     slotData = None
-    def __init__(self, tag, attributes=None, children=None, specials=None):
+    filename = None
+    lineNumber = None
+    columnNumber = None
+
+    def __init__(self, tag, attributes=None, children=None, specials=None, filename=None, lineNumber=None, columnNumber=None):
         self.tagName = tag
         if attributes is None:
             self.attributes = {}
@@ -148,6 +247,13 @@ class Tag(object):
             self._specials = {}
         else:
             self._specials = specials
+        if filename is not None:
+            self.filename = filename
+        if lineNumber is not None:
+            self.lineNumber = lineNumber
+        if columnNumber is not None:
+            self.columnNumber = columnNumber
+
 
     def fillSlots(self, slotName, slotValue):
         """Remember the stan 'slotValue' with the name 'slotName' at this position
@@ -163,12 +269,12 @@ class Tag(object):
         """Returns a psudeo-Tag which will generate clones of matching
         pattern tags forever, looping around to the beginning when running
         out of unique matches.
-        
+
         If no matches are found, and default is None, raise an exception,
         otherwise, generate clones of default forever.
 
         You can use the normal stan syntax on the return value.
-        
+
         Useful to find repeating pattern elements. Example rendering function:
 
         >>> def simpleSequence(context, data):
@@ -180,46 +286,54 @@ class Tag(object):
 
     def allPatterns(self, pattern):
         """Return a list of all matching pattern tags, cloned.
-        
+
         Useful if you just want to insert them in the output in one
         place.
-        
+
         E.g. the sequence renderer's header and footer are found with this.
         """
-        return [tag.clone(deep=False, clearPattern=True) for tag in 
+        return [tag.clone(deep=False, clearPattern=True) for tag in
                 specialMatches(self, 'pattern', pattern)]
 
     def onePattern(self, pattern):
-        """Return a single matching pattern, cloned.
+        """
+        Return a single matching pattern, cloned.
+
         If there is more than one matching pattern or no matching patterns,
         raise an exception.
 
-        Useful in the case where you want to locate one and only one
-        sub-tag and do something with it.
+        Useful in the case where you want to locate one and only one sub-tag
+        and do something with it.
         """
-        return _locateOne(pattern,
-            lambda pattern: specialMatches(
-                self, 'pattern', pattern),
-            'pattern').clone(deep=False, clearPattern=True)
+        data = getattr(self, 'pattern', Unset)
+        if data == pattern:
+            result = self
+        else:
+            result = _locateOne(
+                pattern,
+                lambda pattern: specialMatches(self, 'pattern', pattern),
+                'pattern')
+        return result.clone(deep=False, clearPattern=True)
+
 
     def __call__(self, **kw):
         """Change attributes of this tag. This is implemented using
         __call__ because it then allows the natural syntax::
-        
+
           table(width="100%", height="50%", border="1")
 
         Attributes may be 'invisible' tag instances (so that
         C{a(href=invisible(data="foo", render=myhrefrenderer))} works),
         strings, functions, or any other object which has a registered
         flattener.
-        
+
         If the attribute is a python keyword, such as 'class', you can
         add an underscore to the name, like 'class_'.
 
         A few magic attributes have values other than these, as they
         are not serialized for output but rather have special purposes
         of their own:
-        
+
          - data: The value is saved on the context stack and passed to
            render functions.
 
@@ -251,7 +365,7 @@ class Tag(object):
             if kw.has_key(name):
                 setattr(self, name, kw[name])
                 del kw[name]
-            
+
         for k, v in kw.iteritems():
             if k[-1] == '_':
                 k = k[:-1]
@@ -265,10 +379,10 @@ class Tag(object):
         passing a tuple or a list. Children may be other tag instances,
         strings, functions, or any other object which has a registered
         flatten.
-        
+
         This is implemented using __getitem__ because it then allows
         the natural syntax::
-        
+
           html[
               head[
                   title["Hello World!"]
@@ -295,11 +409,11 @@ class Tag(object):
         """Clears all the specials in this tag. For use by flatstan.
         """
         self._specials = {}
-        
+
     # FIXME: make this function actually be used.
     def precompilable(self):
         """Is this tag precompilable?
-        
+
         Tags are precompilable if they will not be modified by a user
         render function.
 
@@ -311,7 +425,7 @@ class Tag(object):
                     enclosing renderer)
         """
         return self.render is Unset and self.pattern is Unset
-    
+
     def _clone(self, obj, deep):
         if hasattr(obj, 'clone'):
             return obj.clone(deep)
@@ -320,7 +434,7 @@ class Tag(object):
                     for x in obj]
         else:
             return obj
-        
+
     def clone(self, deep=True, clearPattern=False):
         """Return a clone of this tag. If deep is True, clone all of this
         tag's children. Otherwise, just shallow copy the children list
@@ -344,8 +458,10 @@ class Tag(object):
             self.tagName,
             attributes=newattrs,
             children=newchildren,
-            specials=self._specials.copy()
-            )
+            specials=self._specials.copy(),
+            filename=self.filename,
+            lineNumber=self.lineNumber,
+            columnNumber=self.columnNumber)
         newtag.slotData = newslotdata
         if clearPattern:
             newtag.pattern = None
@@ -400,6 +516,22 @@ for name in Tag.specials:
 del name
 
 
+
+def visit(root, visitor):
+    """
+    Invoke C{visitor} with each Tag in the stan DOM represented by C{root}.
+    """
+    if isinstance(root, list):
+        for t in root:
+            visit(t, visitor)
+    else:
+        visitor(root)
+        if isinstance(root, Tag):
+            for ch in root.children:
+                visit(ch, visitor)
+
+
+
 ### Pattern machinery
 class NodeNotFound(KeyError):
     def __str__(self):
@@ -431,6 +563,16 @@ for forward in ['__call__', '__getitem__', 'fillSlots']:
     setattr(PatternTag, forward, makeForwarder(forward))
 
 def _locatePatterns(tag, pattern, default, loop=True):
+    """
+    Find tags with the given pattern which are children of the given tag.
+
+    @param tag: The L{Tag} the children of which to search.
+    @param pattern: A C{str} giving the name of the patterns to find.
+    @param default: The value to yield if no tags with the given pattern are
+        found.
+    @param loop: A C{bool} indicating whether to cycle through all results
+        infinitely.
+    """
     gen = specialMatches(tag, 'pattern', pattern)
     produced = []
 
@@ -454,7 +596,7 @@ def _locatePatterns(tag, pattern, default, loop=True):
         while True:  yield default.clone(deep=False)
     else:
         while True:  yield default
-Tag._locatePatterns = staticmethod(_locatePatterns)
+Tag._locatePatterns = _locatePatterns
 
 
 def _locateOne(name, locator, descr):
@@ -473,7 +615,7 @@ def specials(tag, special):
     """
     for childOrContext in getattr(tag, 'children', []):
         child = getattr(childOrContext, 'tag', childOrContext)
-        
+
         if getattr(child, special, Unset) is not Unset:
             yield child
         else:
@@ -482,13 +624,14 @@ def specials(tag, special):
 
 
 def specialMatches(tag, special, pattern):
-    """Generate special attribute matches starting with the given tag;
-    if a tag has special, do not look any deeper below that tag, whether
-    it matches pattern or not. Returns an iterable.
+    """
+    Generate special attribute matches starting with the given tag; if a tag
+    has special, do not look any deeper below that tag, whether it matches
+    pattern or not. Returns an iterable.
     """
     for childOrContext in getattr(tag, 'children', []):
         child = getattr(childOrContext, 'tag', childOrContext)
-        
+
         data = getattr(child, special, Unset)
         if data == pattern:
             yield child
@@ -524,3 +667,10 @@ class Entity(object):
     def __repr__(self):
         return "Entity(%r, %r, %r)" % (self.name, self.num, self.description)
 
+
+class inlineJS(object):
+    def __init__(self, children):
+        self.children = children
+
+    def __repr__(self):
+        return "inlineJS(%s)" % (self.children, )

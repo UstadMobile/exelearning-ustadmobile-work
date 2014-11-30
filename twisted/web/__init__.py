@@ -1,13 +1,15 @@
-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# -*- test-case-name: twisted.web.test -*-
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-
+"""
+Twisted Web: a L{web server<twisted.web.server>} (including an
+L{HTTP implementation<twisted.web.http>} and a
+L{resource model<twisted.web.resource>}) and
+a L{web client<twisted.web.client>}.
 """
 
-Twisted Web: a Twisted Web Server.
+from twisted.web._version import version
 
-"""
-
-__version__ = '0.5.0'
+__version__ = version.short()
 

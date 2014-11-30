@@ -1,5 +1,5 @@
 
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
@@ -19,4 +19,4 @@ class ParamTest(unittest.TestCase):
             if param == None:
                 break
             params.append(param)
-        self.failUnlessEqual(params, goodparams)#, "DictClient.parseParam returns unexpected results")
+        self.assertEqual(params, goodparams)#, "DictClient.parseParam returns unexpected results")

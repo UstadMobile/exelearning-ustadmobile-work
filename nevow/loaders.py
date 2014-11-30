@@ -22,53 +22,22 @@ developer first ;-).
 import warnings
 
 import os.path
+from zope.interface import implements
 
-from nevow import context
+from twisted.python.reflect import getClass
+from twisted.web import microdom
+
 from nevow import inevow
-from nevow import tags
 from nevow import flat
 from nevow.flat import flatsax
+from nevow.util import CachedFile
 
-class DocFactory:
-    """Base class for document factories. I am responsible for loading a document
-    template for the renderer to use.
-    """
-
-    __implements__ = inevow.IDocFactory,
-    
-    pattern = None
-    precompiledDoc = None
-
-    def __init__(self, pattern=None):
-        import warnings
-        warnings.warn(
-            "[v0.4] DocFactory is deprecated - it just made things more complicated. Please update the %r loader."%self.__class__,
-            DeprecationWarning,
-            stacklevel=2)
-        if pattern:
-            self.pattern = pattern
-
-    def precompile(self, parent):
-        ctx = context.WovenContext(parent=parent, precompile=True)
-        from nevow import flat
-        doc = flat.precompile(self.getDoc(), ctx)
-        if self.pattern:
-            tag = tags.invisible[doc]
-            doc = [tag.onePattern(self.pattern)]
-        return doc
-
-    def load(self, ctx=None):
-        """Load and return the document for the renderer"""
-        if self.precompiledDoc is None:
-            self.precompiledDoc = self.precompile(ctx)
-        return self.precompiledDoc
-        
 
 class stan(object):
     """A stan tags document factory"""
-    
-    __implements__ = inevow.IDocFactory,
-    
+
+    implements(inevow.IDocFactory)
+
     stan = None
     pattern = None
     _cache = None
@@ -79,36 +48,45 @@ class stan(object):
         if pattern is not None:
             self.pattern = pattern
 
-    def load(self, ctx=None):
+
+    def load(self, ctx=None, preprocessors=()):
         if self._cache is None:
-            stan = flat.precompile(self.stan, ctx)
+            stan = [self.stan]
+            for proc in preprocessors:
+                stan = proc(stan)
+            stan = flat.precompile(stan, ctx)
             if self.pattern is not None:
                 stan = inevow.IQ(stan).onePattern(self.pattern)
             self._cache = stan
         return self._cache
 
 
+
 class htmlstr(object):
     """A document factory for HTML contained in a string"""
 
-    __implements__ = inevow.IDocFactory,
-    
+    implements(inevow.IDocFactory)
+
     template = None
     pattern = None
     beExtremelyLenient = True
     _cache = None
 
     def __init__(self, template=None, pattern=None, beExtremelyLenient=None):
+        warnings.warn(
+            "[v0.8] htmlstr is deprecated because it's buggy. Please start using xmlfile and/or xmlstr.",
+            DeprecationWarning,
+            stacklevel=2)
         if template is not None:
             self.template = template
         if pattern is not None:
             self.pattern = pattern
         if beExtremelyLenient is not None:
             self.beExtremelyLenient = beExtremelyLenient
-            
-    def load(self, ctx=None):
+
+    def load(self, ctx=None, preprocessors=()):
+        assert not preprocessors, "preprocessors not supported by htmlstr"
         if self._cache is None:
-            from twisted.web import microdom
             doc = microdom.parseString(self.template, beExtremelyLenient=self.beExtremelyLenient)
             doc = flat.precompile(doc, ctx)
             if self.pattern is not None:
@@ -116,22 +94,21 @@ class htmlstr(object):
             self._cache = doc
         return self._cache
 
-
 class htmlfile(object):
     """A document factory for an HTML disk template"""
 
-    __implements__ = inevow.IDocFactory,
-    
+    implements(inevow.IDocFactory)
+
     template = None
     pattern = None
     templateDir = ''
     beExtremelyLenient = True
-    
-    _filename = None
-    _mtime = None
-    _cache = None
 
     def __init__(self, template=None, pattern=None, templateDir=None, beExtremelyLenient=None):
+        warnings.warn(
+            "[v0.8] htmlfile is deprecated because it's buggy. Please start using xmlfile and/or xmlstr.",
+            DeprecationWarning,
+            stacklevel=2)
         if template is not None:
             self.template = template
         if pattern is not None:
@@ -140,31 +117,30 @@ class htmlfile(object):
             self.templateDir = templateDir
         if beExtremelyLenient is not None:
             self.beExtremelyLenient = beExtremelyLenient
-        self._filename = os.path.join(self.templateDir, self.template)
-        
-    def load(self, ctx=None):
-        mtime = os.path.getmtime(self._filename)
-        if mtime != self._mtime or self._cache is None:
-            from twisted.web import microdom
-            doc = microdom.parse(self._filename, beExtremelyLenient=self.beExtremelyLenient)
-            doc = flat.precompile(doc, ctx)
-            if self.pattern is not None:
-                doc = inevow.IQ(doc).onePattern(self.pattern)
-            self._mtime = mtime
-            self._cache = doc
-        return self._cache
+        _filename = os.path.join(self.templateDir, self.template)
+        self._cache = CachedFile(_filename, self._reallyLoad)
 
-        
+    def _reallyLoad(self, path, ctx):
+        doc = microdom.parse(path, beExtremelyLenient=self.beExtremelyLenient)
+        doc = flat.precompile(doc, ctx)
+        if self.pattern is not None:
+            doc = inevow.IQ(doc).onePattern(self.pattern)
+        return doc
+
+    def load(self, ctx=None, preprocessors=()):
+        assert not preprocessors, "preprocessors not supported by htmlfile"
+        return self._cache.load(ctx)
+
 class xmlstr(object):
 
-    __implements__ = inevow.IDocFactory,
-    
+    implements(inevow.IDocFactory)
+
     template = None
     pattern = None
     ignoreDocType = None
     ignoreComment = None
     _cache = None
-    
+
     def __init__(self, template=None, pattern=None, ignoreDocType=False, ignoreComment=False):
         if template is not None:
             self.template = template
@@ -175,29 +151,30 @@ class xmlstr(object):
         if ignoreComment is not None:
             self.ignoreComment = ignoreComment
 
-    def load(self, ctx=None):
+    def load(self, ctx=None, preprocessors=()):
+        """
+        Get an instance, possibly cached from a previous call, of this document
+        """
         if self._cache is None:
             doc = flatsax.parseString(self.template, self.ignoreDocType, self.ignoreComment)
+            for proc in preprocessors:
+                doc = proc(doc)
             doc = flat.precompile(doc, ctx)
             if self.pattern is not None:
                 doc = inevow.IQ(doc).onePattern(self.pattern)
             self._cache = doc
         return self._cache
-        
+
 
 class xmlfile(object):
-    
-    __implements__ = inevow.IDocFactory,
+
+    implements(inevow.IDocFactory)
 
     template = None
     templateDir = None
     pattern = None
     ignoreDocType = False
     ignoreComment = False
-
-    _filename = None
-    _mtime = None
-    _cache = None
 
     def __init__(self, template=None, pattern=None, templateDir=None, ignoreDocType=None, ignoreComment=None):
         self._cache = {}
@@ -215,15 +192,30 @@ class xmlfile(object):
             self._filename = os.path.join(self.templateDir, self.template)
         else:
             self._filename = self.template
-        
-    def load(self, ctx=None):
-        mtime, doc = self._cache.get((self._filename, self.pattern), (None,None))
-        self._mtime = os.path.getmtime(self._filename)
-        if mtime == self._mtime:
-            return doc
+
+        self._cache = {}
+
+    def load(self, ctx=None, preprocessors=()):
+        rendererFactoryClass = None
+        if ctx is not None:
+            r = inevow.IRendererFactory(ctx, None)
+            if r is not None:
+                rendererFactoryClass = getClass(r)
+
+        cacheKey = (self._filename, self.pattern, rendererFactoryClass)
+        cachedFile = self._cache.get(cacheKey)
+        if cachedFile is None:
+            cachedFile = self._cache[cacheKey] = CachedFile(self._filename, self._reallyLoad)
+
+        return cachedFile.load(ctx, preprocessors)
+
+    def _reallyLoad(self, path, ctx, preprocessors):
         doc = flatsax.parse(open(self._filename), self.ignoreDocType, self.ignoreComment)
-        doc = flat.precompile(doc)
+        for proc in preprocessors:
+            doc = proc(doc)
+        doc = flat.precompile(doc, ctx)
+
         if self.pattern is not None:
             doc = inevow.IQ(doc).onePattern(self.pattern)
-        self._cache[(self._filename, self.pattern)] = self._mtime, doc
+
         return doc

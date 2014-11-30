@@ -1,12 +1,11 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
-"""This module integrates PyUI with twisted.internet's mainloop.
+"""
+This module integrates PyUI with twisted.internet's mainloop.
 
-API Stability: unstable
-
-Maintainer: U{Jp Calderone<mailto:exarkun@twistedmatrix.com>}
+Maintainer: Jp Calderone
 
 See doc/examples/pyuidemo.py for example usage.
 """

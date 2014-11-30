@@ -1,7 +1,6 @@
-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# -*- test-case-name: twisted.test.test_pb -*-
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
-
 
 """
 This module represents flavors of remotely acessible objects.
@@ -10,16 +9,12 @@ Currently this is only objects accessible through Perspective Broker, but will
 hopefully encompass all forms of remote access which can emulate subsets of PB
 (such as XMLRPC or SOAP).
 
-Stability: semi-stable
-
 Future Plans: Optimization.  Exploitation of new-style object model.
 Optimizations to this module should not affect external-use semantics at all,
 but may have a small impact on users who subclass and override methods.
 
-@author: U{Glyph Lefkowitz<mailto:glyph@twistedmatrix.com>}
+@author: Glyph Lefkowitz
 """
-
-__version__ = "$Revision: 1.32 $"[11:-2]
 
 # NOTE: this module should NOT import pb; it is supposed to be a module which
 # abstractly defines remotely accessible types.  Many of these types expect to
@@ -27,15 +22,15 @@ __version__ = "$Revision: 1.32 $"[11:-2]
 # mechanisms (like XMLRPC)
 
 # system imports
-import types
-from zope.interface import implements
+import sys
+from zope.interface import implements, Interface
 
 # twisted imports
-from twisted.python import log, reflect, components
+from twisted.python import log, reflect
 
 # sibling imports
 from jelly import setUnjellyableForClass, setUnjellyableForClassTree, setUnjellyableFactoryForClass, unjellyableRegistry
-from jelly import Jellyable, Unjellyable, _Dummy
+from jelly import Jellyable, Unjellyable, _newDummyLike
 from jelly import setInstanceState, getInstanceState
 
 # compatibility
@@ -54,10 +49,10 @@ class NoSuchMethod(AttributeError):
     """Raised if there is no such remote method"""
 
 
-class IPBRoot(components.Interface):
+class IPBRoot(Interface):
     """Factory for root Referenceable objects for PB servers."""
 
-    def rootObject(self, broker):
+    def rootObject(broker):
         """Return root Referenceable for broker."""
 
 
@@ -129,7 +124,7 @@ class Referenceable(Serializable):
         serialize this to a peer.
         """
 
-        return "remote", jellier.invoker.registerReference(self)
+        return ["remote", jellier.invoker.registerReference(self)]
 
 
 class Root(Referenceable):
@@ -138,8 +133,6 @@ class Root(Referenceable):
     When a L{pb.BrokerFactory} produces a L{pb.Broker}, it supplies that
     L{pb.Broker} with an object named \"root\".  That object is obtained
     by calling my rootObject method.
-
-    See also: L{pb.getObjectAt}
     """
 
     implements(IPBRoot)
@@ -152,8 +145,6 @@ class Root(Referenceable):
         object.  By default I return myself.
         """
         return self
-
-components.backwardsCompatImplements(Root)
 
 
 class ViewPoint(Referenceable):
@@ -219,7 +210,7 @@ class ViewPoint(Referenceable):
         kw = broker.unserialize(kw, self.perspective)
         method = getattr(self.object, "view_%s" % message)
         try:
-            state = apply(method, (self.perspective,)+args, kw)
+            state = method(*(self.perspective,)+args, **kw)
         except TypeError:
             log.msg("%s didn't accept %s and %s" % (method, args, kw))
             raise
@@ -426,7 +417,7 @@ class RemoteCache(RemoteCopy, Serializable):
         kw = broker.unserialize(kw)
         method = getattr(self, "observe_%s" % message)
         try:
-            state = apply(method, args, kw)
+            state = method(*args, **kw)
         except TypeError:
             log.msg("%s didn't accept %s and %s" % (method, args, kw))
             raise
@@ -446,9 +437,7 @@ class RemoteCache(RemoteCopy, Serializable):
             return setInstanceState(self, unjellier, jellyList)
         self.broker = unjellier.invoker
         self.luid = jellyList[1]
-        cProxy = _Dummy()
-        cProxy.__class__ = self.__class__
-        cProxy.__dict__ = self.__dict__
+        cProxy = _newDummyLike(self)
         # XXX questionable whether this was a good design idea...
         init = getattr(cProxy, "__init__", None)
         if init:
@@ -479,7 +468,7 @@ class RemoteCache(RemoteCopy, Serializable):
     def __hash__(self):
         """Hash me.
         """
-        return id(self.__dict__)
+        return int(id(self.__dict__) % sys.maxint)
 
     broker = None
     luid = None
@@ -497,10 +486,7 @@ class RemoteCache(RemoteCopy, Serializable):
 def unjellyCached(unjellier, unjellyList):
     luid = unjellyList[1]
     cNotProxy = unjellier.invoker.cachedLocallyAs(luid)
-
-    cProxy = _Dummy()
-    cProxy.__class__ = cNotProxy.__class__
-    cProxy.__dict__ = cNotProxy.__dict__
+    cProxy = _newDummyLike(cNotProxy)
     return cProxy
 
 setUnjellyableForClass("cached", unjellyCached)

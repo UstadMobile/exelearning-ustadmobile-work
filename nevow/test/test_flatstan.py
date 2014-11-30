@@ -1,9 +1,9 @@
-# Copyright (c) 2004 Divmod.
+# Copyright (c) 2004,2008 Divmod.
 # See LICENSE for details.
 
-from __future__ import generators
-
 from twisted.internet import defer
+
+from zope.interface import implements, Interface
 
 from nevow import stan
 from nevow import context
@@ -12,8 +12,9 @@ from nevow import entities
 from nevow import inevow
 from nevow import flat
 from nevow import rend
-from nevow import compy
 from nevow.testutil import FakeRequest, TestCase
+
+from nevow.flat import twist
 
 proto = stan.Proto('hello')
 
@@ -24,28 +25,26 @@ class Base(TestCase):
         return lambda context, data: ""
 
     def setupContext(self, precompile=False, setupRequest=lambda r:r):
-        fr = setupRequest(FakeRequest())
+        fr = setupRequest(FakeRequest(uri='/', currentSegments=['']))
         ctx = context.RequestContext(tag=fr)
         ctx.remember(fr, inevow.IRequest)
         ctx.remember(None, inevow.IData)
         ctx = context.WovenContext(parent=ctx, precompile=precompile)
         return ctx
 
-    def render(self, tag, precompile=False, data=None, setupRequest=lambda r: r, setupContext=lambda c:c):
+    def render(self, tag, precompile=False, data=None, setupRequest=lambda r: r, setupContext=lambda c:c, wantDeferred=False):
         ctx = self.setupContext(precompile, setupRequest)
         ctx = setupContext(ctx)
         if precompile:
             return flat.precompile(tag, ctx)
         else:
-            try:
-                from twisted.trial import util
-                from nevow.flat import twist
-            except ImportError:
-                return flat.flatten(tag, ctx)
-            else:
+            if wantDeferred:
                 L = []
-                util.deferredResult(twist.deferflatten(tag, ctx, L.append))
-                return ''.join(L)
+                D = twist.deferflatten(tag, ctx, L.append)
+                D.addCallback(lambda igresult: ''.join(L))
+                return D
+            else:
+                return flat.flatten(tag, ctx)
 
 
 class TestSimpleSerialization(Base):
@@ -143,6 +142,22 @@ class TestComplexSerialization(Base):
         precompiled = self.render(tag, precompile=True)
         self.assertEquals(self.render(precompiled), '<p>bar</p>')
 
+
+    def test_precompiledSlotLocation(self):
+        """
+        The result of precompiling a slot preserves the location information
+        associated with the slot.
+        """
+        filename = 'foo/bar'
+        line = 123
+        column = 432
+        [slot] = self.render(
+            tags.slot('foo', None, filename, line, column), precompile=True)
+        self.assertEqual(slot.filename, filename)
+        self.assertEqual(slot.lineNumber, line)
+        self.assertEqual(slot.columnNumber, column)
+
+
     def makeComplex(self):
         return tags.html[
             tags.body[
@@ -159,7 +174,7 @@ class TestComplexSerialization(Base):
     def test_precompileTwice(self):
         def render_same(context, data):
             return context.tag
-        
+
         doc = tags.html[
             tags.body(render=render_same, data={'foo':5})[
                 tags.p["Hello"],
@@ -176,7 +191,7 @@ class TestComplexSerialization(Base):
     def test_precompilePrecompiled(self):
         def render_same(context, data):
             return context.tag
-        
+
         doc = tags.html[
             tags.body(render=render_same, data={'foo':5})[
                 tags.p["Hello"],
@@ -192,10 +207,10 @@ class TestComplexSerialization(Base):
 
     def test_precompileDoesntChangeOriginal(self):
         doc = tags.html(data="foo")[tags.p['foo'], tags.p['foo']]
-        
+
         result = self.render(doc, precompile=True)
         rendered = self.render(result)
-        
+
         self.assertEquals(len(doc.children), 2)
         self.assertEquals(rendered, "<html><p>foo</p><p>foo</p></html>")
 
@@ -203,18 +218,18 @@ class TestComplexSerialization(Base):
         tag = self.makeComplex()
         prelude, dynamic, postlude = self.render(tag, precompile=True)
         self.assertEquals(prelude, '<html><body>')
-        
+
         self.assertEquals(dynamic.tag.tagName, 'table')
         self.failUnless(dynamic.tag.children)
         self.assertEquals(dynamic.tag.data, 5)
-        
+
         childPrelude, childDynamic, childPostlude = dynamic.tag.children
-        
+
         self.assertEquals(childPrelude, '<tr><td>')
         self.assertEquals(childDynamic.tag.tagName, 'span')
         self.assertEquals(childDynamic.tag.render, str)
         self.assertEquals(childPostlude, '</td></tr>')
-        
+
         self.assertEquals(postlude, '</body></html>')
 
     def test_precompileThenRender(self):
@@ -259,8 +274,12 @@ class TestComplexSerialization(Base):
         ]
         self.assertEquals(self.render(tag), "<html><body><table><tr><td>Header one.</td><td>Header two.</td></tr><tr><td>One: 1</td><td>Two: 2</td></tr></table></body></html>")
 
-    def test_slotAttributeEscapingWhenPrecompiled(self):
 
+    def test_slotAttributeEscapingWhenPrecompiled(self):
+        """
+        Test that slots which represent attribute values properly quote those
+        values for that context.
+        """
         def render_searchResults(ctx, remoteCursor):
             ctx.fillSlots('old-query', '"meow"')
             return ctx.tag
@@ -274,7 +293,6 @@ class TestComplexSerialization(Base):
 
         self.assertEquals(self.render(precompiled), '<input value="&quot;meow&quot;" />')
 
-    test_slotAttributeEscapingWhenPrecompiled.todo = 'this is a bug and should be fixed.'
 
     def test_nestedpatterns(self):
         def data_table(context, data):  return [[1,2,3],[4,5,6]]
@@ -336,20 +354,20 @@ class TestComplexSerialization(Base):
         self.assertEquals(self.render(tag), "<html><span>Hi</span></html>")
 
     def test_nested_remember(self):
-        class IFoo(compy.Interface):
+        class IFoo(Interface):
             pass
         class Foo(str):
-            __implements__ = IFoo
-            
+            implements(IFoo)
+
         def checkContext(ctx, data):
             self.assertEquals(ctx.locate(IFoo), Foo("inner"))
             self.assertEquals(ctx.locate(IFoo, depth=2), Foo("outer"))
             return 'Hi'
         tag = tags.html(remember=Foo("outer"))[tags.span(render=lambda ctx,data: ctx.tag, remember=Foo("inner"))[checkContext]]
         self.assertEquals(self.render(tag), "<html><span>Hi</span></html>")
-        
+
     def test_deferredRememberInRenderer(self):
-        class IFoo(compy.Interface):
+        class IFoo(Interface):
             pass
         def rememberIt(ctx, data):
             ctx.remember("bar", IFoo)
@@ -357,7 +375,16 @@ class TestComplexSerialization(Base):
         def locateIt(ctx, data):
             return IFoo(ctx)
         tag = tags.invisible(render=rememberIt)[tags.invisible(render=locateIt)]
-        self.assertEquals(self.render(tag), "bar")
+        self.render(tag, wantDeferred=True).addCallback(
+            lambda result: self.assertEquals(result, "bar"))
+
+    def test_deferredFromNestedFunc(self):
+        def outer(ctx, data):
+            def inner(ctx, data):
+                return defer.succeed(tags.p['Hello'])
+            return inner
+        self.render(tags.invisible(render=outer), wantDeferred=True).addCallback(
+            lambda result: self.assertEquals(result, '<p>Hello</p>'))
 
     def test_dataContextCreation(self):
         data = {'foo':'oof', 'bar':'rab'}
@@ -378,7 +405,7 @@ class TestComplexSerialization(Base):
 
         self.assertEquals(result, '<div>one</div>')
 
-        
+
 class TestMultipleRenderWithDirective(Base):
     def test_it(self):
         class Cool(object):
@@ -418,6 +445,7 @@ class TestEntity(Base):
 
 
 class TestNoneAttribute(Base):
+
     def test_simple(self):
         val = self.render(tags.html(foo=None)["Bar"])
         self.assertEquals(val, "<html>Bar</html>")
@@ -425,7 +453,18 @@ class TestNoneAttribute(Base):
     def test_slot(self):
         val = self.render(tags.html().fillSlots('bar', None)(foo=tags.slot('bar'))["Bar"])
         self.assertEquals(val, "<html>Bar</html>")
-    test_slot.todo = "We need to be able to roll back time in order to not output the attribute name"
+    test_slot.skip = "Attribute name flattening must happen later for this to work"
+
+    def test_deepSlot(self):
+        val = self.render(tags.html().fillSlots('bar', lambda c,d: None)(foo=tags.slot('bar'))["Bar"])
+        self.assertEquals(val, "<html>Bar</html>")
+    test_deepSlot.skip = "Attribute name flattening must happen later for this to work"
+
+    def test_deferredSlot(self):
+        self.render(tags.html().fillSlots('bar', defer.succeed(None))(foo=tags.slot('bar'))["Bar"],
+                    wantDeferred=True).addCallback(
+            lambda val: self.assertEquals(val, "<html>Bar</html>"))
+    test_deferredSlot.skip = "Attribute name flattening must happen later for this to work"
 
 
 class TestKey(Base):
@@ -441,3 +480,75 @@ class TestKey(Base):
                         tags.div(key="four", render=appendKey)]]])
         self.assertEquals(val, ["one", "one.two", "one.two", "one.two.four"])
 
+
+
+class TestDeferFlatten(Base):
+
+    def flatten(self, obj):
+        """
+        Flatten the given object using L{twist.deferflatten} and a simple context.
+
+        Return the Deferred returned by L{twist.deferflatten}.
+        it.
+        """
+        # Simple context with None IData
+        ctx = context.WovenContext()
+        ctx.remember(None, inevow.IData)
+        return twist.deferflatten(obj, ctx, lambda bytes: None)
+
+
+    def test_errorPropogation(self):
+        # A generator that raises an error
+        def gen(ctx, data):
+            yield 1
+            raise Exception('This is an exception!')
+            yield 2
+
+        # The actual test
+        notquiteglobals = {}
+        def finished(spam):
+            print 'FINISHED'
+        def error(failure):
+            notquiteglobals['exception'] = failure.value
+        def checker(result):
+            if not isinstance(notquiteglobals['exception'], Exception):
+                self.fail('deferflatten did not errback with the correct failure')
+            return result
+        d = self.flatten(gen)
+        d.addCallback(finished)
+        d.addErrback(error)
+        d.addBoth(checker)
+        return d
+
+
+    def test_failurePropagation(self):
+        """
+        Passing a L{Deferred}, the current result of which is a L{Failure}, to
+        L{twist.deferflatten} causes it to return a L{Deferred} which will be
+        errbacked with that failure.  The original Deferred will also errback
+        with that failure even after having been passed to
+        L{twist.deferflatten}.
+        """
+        error = RuntimeError("dummy error")
+        deferred = defer.fail(error)
+
+        d = self.flatten(deferred)
+        self.assertFailure(d, RuntimeError)
+        d.addCallback(self.assertIdentical, error)
+
+        self.assertFailure(deferred, RuntimeError)
+        deferred.addCallback(self.assertIdentical, error)
+
+        return defer.gatherResults([d, deferred])
+
+
+    def test_resultPreserved(self):
+        """
+        The result of a L{Deferred} passed to L{twist.deferflatten} is the
+        same before and after the call.
+        """
+        result = 1357
+        deferred = defer.succeed(result)
+        d = self.flatten(deferred)
+        deferred.addCallback(self.assertIdentical, result)
+        return defer.gatherResults([d, deferred])

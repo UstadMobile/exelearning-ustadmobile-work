@@ -1,15 +1,9 @@
 # -*- test-case-name: twisted.test.test_ftp -*-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 """
 An FTP protocol implementation
-
-@author: U{Itamar Shtull-Trauring<mailto:itamarst@twistedmatrix.com>}
-@author: U{Jp Calderone<mailto:exarkun@divmod.com>}
-@author: U{Andrew Bennetts<mailto:spiv@twistedmatrix.com>}
-
-API stability: FTPClient is stable, FTP and FTPFactory (server) is unstable.
 """
 
 # System Imports
@@ -33,7 +27,7 @@ from twisted import copyright
 from twisted.internet import reactor, interfaces, protocol, error, defer
 from twisted.protocols import basic, policies
 
-from twisted.python import log, components, failure, filepath
+from twisted.python import log, failure, filepath
 
 from twisted.cred import error as cred_error, portal, credentials, checkers
 
@@ -49,18 +43,19 @@ CMD_OK                                  = "200.1"
 TYPE_SET_OK                             = "200.2"
 ENTERING_PORT_MODE                      = "200.3"
 CMD_NOT_IMPLMNTD_SUPERFLUOUS            = "202"
-SYS_STATUS_OR_HELP_REPLY                = "211"
+SYS_STATUS_OR_HELP_REPLY                = "211.1"
+FEAT_OK                                 = '211.2'
 DIR_STATUS                              = "212"
 FILE_STATUS                             = "213"
 HELP_MSG                                = "214"
 NAME_SYS_TYPE                           = "215"
 SVC_READY_FOR_NEW_USER                  = "220.1"
 WELCOME_MSG                             = "220.2"
-SVC_CLOSING_CTRL_CNX                    = "221"
-GOODBYE_MSG                             = "221"
+SVC_CLOSING_CTRL_CNX                    = "221.1"
+GOODBYE_MSG                             = "221.2"
 DATA_CNX_OPEN_NO_XFR_IN_PROGRESS        = "225"
-CLOSING_DATA_CNX                        = "226"
-TXFR_COMPLETE_OK                        = "226"
+CLOSING_DATA_CNX                        = "226.1"
+TXFR_COMPLETE_OK                        = "226.2"
 ENTERING_PASV_MODE                      = "227"
 ENTERING_EPSV_MODE                      = "229"
 USR_LOGGED_IN_PROCEED                   = "230.1"     # v1 of code 230
@@ -84,7 +79,8 @@ REQ_ACTN_ABRTD_INSUFF_STORAGE           = "452"
 
 SYNTAX_ERR                              = "500"
 SYNTAX_ERR_IN_ARGS                      = "501"
-CMD_NOT_IMPLMNTD                        = "502"
+CMD_NOT_IMPLMNTD                        = "502.1"
+OPTS_NOT_IMPLEMENTED                    = '502.2'
 BAD_CMD_SEQ                             = "503"
 CMD_NOT_IMPLMNTD_FOR_PARAM              = "504"
 NOT_LOGGED_IN                           = "530.1"     # v1 of code 530 - please log in
@@ -95,6 +91,8 @@ PERMISSION_DENIED                       = "550.2"     # permission denied
 ANON_USER_DENIED                        = "550.3"     # anonymous users can't alter filesystem
 IS_NOT_A_DIR                            = "550.4"     # rmd called on a path that is not a directory
 REQ_ACTN_NOT_TAKEN                      = "550.5"
+FILE_EXISTS                             = "550.6"
+IS_A_DIR                                = "550.7"
 PAGE_TYPE_UNK                           = "551"
 EXCEEDED_STORAGE_ALLOC                  = "552"
 FILENAME_NOT_ALLOWED                    = "553"
@@ -113,12 +111,14 @@ RESPONSE = {
     ENTERING_PORT_MODE:                 '200 PORT OK',
     CMD_NOT_IMPLMNTD_SUPERFLUOUS:       '202 Command not implemented, superfluous at this site',
     SYS_STATUS_OR_HELP_REPLY:           '211 System status reply',
+    FEAT_OK:                            ['211-Features:','211 End'],
     DIR_STATUS:                         '212 %s',
     FILE_STATUS:                        '213 %s',
     HELP_MSG:                           '214 help: %s',
     NAME_SYS_TYPE:                      '215 UNIX Type: L8',
     WELCOME_MSG:                        "220 %s",
     SVC_READY_FOR_NEW_USER:             '220 Service ready',
+    SVC_CLOSING_CTRL_CNX:               '221 Service closing control connection',
     GOODBYE_MSG:                        '221 Goodbye.',
     DATA_CNX_OPEN_NO_XFR_IN_PROGRESS:   '225 data connection open, no transfer in progress',
     CLOSING_DATA_CNX:                   '226 Abort successful',
@@ -132,9 +132,9 @@ RESPONSE = {
     MKD_REPLY:                          '257 "%s" created',
 
     # -- 300's --
-    'userotp':                          '331 Response to %s.',  # ???
     USR_NAME_OK_NEED_PASS:              '331 Password required for %s.',
     GUEST_NAME_OK_NEED_EMAIL:           '331 Guest login ok, type your email address as password.',
+    NEED_ACCT_FOR_LOGIN:                '332 Need account for login.',
 
     REQ_FILE_ACTN_PENDING_FURTHER_INFO: '350 Requested file action pending further information.',
 
@@ -144,13 +144,15 @@ RESPONSE = {
     CANT_OPEN_DATA_CNX:                 "425 Can't open data connection.",
     CNX_CLOSED_TXFR_ABORTED:            '426 Transfer aborted.  Data connection closed.',
 
+    REQ_ACTN_ABRTD_FILE_UNAVAIL:        '450 Requested action aborted. File unavailable.',
     REQ_ACTN_ABRTD_LOCAL_ERR:           '451 Requested action aborted. Local error in processing.',
-
+    REQ_ACTN_ABRTD_INSUFF_STORAGE:      '452 Requested action aborted. Insufficient storage.',
 
     # -- 500's --
     SYNTAX_ERR:                         "500 Syntax error: %s",
     SYNTAX_ERR_IN_ARGS:                 '501 syntax error in argument(s) %s.',
     CMD_NOT_IMPLMNTD:                   "502 Command '%s' not implemented",
+    OPTS_NOT_IMPLEMENTED:               "502 Option '%s' not implemented.",
     BAD_CMD_SEQ:                        '503 Incorrect sequence of commands: %s',
     CMD_NOT_IMPLMNTD_FOR_PARAM:         "504 Not implemented for parameter '%s'.",
     NOT_LOGGED_IN:                      '530 Please login with USER and PASS.',
@@ -160,14 +162,21 @@ RESPONSE = {
     PERMISSION_DENIED:                  '550 %s: Permission denied.',
     ANON_USER_DENIED:                   '550 Anonymous users are forbidden to change the filesystem',
     IS_NOT_A_DIR:                       '550 Cannot rmd, %s is not a directory',
+    FILE_EXISTS:                        '550 %s: File exists',
+    IS_A_DIR:                           '550 %s: is a directory',
     REQ_ACTN_NOT_TAKEN:                 '550 Requested action not taken: %s',
+    PAGE_TYPE_UNK:                      '551 Page type unknown',
     EXCEEDED_STORAGE_ALLOC:             '552 Requested file action aborted, exceeded file storage allocation',
     FILENAME_NOT_ALLOWED:               '553 Requested action not taken, file name not allowed'
 }
 
 
+
 class InvalidPath(Exception):
-    pass
+    """
+    Internal exception used to signify an error during parsing a path.
+    """
+
 
 
 def toSegments(cwd, path):
@@ -196,44 +205,78 @@ def toSegments(cwd, path):
 
 
 def errnoToFailure(e, path):
-    if e == errno.ENOENT or e == errno.EISDIR:
+    """
+    Map C{OSError} and C{IOError} to standard FTP errors.
+    """
+    if e == errno.ENOENT:
         return defer.fail(FileNotFoundError(path))
     elif e == errno.EACCES or e == errno.EPERM:
         return defer.fail(PermissionDeniedError(path))
     elif e == errno.ENOTDIR:
         return defer.fail(IsNotADirectoryError(path))
+    elif e == errno.EEXIST:
+        return defer.fail(FileExistsError(path))
+    elif e == errno.EISDIR:
+        return defer.fail(IsADirectoryError(path))
     else:
         return defer.fail()
 
-# Generic VFS exceptions
-class FilesystemShellException(Exception):
-    """Base for IFTPShell errors.
+
+def _isGlobbingExpression(segments=None):
     """
+    Helper for checking if a FTPShell `segments` contains a wildcard Unix
+    expression.
 
-class NoSuchFile(FilesystemShellException):
-    pass
+    Only filename globbing is supported.
+    This means that wildcards can only be presents in the last element of
+    `segments`.
 
-class PermissionDenied(FilesystemShellException):
-    pass
+    @type  segments: C{list}
+    @param segments: List of path elements as used by the FTP server protocol.
 
-class WrongFiletype(FilesystemShellException):
-    pass
+    @rtype: Boolean
+    @return: True if `segments` contains a globbing expression.
+    """
+    if not segments:
+        return False
 
+    # To check that something is a glob expression, we convert it to
+    # Regular Expression. If the result is the same as the original expression
+    # then it contains no globbing expression.
+    globCandidate = segments[-1]
+    # A set of default regex rules is added to all strings.
+    emtpyTranslations = fnmatch.translate('')
+    globTranslations = fnmatch.translate(globCandidate)
 
-# -- Custom Exceptions --
+    if globCandidate + emtpyTranslations == globTranslations:
+        return False
+    else:
+        return True
+
 
 class FTPCmdError(Exception):
+    """
+    Generic exception for FTP commands.
+    """
     def __init__(self, *msg):
         Exception.__init__(self, *msg)
         self.errorMessage = msg
 
+
     def response(self):
-        """Generate a FTP response message for this error."""
+        """
+        Generate a FTP response message for this error.
+        """
         return RESPONSE[self.errorCode] % self.errorMessage
 
 
+
 class FileNotFoundError(FTPCmdError):
+    """
+    Raised when trying to access a non existent file or directory.
+    """
     errorCode = FILE_NOT_FOUND
+
 
 
 class AnonUserDeniedError(FTPCmdError):
@@ -241,11 +284,9 @@ class AnonUserDeniedError(FTPCmdError):
     Raised when an anonymous user issues a command that will alter the
     filesystem
     """
-    def __init__(self):
-        # No message
-        FTPCmdError.__init__(self, None)
 
     errorCode = ANON_USER_DENIED
+
 
 
 class PermissionDeniedError(FTPCmdError):
@@ -256,60 +297,90 @@ class PermissionDeniedError(FTPCmdError):
     errorCode = PERMISSION_DENIED
 
 
+
 class IsNotADirectoryError(FTPCmdError):
-    """raised when RMD is called on a path that isn't a directory
+    """
+    Raised when RMD is called on a path that isn't a directory.
     """
     errorCode = IS_NOT_A_DIR
 
+
+
+class FileExistsError(FTPCmdError):
+    """
+    Raised when attempted to override an existing resource.
+    """
+    errorCode = FILE_EXISTS
+
+
+
+class IsADirectoryError(FTPCmdError):
+    """
+    Raised when DELE is called on a path that is a directory.
+    """
+    errorCode = IS_A_DIR
+
+
+
 class CmdSyntaxError(FTPCmdError):
+    """
+    Raised when a command syntax is wrong.
+    """
     errorCode = SYNTAX_ERR
 
+
+
 class CmdArgSyntaxError(FTPCmdError):
+    """
+    Raised when a command is called with wrong value or a wrong number of
+    arguments.
+    """
     errorCode = SYNTAX_ERR_IN_ARGS
 
+
+
 class CmdNotImplementedError(FTPCmdError):
-    """raised when an unimplemented command is given to the server
+    """
+    Raised when an unimplemented command is given to the server.
     """
     errorCode = CMD_NOT_IMPLMNTD
 
+
+
 class CmdNotImplementedForArgError(FTPCmdError):
+    """
+    Raised when the handling of a parameter for a command is not implemented by
+    the server.
+    """
     errorCode = CMD_NOT_IMPLMNTD_FOR_PARAM
+
+
 
 class FTPError(Exception):
     pass
 
-class FTPTimeoutError(Exception):
-    pass
 
-class DTPError(Exception):
-    pass
-
-class BogusClientError(Exception):
-    """thrown when a client other than the one we opened this
-    DTP connection for attempts to connect, or a client attempts to
-    get us to connect to an ip that differs from the one where the
-    request came from"""
-    pass
-
-class PathBelowTLDError(FTPCmdError):
-    errorCode = PERMISSION_DENIED
-
-class ClientDisconnectError(Exception):
-    pass
 
 class PortConnectionError(Exception):
     pass
 
+
+
 class BadCmdSequenceError(FTPCmdError):
-    """raised when a client sends a series of commands in an illogical sequence"""
+    """
+    Raised when a client sends a series of commands in an illogical sequence.
+    """
     errorCode = BAD_CMD_SEQ
 
+
+
 class AuthorizationError(FTPCmdError):
-    """raised when client authentication fails"""
+    """
+    Raised when client authentication fails.
+    """
     errorCode = AUTH_FAILURE
 
 
-# -- Utility Functions --
 
 def debugDeferred(self, *_):
     log.msg('debugDeferred(): %s' % str(_), debug=True)
@@ -317,26 +388,12 @@ def debugDeferred(self, *_):
 
 # -- DTP Protocol --
 
-class IDTPFactory(components.Interface):
-    """An interface for protocol.Factories
-
-    @ivar peerCheck: perform checks to make sure the ftp-pi's peer is the same
-        as the dtp's
-    @ivar pi: a reference to this factory's protocol interpreter
-    """
-    def __init__(self, pi, peerHost=None):
-        """Constructor
-        @param pi: this factory's protocol interpreter
-        @param peerHost: if peerCheck is True, this is the tuple that the
-            generated instance will use to perform security checks
-        """
-        pass
-
 
 _months = [
     None,
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
 
 class DTP(object, protocol.Protocol):
     implements(interfaces.IConsumer)
@@ -358,6 +415,12 @@ class DTP(object, protocol.Protocol):
             self._onConnLost.callback(None)
 
     def sendLine(self, line):
+        """
+        Send a line to data channel.
+
+        @param line: The line to be sent.
+        @type line: L{bytes}
+        """
         self.transport.write(line + '\r\n')
 
 
@@ -455,64 +518,98 @@ class DTP(object, protocol.Protocol):
     def stopProducing(self):
         self.transport.stopProducing()
 
-components.backwardsCompatImplements(DTP)
-
-
 class DTPFactory(protocol.ClientFactory):
-    implements(IDTPFactory)
+    """
+    Client factory for I{data transfer process} protocols.
+
+    @ivar peerCheck: perform checks to make sure the ftp-pi's peer is the same
+        as the dtp's
+    @ivar pi: a reference to this factory's protocol interpreter
+
+    @ivar _state: Indicates the current state of the DTPFactory.  Initially,
+        this is L{_IN_PROGRESS}.  If the connection fails or times out, it is
+        L{_FAILED}.  If the connection succeeds before the timeout, it is
+        L{_FINISHED}.
+    """
+
+    _IN_PROGRESS = object()
+    _FAILED = object()
+    _FINISHED = object()
+
+    _state = _IN_PROGRESS
 
     # -- configuration variables --
     peerCheck = False
 
     # -- class variables --
-    def __init__(self, pi, peerHost=None):
+    def __init__(self, pi, peerHost=None, reactor=None):
+        """
+        Constructor
+
+        @param pi: this factory's protocol interpreter
+        @param peerHost: if peerCheck is True, this is the tuple that the
+            generated instance will use to perform security checks
+        """
         self.pi = pi                        # the protocol interpreter that is using this factory
         self.peerHost = peerHost            # the from FTP.transport.peerHost()
         self.deferred = defer.Deferred()    # deferred will fire when instance is connected
-        self.deferred.addBoth(lambda ign: (delattr(self, 'deferred'), ign)[1])
         self.delayedCall = None
+        if reactor is None:
+            from twisted.internet import reactor
+        self._reactor = reactor
+
 
     def buildProtocol(self, addr):
         log.msg('DTPFactory.buildProtocol', debug=True)
+
+        if self._state is not self._IN_PROGRESS:
+            return None
+        self._state = self._FINISHED
+
         self.cancelTimeout()
-        if self.pi.dtpInstance:   # only create one instance
-            return
         p = DTP()
         p.factory = self
         p.pi = self.pi
         self.pi.dtpInstance = p
         return p
 
+
     def stopFactory(self):
         log.msg('dtpFactory.stopFactory', debug=True)
         self.cancelTimeout()
 
+
     def timeoutFactory(self):
         log.msg('timed out waiting for DTP connection')
-        if self.deferred:
-            d, self.deferred = self.deferred, None
+        if self._state is not self._IN_PROGRESS:
+            return
+        self._state = self._FAILED
 
-            # TODO: LEFT OFF HERE!
+        d = self.deferred
+        self.deferred = None
+        d.errback(
+            PortConnectionError(defer.TimeoutError("DTPFactory timeout")))
 
-            d.addErrback(debugDeferred, 'timeoutFactory firing errback')
-            d.errback(defer.TimeoutError())
-        self.stopFactory()
 
     def cancelTimeout(self):
-        if not self.delayedCall.called and not self.delayedCall.cancelled:
+        if self.delayedCall is not None and self.delayedCall.active():
             log.msg('cancelling DTP timeout', debug=True)
             self.delayedCall.cancel()
-            assert self.delayedCall.cancelled
-            log.msg('timeout has been cancelled', debug=True)
+
 
     def setTimeout(self, seconds):
         log.msg('DTPFactory.setTimeout set to %s seconds' % seconds)
-        self.delayedCall = reactor.callLater(seconds, self.timeoutFactory)
+        self.delayedCall = self._reactor.callLater(seconds, self.timeoutFactory)
+
 
     def clientConnectionFailed(self, connector, reason):
-        self.deferred.errback(PortConnectionError(reason))
+        if self._state is not self._IN_PROGRESS:
+            return
+        self._state = self._FAILED
+        d = self.deferred
+        self.deferred = None
+        d.errback(PortConnectionError(reason))
 
-components.backwardsCompatImplements(DTPFactory)
 
 # -- FTP-PI (Protocol Interpreter) --
 
@@ -531,20 +628,34 @@ class ASCIIConsumerWrapper(object):
         return self.cons.write(bytes.replace(os.linesep, "\r\n"))
 
 
+
 class FileConsumer(object):
+    """
+    A consumer for FTP input that writes data to a file.
+
+    @ivar fObj: a file object opened for writing, used to write data received.
+    @type fObj: C{file}
+    """
+
+    implements(interfaces.IConsumer)
+
     def __init__(self, fObj):
         self.fObj = fObj
+
 
     def registerProducer(self, producer, streaming):
         self.producer = producer
         assert streaming
 
+
     def unregisterProducer(self):
         self.producer = None
         self.fObj.close()
 
+
     def write(self, bytes):
         self.fObj.write(bytes)
+
 
 
 class FTPOverflowProtocol(basic.LineReceiver):
@@ -555,15 +666,22 @@ class FTPOverflowProtocol(basic.LineReceiver):
 
 
 class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
-    """Protocol Interpreter for the File Transfer Protocol
+    """
+    Protocol Interpreter for the File Transfer Protocol
 
     @ivar state: The current server state.  One of L{UNAUTH},
-    L{INAUTH}, L{AUTHED}, L{RENAMING}.
+        L{INAUTH}, L{AUTHED}, L{RENAMING}.
 
     @ivar shell: The connected avatar
     @ivar binary: The transfer mode.  If false, ASCII.
     @ivar dtpFactory: Generates a single DTP for this session
     @ivar dtpPort: Port returned from listenTCP
+    @ivar listenFactory: A callable with the signature of
+        L{twisted.internet.interfaces.IReactorTCP.listenTCP} which will be used
+        to create Ports for passive connections (mainly for testing).
+
+    @ivar passivePortRange: iterator used as source of passive port numbers.
+    @type passivePortRange: C{iterator}
     """
 
     disconnected = False
@@ -574,13 +692,18 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
     # how long the DTP waits for a connection
     dtpTimeout = 10
 
-    portal      = None
-    shell       = None     # the avatar
-    dtpFactory  = None     # generates a single DTP for this session
-    dtpPort     = None     # object returned from listenTCP
+    portal = None
+    shell = None
+    dtpFactory = None
+    dtpPort = None
     dtpInstance = None
-    binary      = True     # binary transfers? False implies ASCII. defaults to True
+    binary = True
+    PUBLIC_COMMANDS = ['FEAT', 'QUIT']
+    FEATURES = ['FEAT', 'MDTM', 'PASV', 'SIZE', 'TYPE A;I']
 
+    passivePortRange = xrange(0, 1)
+
+    listenFactory = reactor.listenTCP
 
     def reply(self, key, *args):
         msg = RESPONSE[key] % args
@@ -614,7 +737,7 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
         def processFailed(err):
             if err.check(FTPCmdError):
                 self.sendLine(err.value.response())
-            elif (err.check(TypeError) and 
+            elif (err.check(TypeError) and
                   err.value.args[0].find('takes exactly') != -1):
                 self.reply(SYNTAX_ERR, "%s requires an argument." % (cmd,))
             else:
@@ -651,9 +774,19 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
 
 
     def processCommand(self, cmd, *params):
+
+        def call_ftp_command(command):
+            method = getattr(self, "ftp_" + command, None)
+            if method is not None:
+                return method(*params)
+            return defer.fail(CmdNotImplementedError(command))
+
         cmd = cmd.upper()
 
-        if self.state == self.UNAUTH:
+        if cmd in self.PUBLIC_COMMANDS:
+            return call_ftp_command(cmd)
+
+        elif self.state == self.UNAUTH:
             if cmd == 'USER':
                 return self.ftp_USER(*params)
             elif cmd == 'PASS':
@@ -665,19 +798,33 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
             if cmd == 'PASS':
                 return self.ftp_PASS(*params)
             else:
-                return BAD_CMD_SEQ
+                return BAD_CMD_SEQ, "PASS required after USER"
 
         elif self.state == self.AUTHED:
-            method = getattr(self, "ftp_" + cmd, None)
-            if method is not None:
-                return method(*params)
-            return defer.fail(CmdNotImplementedError(cmd))
+            return call_ftp_command(cmd)
 
         elif self.state == self.RENAMING:
             if cmd == 'RNTO':
                 return self.ftp_RNTO(*params)
             else:
-                return BAD_CMD_SEQ, "Blah"
+                return BAD_CMD_SEQ, "RNTO required after RNFR"
+
+
+    def getDTPPort(self, factory):
+        """
+        Return a port for passive access, using C{self.passivePortRange}
+        attribute.
+        """
+        for portn in self.passivePortRange:
+            try:
+                dtpPort = self.listenFactory(portn, factory)
+            except error.CannotListenError:
+                continue
+            else:
+                return dtpPort
+        raise error.CannotListenError('', portn,
+            "No port available in range %s" %
+            (self.passivePortRange,))
 
 
     def ftp_USER(self, username):
@@ -732,14 +879,16 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
 
 
     def ftp_PASV(self):
-        """Request for a passive connection
+        """
+        Request for a passive connection
 
-        from the rfc:
-            This command requests the server-DTP to "listen" on a data
-            port (which is not its default data port) and to wait for a
-            connection rather than initiate one upon receipt of a
-            transfer command.  The response to this command includes the
-            host and port address this server is listening on.
+        from the rfc::
+
+            This command requests the server-DTP to \"listen\" on a data port
+            (which is not its default data port) and to wait for a connection
+            rather than initiate one upon receipt of a transfer command.  The
+            response to this command includes the host and port address this
+            server is listening on.
         """
         # if we have a DTP port set up, lose it.
         if self.dtpFactory is not None:
@@ -748,7 +897,7 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
             self.cleanupDTP()
         self.dtpFactory = DTPFactory(pi=self)
         self.dtpFactory.setTimeout(self.dtpTimeout)
-        self.dtpPort = reactor.listenTCP(0, self.dtpFactory)
+        self.dtpPort = self.getDTPPort(self.dtpFactory)
 
         host = self.transport.getHost().host
         port = self.dtpPort.getHost().port
@@ -777,6 +926,38 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
         return self.dtpFactory.deferred.addCallbacks(connected, connFailed)
 
 
+    def _encodeName(self, name):
+        """
+        Encode C{name} to be sent over the wire.
+
+        This encodes L{unicode} objects as UTF-8 and leaves L{bytes} as-is.
+
+        As described by U{RFC 3659 section
+        2.2<https://tools.ietf.org/html/rfc3659#section-2.2>}::
+
+            Various FTP commands take pathnames as arguments, or return
+            pathnames in responses. When the MLST command is supported, as
+            indicated in the response to the FEAT command, pathnames are to be
+            transferred in one of the following two formats.
+
+                pathname = utf-8-name / raw
+                utf-8-name = <a UTF-8 encoded Unicode string>
+                raw = <any string that is not a valid UTF-8 encoding>
+
+            Which format is used is at the option of the user-PI or server-PI
+            sending the pathname.
+
+        @param name: Name to be encoded.
+        @type name: L{bytes} or L{unicode}
+
+        @return: Wire format of C{name}.
+        @rtype: L{bytes}
+        """
+        if isinstance(name, unicode):
+            return name.encode('utf-8')
+        return name
+
+
     def ftp_LIST(self, path=''):
         """ This command causes a list to be sent from the server to the
         passive DTP.  If the pathname specifies a directory or other
@@ -790,29 +971,21 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
         if self.dtpInstance is None or not self.dtpInstance.isConnected:
             return defer.fail(BadCmdSequenceError('must send PORT or PASV before RETR'))
 
-        # bug in konqueror
-        if path == "-a":
-            path = ''
-        # bug in gFTP 2.0.15
-        if path == "-aL":
-            path = ''
-        # bug in Nautilus 2.10.0
-        if path == "-L":
-            path = ''
-        # bug in ange-ftp
-        if path == "-la":
+        # Various clients send flags like -L or -al etc.  We just ignore them.
+        if path.lower() in ['-a', '-l', '-la', '-al']:
             path = ''
 
         def gotListing(results):
             self.reply(DATA_CNX_ALREADY_OPEN_START_XFR)
             for (name, attrs) in results:
+                name = self._encodeName(name)
                 self.dtpInstance.sendListResponse(name, attrs)
             self.dtpInstance.transport.loseConnection()
             return (TXFR_COMPLETE_OK,)
 
         try:
             segments = toSegments(self.workingDirectory, path)
-        except InvalidPath, e:
+        except InvalidPath:
             return defer.fail(FileNotFoundError(path))
 
         d = self.shell.list(
@@ -824,47 +997,91 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
 
 
     def ftp_NLST(self, path):
-        # XXX: why is this check different to ftp_RETR/ftp_STOR?
+        """
+        This command causes a directory listing to be sent from the server to
+        the client. The pathname should specify a directory or other
+        system-specific file group descriptor. An empty path implies the current
+        working directory. If the path is non-existent, send nothing. If the
+        path is to a file, send only the file name.
+
+        @type path: C{str}
+        @param path: The path for which a directory listing should be returned.
+
+        @rtype: L{Deferred}
+        @return: a L{Deferred} which will be fired when the listing request
+            is finished.
+        """
+        # XXX: why is this check different from ftp_RETR/ftp_STOR? See #4180
         if self.dtpInstance is None or not self.dtpInstance.isConnected:
-            return defer.fail(BadCmdSequenceError('must send PORT or PASV before RETR'))
+            return defer.fail(
+                BadCmdSequenceError('must send PORT or PASV before RETR'))
 
         try:
             segments = toSegments(self.workingDirectory, path)
-        except InvalidPath, e:
+        except InvalidPath:
             return defer.fail(FileNotFoundError(path))
 
-        def cbList(results):
-            self.reply(DATA_CNX_ALREADY_OPEN_START_XFR)
-            for (name, ignored) in results:
-                self.dtpInstance.sendLine(name)
-            self.dtpInstance.transport.loseConnection()
-            return (TXFR_COMPLETE_OK,)
+        def cbList(results, glob):
+            """
+            Send, line by line, each matching file in the directory listing, and
+            then close the connection.
 
-        def cbGlob(results):
+            @type results: A C{list} of C{tuple}. The first element of each
+                C{tuple} is a C{str} and the second element is a C{list}.
+            @param results: The names of the files in the directory.
+
+            @param glob: A shell-style glob through which to filter results (see
+                U{http://docs.python.org/2/library/fnmatch.html}), or C{None}
+                for no filtering.
+            @type glob: L{str} or L{NoneType}
+
+            @return: A C{tuple} containing the status code for a successful
+                transfer.
+            @rtype: C{tuple}
+            """
             self.reply(DATA_CNX_ALREADY_OPEN_START_XFR)
             for (name, ignored) in results:
-                if fnmatch.fnmatch(name, segments[-1]):
+                if not glob or (glob and fnmatch.fnmatch(name, glob)):
+                    name = self._encodeName(name)
                     self.dtpInstance.sendLine(name)
             self.dtpInstance.transport.loseConnection()
             return (TXFR_COMPLETE_OK,)
 
-        # XXX Maybe this globbing is incomplete, but who cares.
-        # Stupid people probably.
-        if segments and (
-            '*' in segments[-1] or '?' in segments[-1] or
-            ('[' in segments[-1] and ']' in segments[-1])):
-            d = self.shell.list(segments[:-1])
-            d.addCallback(cbGlob)
+        def listErr(results):
+            """
+            RFC 959 specifies that an NLST request may only return directory
+            listings. Thus, send nothing and just close the connection.
+
+            @type results: L{Failure}
+            @param results: The L{Failure} wrapping a L{FileNotFoundError} that
+                occurred while trying to list the contents of a nonexistent
+                directory.
+
+            @returns: A C{tuple} containing the status code for a successful
+                transfer.
+            @rtype: C{tuple}
+            """
+            self.dtpInstance.transport.loseConnection()
+            return (TXFR_COMPLETE_OK,)
+
+        if _isGlobbingExpression(segments):
+            # Remove globbing expression from path
+            # and keep to be used for filtering.
+            glob = segments.pop()
         else:
-            d = self.shell.list(segments)
-            d.addCallback(cbList)
+            glob = None
+
+        d = self.shell.list(segments)
+        d.addCallback(cbList, glob)
+        # self.shell.list will generate an error if the path is invalid
+        d.addErrback(listErr)
         return d
 
 
     def ftp_CWD(self, path):
         try:
             segments = toSegments(self.workingDirectory, path)
-        except InvalidPath, e:
+        except InvalidPath:
             # XXX Eh, what to fail with here?
             return defer.fail(FileNotFoundError(path))
 
@@ -884,6 +1101,17 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
 
 
     def ftp_RETR(self, path):
+        """
+        This command causes the content of a file to be sent over the data
+        transfer channel. If the path is to a folder, an error will be raised.
+
+        @type path: C{str}
+        @param path: The path to the file which should be transferred over the
+        data transfer channel.
+
+        @rtype: L{Deferred}
+        @return: a L{Deferred} which will be fired when the transfer is done.
+        """
         if self.dtpInstance is None:
             raise BadCmdSequenceError('PORT or PASV required before RETR')
 
@@ -914,6 +1142,8 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
         def ebSent(err):
             log.msg("Unexpected error attempting to transmit file to client:")
             log.err(err)
+            if err.check(FTPCmdError):
+                return err
             return (CNX_CLOSED_TXFR_ABORTED,)
 
         def cbOpened(file):
@@ -928,9 +1158,11 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
             return d
 
         def ebOpened(err):
-            if not err.check(PermissionDeniedError, FileNotFoundError, IsNotADirectoryError):
+            if not err.check(PermissionDeniedError, FileNotFoundError, IsADirectoryError):
                 log.msg("Unexpected error attempting to open file for transmission:")
                 log.err(err)
+            if err.check(FTPCmdError):
+                return (err.value.errorCode, '/'.join(newsegs))
             return (FILE_NOT_FOUND, '/'.join(newsegs))
 
         d = self.shell.openForReading(newsegs)
@@ -942,6 +1174,17 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
 
 
     def ftp_STOR(self, path):
+        """
+        STORE (STOR)
+
+        This command causes the server-DTP to accept the data
+        transferred via the data connection and to store the data as
+        a file at the server site.  If the file specified in the
+        pathname exists at the server site, then its contents shall
+        be replaced by the data being transferred.  A new file is
+        created at the server site if the file specified in the
+        pathname does not already exist.
+        """
         if self.dtpInstance is None:
             raise BadCmdSequenceError('PORT or PASV required before STOR')
 
@@ -960,20 +1203,40 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
             self.setTimeout(self.factory.timeOut)
             return result
 
-        def cbSent(result):
-            return (TXFR_COMPLETE_OK,)
+        def cbOpened(file):
+            """
+            File was open for reading. Launch the data transfer channel via
+            the file consumer.
+            """
+            d = file.receive()
+            d.addCallback(cbConsumer)
+            d.addCallback(lambda ignored: file.close())
+            d.addCallbacks(cbSent, ebSent)
+            return d
 
-        def ebSent(err):
-            log.msg("Unexpected error receiving file from client:")
-            log.err(err)
-            return (CNX_CLOSED_TXFR_ABORTED,)
+        def ebOpened(err):
+            """
+            Called when failed to open the file for reading.
+
+            For known errors, return the FTP error code.
+            For all other, return a file not found error.
+            """
+            if isinstance(err.value, FTPCmdError):
+                return (err.value.errorCode, '/'.join(newsegs))
+            log.err(err, "Unexpected error received while opening file:")
+            return (FILE_NOT_FOUND, '/'.join(newsegs))
 
         def cbConsumer(cons):
+            """
+            Called after the file was opended for reading.
+
+            Prepare the data transfer channel and send the response
+            to the command channel.
+            """
             if not self.binary:
                 cons = ASCIIConsumerWrapper(cons)
 
             d = self.dtpInstance.registerConsumer(cons)
-            d.addCallbacks(cbSent, ebSent)
 
             # Tell them what to doooo
             if self.dtpInstance.isConnected:
@@ -983,16 +1246,21 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
 
             return d
 
-        def cbOpened(file):
-            d = file.receive()
-            d.addCallback(cbConsumer)
-            return d
+        def cbSent(result):
+            """
+            Called from data transport when tranfer is done.
+            """
+            return (TXFR_COMPLETE_OK,)
 
-        def ebOpened(err):
-            if not err.check(PermissionDeniedError, FileNotFoundError, IsNotADirectoryError):
-                log.msg("Unexpected error attempting to open file for upload:")
-                log.err(err)
-            return (FILE_NOT_FOUND, '/'.join(newsegs))
+        def ebSent(err):
+            """
+            Called from data transport when there are errors during the
+            transfer.
+            """
+            log.err(err, "Unexpected error received during transfer:")
+            if err.check(FTPCmdError):
+                return err
+            return (CNX_CLOSED_TXFR_ABORTED,)
 
         d = self.shell.openForWriting(newsegs)
         d.addCallbacks(cbOpened, ebOpened)
@@ -1003,6 +1271,31 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
 
 
     def ftp_SIZE(self, path):
+        """
+        File SIZE
+
+        The FTP command, SIZE OF FILE (SIZE), is used to obtain the transfer
+        size of a file from the server-FTP process.  This is the exact number
+        of octets (8 bit bytes) that would be transmitted over the data
+        connection should that file be transmitted.  This value will change
+        depending on the current STRUcture, MODE, and TYPE of the data
+        connection or of a data connection that would be created were one
+        created now.  Thus, the result of the SIZE command is dependent on
+        the currently established STRU, MODE, and TYPE parameters.
+
+        The SIZE command returns how many octets would be transferred if the
+        file were to be transferred using the current transfer structure,
+        mode, and type.  This command is normally used in conjunction with
+        the RESTART (REST) command when STORing a file to a remote server in
+        STREAM mode, to determine the restart point.  The server-PI might
+        need to read the partially transferred file, do any appropriate
+        conversion, and count the number of octets that would be generated
+        when sending the file in order to correctly respond to this command.
+        Estimates of the file transfer size MUST NOT be returned; only
+        precise information is acceptable.
+
+        http://tools.ietf.org/html/rfc3659
+        """
         try:
             newsegs = toSegments(self.workingDirectory, path)
         except InvalidPath:
@@ -1015,6 +1308,18 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
 
 
     def ftp_MDTM(self, path):
+        """
+        File Modification Time (MDTM)
+
+        The FTP command, MODIFICATION TIME (MDTM), can be used to determine
+        when a file in the server NVFS was last modified.  This command has
+        existed in many FTP servers for many years, as an adjunct to the REST
+        command for STREAM mode, thus is widely available.  However, where
+        supported, the "modify" fact that can be provided in the result from
+        the new MLST command is recommended as a superior alternative.
+
+        http://tools.ietf.org/html/rfc3659
+        """
         try:
             newsegs = toSegments(self.workingDirectory, path)
         except InvalidPath:
@@ -1027,6 +1332,18 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
 
 
     def ftp_TYPE(self, type):
+        """
+        REPRESENTATION TYPE (TYPE)
+
+        The argument specifies the representation type as described
+        in the Section on Data Representation and Storage.  Several
+        types take a second parameter.  The first parameter is
+        denoted by a single Telnet character, as is the second
+        Format parameter for ASCII and EBCDIC; the second parameter
+        for local byte is a decimal integer to indicate Bytesize.
+        The parameters are separated by a <SP> (Space, ASCII code
+        32).
+        """
         p = type.upper()
         if p:
             f = getattr(self, 'type_' + p[0], None)
@@ -1119,14 +1436,33 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
         return self.shell.rename(fromsegs, tosegs).addCallback(lambda ign: (REQ_FILE_ACTN_COMPLETED_OK,))
 
 
+    def ftp_FEAT(self):
+        """
+        Advertise the features supported by the server.
+
+        http://tools.ietf.org/html/rfc2389
+        """
+        self.sendLine(RESPONSE[FEAT_OK][0])
+        for feature in self.FEATURES:
+            self.sendLine(' ' + feature)
+        self.sendLine(RESPONSE[FEAT_OK][1])
+
+    def ftp_OPTS(self, option):
+        """
+        Handle OPTS command.
+
+        http://tools.ietf.org/html/draft-ietf-ftpext-utf-8-option-00
+        """
+        return self.reply(OPTS_NOT_IMPLEMENTED, option)
+
     def ftp_QUIT(self):
         self.reply(GOODBYE_MSG)
         self.transport.loseConnection()
         self.disconnected = True
 
-
     def cleanupDTP(self):
-        """call when DTP connection exits
+        """
+        Call when DTP connection exits
         """
         log.msg('cleanupDTP', debug=True)
 
@@ -1145,14 +1481,16 @@ class FTP(object, basic.LineReceiver, policies.TimeoutMixin):
         if self.dtpInstance is not None:
             self.dtpInstance = None
 
-components.backwardsCompatImplements(FTP)
-
 
 class FTPFactory(policies.LimitTotalConnectionsFactory):
-    """A factory for producing ftp protocol instances
+    """
+    A factory for producing ftp protocol instances
 
     @ivar timeOut: the protocol interpreter's idle timeout time in seconds,
         default is 600 seconds.
+
+    @ivar passivePortRange: value forwarded to C{protocol.passivePortRange}.
+    @type passivePortRange: C{iterator}
     """
     protocol = FTP
     overflowProtocol = FTPOverflowProtocol
@@ -1162,9 +1500,11 @@ class FTPFactory(policies.LimitTotalConnectionsFactory):
 
     welcomeMessage = "Twisted %s FTP Server" % (copyright.version,)
 
+    passivePortRange = xrange(0, 1)
+
     def __init__(self, portal=None, userAnonymous='anonymous'):
         self.portal = portal
-        self.userAnonymous = 'anonymous'
+        self.userAnonymous = userAnonymous
         self.instances = []
 
     def buildProtocol(self, addr):
@@ -1172,6 +1512,7 @@ class FTPFactory(policies.LimitTotalConnectionsFactory):
         if p is not None:
             p.wrappedProtocol.portal = self.portal
             p.wrappedProtocol.timeOut = self.timeOut
+            p.wrappedProtocol.passivePortRange = self.passivePortRange
         return p
 
     def stopFactory(self):
@@ -1181,6 +1522,7 @@ class FTPFactory(policies.LimitTotalConnectionsFactory):
         policies.LimitTotalConnectionsFactory.stopFactory(self)
 
 # -- Cred Objects --
+
 
 class IFTPShell(Interface):
     """
@@ -1272,24 +1614,31 @@ class IFTPShell(Interface):
         child of the directory.
 
         @param path: The path, as a list of segments, to list
-        @type path: C{list} of C{unicode}
+        @type path: C{list} of C{unicode} or C{bytes}
 
         @param keys: A tuple of keys desired in the resulting
         dictionaries.
 
         @return: A Deferred which fires with a list of (name, list),
-        where the name is the name of the entry as a unicode string
-        and each list contains values corresponding to the requested
+        where the name is the name of the entry as a unicode string or
+        bytes and each list contains values corresponding to the requested
         keys.  The following are possible elements of keys, and the
         values which should be returned for them:
 
-            'size': size in bytes, as an integer (this is kinda required)
-            'directory': boolean indicating the type of this entry
-            'permissions': a bitvector (see os.stat(foo).st_mode)
-            'hardlinks': Number of hard links to this entry
-            'modified': number of seconds since the epoch since entry was modified
-            'owner': string indicating the user owner of this entry
-            'group': string indicating the group owner of this entry
+            - C{'size'}: size in bytes, as an integer (this is kinda required)
+
+            - C{'directory'}: boolean indicating the type of this entry
+
+            - C{'permissions'}: a bitvector (see os.stat(foo).st_mode)
+
+            - C{'hardlinks'}: Number of hard links to this entry
+
+            - C{'modified'}: number of seconds since the epoch since entry was
+              modified
+
+            - C{'owner'}: string indicating the user owner of this entry
+
+            - C{'group'}: string indicating the group owner of this entry
         """
 
 
@@ -1311,9 +1660,12 @@ class IFTPShell(Interface):
         """
 
 
+
 class IReadFile(Interface):
-    """A file out of which bytes may be read.
     """
+    A file out of which bytes may be read.
+    """
+
     def send(consumer):
         """
         Produce the contents of the given path to the given consumer.  This
@@ -1326,9 +1678,12 @@ class IReadFile(Interface):
         """
 
 
+
 class IWriteFile(Interface):
-    """A file into which bytes may be written.
     """
+    A file into which bytes may be written.
+    """
+
     def receive():
         """
         Create a consumer which will write to this file.  This method may
@@ -1337,9 +1692,20 @@ class IWriteFile(Interface):
         @rtype: C{Deferred} of C{IConsumer}
         """
 
+    def close():
+        """
+        Perform any post-write work that needs to be done. This method may
+        only be invoked once on each provider, and will always be invoked
+        after receive().
+
+        @rtype: C{Deferred} of anything: the value is ignored. The FTP client
+        will not see their upload request complete until this Deferred has
+        been fired.
+        """
 
 def _getgroups(uid):
-    """Return the primary and supplementary groups for the given UID.
+    """
+    Return the primary and supplementary groups for the given UID.
 
     @type uid: C{int}
     """
@@ -1372,8 +1738,8 @@ def _testPermissions(uid, gid, spath, mode='r'):
     @param mode: 'r' or 'w' (read or write)
 
     @rtype: C{bool}
-    @returns: True if the given credentials have the specified form of
-    access to the given path
+    @return: True if the given credentials have the specified form of
+        access to the given path
     """
     if mode == 'r':
         usr = stat.S_IRUSR
@@ -1409,8 +1775,10 @@ def _testPermissions(uid, gid, spath, mode='r'):
     return access
 
 
+
 class FTPAnonymousShell(object):
-    """An anonymous implementation of IFTPShell
+    """
+    An anonymous implementation of IFTPShell
 
     @type filesystemRoot: L{twisted.python.filepath.FilePath}
     @ivar filesystemRoot: The path which is considered the root of
@@ -1421,29 +1789,50 @@ class FTPAnonymousShell(object):
     def __init__(self, filesystemRoot):
         self.filesystemRoot = filesystemRoot
 
+
     def _path(self, path):
-        return reduce(filepath.FilePath.child, path, self.filesystemRoot)
+        return self.filesystemRoot.descendant(path)
+
 
     def makeDirectory(self, path):
         return defer.fail(AnonUserDeniedError())
 
+
     def removeDirectory(self, path):
         return defer.fail(AnonUserDeniedError())
+
 
     def removeFile(self, path):
         return defer.fail(AnonUserDeniedError())
 
+
     def rename(self, fromPath, toPath):
         return defer.fail(AnonUserDeniedError())
+
 
     def receive(self, path):
         path = self._path(path)
         return defer.fail(AnonUserDeniedError())
 
+
     def openForReading(self, path):
+        """
+        Open C{path} for reading.
+
+        @param path: The path, as a list of segments, to open.
+        @type path: C{list} of C{unicode}
+        @return: A L{Deferred} is returned that will fire with an object
+            implementing L{IReadFile} if the file is successfully opened.  If
+            C{path} is a directory, or if an exception is raised while trying
+            to open the file, the L{Deferred} will fire with an error.
+        """
         p = self._path(path)
+        if p.isdir():
+            # Normally, we would only check for EISDIR in open, but win32
+            # returns EACCES in this case, so we check before
+            return defer.fail(IsADirectoryError(path))
         try:
-            f = p.open('rb')
+            f = p.open('r')
         except (IOError, OSError), e:
             return errnoToFailure(e.errno, path)
         except:
@@ -1451,8 +1840,21 @@ class FTPAnonymousShell(object):
         else:
             return defer.succeed(_FileReader(f))
 
+
+    def openForWriting(self, path):
+        """
+        Reject write attempts by anonymous users with
+        L{PermissionDeniedError}.
+        """
+        return defer.fail(PermissionDeniedError("STOR not allowed"))
+
+
     def access(self, path):
         p = self._path(path)
+        if not p.exists():
+            # Again, win32 doesn't report a sane error after, so let's fail
+            # early if we can
+            return defer.fail(FileNotFoundError(path))
         # For now, just see if we can os.listdir() it
         try:
             p.listdir()
@@ -1463,46 +1865,78 @@ class FTPAnonymousShell(object):
         else:
             return defer.succeed(None)
 
+
     def stat(self, path, keys=()):
         p = self._path(path)
         if p.isdir():
-            return defer.fail(WrongFiletype())
+            try:
+                statResult = self._statNode(p, keys)
+            except (IOError, OSError), e:
+                return errnoToFailure(e.errno, path)
+            except:
+                return defer.fail()
+            else:
+                return defer.succeed(statResult)
         else:
             return self.list(path, keys).addCallback(lambda res: res[0][1])
 
+
     def list(self, path, keys=()):
-        path = self._path(path)
-        if path.isdir():
-            entries = path.listdir()
+        """
+        Return the list of files at given C{path}, adding C{keys} stat
+        informations if specified.
+
+        @param path: the directory or file to check.
+        @type path: C{str}
+
+        @param keys: the list of desired metadata
+        @type keys: C{list} of C{str}
+        """
+        filePath = self._path(path)
+        if filePath.isdir():
+            entries = filePath.listdir()
+            fileEntries = [filePath.child(p) for p in entries]
+        elif filePath.isfile():
+            entries = [os.path.join(*filePath.segmentsFrom(self.filesystemRoot))]
+            fileEntries = [filePath]
         else:
-            entries = [None]
+            return defer.fail(FileNotFoundError(path))
 
         results = []
-        for fName in entries:
+        for fileName, filePath in zip(entries, fileEntries):
             ent = []
-            results.append((fName, ent))
+            results.append((fileName, ent))
             if keys:
-                if fName is not None:
-                    p = os.path.join(path.path, fName)
-                else:
-                    p = path.path
                 try:
-                    statResult = os.stat(p)
+                    ent.extend(self._statNode(filePath, keys))
                 except (IOError, OSError), e:
-                    return errnoToFailure(e.errno, path)
+                    return errnoToFailure(e.errno, fileName)
                 except:
                     return defer.fail()
 
-            for k in keys:
-                ent.append(getattr(self, '_list_' + k)(statResult))
         return defer.succeed(results)
 
-    _list_size = operator.attrgetter('st_size')
-    _list_permissions = operator.attrgetter('st_mode')
-    _list_hardlinks = operator.attrgetter('st_nlink')
-    _list_modified = operator.attrgetter('st_mtime')
 
-    def _list_owner(self, st):
+    def _statNode(self, filePath, keys):
+        """
+        Shortcut method to get stat info on a node.
+
+        @param filePath: the node to stat.
+        @type filePath: C{filepath.FilePath}
+
+        @param keys: the stat keys to get.
+        @type keys: C{iterable}
+        """
+        filePath.restat()
+        return [getattr(self, '_stat_' + k)(filePath.statinfo) for k in keys]
+
+    _stat_size = operator.attrgetter('st_size')
+    _stat_permissions = operator.attrgetter('st_mode')
+    _stat_hardlinks = operator.attrgetter('st_nlink')
+    _stat_modified = operator.attrgetter('st_mtime')
+
+
+    def _stat_owner(self, st):
         if pwd is not None:
             try:
                 return pwd.getpwuid(st.st_uid)[0]
@@ -1510,7 +1944,8 @@ class FTPAnonymousShell(object):
                 pass
         return str(st.st_uid)
 
-    def _list_group(self, st):
+
+    def _stat_group(self, st):
         if grp is not None:
             try:
                 return grp.getgrgid(st.st_gid)[0]
@@ -1518,8 +1953,10 @@ class FTPAnonymousShell(object):
                 pass
         return str(st.st_gid)
 
-    def _list_directory(self, st):
+
+    def _stat_directory(self, st):
         return bool(st.st_mode & stat.S_IFDIR)
+
 
 
 class _FileReader(object):
@@ -1542,11 +1979,18 @@ class _FileReader(object):
         return d
 
 
+
 class FTPShell(FTPAnonymousShell):
+    """
+    An authenticated implementation of L{IFTPShell}.
+    """
+
     def makeDirectory(self, path):
         p = self._path(path)
         try:
             p.makedirs()
+        except (IOError, OSError), e:
+            return errnoToFailure(e.errno, path)
         except:
             return defer.fail()
         else:
@@ -1555,8 +1999,15 @@ class FTPShell(FTPAnonymousShell):
 
     def removeDirectory(self, path):
         p = self._path(path)
+        if p.isfile():
+            # Win32 returns the wrong errno when rmdir is called on a file
+            # instead of a directory, so as we have the info here, let's fail
+            # early with a pertinent error
+            return defer.fail(IsNotADirectoryError(path))
         try:
             os.rmdir(p.path)
+        except (IOError, OSError), e:
+            return errnoToFailure(e.errno, path)
         except:
             return defer.fail()
         else:
@@ -1565,8 +2016,15 @@ class FTPShell(FTPAnonymousShell):
 
     def removeFile(self, path):
         p = self._path(path)
+        if p.isdir():
+            # Win32 returns the wrong errno when remove is called on a
+            # directory instead of a file, so as we have the info here,
+            # let's fail early with a pertinent error
+            return defer.fail(IsADirectoryError(path))
         try:
             p.remove()
+        except (IOError, OSError), e:
+            return errnoToFailure(e.errno, path)
         except:
             return defer.fail()
         else:
@@ -1578,6 +2036,8 @@ class FTPShell(FTPAnonymousShell):
         tp = self._path(toPath)
         try:
             os.rename(fp.path, tp.path)
+        except (IOError, OSError), e:
+            return errnoToFailure(e.errno, fromPath)
         except:
             return defer.fail()
         else:
@@ -1585,12 +2045,29 @@ class FTPShell(FTPAnonymousShell):
 
 
     def openForWriting(self, path):
+        """
+        Open C{path} for writing.
+
+        @param path: The path, as a list of segments, to open.
+        @type path: C{list} of C{unicode}
+        @return: A L{Deferred} is returned that will fire with an object
+            implementing L{IWriteFile} if the file is successfully opened.  If
+            C{path} is a directory, or if an exception is raised while trying
+            to open the file, the L{Deferred} will fire with an error.
+        """
         p = self._path(path)
+        if p.isdir():
+            # Normally, we would only check for EISDIR in open, but win32
+            # returns EACCES in this case, so we check before
+            return defer.fail(IsADirectoryError(path))
         try:
-            fObj = p.open('wb')
+            fObj = p.open('w')
+        except (IOError, OSError), e:
+            return errnoToFailure(e.errno, path)
         except:
             return defer.fail()
         return defer.succeed(_FileWriter(fObj))
+
 
 
 class _FileWriter(object):
@@ -1606,17 +2083,35 @@ class _FileWriter(object):
         # FileConsumer will close the file object
         return defer.succeed(FileConsumer(self.fObj))
 
+    def close(self):
+        return defer.succeed(None)
 
-class FTPRealm:
+
+
+class BaseFTPRealm:
     """
-    @type anonymousRoot: L{twisted.python.filepath.FilePath}
-    @ivar anonymousRoot: Root of the filesystem to which anonymous
-    users will be granted access.
+    Base class for simple FTP realms which provides an easy hook for specifying
+    the home directory for each user.
     """
     implements(portal.IRealm)
 
     def __init__(self, anonymousRoot):
         self.anonymousRoot = filepath.FilePath(anonymousRoot)
+
+
+    def getHomeDirectory(self, avatarId):
+        """
+        Return a L{FilePath} representing the home directory of the given
+        avatar.  Override this in a subclass.
+
+        @param avatarId: A user identifier returned from a credentials checker.
+        @type avatarId: C{str}
+
+        @rtype: L{FilePath}
+        """
+        raise NotImplementedError(
+            "%r did not override getHomeDirectory" % (self.__class__,))
+
 
     def requestAvatar(self, avatarId, mind, *interfaces):
         for iface in interfaces:
@@ -1624,10 +2119,54 @@ class FTPRealm:
                 if avatarId is checkers.ANONYMOUS:
                     avatar = FTPAnonymousShell(self.anonymousRoot)
                 else:
-                    avatar = FTPShell(filepath.FilePath("/home/" + avatarId))
-                return IFTPShell, avatar, getattr(avatar, 'logout', lambda: None)
-        raise NotImplementedError("Only IFTPShell interface is supported by this realm")
-components.backwardsCompatImplements(FTPRealm)
+                    avatar = FTPShell(self.getHomeDirectory(avatarId))
+                return (IFTPShell, avatar,
+                        getattr(avatar, 'logout', lambda: None))
+        raise NotImplementedError(
+            "Only IFTPShell interface is supported by this realm")
+
+
+
+class FTPRealm(BaseFTPRealm):
+    """
+    @type anonymousRoot: L{twisted.python.filepath.FilePath}
+    @ivar anonymousRoot: Root of the filesystem to which anonymous
+        users will be granted access.
+
+    @type userHome: L{filepath.FilePath}
+    @ivar userHome: Root of the filesystem containing user home directories.
+    """
+    def __init__(self, anonymousRoot, userHome='/home'):
+        BaseFTPRealm.__init__(self, anonymousRoot)
+        self.userHome = filepath.FilePath(userHome)
+
+
+    def getHomeDirectory(self, avatarId):
+        """
+        Use C{avatarId} as a single path segment to construct a child of
+        C{self.userHome} and return that child.
+        """
+        return self.userHome.child(avatarId)
+
+
+
+class SystemFTPRealm(BaseFTPRealm):
+    """
+    L{SystemFTPRealm} uses system user account information to decide what the
+    home directory for a particular avatarId is.
+
+    This works on POSIX but probably is not reliable on Windows.
+    """
+    def getHomeDirectory(self, avatarId):
+        """
+        Return the system-defined home directory of the system user account with
+        the name C{avatarId}.
+        """
+        path = os.path.expanduser('~' + avatarId)
+        if path.startswith('~'):
+            raise cred_error.UnauthorizedLogin()
+        return filepath.FilePath(path)
+
 
 
 # --- FTP CLIENT  -------------------------------------------------------------
@@ -1689,8 +2228,23 @@ class ProtocolWrapper(protocol.Protocol):
         self.deferred.callback(None)
 
 
+
+class IFinishableConsumer(interfaces.IConsumer):
+    """
+    A Consumer for producers that finish.
+
+    @since: 11.0
+    """
+
+    def finish():
+        """
+        The producer has finished producing.
+        """
+
+
+
 class SenderProtocol(protocol.Protocol):
-    implements(interfaces.IFinishableConsumer)
+    implements(IFinishableConsumer)
 
     def __init__(self):
         # Fired upon connection
@@ -1720,27 +2274,36 @@ class SenderProtocol(protocol.Protocol):
     def write(self, data):
         self.transport.write(data)
 
-    def registerProducer(self):
-        pass
+    def registerProducer(self, producer, streaming):
+        """
+        Register the given producer with our transport.
+        """
+        self.transport.registerProducer(producer, streaming)
 
     def unregisterProducer(self):
-        pass
+        """
+        Unregister the previously registered producer.
+        """
+        self.transport.unregisterProducer()
 
     def finish(self):
         self.transport.loseConnection()
 
-components.backwardsCompatImplements(SenderProtocol)
-
 
 def decodeHostPort(line):
-    """Decode an FTP response specifying a host and port.
+    """
+    Decode an FTP response specifying a host and port.
 
-    @returns: a 2-tuple of (host, port).
+    @return: a 2-tuple of (host, port).
     """
     abcdef = re.sub('[^0-9, ]', '', line)
-    a, b, c, d, e, f = map(str.strip, abcdef.split(','))
+    parsed = [int(p.strip()) for p in abcdef.split(',')]
+    for x in parsed:
+        if x < 0 or x > 255:
+            raise ValueError("Out of range", line, x)
+    a, b, c, d, e, f = parsed
     host = "%s.%s.%s.%s" % (a, b, c, d)
-    port = (int(e)<<8) + int(f)
+    port = (int(e) << 8) + int(f)
     return host, port
 
 def encodeHostPort(host, port):
@@ -1752,7 +2315,8 @@ def _unwrapFirstError(failure):
     return failure.value.subFailure
 
 class FTPDataPortFactory(protocol.ServerFactory):
-    """Factory for data connections that use the PORT command
+    """
+    Factory for data connections that use the PORT command
 
     (i.e. "active" transfers)
     """
@@ -1768,8 +2332,11 @@ class FTPDataPortFactory(protocol.ServerFactory):
 
 
 class FTPClientBasic(basic.LineReceiver):
-    """Foundations of an FTP client."""
-    debug = 0
+    """
+    Foundations of an FTP client.
+    """
+    debug = False
+
     def __init__(self):
         self.actionQueue = []
         self.greeting = None
@@ -1779,15 +2346,24 @@ class FTPClientBasic(basic.LineReceiver):
         self._failed = 0
 
     def fail(self, error):
-        """Give an error to any queued deferreds."""
+        """
+        Give an error to any queued deferreds.
+        """
         self._fail(error)
 
     def _fail(self, error):
-        """Errback all queued deferreds."""
+        """
+        Errback all queued deferreds.
+        """
         if self._failed:
             # We're recursing; bail out here for simplicity
             return error
         self._failed = 1
+        if self.nextDeferred:
+            try:
+                self.nextDeferred.errback(failure.Failure(ConnectionLost('FTP connection lost', error)))
+            except defer.AlreadyCalledError:
+                pass
         for ftpCommand in self.actionQueue:
             ftpCommand.fail(failure.Failure(ConnectionLost('FTP connection lost', error)))
         return error
@@ -1796,13 +2372,17 @@ class FTPClientBasic(basic.LineReceiver):
         self.greeting = greeting
 
     def sendLine(self, line):
-        """(Private) Sends a line, unless line is None."""
+        """
+        (Private) Sends a line, unless line is None.
+        """
         if line is None:
             return
         basic.LineReceiver.sendLine(self, line)
 
     def sendNextCommand(self):
-        """(Private) Processes the next command in the queue."""
+        """
+        (Private) Processes the next command in the queue.
+        """
         ftpCommand = self.popCommandQueue()
         if ftpCommand is None:
             self.nextDeferred = None
@@ -1824,7 +2404,8 @@ class FTPClientBasic(basic.LineReceiver):
         self.sendLine(ftpCommand.text)
 
     def queueCommand(self, ftpCommand):
-        """Add an FTPCommand object to the queue.
+        """
+        Add an FTPCommand object to the queue.
 
         If it's the only thing in the queue, and we are connected and we aren't
         waiting for a response of an earlier command, the command will be sent
@@ -1838,29 +2419,33 @@ class FTPClientBasic(basic.LineReceiver):
             self.sendNextCommand()
 
     def queueStringCommand(self, command, public=1):
-        """Queues a string to be issued as an FTP command
+        """
+        Queues a string to be issued as an FTP command
 
         @param command: string of an FTP command to queue
         @param public: a flag intended for internal use by FTPClient.  Don't
             change it unless you know what you're doing.
 
-        @returns: a L{Deferred} that will be called when the response to the
-        command has been received.
+        @return: a L{Deferred} that will be called when the response to the
+            command has been received.
         """
         ftpCommand = FTPCommand(command, public)
         self.queueCommand(ftpCommand)
         return ftpCommand.deferred
 
     def popCommandQueue(self):
-        """Return the front element of the command queue, or None if empty."""
+        """
+        Return the front element of the command queue, or None if empty.
+        """
         if self.actionQueue:
             return self.actionQueue.pop(0)
         else:
             return None
 
     def queueLogin(self, username, password):
-        """Login: send the username, send the password.
-        
+        """
+        Login: send the username, send the password.
+
         If the password is C{None}, the PASS command won't be sent.  Also, if
         the response to the USER command has a response code of 230 (User logged
         in), then PASS won't be sent either.
@@ -1869,7 +2454,7 @@ class FTPClientBasic(basic.LineReceiver):
         deferreds = []
         userDeferred = self.queueStringCommand('USER ' + username, public=0)
         deferreds.append(userDeferred)
-        
+
         # Prepare the PASS command (if a password is given)
         if password is not None:
             passwordCmd = FTPCommand('PASS ' + password, public=0)
@@ -1893,7 +2478,9 @@ class FTPClientBasic(basic.LineReceiver):
             deferred.addErrback(lambda x: None)
 
     def lineReceived(self, line):
-        """(Private) Parses the response messages from the FTP server."""
+        """
+        (Private) Parses the response messages from the FTP server.
+        """
         # Add this line to the current response
         if self.debug:
             log.msg('--> %s' % line)
@@ -1904,7 +2491,7 @@ class FTPClientBasic(basic.LineReceiver):
         codeIsValid = re.match(r'\d{3} ', line)
         if not codeIsValid:
             return
-        
+
         code = line[0:3]
 
         # Ignore marks
@@ -1957,18 +2544,32 @@ class _PassiveConnectionFactory(protocol.ClientFactory):
 
 
 class FTPClient(FTPClientBasic):
-    """A Twisted FTP Client
+    """
+    L{FTPClient} is a client implementation of the FTP protocol which
+    exposes FTP commands as methods which return L{Deferred}s.
 
-    Supports active and passive transfers.
+    Each command method returns a L{Deferred} which is called back when a
+    successful response code (2xx or 3xx) is received from the server or
+    which is error backed if an error response code (4xx or 5xx) is received
+    from the server or if a protocol violation occurs.  If an error response
+    code is received, the L{Deferred} fires with a L{Failure} wrapping a
+    L{CommandFailed} instance.  The L{CommandFailed} instance is created
+    with a list of the response lines received from the server.
 
-    This class is semi-stable.
+    See U{RFC 959<http://www.ietf.org/rfc/rfc959.txt>} for error code
+    definitions.
+
+    Both active and passive transfers are supported.
 
     @ivar passive: See description in __init__.
     """
+    connectFactory = reactor.connectTCP
+
     def __init__(self, username='anonymous',
                  password='twisted@twistedmatrix.com',
                  passive=1):
-        """Constructor.
+        """
+        Constructor.
 
         I will login as soon as I receive the welcome message from the server.
 
@@ -1976,7 +2577,7 @@ class FTPClient(FTPClientBasic):
         @param password: FTP password
         @param passive: flag that controls if I use active or passive data
             connections.  You can also change this after construction by
-            assigning to self.passive.
+            assigning to C{self.passive}.
         """
         FTPClientBasic.__init__(self)
         self.queueLogin(username, password)
@@ -1984,7 +2585,9 @@ class FTPClient(FTPClientBasic):
         self.passive = passive
 
     def fail(self, error):
-        """Disconnect, and also give an error to any queued deferreds."""
+        """
+        Disconnect, and also give an error to any queued deferreds.
+        """
         self.transport.loseConnection()
         self._fail(error)
 
@@ -1993,20 +2596,21 @@ class FTPClient(FTPClientBasic):
         Retrieves a file or listing generated by the given command,
         feeding it to the given protocol.
 
-        @param command: list of strings of FTP commands to execute then receive
-            the results of (e.g. LIST, RETR)
-        @param protocol: A L{Protocol} *instance* e.g. an
+        @param commands: list of strings of FTP commands to execute then receive
+            the results of (e.g. C{LIST}, C{RETR})
+        @param protocol: A L{Protocol} B{instance} e.g. an
             L{FTPFileListProtocol}, or something that can be adapted to one.
-            Typically this will be an L{IConsumer} implemenation.
+            Typically this will be an L{IConsumer} implementation.
 
-        @returns: L{Deferred}.
+        @return: L{Deferred}.
         """
         protocol = interfaces.IProtocol(protocol)
         wrapper = ProtocolWrapper(protocol, defer.Deferred())
         return self._openDataConnection(commands, wrapper)
 
     def queueLogin(self, username, password):
-        """Login: send the username, send the password, and
+        """
+        Login: send the username, send the password, and
         set retrieval mode to binary
         """
         FTPClientBasic.queueLogin(self, username, password)
@@ -2017,9 +2621,10 @@ class FTPClient(FTPClientBasic):
         d.addErrback(lambda x: None)
 
     def sendToConnection(self, commands):
-        """XXX
+        """
+        XXX
 
-        @returns: A tuple of two L{Deferred}s:
+        @return: A tuple of two L{Deferred}s:
                   - L{Deferred} L{IFinishableConsumer}. You must call
                     the C{finish} method on the IFinishableConsumer when the file
                     is completely transferred.
@@ -2047,14 +2652,14 @@ class FTPClient(FTPClientBasic):
                 host, port = decodeHostPort(response[-1][4:])
 
                 f = _PassiveConnectionFactory(protocol)
-                _mutable[0] = reactor.connectTCP(host, port, f)
+                _mutable[0] = self.connectFactory(host, port, f)
 
             pasvCmd = FTPCommand('PASV')
             self.queueCommand(pasvCmd)
             pasvCmd.deferred.addCallback(doPassive).addErrback(self.fail)
 
             results = [cmdsDeferred, pasvCmd.deferred, protocol.deferred]
-            d = defer.DeferredList(results, fireOnOneErrback=1, consumeErrors=1)
+            d = defer.DeferredList(results, fireOnOneErrback=True, consumeErrors=True)
             d.addErrback(_unwrapFirstError)
 
             # Ensure the connection is always closed
@@ -2090,15 +2695,17 @@ class FTPClient(FTPClientBasic):
             cmdsDeferred.addErrback(lambda e, pc=portCmd: pc.fail(e) or e)
 
             results = [cmdsDeferred, portCmd.deferred, portCmd.transferDeferred]
-            d = defer.DeferredList(results, fireOnOneErrback=1, consumeErrors=1)
-            # XXX: d.addErrback(_unwrapFirstError), but add a test.
+            d = defer.DeferredList(results, fireOnOneErrback=True, consumeErrors=True)
+            d.addErrback(_unwrapFirstError)
 
         for cmd in cmds:
             self.queueCommand(cmd)
         return d
 
     def generatePortCommand(self, portCmd):
-        """(Private) Generates the text of a given PORT command"""
+        """
+        (Private) Generates the text of a given PORT command.
+        """
 
         # The problem is that we don't create the listening port until we need
         # it for various reasons, and so we have to muck about to figure out
@@ -2130,12 +2737,15 @@ class FTPClient(FTPClientBasic):
         portCmd.text = 'PORT ' + encodeHostPort(host, port)
 
     def escapePath(self, path):
-        """Returns a FTP escaped path (replace newlines with nulls)"""
+        """
+        Returns a FTP escaped path (replace newlines with nulls).
+        """
         # Escape newline characters
         return path.replace('\n', '\0')
 
     def retrieveFile(self, path, protocol, offset=0):
-        """Retrieve a file from the given path
+        """
+        Retrieve a file from the given path
 
         This method issues the 'RETR' FTP command.
 
@@ -2146,7 +2756,7 @@ class FTPClient(FTPClientBasic):
         @param protocol: a L{Protocol} instance.
         @param offset: offset to start downloading from
 
-        @returns: L{Deferred}
+        @return: L{Deferred}
         """
         cmds = ['RETR ' + self.escapePath(path)]
         if offset:
@@ -2156,11 +2766,12 @@ class FTPClient(FTPClientBasic):
     retr = retrieveFile
 
     def storeFile(self, path, offset=0):
-        """Store a file at the given path.
+        """
+        Store a file at the given path.
 
         This method issues the 'STOR' FTP command.
 
-        @returns: A tuple of two L{Deferred}s:
+        @return: A tuple of two L{Deferred}s:
                   - L{Deferred} L{IFinishableConsumer}. You must call
                     the C{finish} method on the IFinishableConsumer when the file
                     is completely transferred.
@@ -2173,8 +2784,59 @@ class FTPClient(FTPClientBasic):
 
     stor = storeFile
 
+
+    def rename(self, pathFrom, pathTo):
+        """
+        Rename a file.
+
+        This method issues the I{RNFR}/I{RNTO} command sequence to rename
+        C{pathFrom} to C{pathTo}.
+
+        @param: pathFrom: the absolute path to the file to be renamed
+        @type pathFrom: C{str}
+
+        @param: pathTo: the absolute path to rename the file to.
+        @type pathTo: C{str}
+
+        @return: A L{Deferred} which fires when the rename operation has
+            succeeded or failed.  If it succeeds, the L{Deferred} is called
+            back with a two-tuple of lists.  The first list contains the
+            responses to the I{RNFR} command.  The second list contains the
+            responses to the I{RNTO} command.  If either I{RNFR} or I{RNTO}
+            fails, the L{Deferred} is errbacked with L{CommandFailed} or
+            L{BadResponse}.
+        @rtype: L{Deferred}
+
+        @since: 8.2
+        """
+        renameFrom = self.queueStringCommand('RNFR ' + self.escapePath(pathFrom))
+        renameTo = self.queueStringCommand('RNTO ' + self.escapePath(pathTo))
+
+        fromResponse = []
+
+        # Use a separate Deferred for the ultimate result so that Deferred
+        # chaining can't interfere with its result.
+        result = defer.Deferred()
+        # Bundle up all the responses
+        result.addCallback(lambda toResponse: (fromResponse, toResponse))
+
+        def ebFrom(failure):
+            # Make sure the RNTO doesn't run if the RNFR failed.
+            self.popCommandQueue()
+            result.errback(failure)
+
+        # Save the RNFR response to pass to the result Deferred later
+        renameFrom.addCallbacks(fromResponse.extend, ebFrom)
+
+        # Hook up the RNTO to the result Deferred as well
+        renameTo.chainDeferred(result)
+
+        return result
+
+
     def list(self, path, protocol):
-        """Retrieve a file listing into the given protocol instance.
+        """
+        Retrieve a file listing into the given protocol instance.
 
         This method issues the 'LIST' FTP command.
 
@@ -2183,14 +2845,16 @@ class FTPClient(FTPClientBasic):
             L{FTPFileListProtocol} instance.  It can cope with most common file
             listing formats.
 
-        @returns: L{Deferred}
+        @return: L{Deferred}
         """
         if path is None:
             path = ''
         return self.receiveFromConnection(['LIST ' + self.escapePath(path)], protocol)
 
+
     def nlst(self, path, protocol):
-        """Retrieve a short file listing into the given protocol instance.
+        """
+        Retrieve a short file listing into the given protocol instance.
 
         This method issues the 'NLST' FTP command.
 
@@ -2203,36 +2867,139 @@ class FTPClient(FTPClientBasic):
             path = ''
         return self.receiveFromConnection(['NLST ' + self.escapePath(path)], protocol)
 
-    def cwd(self, path):
-        """Issues the CWD (Change Working Directory) command.
 
-        @returns: a L{Deferred} that will be called when done.
+    def cwd(self, path):
+        """
+        Issues the CWD (Change Working Directory) command.
+
+        @return: a L{Deferred} that will be called when done.
         """
         return self.queueStringCommand('CWD ' + self.escapePath(path))
 
-    def cdup(self):
-        """Issues the CDUP (Change Directory UP) command.
 
-        @returns: a L{Deferred} that will be called when done.
+    def makeDirectory(self, path):
+        """
+        Make a directory
+
+        This method issues the MKD command.
+
+        @param path: The path to the directory to create.
+        @type path: C{str}
+
+        @return: A L{Deferred} which fires when the server responds.  If the
+            directory is created, the L{Deferred} is called back with the
+            server response.  If the server response indicates the directory
+            was not created, the L{Deferred} is errbacked with a L{Failure}
+            wrapping L{CommandFailed} or L{BadResponse}.
+        @rtype: L{Deferred}
+
+        @since: 8.2
+        """
+        return self.queueStringCommand('MKD ' + self.escapePath(path))
+
+
+    def removeFile(self, path):
+        """
+        Delete a file on the server.
+
+        L{removeFile} issues a I{DELE} command to the server to remove the
+        indicated file.  Note that this command cannot remove a directory.
+
+        @param path: The path to the file to delete. May be relative to the
+            current dir.
+        @type path: C{str}
+
+        @return: A L{Deferred} which fires when the server responds.  On error,
+            it is errbacked with either L{CommandFailed} or L{BadResponse}.  On
+            success, it is called back with a list of response lines.
+        @rtype: L{Deferred}
+
+        @since: 8.2
+        """
+        return self.queueStringCommand('DELE ' + self.escapePath(path))
+
+
+    def removeDirectory(self, path):
+        """
+        Delete a directory on the server.
+
+        L{removeDirectory} issues a I{RMD} command to the server to remove the
+        indicated directory. Described in RFC959.
+
+        @param path: The path to the directory to delete. May be relative to
+            the current working directory.
+        @type path: C{str}
+
+        @return: A L{Deferred} which fires when the server responds. On error,
+            it is errbacked with either L{CommandFailed} or L{BadResponse}. On
+            success, it is called back with a list of response lines.
+        @rtype: L{Deferred}
+
+        @since: 11.1
+        """
+        return self.queueStringCommand('RMD ' + self.escapePath(path))
+
+
+    def cdup(self):
+        """
+        Issues the CDUP (Change Directory UP) command.
+
+        @return: a L{Deferred} that will be called when done.
         """
         return self.queueStringCommand('CDUP')
 
-    def pwd(self):
-        """Issues the PWD (Print Working Directory) command.
 
-        @returns: a L{Deferred} that will be called when done.  It is up to the
+    def pwd(self):
+        """
+        Issues the PWD (Print Working Directory) command.
+
+        The L{getDirectory} does the same job but automatically parses the
+        result.
+
+        @return: a L{Deferred} that will be called when done.  It is up to the
             caller to interpret the response, but the L{parsePWDResponse} method
             in this module should work.
         """
         return self.queueStringCommand('PWD')
 
+
+    def getDirectory(self):
+        """
+        Returns the current remote directory.
+
+        @return: a L{Deferred} that will be called back with a C{str} giving
+            the remote directory or which will errback with L{CommandFailed}
+            if an error response is returned.
+        """
+        def cbParse(result):
+            try:
+                # The only valid code is 257
+                if int(result[0].split(' ', 1)[0]) != 257:
+                    raise ValueError
+            except (IndexError, ValueError):
+                return failure.Failure(CommandFailed(result))
+            path = parsePWDResponse(result[0])
+            if path is None:
+                return failure.Failure(CommandFailed(result))
+            return path
+        return self.pwd().addCallback(cbParse)
+
+
     def quit(self):
-        """Issues the QUIT command."""
+        """
+        Issues the I{QUIT} command.
+
+        @return: A L{Deferred} that fires when the server acknowledges the
+            I{QUIT} command.  The transport should not be disconnected until
+            this L{Deferred} fires.
+        """
         return self.queueStringCommand('QUIT')
 
 
+
 class FTPFileListProtocol(basic.LineReceiver):
-    """Parser for standard FTP file listings
+    """
+    Parser for standard FTP file listings
 
     This is the evil required to match::
 
@@ -2257,12 +3024,24 @@ class FTPFileListProtocol(basic.LineReceiver):
     date.  Check U{http://cr.yp.to/ftp.html} if you really want to try to parse
     it.
 
+    It also matches the following::
+        -rw-r--r--   1 root     other        531 Jan 29 03:26 I HAVE\ SPACE
+           - filename:   e.g. 'I HAVE SPACE'
+
+        -rw-r--r--   1 root     other        531 Jan 29 03:26 LINK -> TARGET
+           - filename:   e.g. 'LINK'
+           - linktarget: e.g. 'TARGET'
+
+        -rw-r--r--   1 root     other        531 Jan 29 03:26 N S -> L S
+           - filename:   e.g. 'N S'
+           - linktarget: e.g. 'L S'
+
     @ivar files: list of dicts describing the files in this listing
     """
     fileLinePattern = re.compile(
         r'^(?P<filetype>.)(?P<perms>.{9})\s+(?P<nlinks>\d*)\s*'
         r'(?P<owner>\S+)\s+(?P<group>\S+)\s+(?P<size>\d+)\s+'
-        r'(?P<date>...\s+\d+\s+[\d:]+)\s+(?P<filename>([^ ]|\\ )*?)'
+        r'(?P<date>...\s+\d+\s+[\d:]+)\s+(?P<filename>.{1,}?)'
         r'( -> (?P<linktarget>[^\r]*))?\r?$'
     )
     delimiter = '\n'
@@ -2278,7 +3057,8 @@ class FTPFileListProtocol(basic.LineReceiver):
             self.addFile(d)
 
     def parseDirectoryLine(self, line):
-        """Return a dictionary of fields, or None if line cannot be parsed.
+        """
+        Return a dictionary of fields, or None if line cannot be parsed.
 
         @param line: line of text expected to contain a directory entry
         @type line: str
@@ -2298,7 +3078,8 @@ class FTPFileListProtocol(basic.LineReceiver):
             return d
 
     def addFile(self, info):
-        """Append file information dictionary to the list of known files.
+        """
+        Append file information dictionary to the list of known files.
 
         Subclasses can override or extend this method to handle file
         information differently without affecting the parsing of data
@@ -2311,7 +3092,8 @@ class FTPFileListProtocol(basic.LineReceiver):
         self.files.append(info)
 
     def unknownLine(self, line):
-        """Deal with received lines which could not be parsed as file
+        """
+        Deal with received lines which could not be parsed as file
         information.
 
         Subclasses can override this to perform any special processing
@@ -2323,7 +3105,8 @@ class FTPFileListProtocol(basic.LineReceiver):
         pass
 
 def parsePWDResponse(response):
-    """Returns the path from a response to a PWD command.
+    """
+    Returns the path from a response to a PWD command.
 
     Responses typically look like::
 
@@ -2333,7 +3116,7 @@ def parsePWDResponse(response):
 
     If I can't find the path, I return C{None}.
     """
-    match = re.search('".*"', response)
+    match = re.search('"(.*)"', response)
     if match:
         return match.groups()[0]
     else:

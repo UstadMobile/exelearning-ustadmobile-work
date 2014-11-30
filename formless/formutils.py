@@ -3,14 +3,14 @@
 
 from __future__ import generators
 
-from nevow import compy
+from zope.interface import implements
+
+from twisted.python import components
+
 from nevow import inevow
-from nevow.tags import *
+from nevow import tags
 
-import formless
 from formless import iformless
-
-import os.path
 
 
 try:
@@ -52,7 +52,7 @@ class PrefixerDict(dict):
             self[key] = value
 
 
-class FormDefaults(compy.Adapter):
+class FormDefaults(components.Adapter):
     def __init__(self):
         self.defaults = {}
 
@@ -86,10 +86,10 @@ class FormDefaults(compy.Adapter):
         self.defaults = {}
 
 
-class FormErrors(compy.Adapter):
+class FormErrors(components.Adapter):
     """An object which keeps track of which forms have which errors
     """
-    __implements__ =iformless.IFormErrors,
+    implements(iformless.IFormErrors)
     def __init__(self):
         self.errors = {}
 
@@ -113,7 +113,6 @@ class FormErrors(compy.Adapter):
 
     def clearAll(self):
         self.errors = {}
-
 
 def calculatePostURL(context, data):
     postLocation = inevow.ICurrentSegments(context)[-1]
@@ -141,4 +140,4 @@ def getError(context):
     err = errors.getError(context.key)
     if err is not None:
         return err
-    return comment["\nNo error for error key: %s\n" % context.key]
+    return tags.comment["\nNo error for error key: %s\n" % context.key]

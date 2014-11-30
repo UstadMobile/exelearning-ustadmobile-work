@@ -5,11 +5,6 @@
 DEBUG = False
 
 
-from weakref import ref
-from nevow import util
-
-
-
 class EventNotification:
     def __init__(self):
         self._subscribers = {}

@@ -1,57 +1,55 @@
 # -*- test-case-name: nevow.test.test_appserver -*-
-# Copyright (c) 2004 Divmod.
+# Copyright (c) 2004-2008 Divmod.
 # See LICENSE for details.
 
-
-"""A web application server built using twisted.web
+"""
+A web application server built using twisted.web
 """
 
 import cgi
-from copy import copy
 from urllib import unquote
-from types import StringType
-import warnings
 
+from zope.interface import implements, classImplements
+
+import twisted.python.components as tpc
 from twisted.web import server
-from twisted.web import resource
-from twisted.web import util as webutil
 
-from twisted.protocols import http
+try:
+    from twisted.web import http
+except ImportError:
+    from twisted.protocols import http
 
 from twisted.python import log
-from twisted.python import failure
 from twisted.internet import defer
-from twisted.application import service
 
-from nevow import compy
 from nevow import context
 from nevow import inevow
-from nevow import events
 from nevow import url
-from nevow import util
 from nevow import flat
 from nevow import stan
 
 
 class UninformativeExceptionHandler:
-    __implements__ = inevow.ICanHandleException
-    
+    implements(inevow.ICanHandleException)
+
     def renderHTTP_exception(self, ctx, reason):
         request = inevow.IRequest(ctx)
         log.err(reason)
         request.write("<html><head><title>Internal Server Error</title></head>")
         request.write("<body><h1>Internal Server Error</h1>An error occurred rendering the requested page. To see a more detailed error message, enable tracebacks in the configuration.</body></html>")
-        server.Request.finish(request)
 
-    def renderInlineException(self, request, reason):
+        request.finishRequest( False )
+
+    def renderInlineException(self, context, reason):
         log.err(reason)
         return """<div style="border: 1px dashed red; color: red; clear: both">[[ERROR]]</div>"""
 
 
 class DefaultExceptionHandler:
-    __implements__ = inevow.ICanHandleException
+    implements(inevow.ICanHandleException)
 
     def renderHTTP_exception(self, ctx, reason):
+        log.err(reason)
         request = inevow.IRequest(ctx)
         request.setResponseCode(http.INTERNAL_SERVER_ERROR)
         request.write("<html><head><title>Exception</title></head><body>")
@@ -59,13 +57,13 @@ class DefaultExceptionHandler:
         result = failure.formatFailure(reason)
         request.write(''.join(flat.flatten(result)))
         request.write("</body></html>")
-        server.Request.finish(request)
+
+        request.finishRequest( False )
 
     def renderInlineException(self, context, reason):
         from nevow import failure
         formatted = failure.formatFailure(reason)
-
-        desc = str(e)
+        desc = str(reason)
         return flat.serialize([
             stan.xml("""<div style="border: 1px dashed red; color: red; clear: both" onclick="this.childNodes[1].style.display = this.childNodes[1].style.display == 'none' ? 'block': 'none'">"""),
             desc,
@@ -82,15 +80,16 @@ def processingFailed(reason, request, ctx):
     try:
         handler = inevow.ICanHandleException(ctx)
         handler.renderHTTP_exception(ctx, reason)
-    except Exception, e:
+    except:
         request.setResponseCode(http.INTERNAL_SERVER_ERROR)
         log.msg("Exception rendering error page:", isErr=1)
-        log.err(e)
+        log.err()
         log.err("Original exception:", isErr=1)
         log.err(reason)
         request.write("<html><head><title>Internal Server Error</title></head>")
-        request.write("<body><h1>Internal Server Error</h1>An error occurred rendering the requested page. Additionally, an error occured rendering the error page.</body></html>")
-    server.Request.finish(request)
+        request.write("<body><h1>Internal Server Error</h1>An error occurred rendering the requested page. Additionally, an error occurred rendering the error page.</body></html>")
+        request.finishRequest( False )
+
     return errorMarker
 
 
@@ -98,25 +97,30 @@ def defaultExceptionHandlerFactory(ctx):
     return DefaultExceptionHandler()
 
 
-class NevowRequest(compy.Componentized, server.Request):
-    """A Request subclass which does additional
+class NevowRequest(tpc.Componentized, server.Request):
+    """
+    A Request subclass which does additional
     processing if a form was POSTed. When a form is POSTed,
     we create a cgi.FieldStorage instance using the data posted,
     and set it as the request.fields attribute. This way, we can
     get at information about filenames and mime-types of
     files that were posted.
-    
+
     TODO: cgi.FieldStorage blocks while decoding the MIME.
     Rewrite it to do the work in chunks, yielding from time to
     time.
-    """
 
-    __implements__ = inevow.IRequest,
+    @ivar fields: C{None} or, if the HTTP method is B{POST}, a
+        L{cgi.FieldStorage} instance giving the content of the POST.
+    """
+    implements(inevow.IRequest)
+
+    fields = None
 
     def __init__(self, *args, **kw):
         server.Request.__init__(self, *args, **kw)
-        compy.Componentized.__init__(self)
-        
+        tpc.Componentized.__init__(self)
+
     def process(self):
         # extra request parsing
         if self.method == 'POST':
@@ -157,6 +161,8 @@ class NevowRequest(compy.Componentized, server.Request):
         if pageContext is not errorMarker:
             return defer.maybeDeferred(
                 pageContext.tag.renderHTTP, pageContext
+            ).addBoth(
+                self._cbSetLogger, pageContext
             ).addErrback(
                 processingFailed, self, pageContext
             ).addCallback(
@@ -166,22 +172,32 @@ class NevowRequest(compy.Componentized, server.Request):
     def finish(self):
         self.deferred.callback("")
 
+    def finishRequest( self, success ):
+        server.Request.finish(self)
+
     def _cbFinishRender(self, html, ctx):
         if isinstance(html, str):
             self.write(html)
-            server.Request.finish(self)
+            self.finishRequest(  True )
         elif html is errorMarker:
             ## Error webpage has already been rendered and finish called
             pass
         else:
-            res = inevow.IResource(html, None)
-            if res is not None:
-                pageContext = context.PageContext(tag=res, parent=ctx)
-                return self.gotPageContext(pageContext)
-            else:
-                print "html is not a string: %s on %s" % (str(html), ctx.tag)
-                server.Request.finish(self)
+            res = inevow.IResource(html)
+            pageContext = context.PageContext(tag=res, parent=ctx)
+            return self.gotPageContext(pageContext)
         return html
+
+    _logger = None
+    def _cbSetLogger(self, result, ctx):
+        try:
+            logger = ctx.locate(inevow.ILogger)
+        except KeyError:
+            pass
+        else:
+            self._logger = lambda : logger.log(ctx)
+
+        return result
 
     session = None
 
@@ -218,15 +234,16 @@ requestFactory = lambda ctx: ctx.tag
 
 class NevowSite(server.Site):
     requestFactory = NevowRequest
-    
-    def __init__(self, *args, **kwargs):
-        server.Site.__init__(self, *args, **kwargs)
+
+    def __init__(self, resource, *args, **kwargs):
+        resource.addSlash = True
+        server.Site.__init__(self, resource, *args, **kwargs)
         self.context = context.SiteContext()
-        
+
     def remember(self, obj, inter=None):
         """Remember the given object for the given interfaces (or all interfaces
         obj implements) in the site's context.
-        
+
         The site context is the parent of all other contexts. Anything
         remembered here will be available throughout the site.
         """
@@ -243,14 +260,6 @@ class NevowSite(server.Site):
         return defer.maybeDeferred(res.locateChild, pageContext, path).addCallback(
             self.handleSegment, ctx.tag, path, pageContext
         )
-
-    def getResourceFor(self, request):
-        """DEPRECATED. Use getPageContextForRequestContext instead.
-        """
-        warnings.warn(
-            "getResourceFor is deprecated, use getPageContextForRequestContext instead.", stacklevel=2)
-        return self.getPageContextForRequestContext(
-            context.RequestContext(tag=request))
 
     def handleSegment(self, result, request, path, pageContext):
         if result is errorMarker:
@@ -269,14 +278,19 @@ class NevowSite(server.Site):
                 lambda actualRes: self.handleSegment(
                     (actualRes, newpath), request, path, pageContext))
 
-        newres = inevow.IResource(newres, persist=True)
+
+        #
+        # FIX A GIANT LEAK. Is this code really useful anyway?
+        #
+        newres = inevow.IResource(newres)#, persist=True)
         if newres is pageContext.tag:
             assert not newpath is path, "URL traversal cycle detected when attempting to locateChild %r from resource %r." % (path, pageContext.tag)
             assert  len(newpath) < len(path), "Infinite loop impending..."
 
         ## We found a Resource... update the request.prepath and postpath
         for x in xrange(len(path) - len(newpath)):
-            request.prepath.append(request.postpath.pop(0))
+            if request.postpath:
+                request.prepath.append(request.postpath.pop(0))
 
         ## Create a context object to represent this new resource
         ctx = context.PageContext(tag=newres, parent=pageContext)
@@ -297,12 +311,17 @@ class NevowSite(server.Site):
             self.handleSegment, request, path, ctx
         )
 
+    def log(self, request):
+        if request._logger is None:
+            server.Site.log(self, request)
+        else:
+            request._logger()
 
 
 ## This should be moved somewhere else, it's cluttering up this module.
 
 class OldResourceAdapter(object):
-    __implements__ = inevow.IResource,
+    implements(inevow.IResource)
 
     # This is required to properly handle the interaction between
     # original.isLeaf and request.postpath, from which PATH_INFO is set in
@@ -343,7 +362,7 @@ class OldResourceAdapter(object):
     def renderHTTP(self, ctx):
         request = inevow.IRequest(ctx)
         if self.real_prepath_len is not None:
-            path = request.postpath = request.prepath[self.real_prepath_len:]
+            request.postpath = request.prepath[self.real_prepath_len:]
             del request.prepath[self.real_prepath_len:]
         result = defer.maybeDeferred(self.original.render, request).addCallback(
             self._handle_NOT_DONE_YET, request)
@@ -362,3 +381,5 @@ from nevow import rend
 
 NotFound = rend.NotFound
 FourOhFour = rend.FourOhFour
+
+classImplements(server.Session, inevow.ISession)

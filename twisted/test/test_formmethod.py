@@ -1,4 +1,4 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
@@ -16,10 +16,19 @@ class ArgumentTestCase(unittest.TestCase):
     def argTest(self, argKlass, testPairs, badValues, *args, **kwargs):
         arg = argKlass("name", *args, **kwargs)
         for val, result in testPairs:
-            self.assertEquals(arg.coerce(val), result)
+            self.assertEqual(arg.coerce(val), result)
         for val in badValues:
             self.assertRaises(formmethod.InputError, arg.coerce, val)
-    
+
+
+    def test_argument(self):
+        """
+        Test that corce correctly raises NotImplementedError.
+        """
+        arg = formmethod.Argument("name")
+        self.assertRaises(NotImplementedError, arg.coerce, "")
+
+
     def testString(self):
         self.argTest(formmethod.String, [("a", "a"), (1, "1"), ("", "")], ())
         self.argTest(formmethod.String, [("ab", "ab"), ("abc", "abc")], ("2", ""), min=2)
@@ -52,6 +61,18 @@ class ArgumentTestCase(unittest.TestCase):
     def testBoolean(self):
         tests =  [("yes", 1), ("", 0), ("False", 0), ("no", 0)]
         self.argTest(formmethod.Boolean, tests, ())
+
+
+    def test_file(self):
+        """
+        Test the correctness of the coerce function.
+        """
+        arg = formmethod.File("name", allowNone=0)
+        self.assertEqual(arg.coerce("something"), "something")
+        self.assertRaises(formmethod.InputError, arg.coerce, None)
+        arg2 = formmethod.File("name")
+        self.assertEqual(arg2.coerce(None), None)
+
 
     def testDate(self):
         goodTests = { 

@@ -1,20 +1,19 @@
-# -*- test-case-name: twisted.web.test.test_woven -*-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# -*- test-case-name: twisted.web.test.test_domhelpers -*-
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-# 
+"""
+A library for performing interesting tasks with DOM objects.
+"""
 
-from __future__ import nested_scopes
+import StringIO
 
 from twisted.web import microdom
-from microdom import getElementsByTagName, escape, unescape
+from twisted.web.microdom import getElementsByTagName, escape, unescape
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
 
-class NodeLookupError(Exception): pass
+class NodeLookupError(Exception):
+    pass
 
 
 def substitute(request, node, subs):
@@ -32,7 +31,7 @@ def _get(node, nodeId, nodeAttrs=('id','class','model','pattern')):
     (internal) Get a node with the specified C{nodeId} as any of the C{class},
     C{id} or C{pattern} attributes.
     """
-    
+
     if hasattr(node, 'hasAttributes') and node.hasAttributes():
         for nodeAttr in nodeAttrs:
             if (str (node.getAttribute(nodeAttr)) == nodeId):
@@ -97,7 +96,7 @@ def locateNodes(nodeList, key, value, noNesting=1):
                 continue
         returnList.extend(locateNodes(childNode, key, value, noNesting))
     return returnList
-    
+
 def superSetAttribute(node, key, value):
     if not hasattr(node, 'setAttribute'): return
     node.setAttribute(key, value)
@@ -206,15 +205,23 @@ def findNodesShallow(parent, matcher, accum=None):
 
 
 def findElementsWithAttributeShallow(parent, attribute):
+    """
+    Return an iterable of the elements which are direct children of C{parent}
+    and which have the C{attribute} attribute.
+    """
     return findNodesShallow(parent,
-        lambda n: isinstance(n, microdom.Element) and
+        lambda n: getattr(n, 'tagName', None) is not None and
             n.hasAttribute(attribute))
 
 
 def findElements(parent, matcher):
+    """
+    Return an iterable of the elements which are children of C{parent} for
+    which the predicate C{matcher} returns true.
+    """
     return findNodes(
         parent,
-        lambda n, matcher=matcher: isinstance(n, microdom.Element) and
+        lambda n, matcher=matcher: getattr(n, 'tagName', None) is not None and
                                    matcher(n))
 
 def findElementsWithAttribute(parent, attribute, value=None):
@@ -236,7 +243,7 @@ def findNodesNamed(parent, name):
 def writeNodeData(node, oldio):
     for subnode in node.childNodes:
         if hasattr(subnode, 'data'):
-            oldio.write(str(subnode.data))
+            oldio.write(subnode.data)
         else:
             writeNodeData(subnode, oldio)
 
@@ -245,6 +252,7 @@ def getNodeText(node):
     oldio = StringIO.StringIO()
     writeNodeData(node, oldio)
     return oldio.getvalue()
+
 
 def getParents(node):
     l = []

@@ -1,16 +1,15 @@
 # -*- test-case-name: twisted.test.test_sob -*-
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 #
-"""Save and load Small OBjects to and from files, using various formats.
+"""
+Save and load Small OBjects to and from files, using various formats.
 
-API Stability: unstable
-
-Maintainer: U{Moshe Zadka<mailto:moshez@twistedmatrix.com>}
+Maintainer: Moshe Zadka
 """
 
-import os, md5, sys
+import os, sys
 try:
     import cPickle as pickle
 except ImportError:
@@ -19,9 +18,10 @@ try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
-from twisted.python import components, log, runtime
+from hashlib import md5
+from twisted.python import log, runtime
 from twisted.persisted import styles
-from zope.interface import implements
+from zope.interface import implements, Interface
 
 # Note:
 # These encrypt/decrypt functions only work for data formats
@@ -32,24 +32,24 @@ def _encrypt(passphrase, data):
     leftover = len(data) % cipher.block_size
     if leftover:
         data += ' '*(cipher.block_size - leftover)
-    return cipher.new(md5.new(passphrase).digest()[:16]).encrypt(data)
+    return cipher.new(md5(passphrase).digest()[:16]).encrypt(data)
 
 def _decrypt(passphrase, data):
     from Crypto.Cipher import AES
-    return AES.new(md5.new(passphrase).digest()[:16]).decrypt(data)
+    return AES.new(md5(passphrase).digest()[:16]).decrypt(data)
 
 
-class IPersistable(components.Interface):
+class IPersistable(Interface):
 
     """An object which can be saved in several formats to a file"""
 
-    def setStyle(self, style):
+    def setStyle(style):
         """Set desired format.
 
-        @type style: string (one of 'pickle', 'source' or 'xml')
+        @type style: string (one of 'pickle' or 'source')
         """
 
-    def save(self, tag=None, filename=None, passphrase=None):
+    def save(tag=None, filename=None, passphrase=None):
         """Save object to file.
 
         @type tag: string
@@ -71,7 +71,7 @@ class Persistent:
     def setStyle(self, style):
         """Set desired format.
 
-        @type style: string (one of 'pickle', 'source' or 'xml')
+        @type style: string (one of 'pickle' or 'source')
         """
         self.style = style
 
@@ -98,10 +98,7 @@ class Persistent:
         f.close()
 
     def _getStyle(self):
-        if self.style == "xml":
-            from twisted.persisted.marmalade import jellyToXML as dumpFunc
-            ext = "tax"
-        elif self.style == "source":
+        if self.style == "source":
             from twisted.persisted.aot import jellyToSource as dumpFunc
             ext = "tas"
         else:
@@ -130,16 +127,20 @@ class Persistent:
 
 # "Persistant" has been present since 1.0.7, so retain it for compatibility
 Persistant = Persistent
-components.backwardsCompatImplements(Persistent)
-
 
 class _EverythingEphemeral(styles.Ephemeral):
 
     initRun = 0
 
+    def __init__(self, mainMod):
+        """
+        @param mainMod: The '__main__' module that this class will proxy.
+        """
+        self.mainMod = mainMod
+
     def __getattr__(self, key):
         try:
-            return getattr(mainMod, key)
+            return getattr(self.mainMod, key)
         except AttributeError:
             if self.initRun:
                 raise
@@ -154,27 +155,28 @@ def load(filename, style, passphrase=None):
     Deserialize an object from a file. The file can be encrypted.
 
     @param filename: string
-    @param style: string (one of 'source', 'xml' or 'pickle')
+    @param style: string (one of 'pickle' or 'source')
     @param passphrase: string
     """
     mode = 'r'
     if style=='source':
-        from twisted.persisted.aot import unjellyFromSource as load
-    elif style=='xml':
-        from twisted.persisted.marmalade import unjellyFromXML as load
+        from twisted.persisted.aot import unjellyFromSource as _load
     else:
-        load, mode = pickle.load, 'rb'
+        _load, mode = pickle.load, 'rb'
     if passphrase:
         fp = StringIO.StringIO(_decrypt(passphrase,
                                         open(filename, 'rb').read()))
     else:
         fp = open(filename, mode)
-    mainMod = sys.modules['__main__']
-    ee = _EverythingEphemeral()
+    ee = _EverythingEphemeral(sys.modules['__main__'])
     sys.modules['__main__'] = ee
     ee.initRun = 1
-    value = load(fp)
-    sys.modules['__main__'] = mainMod
+    try:
+        value = _load(fp)
+    finally:
+        # restore __main__ if an exception is raised.
+        sys.modules['__main__'] = ee.mainMod
+
     styles.doUpgrade()
     ee.initRun = 0
     persistable = IPersistable(value, None)
@@ -219,8 +221,6 @@ def guessType(filename):
         '.etap': 'pickle',
         '.tas': 'source',
         '.etas': 'source',
-        '.tax': 'xml',
-        '.etax': 'xml'
     }[ext]
 
 __all__ = ['loadValueFromFile', 'load', 'Persistent', 'Persistant',

@@ -1,6 +1,10 @@
-"""Post-install GUI to compile to pyc and unpack twisted doco"""
+# -*- test-case-name: twisted.scripts.test.test_scripts -*-
+# Copyright (c) Twisted Matrix Laboratories.
+# See LICENSE for details.
 
-from __future__ import generators
+"""
+Post-install GUI to compile to pyc and unpack twisted doco.
+"""
 
 import sys
 import zipfile
@@ -9,7 +13,7 @@ import py_compile
 # we're going to ignore failures to import tkinter and fall back
 # to using the console if the required dll is not found
 
-# Scary kludge to work around tk84.dll bug: 
+# Scary kludge to work around tk84.dll bug:
 # https://sourceforge.net/tracker/index.php?func=detail&aid=814654&group_id=5470&atid=105470
 # Without which(): you get a windows missing-dll popup message
 from twisted.python.procutils import which
@@ -65,7 +69,7 @@ class ProgressBar:
 
     def pack(self, *args, **kwargs):
         self.frame.pack(*args, **kwargs)
-    
+
     def updateProgress(self, newValue, newMax=None):
         if newMax:
             self.max = newMax
@@ -85,7 +89,7 @@ class ProgressBar:
               float(value) / self.max * self.width, self.height)
         else:
             self.canvas.coords(self.scale, 0,
-                               self.height - (float(value) / 
+                               self.height - (float(value) /
                                               self.max*self.height),
                                self.width, self.height)
         # Now update the colors
@@ -95,7 +99,7 @@ class ProgressBar:
         if self.doLabel:
             if value:
                 if value >= 0:
-                    pvalue = int((float(value) / float(self.max)) * 
+                    pvalue = int((float(value) / float(self.max)) *
                                    100.0)
                 else:
                     pvalue = 0
@@ -127,7 +131,7 @@ class Progressor:
     def setIterator(self, iterator):
         self.iterator=iterator
         return self
-    
+
     def updateBar(self, deferred):
         b=self.bar
         try:
@@ -150,14 +154,14 @@ class Progressor:
         if self.stopping:
             deferred.callback(self.root)
             return
-        
+
         try:
             self.remaining=self.iterator.next()
         except StopIteration:
-            self.stopping=1            
+            self.stopping=1
         except:
             deferred.errback(failure.Failure())
-        
+
         if self.remaining%10==0:
             reactor.callLater(0, self.updateBar, deferred)
         if self.remaining%100==0:
@@ -212,7 +216,7 @@ def run(argv=sys.argv):
 
     if opt['use-console']:
         # this should come before shell-exec to prevent infinite loop
-        return doItConsolicious(opt)              
+        return doItConsolicious(opt)
     if opt['shell-exec'] or not 'Tkinter' in sys.modules:
         from distutils import sysconfig
         from twisted.scripts import tkunzip
@@ -234,7 +238,7 @@ def doItConsolicious(opt):
             if n % 1000 == 0:
                 print
         print 'Done unpacking.'
-        
+
     if opt['compiledir']:
         print 'Compiling to pyc...'
         import compileall
@@ -247,7 +251,7 @@ def doItTkinterly(opt):
     root.title('One Moment.')
     root.protocol('WM_DELETE_WINDOW', reactor.stop)
     tksupport.install(root)
-    
+
     prog=ProgressBar(root, value=0, labelColor="black", width=200)
     prog.pack()
 
@@ -259,7 +263,7 @@ def doItTkinterly(opt):
         return root
 
     d.addCallback(deiconify)
-    
+
     if opt['zipfile']:
         uz=Progressor('Unpacking documentation...')
         max=zipstream.countZipFileChunks(opt['zipfile'], 4096)

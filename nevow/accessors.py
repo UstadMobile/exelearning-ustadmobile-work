@@ -12,11 +12,11 @@ and sequence (tuple, list) types as well as call any functions and
 methods found in the stan tree.
 """
 
+from zope.interface import implements
 
-from nevow import compy
+import twisted.python.components as tpc
 
 from nevow.inevow import IGettable, IContainer, IData
-from nevow.stan import directive
 from nevow import util
 
 def convertToData(data, context):
@@ -24,7 +24,7 @@ def convertToData(data, context):
     something that does not implement the IGettable interface is
     found.
     """
-    newdata = IGettable(data, persist=False, default=None)
+    newdata = IGettable(data, None)
     if newdata is not None:
         olddata = newdata
         newdata = olddata.get(context)
@@ -41,39 +41,39 @@ class NoAccessor(NotImplementedError):
     pass
 
 
-class DirectiveAccessor(compy.Adapter):
-    __implements__ = IGettable
+class DirectiveAccessor(tpc.Adapter):
+    implements(IGettable)
 
     def get(self, context):
         data = context.locate(IData)
-        container = IContainer(data, None, persist=False)
+        container = IContainer(data, None)
         if container is None:
-            raise NoAccessor, "%s does not implement IContainer, and there is no registered adapter." % data
+            raise NoAccessor, "%r does not implement IContainer, and there is no registered adapter." % data
         child = container.child(context, self.original.name)
         return child
 
 
-class SlotAccessor(compy.Adapter):
-    __implements__ = IGettable
+class SlotAccessor(tpc.Adapter):
+    implements(IGettable)
 
     def get(self, context):
         return context.locateSlotData(self.original.name)
 
 
-class FunctionAccessor(compy.Adapter):
-    __implements__ = IGettable
+class FunctionAccessor(tpc.Adapter):
+    implements(IGettable)
     def get(self, context):
         return self.original(context, context.locate(IData))
 
 
-class DictionaryContainer(compy.Adapter):
-    __implements__ = IContainer
+class DictionaryContainer(tpc.Adapter):
+    implements(IContainer)
     
     def child(self, context, name):
         return self.original[name]
 
 
-class ObjectContainer(compy.Adapter):
+class ObjectContainer(tpc.Adapter):
     """Retrieve object attributes in response to a data directive; providing
     easy access to your application objects' attributes.
 
@@ -104,7 +104,7 @@ class ObjectContainer(compy.Adapter):
         </div>
     """
     
-    __implements__ = IContainer
+    implements(IContainer)
     
     def child(self, context, name):
         if name[:1] == '_':
@@ -119,8 +119,8 @@ def intOrNone(s):
         return None
 
 
-class ListContainer(compy.Adapter):
-    __implements__ = IContainer
+class ListContainer(tpc.Adapter):
+    implements(IContainer)
 
     def child(self, context, name):
         if ':' in name:

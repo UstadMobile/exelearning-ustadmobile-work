@@ -1,4 +1,4 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 
@@ -13,10 +13,10 @@ from twisted.python.util import sibpath
 from twisted.python import reflect
 
 from twisted.manhole.ui import gtk2manhole
-from twisted.python.components import Adapter, Interface, registerAdapter
-from twisted.python import log, components
+from twisted.python.components import Adapter, registerAdapter
+from twisted.python import log
 from twisted.protocols import policies
-from zope.interface import implements
+from zope.interface import implements, Interface
 
 # the glade file uses stock icons, which requires gnome to be installed
 import gnome
@@ -79,8 +79,6 @@ class InspectorNode(Adapter):
 
     def format(self):
         return (self.slot, self.origstr())
-
-components.backwardsCompatImplements(InspectorNode)
 
 
 class ConstantNode(InspectorNode):
@@ -317,7 +315,7 @@ class LogViewer:
             vals.append(p.outLog[0][0])
         self.startTime = min(vals)
         p.logViewer = self
-        self.xml = x = gtk.glade.XML(sibpath(__file__, "logview.glade"))
+        self.xml = gtk.glade.XML(sibpath(__file__, "logview.glade"))
         self.xml.signal_autoconnect(self)
         self.loglist = self.xml.get_widget("loglist")
         # setup model, connect it to my treeview

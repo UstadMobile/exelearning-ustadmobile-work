@@ -1,28 +1,20 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# -*- test-case-name: twisted.test.test_pb -*-
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
-
 """
-
 Persistently cached objects for PB.
 
-Maintainer: U{Glyph Lefkowitz<mailto:glyph@twistedmatrix.com>}
-
-Stability: semi-stable
+Maintainer: Glyph Lefkowitz
 
 Future Plans: None known.
 """
 
-# Twisted imports
-from twisted.internet import defer
-
-# sibling imports
-import jelly
-import banana
-import flavors
-
-# System Imports
 import time
+
+from twisted.internet import defer
+from twisted.spread import banana, jelly, flavors
+
 
 class Publishable(flavors.Cacheable):
     """An object whose cached state persists across sessions.
@@ -79,7 +71,9 @@ class RemotePublished(flavors.RemoteCache):
         self.__dict__.update(state)
         self._activationListeners = []
         try:
-            data = open(self.getFileName()).read()
+            dataFile = file(self.getFileName(), "rb")
+            data = dataFile.read()
+            dataFile.close()
         except IOError:
             recent = 0
         else:
@@ -110,7 +104,10 @@ class RemotePublished(flavors.RemoteCache):
             listener(self)
         self._activationListeners = []
         self.activated()
-        open(self.getFileName(), "wb").write(banana.encode(jelly.jelly(self)))
+        dataFile = file(self.getFileName(), "wb")
+        dataFile.write(banana.encode(jelly.jelly(self)))
+        dataFile.close()
+
 
     def activated(self):
         """Implement this method if you want to be notified when your

@@ -1,17 +1,15 @@
 # Copyright (c) 2004 Divmod.
 # See LICENSE for details.
 
-import os
+from zope.interface import implements
 
 from twisted.internet import defer
 from twisted.python import log
 
-from nevow import inevow, rend, loaders, static, url, tags
+from nevow import inevow, rend, loaders, static, url, tags, util
 from nevow.flat import flatten
 from nevow.stan import Proto, Tag
-
 from itertools import count
-
 
 cn = count().next
 cookie = lambda: str(cn())
@@ -289,7 +287,7 @@ class CanvasSocket(GroupBase):
     """An object which represents the client-side canvas. Defines APIs for drawing
     on the canvas. An instance of this class will be passed to your onload callback.
     """
-    __implements__ = inevow.IResource,
+    implements(inevow.IResource)
 
     groupName = 'canvas'
 
@@ -314,7 +312,7 @@ class CanvasSocket(GroupBase):
             self.delegate = _hookup[self.cookie]
             self.delegate.onload(self)
             del _hookup[self.cookie]
-        except Exception, e:
+        except:
             log.err()
         return self.d
 
@@ -369,7 +367,6 @@ class CanvasSocket(GroupBase):
     def handle_diagnostic(self, info):
         print "Trace", info
 
-
 canvasServerMessage = loaders.stan(tags.html["This server dispatches for nevow canvas events."])
 
 
@@ -379,6 +376,7 @@ def canvas(width, height, delegate, useCGI=False):
         global _canvasCGIService
         if _canvasCGIService is None:
             from nevow import appserver
+            # Import reactor here to avoid installing default at startup
             from twisted.internet import reactor
             _canvasCGIService = reactor.listenTCP(0, appserver.NevowSite(Canvas(docFactory=canvasServerMessage)))
             _canvasCGIService.dispatchMap = {}
@@ -471,11 +469,6 @@ class Canvas(rend.Page):
     docFactory = loaders.stan(tags.html[render_canvas])
 
 setattr(Canvas, 'child_nevow_canvas_movie.swf', static.File(
-    os.path.join(
-        os.path.split(__file__)[0], 'Canvas.swf'),
+    util.resource_filename('nevow', 'Canvas.swf'),
     'application/x-shockwave-flash'))
 
-#setattr(Canvas, 'child_nevow_canvas_movie.swd', static.File(
-#    os.path.join(
-#        os.path.split(__file__)[0], 'Canvas.swd'),
-#    'application/x-shockwave-flash'))

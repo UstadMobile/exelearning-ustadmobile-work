@@ -8,15 +8,13 @@
 
 import os
 import sys
-import copy
 import inspect
-import types
 import warnings
+from zope.interface import implements
+from zope.interface.interface import InterfaceClass, Attribute
 
-from nevow import inevow
 from nevow import util
-from nevow.compy import MetaInterface, Interface, Adapter, registerAdapter, implements
-from nevow import compy
+
 
 from formless import iformless
 
@@ -71,7 +69,7 @@ class ValidateError(Exception):
 
 
 
-class Typed(object):
+class Typed(Attribute):
     """A typed value. Subclasses of Typed are constructed inside of
     TypedInterface class definitions to describe the types of properties,
     the parameter types to method calls, and method return types.
@@ -94,7 +92,7 @@ class Typed(object):
         of the data from the browser and pass unicode strings to
         coerce.
     """
-    __implements__ = iformless.ITyped
+    implements(iformless.ITyped)
 
     complexType = False
     strip = False
@@ -105,6 +103,8 @@ class Typed(object):
     requiredFailMessage = 'Please enter a value'
     null = None
     unicode = False
+
+    __name__ = ''
 
     def __init__(
         self,
@@ -139,7 +139,6 @@ class Typed(object):
 
     def coerce(self, val, configurable):
         raise NotImplementedError, "Implement in %s" % util.qual(self.__class__)
-
 
 
 #######################################
@@ -276,6 +275,8 @@ class Choice(Typed):
     passed to stringify, which is by default "str".
     """
 
+    requiredFailMessage = 'Please choose an option.'
+
     def __init__(self, choices=None, choicesAttribute=None, stringify=str,
                  valueToKey=str, keyToValue=None, keyAndConfigurableToValue=None,
                  *args, **kw):
@@ -348,17 +349,17 @@ class Object(Typed):
     complexType = True
     def __init__(self, interface=Any, *args, **kw):
         Typed.__init__(self, *args, **kw)
-        self.interface = interface
+        self.iface = interface
 
     def __repr__(self):
-        if self.interface is None:
-            return "Object(None)"
-        return "Object(interface=%s)" % util.qual(self.interface)
+        if self.iface is not None:
+            return "%s(interface=%s)" % (self.__class__.__name__, util.qual(self.iface))
+        return "%s(None)" % (self.__class__.__name__,)
 
 
 
 class List(Object):
-    __implements__ = iformless.IActionableType, Object.__implements__
+    implements(iformless.IActionableType)
 
     complexType = True
     def __init__(self, actions=None, header='', footer='', separator='', *args, **kw):
@@ -382,9 +383,9 @@ class List(Object):
         return data
 
     def __repr__(self):
-        if self.interface is not None:
-            return "List(interface=%s)" % util.qual(self.interface)
-        return "List()"
+        if self.iface is not None:
+            return "%s(interface=%s)" % (self.__class__.__name__, util.qual(self.iface))
+        return self.__class__.__name__ + "()"
 
     def attachActionBindings(self, possibleActions):
         ## Go through and replace self.actions, which is a list of method
@@ -398,17 +399,12 @@ class List(Object):
     def getActionBindings(self):
         return self.actions
 
-
 class Dictionary(List):
     pass
 
 
 class Table(Object):
-    complexType = True
-    def __repr__(self):
-        if self.interface is not None:
-            return "Table(interface=%s)" % util.qual(self.interface)
-        return "Table()"
+    pass
 
 
 class Request(Typed):
@@ -416,7 +412,7 @@ class Request(Typed):
     request when called. Including a Request arg will not affect the
     appearance of the rendered form.
 
-    >>> def doSomething(self, request=formless.Request(), name=formless.String()):
+    >>> def doSomething(request=formless.Request(), name=formless.String()):
     ...     pass
     >>> doSomething = formless.autocallable(doSomething)
     """
@@ -428,7 +424,7 @@ class Context(Typed):
     context when called. Including a Context arg will not affect the
     appearance of the rendered form.
 
-    >>> def doSomething(self, context=formless.Context(), name=formless.String()):
+    >>> def doSomething(context=formless.Context(), name=formless.String()):
     ...     pass
     >>> doSomething = formless.autocallable(doSomething)
     """
@@ -473,7 +469,7 @@ def autocallable(method, action=None, visible=False, **kw):
     Use this like a method adapter around a method in a TypedInterface:
     
     >>> class IFoo(TypedInterface):
-    ...     def doSomething(self):
+    ...     def doSomething():
     ...         '''Do Something
     ...         
     ...         Do some action bla bla'''
@@ -508,11 +504,11 @@ class Binding(object):
     keyword argument, a Typed instance, as the binding typeValue.
     
     One more thing. When an autocallable method is found, it is called with
-    None as the self argument. The return value is passed the the Method
+    None as the self argument. The return value is passed the Method
     Binding when it is constructed to keep track of what the method is
     supposed to return.
     """
-    __implements__ = iformless.IBinding,
+    implements(iformless.IBinding)
 
     label = None
     description = ''
@@ -538,7 +534,7 @@ class Binding(object):
     def getArgs(self):
         """Return a *copy* of this Binding.
         """
-        Return (Binding(self.name, self.original, self.id), )
+        return (Binding(self.name, self.original, self.id), )
 
     def getViewName(self):
         return self.original.__class__.__name__.lower()
@@ -551,7 +547,6 @@ class Binding(object):
             return self.original.coerce(val)
         return val
 
-
 class Argument(Binding):
     pass
 
@@ -561,7 +556,6 @@ class Property(Binding):
     def configure(self, boundTo, results):
         ## set the property!
         setattr(boundTo, self.name, results[self.name])
-        return "Property %r set successfully." % nameToLabel(self.name)
 
 
 class MethodBinding(Binding):
@@ -578,10 +572,7 @@ class MethodBinding(Binding):
 
     def configure(self, boundTo, results):
         bound = getattr(boundTo, self.name)
-        rv = bound(**results)
-        if rv is None:
-            return "Method %r called successfully." % nameToLabel(self.name)
-        return rv
+        return bound(**results)
 
     def getArgs(self):
         """Make sure each form post gets a unique copy of the argument list which it can use to keep
@@ -686,7 +677,7 @@ def labelAndDescriptionFromDocstring(docstring):
         return None, '\n'.join(docs)
 
 
-class MetaTypedInterface(MetaInterface):
+class MetaTypedInterface(InterfaceClass):
     """The metaclass for TypedInterface. When TypedInterface is subclassed,
     this metaclass' __new__ method is invoked. The Typed Binding introspection
     described in the Binding docstring occurs, and when it is all done, there will
@@ -711,27 +702,25 @@ class MetaTypedInterface(MetaInterface):
     ...     bar = String()
     ...     baz = Integer()
     ...     
-    ...     def frotz(self): pass
+    ...     def frotz(): pass
     ...     frotz = autocallable(frotz)
     ...     
     ...     xyzzy = Float()
     ...     
-    ...     def blam(self): pass
+    ...     def blam(): pass
     ...     blam = autocallable(blam)
 
     Once the metaclass __new__ is done, the Foo class instance will have three
     properties, __methods__, __properties__, and __spec__,
     """
-    ## Todo try to remove these
-    label = "LABEL"
-    name = "NAME"
-    description = "DESCRIPTION"
-    default = "DEFAULT"
-    complexType = True
+
     def __new__(cls, name, bases, dct):
-        dct['__id__'] = nextId()
-        dct['__methods__'] = methods = []
-        dct['__properties__'] = properties = []
+        rv = cls = InterfaceClass.__new__(cls)
+        cls.__id__ = nextId()
+        cls.__methods__ = methods = []
+        cls.__properties__ = properties = []
+        cls.default = 'DEFAULT'
+        cls.complexType = True
         possibleActions = []
         actionAttachers = []
         for key, value in dct.items():
@@ -740,20 +729,36 @@ class MetaTypedInterface(MetaInterface):
             if isinstance(value, MetaTypedInterface):
                 ## A Nested TypedInterface indicates a GroupBinding
                 properties.append(GroupBinding(key, value, value.__id__))
+
+                ## zope.interface doesn't like these
+                del dct[key]
+                setattr(cls, key, value)
             elif callable(value):
-                try:
-                    result = value(_Marker)
-                except:
-                    ## Allow non-autocallable methods in the interface; ignore them
-                    continue
                 names, _, _, typeList = inspect.getargspec(value)
 
+                _testCallArgs = ()
+
                 if typeList is None:
-                    argumentTypes = []
-                else:
-                    argumentTypes = [
-                        Argument(n, argtype, argtype.id) for n, argtype in zip(names[1:], typeList)
-                    ]
+                    typeList = []
+
+                if len(names) == len(typeList) + 1:
+                    warnings.warn(
+                        "TypeInterface method declarations should not have a 'self' parameter",
+                        DeprecationWarning,
+                        stacklevel=2)
+                    del names[0]
+                    _testCallArgs = (_Marker,)
+
+                if len(names) != len(typeList):
+                    ## Allow non-autocallable methods in the interface; ignore them
+                    continue
+
+                argumentTypes = [
+                    Argument(n, argtype, argtype.id) for n, argtype in zip(names[-len(typeList):], typeList)
+                ]
+
+                result = value(*_testCallArgs)
+
                 label = None
                 description = None
                 if getattr(value, 'autocallable', None):
@@ -782,7 +787,7 @@ class MetaTypedInterface(MetaInterface):
                 if defaultLabel is None:
                     # final fallback: use the function name as label
                     defaultLabel = nameToLabel(key)
-                    
+
                 if label is None:
                     label = defaultLabel
                 if description is None:
@@ -801,7 +806,7 @@ class MetaTypedInterface(MetaInterface):
             else:
                 if not value.label:
                     value.label = nameToLabel(key)
-                if implements(value, iformless.IActionableType):
+                if iformless.IActionableType.providedBy(value):
                     actionAttachers.append(value)
                 properties.append(
                     Property(key, value, value.id)
@@ -810,44 +815,28 @@ class MetaTypedInterface(MetaInterface):
             attacher.attachActionBindings(possibleActions)
         methods.sort(_sorter)
         properties.sort(_sorter)
-        dct['__spec__'] = spec = methods + properties
+        cls.__spec__ = spec = methods + properties
         spec.sort(_sorter)
-        dct['name'] = name
+        cls.name = name
 
         # because attributes "label" and "description" would become Properties,
         # check for ones with an underscore prefix.
-        dct['label'] = dct.get('_label', None)
-        dct['description'] = dct.get('_description', None)
+        cls.label = dct.get('_label', None)
+        cls.description = dct.get('_description', None)
         defaultLabel, defaultDescription = labelAndDescriptionFromDocstring(dct.get('__doc__'))
         if defaultLabel is None:
             defaultLabel = nameToLabel(name)
-        if dct['label'] is None:
-            dct['label'] = defaultLabel
-        if dct['description'] is None:
-            dct['description'] = defaultDescription
+        if cls.label is None:
+            cls.label = defaultLabel
+        if cls.description is None:
+            cls.description = defaultDescription
 
-        # What the heck...work around strange bug in Zope C Optimizations
-        # whose cause I cannot figure out.
-        try:
-            return MetaInterface.__new__(cls, name, bases, dct)
-        except TypeError, e:
-            if len(e.args) == 1 and e.args[0] == '_interface_coptimizations.SpecificationBase.__new__(MetaTypedInterface) is not safe, use object.__new__()':
-                return object.__new__(cls, name, bases, dct)
-            raise
+        return rv
 
 
 #######################################
 ## External API; subclass this to create a TypedInterface
 #######################################
 
-
-class TypedInterface(Interface):
-    __metaclass__ = MetaTypedInterface
-
-    """Inherit from this to create interfaces which annotate the types of
-    properties and types of parameters methods take and types of objects
-    methods return. See documentation for MetaTypedInterface for examples of
-    what is valid, and what is produced.
-    """
-
+TypedInterface = MetaTypedInterface('TypedInterface', (InterfaceClass('TypedInterface'), ), {})
 

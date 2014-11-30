@@ -1,17 +1,18 @@
-# Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
-
-
 
 """
 Copyright information for Twisted.
 """
 
+from __future__ import division, absolute_import
 
-version="2.2.0"
-longversion="Twisted %s" % version
+from twisted import __version__ as version, version as longversion
+
+longversion = str(longversion)
+
 copyright="""\
-Copyright (c) 2001-2004 Twisted Matrix Laboratories.
+Copyright (c) 2001-2014 Twisted Matrix Laboratories.
 See LICENSE for details."""
 
 disclaimer='''
@@ -37,4 +38,4 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-''' % copyright
+''' % (copyright,)

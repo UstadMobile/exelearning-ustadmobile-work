@@ -1,59 +1,50 @@
 # -*- test-case-name: twisted.test.test_plugin -*-
 # Copyright (c) 2005 Divmod, Inc.
+# Copyright (c) Twisted Matrix Laboratories.
 # See LICENSE for details.
 
 """
 Plugin system for Twisted.
 
-@author: U{Jp Calderone<mailto:exarkun@twistedmatrix.com>}
-@author: U{Glyph Lefkowitz<mailto:glyph@twistedmatrix.com>}
+@author: Jp Calderone
+@author: Glyph Lefkowitz
 """
 
-from __future__ import generators
-
-import os, errno
+import os
+import sys
 
 from zope.interface import Interface, providedBy
 
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+def _determinePickleModule():
+    """
+    Determine which 'pickle' API module to use.
+    """
+    try:
+        import cPickle
+        return cPickle
+    except ImportError:
+        import pickle
+        return pickle
+
+pickle = _determinePickleModule()
 
 from twisted.python.components import getAdapterFactory
 from twisted.python.reflect import namedAny
 from twisted.python import log
+from twisted.python.modules import getModule
 
-try:
-    from os import stat_float_times
-    from os.path import getmtime as _getmtime
-    def getmtime(x):
-        sft = stat_float_times()
-        stat_float_times(True)
-        try:
-            return _getmtime(x)
-        finally:
-            stat_float_times(sft)
-except:
-    from os.path import getmtime
+
 
 class IPlugin(Interface):
-    """Interface that must be implemented by all plugins.
+    """
+    Interface that must be implemented by all plugins.
 
-    Only objects which implement this interface will be considered for
-    return by C{getPlugins}.  To be useful, plugins should also
-    implement some other application-specific interface.
+    Only objects which implement this interface will be considered for return
+    by C{getPlugins}.  To be useful, plugins should also implement some other
+    application-specific interface.
     """
 
-class ITestPlugin(Interface):
-    """A plugin for use by the plugin system's unit tests.
 
-    Do not use this.
-    """
-
-class ITestPlugin2(Interface):
-    """See L{ITestPlugin}.
-    """
 
 class CachedPlugin(object):
     def __init__(self, dropin, name, description, provided):
@@ -82,11 +73,31 @@ class CachedPlugin(object):
     # backwards compat HOORJ
     getComponent = __conform__
 
+
+
 class CachedDropin(object):
+    """
+    A collection of L{CachedPlugin} instances from a particular module in a
+    plugin package.
+
+    @type moduleName: C{str}
+    @ivar moduleName: The fully qualified name of the plugin module this
+        represents.
+
+    @type description: C{str} or C{NoneType}
+    @ivar description: A brief explanation of this collection of plugins
+        (probably the plugin module's docstring).
+
+    @type plugins: C{list}
+    @ivar plugins: The L{CachedPlugin} instances which were loaded from this
+        dropin.
+    """
     def __init__(self, moduleName, description):
         self.moduleName = moduleName
         self.description = description
         self.plugins = []
+
+
 
 def _generateCacheEntry(provider):
     dropin = CachedDropin(provider.__name__,
@@ -94,7 +105,8 @@ def _generateCacheEntry(provider):
     for k, v in provider.__dict__.iteritems():
         plugin = IPlugin(v, None)
         if plugin is not None:
-            cachedPlugin = CachedPlugin(dropin, k, v.__doc__, list(providedBy(plugin)))
+            # Instantiated for its side-effects.
+            CachedPlugin(dropin, k, v.__doc__, list(providedBy(plugin)))
     return dropin
 
 try:
@@ -106,107 +118,94 @@ except AttributeError:
             d[k] = value
         return d
 
-_exts = fromkeys(['.py', '.so', '.pyd', '.dll'])
 
-try:
-    WindowsError
-except NameError:
-    class WindowsError:
-        """
-        Stand-in for sometimes-builtin exception on platforms for which it
-        is missing.
-        """
-
-# http://msdn.microsoft.com/library/default.asp?url=/library/en-us/debug/base/system_error_codes.asp
-ERROR_PATH_NOT_FOUND = 3
-ERROR_INVALID_NAME = 123
 
 def getCache(module):
-    topcache = {}
-    for p in module.__path__:
-        dropcache = os.path.join(p, "dropin.cache")
-        try:
-            cache = pickle.load(file(dropcache))
-            lastCached = getmtime(dropcache)
-            dirtyCache = False
-        except:
-            cache = {}
-            lastCached = 0
-            dirtyCache = True
-        try:
-            dropinNames = os.listdir(p)
-        except WindowsError, e:
-            if e.errno == ERROR_PATH_NOT_FOUND:
-                continue
-            elif e.errno == ERROR_INVALID_NAME:
-                log.msg("Invalid path %r in search path for %s" % (p, module.__name__))
-                continue
-            else:
-                raise
-        except OSError, ose:
-            if ose.errno not in (errno.ENOENT, errno.ENOTDIR):
-                raise
-            else:
-                continue
-        else:
-            pys = {}
-            for dropinName in dropinNames:
-                moduleName, moduleExt = os.path.splitext(dropinName)
-                if moduleName != '__init__' and moduleExt in _exts:
-                    pyFile = os.path.join(p, dropinName)
-                    try:
-                        pys[moduleName] = getmtime(pyFile)
-                    except:
-                        log.err()
+    """
+    Compute all the possible loadable plugins, while loading as few as
+    possible and hitting the filesystem as little as possible.
 
-        for moduleName, lastChanged in pys.iteritems():
-            if lastChanged >= lastCached or moduleName not in cache:
-                dirtyCache = True
+    @param module: a Python module object.  This represents a package to search
+    for plugins.
+
+    @return: a dictionary mapping module names to L{CachedDropin} instances.
+    """
+    allCachesCombined = {}
+    mod = getModule(module.__name__)
+    # don't want to walk deep, only immediate children.
+    buckets = {}
+    # Fill buckets with modules by related entry on the given package's
+    # __path__.  There's an abstraction inversion going on here, because this
+    # information is already represented internally in twisted.python.modules,
+    # but it's simple enough that I'm willing to live with it.  If anyone else
+    # wants to fix up this iteration so that it's one path segment at a time,
+    # be my guest.  --glyph
+    for plugmod in mod.iterModules():
+        fpp = plugmod.filePath.parent()
+        if fpp not in buckets:
+            buckets[fpp] = []
+        bucket = buckets[fpp]
+        bucket.append(plugmod)
+    for pseudoPackagePath, bucket in buckets.iteritems():
+        dropinPath = pseudoPackagePath.child('dropin.cache')
+        try:
+            lastCached = dropinPath.getModificationTime()
+            dropinDotCache = pickle.load(dropinPath.open('r'))
+        except:
+            dropinDotCache = {}
+            lastCached = 0
+
+        needsWrite = False
+        existingKeys = {}
+        for pluginModule in bucket:
+            pluginKey = pluginModule.name.split('.')[-1]
+            existingKeys[pluginKey] = True
+            if ((pluginKey not in dropinDotCache) or
+                (pluginModule.filePath.getModificationTime() >= lastCached)):
+                needsWrite = True
                 try:
-                    provider = namedAny(module.__name__ + '.' + moduleName)
+                    provider = pluginModule.load()
                 except:
+                    # dropinDotCache.pop(pluginKey, None)
                     log.err()
                 else:
                     entry = _generateCacheEntry(provider)
-                    cache[moduleName] = entry
-
-        topcache.update(cache)
-
-        if dirtyCache:
-            newCacheData = pickle.dumps(cache, 2)
-            tmpCacheFile = dropcache + ".new"
+                    dropinDotCache[pluginKey] = entry
+        # Make sure that the cache doesn't contain any stale plugins.
+        for pluginKey in dropinDotCache.keys():
+            if pluginKey not in existingKeys:
+                del dropinDotCache[pluginKey]
+                needsWrite = True
+        if needsWrite:
             try:
-                stage = 'opening'
-                f = file(tmpCacheFile, 'wb')
-                stage = 'writing'
-                f.write(newCacheData)
-                stage = 'closing'
-                f.close()
-                stage = 'renaming'
-                os.rename(tmpCacheFile, dropcache)
-            except (OSError, IOError), e:
-                # A large number of errors can occur here.  There's nothing we
-                # can really do about any of them, but they are also non-fatal
-                # (they only slow us down by preventing results from being
-                # cached).  Notify the user of the error, but proceed as if it
-                # had not occurred.
-                log.msg("Error %s plugin cache file %r (%r): %r" % (
-                    stage, tmpCacheFile, dropcache, os.strerror(e.errno)))
+                dropinPath.setContent(pickle.dumps(dropinDotCache))
+            except OSError, e:
+                log.msg(
+                    format=(
+                        "Unable to write to plugin cache %(path)s: error "
+                        "number %(errno)d"),
+                    path=dropinPath.path, errno=e.errno)
+            except:
+                log.err(None, "Unexpected error while writing cache file")
+        allCachesCombined.update(dropinDotCache)
+    return allCachesCombined
 
-    return topcache
 
-import twisted.plugins
-def getPlugins(interface, package=twisted.plugins):
-    """Retrieve all plugins implementing the given interface beneath the given module.
 
-    @param interface: An interface class.  Only plugins which
-    implement this interface will be returned.
+def getPlugins(interface, package=None):
+    """
+    Retrieve all plugins implementing the given interface beneath the given module.
+
+    @param interface: An interface class.  Only plugins which implement this
+    interface will be returned.
 
     @param package: A package beneath which plugins are installed.  For
     most uses, the default value is correct.
 
     @return: An iterator of plugins.
     """
+    if package is None:
+        import twisted.plugins as package
     allDropins = getCache(package)
     for dropin in allDropins.itervalues():
         for plugin in dropin.plugins:
@@ -218,9 +217,39 @@ def getPlugins(interface, package=twisted.plugins):
                 if adapted is not None:
                     yield adapted
 
-                    
+
 # Old, backwards compatible name.  Don't use this.
 getPlugIns = getPlugins
 
 
-__all__ = ['getPlugins']
+def pluginPackagePaths(name):
+    """
+    Return a list of additional directories which should be searched for
+    modules to be included as part of the named plugin package.
+
+    @type name: C{str}
+    @param name: The fully-qualified Python name of a plugin package, eg
+        C{'twisted.plugins'}.
+
+    @rtype: C{list} of C{str}
+    @return: The absolute paths to other directories which may contain plugin
+        modules for the named plugin package.
+    """
+    package = name.split('.')
+    # Note that this may include directories which do not exist.  It may be
+    # preferable to remove such directories at this point, rather than allow
+    # them to be searched later on.
+    #
+    # Note as well that only '__init__.py' will be considered to make a
+    # directory a package (and thus exclude it from this list).  This means
+    # that if you create a master plugin package which has some other kind of
+    # __init__ (eg, __init__.pyc) it will be incorrectly treated as a
+    # supplementary plugin directory.
+    return [
+        os.path.abspath(os.path.join(x, *package))
+        for x
+        in sys.path
+        if
+        not os.path.exists(os.path.join(x, *package + ['__init__.py']))]
+
+__all__ = ['getPlugins', 'pluginPackagePaths']

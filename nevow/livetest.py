@@ -1,167 +1,266 @@
 
-from twisted.internet import defer, reactor
-from nevow import livepage, loaders, tags, rend, static, entities
-from nevow.livepage import js, document
+from twisted.internet import defer
+from nevow import livepage, loaders, tags, rend, static, entities, util
+from nevow.livepage import js
 
 
 testFrameNode = js.testFrameNode
 contentDocument = testFrameNode.contentDocument
+gid = contentDocument.getElementById
+XPathResult = js.XPathResult
+null = js.null
 
 
-import os.path
-resourceDirectory = os.path.dirname(__file__)
+class xpath(object):
+    def __init__(self, path):
+        self.path = path
+
+    def __repr__(self):
+        return 'nevow.livetest.xpath(%r)' % (self.path, )
+
+    def _asjs(self, localName):
+        yield livepage.var(
+            js.targetXPathResult,
+            contentDocument.evaluate(self.path,
+                                     contentDocument,
+                                     null,
+                                     XPathResult.ANY_TYPE,
+                                     null)), livepage.eol
+        yield livepage.var(
+            localName,
+            js.targetXPathResult.iterateNext()), livepage.eol
 
 
 class Driver(object):
-    def __init__(self, suite):
-        self.suite = suite
+    def __init__(self, handle, suite):
+        self.handle = handle
+        self.suite = list(suite)
         self.results = {}
         self.state = 0
         self.iterator = self.drive()
-        self._notifications = []
+        self.nextTest()
 
     passes = 0
     failures = 0
-    _handle = None
-    def setHandle(self, handle):
-        self._handle = handle
-
-    def action_post(self, action, target, parameter, callWhenDone=None):
-        if callWhenDone is None:
-            callWhenDone = "function (){}"
-        def observePosting(client, location, destination):
-            if location.endswith(destination):
-                self.passed()
-            else:
-                self.failed()
-        return [
-            "var targetForm = ", contentDocument[target], ";",
-            "var postTarget = ", js.targetForm.action, ";",
-            [(js.targetForm[key].value, ' = "', value, '";')
-            for (key, value) in parameter.items()],
-            "addLoadObserver(function () {",
-            livepage.handler(
-                observePosting,
-                contentDocument.location,
-                js.postTarget),
-            "});",
-            js.sendSubmitEvent(js.targetForm, js(callWhenDone))]
-
-    def action_submit(self, action, target, parameter):
-        def observeSubmission(client):
-            self.passed()
-        return self.action_post(action, target, parameter, self._handle.flt([
-            "function() {",
-                livepage.handler(observeSubmission),
-            "}"], quote=False))
-
-    def action_follow(self, action, target, parameter):
-        def observeFollowing(client, location, destination):
-            if location.endswith(destination):
-                self.passed()
-            else:
-                self.failed()
-        return [
-            "var theTargetNode = ",
-            contentDocument.getElementById(target), ";",
-            "var theDestinationAddress = theTargetNode.href;",
-            "addLoadObserver(function() {",
-            livepage.handler(
-                observeFollowing,
-                contentDocument.location,
-                js.theDestinationAddress),
-            "});",
-            js.setContentLocation(js.theDestinationAddress)]
-
-    def action_click(self, action, target, parameter):
-        def observeClicking(client):
-            self.passed()
-        return [
-            "var theClickObservation = function() {",
-            livepage.handler(observeClicking), "};",
-            js.sendClickEvent(
-                target,
-                js.theClickObservation)]
-
-    def action_visit(self, action, target, parameter):
-        ## TODO: Figure out how to detect a 404 using javascript
-        def observeLoading(client, location):
-            if location.endswith(target):
-                self.passed()
-            else:
-                self.failed()
-
-        return ["addLoadObserver(function() {", 
-                livepage.handler(
-                    observeLoading,
-                    contentDocument.location),
-                "});",
-                js.setContentLocation(target)]
-
-    def action_assert(self, action, target, parameter):
-        def observeNodeContents(client, contents):
-            if contents == parameter:
-                self.passed()
-            else:
-                self.failed()
-
-        return [livepage.handler(
-            observeNodeContents,
-            contentDocument.getElementById(target).innerHTML, bubble=True)]
-
-    def action_call(self, action, target, parameter):
-        target(self._handle).addCallback(
-            lambda result: self.passed()
-        ).addErrback(
-            lambda result: self.failed())
-        return ''
 
     def drive(self):
         for i, test in enumerate(self.suite):
             self.state = i
-            self.action, self.target, self.parameter = test
-            yield getattr(self, 'action_%s' % self.action)(*test)
-        for notify in self._notifications:
-            notify.callback(self.results)
+            action, target, parameter = test
+            actionCallable = getattr(self, 'action_%s' % (action, ), None)
+            if actionCallable is not None:
+                test = actionCallable(target, parameter)
+                if test is not None:
+                    yield  test
 
-    def notifyWhenTestsComplete(self):
-        self._notifications.append(defer.Deferred())
-        return self._notifications[-1]
+        self.handle.send(livepage.set('test-status', 'Complete'))
 
     def nextTest(self):
         try:
             test = self.iterator.next()
         except StopIteration:
             return
-        assert self._handle is not None, "nextTest cannot be called before handle is set!"
-        self._handle.sendScript(
-            self._handle.flt(
-                test, quote=False))
+        self.handle.send(test)
 
     def passed(self):
         self.results[self.state] = True
         self.passes += 1
-        self._handle.set(
-            'test-passes', self.passes)
-        self._handle.sendScript(
-            js.passed(self.state))
+        self.handle.send(js.passed(self.state))
         self.nextTest()
 
-    def failed(self):
+    def failed(self, text=''):
         self.results[self.state] = False
         self.failures += 1
-        self._handle.set(
-            'test-failures', self.failures)
-        self._handle.sendScript(
-            js.failed(self.state))
+        self.handle.send(js.failed(self.state, text))
         self.nextTest()
+
+    def checkException(self):
+        def continueTests(ctx, status):
+            if status == 'passed':
+                self.passed()
+            else:
+                self.failed()
+
+        continuer = self.handle.transient(continueTests)
+        return livepage.anonymous(
+            [livepage.js("if (testFrameNode.contentDocument.title != 'Exception') {\n\t"),
+            continuer('passed'),
+            livepage.js("\n} else {\n\t"),
+            continuer('failed'),
+            livepage.js("\n}")])
+
+    def action_visit(self, target, param):
+        yield js.addLoadObserver(self.checkException()), livepage.eol
+        yield js.setContentLocation(target), livepage.eol
+
+    def action_assert(self, target, param):
+        def doAssert(ctx, actual):
+            if param == actual:
+                self.passed()
+            else:
+                self.failed("%r != %r" % (param, actual))
+
+        if isinstance(target, xpath):
+            yield target._asjs(js.targetNode)
+        else:
+            yield livepage.var(js.targetNode, gid(target)), livepage.eol
+
+        yield self.handle.transient(
+            doAssert, js.targetNode.innerHTML)
+
+    def action_value(self, target, param):
+        def doAssert(ctx, actual):
+            if param == actual:
+                self.passed()
+            else:
+                self.failed()
+        if isinstance(target, xpath):
+            yield target._asjs(js.targetNode)
+        else:
+            yield livepage.var(js.targetNode, gid(target)), livepage.eol
+        yield self.handle.transient(
+            doAssert, js.targetNode.value)
+
+    def action_follow(self, target, param):
+        if isinstance(target, xpath):
+            yield target._asjs(js.targetNode)
+        else:
+            yield livepage.var(js.targetNode, gid(target)), livepage.eol
+
+        yield [
+            js.addLoadObserver(self.checkException()),
+            livepage.eol,
+            js.setContentLocation(js.targetNode.href)]
+
+    def action_post(self, target, param):
+        def passed(ctx):
+            self.passed()
+
+        if isinstance(target, xpath):
+            yield target._asjs(js.targetForm)
+        else:
+            yield livepage.var(js.targetForm, contentDocument[target]), livepage.eol
+
+        yield livepage.var(js.postTarget, js.targetForm.action), livepage.eol
+        for key, value in param.items():
+            yield livepage.assign(js.targetForm[key].value, value), livepage.eol
+        yield js.addLoadObserver(
+            livepage.anonymous(
+                self.handle.transient(passed))), livepage.eol
+        yield js.sendSubmitEvent(js.targetForm, livepage.anonymous(js))
+
+    def action_submit(self, target, param):
+        """This should only be used with livepage, to simulate an onsubmit.
+
+        It could be possible to make this work when not testing a livepage
+        app, using a monstrosity similar to that used by action_click, below.
+        """
+        def passed(ctx):
+            self.passed()
+
+        if isinstance(target, xpath):
+            yield target._asjs(js.targetForm)
+        else:
+            yield livepage.var(js.targetForm, contentDocument[target]), livepage.eol
+
+        yield livepage.var(js.postTarget, js.targetForm.action), livepage.eol
+        for key, value in param.items():
+            yield livepage.assign(js.targetForm[key].value, value), livepage.eol
+        yield livepage.var(
+            js.inputListener,
+            contentDocument.defaultView.listenForInputEvents(
+                livepage.anonymous(
+                    self.handle.transient(passed)))), livepage.eol
+
+        yield js.sendSubmitEvent(
+            js.targetForm,
+            livepage.anonymous(
+                contentDocument.defaultView.stopListening(js.inputListener)))
+
+    def action_click(self, target, param):
+        """TODO: Either decide that this should only be used in the presence
+        of a real, honest-to-god livepage app, or figure out some way to simplify
+        this monstrosity.
+        """
+        def passed(ctx):
+            self.passed()
+
+        if isinstance(target, xpath):
+            yield target._asjs(js.targetNode)
+        else:
+            yield livepage.var(js.targetNode, gid(target)), livepage.eol
+
+        ## If the testee is using livepage, we don't want the test to pass
+        ## until all input events (and the response javascript from these
+        ## input events) have passed. To do this we use listenForInputEvents,
+        ## passing a continuation function which will be called when all input
+        ## event responses have been evaluated. We call stopListening
+        ## immediately after sending the click event. This means we
+        ## start listening for input events, simulate the click, then stop listening.
+        ## If any input events were initiated during the click, our test only passes
+        ## when all event responses have been processed.
+
+        ## If we are not using livepage, listenForInputEvents will not be defined.
+        ## Because it is hard to do javascript tests (if statement) from python,
+        ## ifTesteeUsingLivePage has been defined in livetest-postscripts.
+        testDidPass = self.handle.transient(passed)
+        yield [
+            js.ifTesteeUsingLivePage(
+                ## Using livepage
+                livepage.anonymous(
+                    livepage.assign(
+                        ## Save the listener in a variable so we can stop listening later
+                        js.inputListener,
+                        contentDocument.defaultView.listenForInputEvents(
+                            ## When all observed events complete, continue running tests
+                            livepage.anonymous(
+                                testDidPass)))),
+                ## Not using livepage; do nothing here.
+                livepage.anonymous('')), livepage.eol,
+            js.sendClickEvent(
+                ## Click our node.
+                js.targetNode,
+                ## Immediately after clicking the node, run this stuff.
+                livepage.anonymous(
+                    js.ifTesteeUsingLivePage(
+                        ## We're done clicking the node, and we're using livepage.
+                        ## Stop listening for input events. This will fire the continuation
+                        ## immediately if no input events were observed; otherwise it
+                        ## will wait for all responses to be evaluated before firing the
+                        ## continuation.
+                        livepage.anonymous(contentDocument.defaultView.stopListening(js.inputListener)),
+                        ## We're done clicking the node, and we are not using livepage.
+                        ## Call testDidPass.
+                        livepage.anonymous(testDidPass))))]
+
+    def action_call(self, target, param):
+        # Import reactor here to avoid installing default at startup
+        from twisted.internet import reactor
+        def doit():
+            target(self.handle, *param).addCallback(
+                lambda result: self.passed()
+            ).addErrback(
+                lambda result: self.failed())
+        reactor.callLater(0, doit)
+        return ''
+
+    def action_fail(self, target, param):
+        # Import reactor here to avoid installing default at startup
+        from twisted.internet import reactor
+        def doit():
+            target(self.handle, *param).addCallback(
+                lambda result: self.failed()
+            ).addErrback(
+                lambda result: self.passed())
+        reactor.callLater(0, doit)
+        
 
 
 class Tester(livepage.LivePage):
     addSlash = True
-    child_css = static.File(os.path.join(resourceDirectory, 'livetest.css'))
-    child_scripts = static.File(os.path.join(resourceDirectory, 'livetest.js'))
-    child_postscripts = static.File(os.path.join(resourceDirectory, 'livetest-postscripts.js'))
+    child_css = static.File(util.resource_filename('nevow', 'livetest.css'))
+    child_scripts = static.File(util.resource_filename('nevow', 'livetest.js'))
+    child_postscripts = static.File(util.resource_filename('nevow', 'livetest-postscripts.js'))
     docFactory = loaders.stan(tags.html[
         tags.head[
             tags.script(src="scripts"),
@@ -174,46 +273,51 @@ class Tester(livepage.LivePage):
                     tags.td(id="test-status")["Running"],
                     tags.td(id="test-passes", _class="test-passes")[entities.nbsp],
                     tags.td(id="test-failures", _class="test-failures")[entities.nbsp]]],
-            tags.table(id="testresults", render=tags.directive('table'))[
+            tags.table(id="testresults", render=tags.directive('sequence'))[
                 tags.tr(pattern="item", render=tags.directive('test'))[
-                    tags.td[tags.slot('action')], tags.td[tags.slot('target')], tags.td[tags.slot('parameter')]]],
+                    tags.td(title=tags.slot('action'))[tags.slot('action')],
+                    tags.td(title=tags.slot('target'))[tags.slot('target')],
+                    tags.td(title=tags.slot('parameter'))[tags.slot('parameter')]]],
             tags.iframe(id="testframe", src="asdf"),
             tags.script(src="postscripts"),
             livepage.glue]])
 
-    def render_table(self, ctx, suite):
+    def beforeRender(self, ctx):
         self.testId = 0
-        driver = Driver(suite)
-        handle = livepage.IClientHandle(ctx)
-        driver.notifyWhenTestsComplete().addCallback(self.testsComplete, handle)
-        driver.setHandle(handle)
-        driver.nextTest()
-        return rend.sequence(ctx, suite)
 
     def render_test(self, ctx, test):
         ctx.tag(id=("test-", self.testId))
         action, target, parameter = test
         ctx.fillSlots('action', action)
         ctx.fillSlots('target', str(target))
-        ctx.fillSlots('parameter', parameter)
+        ctx.fillSlots('parameter', str(parameter))
         self.testId += 1
         return ctx.tag
 
-    def testsComplete(self, results, handle):
-        handle.set('test-status', 'Complete')
+    def goingLive(self, ctx, handle):
+        Driver(handle, self.original)
 
 
-def callMe(client):
-    d = defer.Deferred()
-    def callMePlease(client):
-        d.callback('success')
+class ChildXPath(rend.Page):
+    docFactory = loaders.stan(
+        tags.html[
+            tags.body[
+                tags.div[
+                    tags.span[
+                        tags.div(id='target-node-identifier')[
+                            'expected content']]]]])
 
-    client.sendScript(client.flt(
-        livepage.handler(callMePlease, bubble=True), quote=False))
-    return d
+
+def thingThatPasses(_):
+    return defer.succeed(None)
+
+
+def thingThatFails(_):
+    return defer.fail(None)
 
 
 class TestTests(rend.Page):
+    addSlash = True
     docFactory = loaders.stan(tags.html[tags.a(href="/testtests/tests/")["Run tests"]])
     child_foo = '<html><body><div id="body">foo</div><form method="POST", name="theForm" action="postTarget"><input name="blah" /></form></body></html>'
     child_bar = "bar"
@@ -226,12 +330,20 @@ class TestTests(rend.Page):
 </html>"""
 
     def child_postTarget(self, ctx):
-        return rend.Page(docFactory=loaders.stan(tags.html[tags.body(id="body")[str(ctx.arg('blah'))]]))
+        return rend.Page(
+            docFactory=loaders.stan(
+                tags.html[tags.body(id="body")[str(ctx.arg('blah'))]]))
 
-    def child_tests(self, ctx):
+    def child_testtests(self, ctx):
         return self
 
+    def child_xpath(self, ctx):
+        ## print 'lkfjasldkjasd!!!!!!!!'
+        return ChildXPath()
+
     child_tests = Tester([
+    ('visit', '/testtests/xpath', ''),
+    ('assert', xpath('/html/body/div/span/div[@id="target-node-identifier"]'), 'expected content'),
     ('visit', '/testtests/foo', ''),
     ('visit', '/testtests/bar', ''),
     ('visit', '/testtests/baz', ''),
@@ -243,7 +355,8 @@ class TestTests(rend.Page):
     ('visit', '/testtests/clickHandler', ''),
     ('click', 'theClicker', ''),
     ('assert', 'theClicker', 'Clicked'),
-    ('call', callMe, ''),
+    ('call', thingThatPasses, ()),
+    ('fail', thingThatFails, ())
 ])
 
 
