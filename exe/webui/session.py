@@ -79,9 +79,29 @@ class eXeRequest(appserver.NevowRequest):
 class eXeSession(server.Session):
     def __init__(self, *args, **kwargs):
         server.Session.__init__(self, *args, **kwargs)
+        
         self.packageStore = PackageStore()
         self.webservice_user = None
         self.webservice_config = None
+        self.mainpage = None
+        self.client_handles = []
+        self.notifyOnExpire(self.expire_all_clients)
+        
+    def add_client_handle(self, client):
+        self.client_handles.append(client)
+        
+    def delete_client_handle(self, client):
+        self.client_handles.remove(client)
+        
+    def expire_all_clients(self):
+        expired_clients = []
+        for client in self.client_handles:
+            if client and client.factory:
+                client.expire_client()
+                expired_clients.append(client)
+                
+        for client in expired_clients:
+            self.client_handles.remove(client)
         
 
 

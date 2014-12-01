@@ -126,6 +126,14 @@ Ext.application({
     },
 
     quitWarningEnabled: true,
+    
+    /** Time between attempts at reconnecting (ms)... */
+    reconnectTimeInterval: 2000,
+    
+    /** Panel used to show user when disconnected */
+    disconnectPanel: null,
+    
+    lastReconnectTime: 0,
 
     reload: function() {
         var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
@@ -202,6 +210,21 @@ Ext.application({
         setTimeout(function(){
 		    Ext.get('loading').hide();
 		    Ext.get('loading-mask').fadeOut();
+		    
+		    /*
+		     * This is used to prime cache for what we need to show
+		     * in case we lose connectivity... at which point we cant
+		     * load anything more of course
+		     */
+		    var loadingPanel = new Ext.LoadMask(
+	    	    Ext.ComponentQuery.query('#eXeViewport')[0], {
+	    	    	msg: "Initializing...",
+	    	    }
+	        );
+		    loadingPanel.show();
+		    setTimeout(function() {
+		    	loadingPanel.hide();
+		    }, 100);
 		  }, 250);
         
         if(eXe.app.config.appMode === APPMODE_WEBAPP) {
@@ -242,8 +265,54 @@ Ext.application({
         eXe.app.showLoadError();
 
     },
+    
+    /**
+     * In case connectivity is interrupted - attempt to resume it.
+     */
+    reconnectLivePage: function() {
+    	eXe.app.lastReconnectTime = new Date().getTime();
+    	var eXeViewport = Ext.ComponentQuery.query('#eXeViewport')[0];
+    	
+    	if(!eXe.app.disconnectedMask) {
+    		eXe.app.disconnectedMask = new Ext.LoadMask(eXeViewport, {
+    			msg: _("Lost Connection! Trying to reconnect... Please check your Internet"),
+			});
+    		
+    		eXe.app.disconnectedMask.show();
+    	}
+    	
+    	setTimeout(function() {
+			var timeSinceReconnect = new Date().getTime() - 
+				eXe.app.lastReconnectTime;
+
+			if(timeSinceReconnect > eXe.app.reconnectTimeInterval) {
+				if(eXe.app.disconnectedMask) {
+					eXe.app.disconnectedMask.hide();
+					eXe.app.disconnectedMask = null;
+				}
+			}
+		}, eXe.app.reconnectTimeInterval*2);
+    	
+    	
+    	setTimeout(function() {
+    		/* 
+        	 * must re-add because as soon as disconnect gets fired event
+        	 * all existing listeners are removed
+        	 */ 
+        	addDisconnectListener(function() {
+        		eXe.app.reconnectLivePage();
+        	});
+        	
+    		nevow_startLivePage();
+    	}, eXe.app.reconnectTimeInterval);
+    },
 
     appFolder: "jsui/app"
 
+});
+
+
+addDisconnectListener(function() {
+	eXe.app.reconnectLivePage();
 });
 

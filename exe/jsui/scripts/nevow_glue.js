@@ -7,6 +7,7 @@ var auto_open = true;
 
 var last_request = null;
 var last_server_message_time = null;
+var last_succesful_output_number = 0;
 
 var disconnectListeners = [];
 
@@ -46,6 +47,7 @@ function connect(outputNum) {
     if (xmlhttp.request.readyState == 4) {
       if (xmlhttp.request.responseText) {
         last_server_message_time = new Date();
+        last_succesful_output_number = outputNum;
         console.log("LiveGlue: Connect: message to eval: " 
         		+ xmlhttp.request.responseText);
         eval(xmlhttp.request.responseText);

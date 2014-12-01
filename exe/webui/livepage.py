@@ -86,19 +86,21 @@ class eXeClientHandle(ClientHandle):
                 if filter_func(client, self):
                     client.sendScript(onDone)
         self.sendScript(script)
-
+        
+    def expire_client(self):
+        self.factory.deleteHandle(self.handleId)
 
 class eXeClientHandleFactory(DefaultClientHandleFactory):
     clientHandleClass = eXeClientHandle
 
     def newClientHandle(self, ctx, refreshInterval, targetTimeoutCount):
         handle = DefaultClientHandleFactory.newClientHandle(self, ctx, refreshInterval, targetTimeoutCount)
-        if hasattr(handle, "tag"): 
-            handle.currentNodeId = ctx.tag.package.currentNode.id
-            handle.packageName = ctx.tag.package.name
-        else:
-            handle.currentNodeId = ctx.package.currentNode.id
-            handle.packageName = ctx.package.name
+        
+        handle.currentNodeId = ctx.package.currentNode.id
+        handle.packageName = ctx.package.name
+        handle.session = ctx.session
+        ctx.session.add_client_handle(handle)
+        handle.factory = self
             
         log.debug('New client handle %s. Handles %s' % (handle.handleId, self.clientHandles))
         return handle

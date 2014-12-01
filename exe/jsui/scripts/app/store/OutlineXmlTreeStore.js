@@ -47,7 +47,17 @@ Ext.define('eXe.store.OutlineXmlTreeStore', {
     	},
     	
     	load: function() {
-			nevow_clientToServerEvent('setTreeSelection', this, '');
+			//nevow_clientToServerEvent('setTreeSelection', this, '');
+    		console.log("setTreeSelection event to server");
+    		nevow_clientToServerEvent('setTreeSelection', this, '');
+    		
+    		//sometimes the setTreeSelection isn't quite ready...
+    		setTimeout(function() {
+    			if(!outline) {
+    				console.log("seems like no outline set - select 0");
+    				eXe.app.outlineSelectNode(0);
+    			}
+    		},1500);
     	}
     }    
 });

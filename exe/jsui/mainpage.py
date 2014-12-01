@@ -122,6 +122,10 @@ class MainPage(RenderableLivePage):
         self.exportDownloadPage = None
         
         self.handlers_name_to_fns = {}
+        
+        #change default timeouts to 15mins
+        #time in secs = poll time * targetTimeoutCount
+        self.targetTimeoutCount = 30
 
 
     def adjust_config_for_user(self):
@@ -258,6 +262,11 @@ class MainPage(RenderableLivePage):
 
     def goingLive(self, ctx, client):
         """Called each time the page is served/refreshed"""
+        
+        #there is an instance of this for every client - might as well
+        #keep the client handle available
+        self.exeClientHandle = client
+        
 #        inevow.IRequest(ctx).setHeader('content-type', 'application/vnd.mozilla.xul+xml')
         # Set up named server side funcs that js can call
         def setUpHandler(func, name, *args, **kwargs):

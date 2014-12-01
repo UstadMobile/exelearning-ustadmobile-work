@@ -485,7 +485,12 @@ class DefaultClientHandleFactory(object):
         handle = self.clientHandleClass(
             livePage, handleid, refreshInterval, targetTimeoutCount)
         self.clientHandles[handleid] = handle
-        handle.notifyOnClose().addBoth(lambda ign: self.deleteHandle(handleid))
+        
+        # MD : Modify to not remove handles automatically so they can be resumed
+        #modification for eXe online: the session will take care of deleting old clients
+        #this module should not have been used since 6 years anyway... so mod
+        #can live here for now until migration to athena
+        #handle.notifyOnClose().addBoth(lambda ign: self.deleteHandle(handleid))
         return handle
 
     def deleteHandle(self, handleid):
