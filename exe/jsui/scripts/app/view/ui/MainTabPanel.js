@@ -31,7 +31,6 @@ Ext.define('eXe.view.ui.MainTabPanel', {
 
     initComponent: function() {
         var me = this;
-        debugger;
         var iframeSrc = eXe.app.config.authoringIFrameSrc 
         	+ "?clientHandleId=" + nevow_clientHandleId; 
 
