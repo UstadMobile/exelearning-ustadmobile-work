@@ -190,7 +190,7 @@ class _js(object):
             stuff.append((x, stan.raw(',')))
         if stuff:
             stuff[-1] = stuff[-1][0]
-        newchildren.extend([stan.raw('('), stuff, stan.raw(')')])
+        newchildren.extend([stan.raw('('), stuff, stan.raw(');')])
         return self.__class__(newchildren)
 
     def __getitem__(self, args):

@@ -134,6 +134,23 @@ Ext.application({
     disconnectPanel: null,
     
     lastReconnectTime: 0,
+    
+    /** Last time a message was received from the server saying it's alive */
+    lastPongTime: 0,
+    
+    /** Duration between pings to the server (in ms)*/
+    pingIntervalDuration: 10000,
+    
+    /** Time allowable for an ajax reply to come back from server (in ms) */
+    pingTimeout: 15000,
+    
+    /** 
+     * Reference to interval object being used to check the connection
+     * periodically
+     */
+    checkConnectionInterval : null,
+    
+    startLivePageTimer: null,
 
     reload: function() {
         var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
@@ -185,6 +202,9 @@ Ext.application({
         
         eXe.app = this;
         
+        //set the last pong time to now - we are just initializing
+        this.lastPongTime = new Date().getTime();
+        
         eXe.app.config = config;
         
         Ext.state.Manager.set('filepicker-currentDir', eXe.app.config.lastDir);
@@ -210,23 +230,25 @@ Ext.application({
         setTimeout(function(){
 		    Ext.get('loading').hide();
 		    Ext.get('loading-mask').fadeOut();
-		    
-		    /*
-		     * This is used to prime cache for what we need to show
-		     * in case we lose connectivity... at which point we cant
-		     * load anything more of course
-		     */
-		    var loadingPanel = new Ext.LoadMask(
-	    	    Ext.ComponentQuery.query('#eXeViewport')[0], {
-	    	    	msg: "Initializing...",
-	    	    }
-	        );
-		    loadingPanel.show();
-		    setTimeout(function() {
-		    	loadingPanel.hide();
-		    }, 100);
 		  }, 250);
         
+        /*
+	     * This is used to prime cache for what we need to show
+	     * in case we lose connectivity... at which point we cant
+	     * load anything more of course
+	     */
+	    var loadingPanel = new Ext.LoadMask(
+    	    Ext.getBody(), {
+    	    	msg: "Initializing...",
+    	    }
+        );
+	    loadingPanel.show();
+	    setTimeout(function() {
+	    	loadingPanel.hide();
+	    	loadingPanel = null;
+	    }, 100);
+	    
+	    
         if(eXe.app.config.appMode === APPMODE_WEBAPP) {
         	if(!eXe.app.config.webservice_user) {
         		eXe.app.getController('Toolbar').showWebServiceLogin();
@@ -240,6 +262,10 @@ Ext.application({
         if (eXe.app.config.showWizard) {
         	eXe.app.getController('Toolbar').toolsWizard();
         }
+        
+        this.checkConnectionInterval = setInterval(function() {
+        	eXe.app.checkConnectionLive();
+        }, eXe.app.pingIntervalDuration);
         
         /* Disabled due to new insert menu
 
@@ -263,7 +289,25 @@ Ext.application({
         };
 
         eXe.app.showLoadError();
+        
+        
 
+    },
+    
+    /** 
+     * Check and see if we should still be showing the disconnect
+     * mask
+     */
+    checkDisconnectMaskDisplay: function() {
+    	var timeSincePong = new Date().getTime() - 
+		eXe.app.lastPongTime;
+
+		if(timeSincePong < (eXe.app.pingIntervalDuration *2)) {
+			if(eXe.app.disconnectedMask) {
+				eXe.app.disconnectedMask.hide();
+				eXe.app.disconnectedMask = null;
+			}
+		}
     },
     
     /**
@@ -271,30 +315,23 @@ Ext.application({
      */
     reconnectLivePage: function() {
     	eXe.app.lastReconnectTime = new Date().getTime();
-    	var eXeViewport = Ext.ComponentQuery.query('#eXeViewport')[0];
     	
     	if(!eXe.app.disconnectedMask) {
-    		eXe.app.disconnectedMask = new Ext.LoadMask(eXeViewport, {
-    			msg: _("Lost Connection! Trying to reconnect... Please check your Internet"),
+    		eXe.app.disconnectedMask = new Ext.LoadMask(Ext.getBody(), {
+    			msg: _("Connecting to server..."),
 			});
     		
     		eXe.app.disconnectedMask.show();
     	}
     	
     	setTimeout(function() {
-			var timeSinceReconnect = new Date().getTime() - 
-				eXe.app.lastReconnectTime;
-
-			if(timeSinceReconnect > eXe.app.reconnectTimeInterval) {
-				if(eXe.app.disconnectedMask) {
-					eXe.app.disconnectedMask.hide();
-					eXe.app.disconnectedMask = null;
-				}
-			}
-		}, eXe.app.reconnectTimeInterval*2);
+			eXe.app.checkDisconnectMaskDisplay();
+		}, eXe.app.pingIntervalDuration*2);
     	
     	
-    	setTimeout(function() {
+    	eXe.app.startLivePageTimer = setTimeout(function() {
+    		eXe.app.startLivePageTimer = null;
+    		
     		/* 
         	 * must re-add because as soon as disconnect gets fired event
         	 * all existing listeners are removed
@@ -306,13 +343,46 @@ Ext.application({
     		nevow_startLivePage();
     	}, eXe.app.reconnectTimeInterval);
     },
+    
+    /**
+     * Take the reply from the server telling us it's still alive
+     */
+    pong: function() {
+    	eXe.app.lastPongTime = new Date().getTime();
+    	Ext.ComponentQuery.query('#eXeViewport')[0].setLoading(false);
+    	console.log("Pong message received");
+    	eXe.app.checkDisconnectMaskDisplay();
+    },
+    
+    /**
+     * Run at an interval - send the server a ping - which should
+     * result in a call to pong.  If it's been too long since our
+     * last pong response; show the user that we have a connectivity
+     * problem
+     */
+    checkConnectionLive: function() {
+    	nevow_clientToServerEvent("ping", "");
+    	var timeSinceLastPong = new Date().getTime() - eXe.app.lastPongTime;
+    	if(timeSinceLastPong > (eXe.app.pingIntervalDuration *2)) {
+    		console.log("checkConnectionLive: detect connection down!");
+    		var timeSinceLastRequest = new Date().getTime() 
+    			- last_server_request_time;
+    		
+    		if(timeSinceLastRequest > (eXe.app.pingIntervalDuration*2)) {
+    			//the request is dead actually - abort and try again
+    			if(last_request) {
+    				last_request.abort();
+    				eXe.app.reconnectLivePage();
+    			}else if(!eXe.app.startLivePageTimer){
+    				//see if we have a waiting timer to try to reconnect - if not make it
+    				eXe.app.reconnectLivePage();
+    			}
+    		}
+    	}else {
+    		console.log("checkConnectionLive: detect connection OK");
+    	}
+    },
 
     appFolder: "jsui/app"
 
 });
-
-
-addDisconnectListener(function() {
-	eXe.app.reconnectLivePage();
-});
-

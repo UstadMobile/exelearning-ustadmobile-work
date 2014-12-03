@@ -7,6 +7,8 @@ var auto_open = true;
 
 var last_request = null;
 var last_server_message_time = null;
+var last_server_request_time = 0;
+	
 var last_succesful_output_number = 0;
 
 var disconnectListeners = [];
@@ -63,6 +65,8 @@ function connect(outputNum) {
       }
     }
   }
+  last_server_request_time = new Date().getTime();
+  
   var U = base_url + nevow_clientHandleId + "/output?outputNum=" + outputNum;
   xmlhttp.request.open("GET", U, true);
   xmlhttp.request.send(null);

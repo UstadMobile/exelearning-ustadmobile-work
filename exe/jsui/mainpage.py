@@ -279,7 +279,8 @@ class MainPage(RenderableLivePage):
             #hndlr(ctx, client) # Stores it
             self.handlers_name_to_fns[name] = CallableInstanceMethod(func, client)
             
-        setUpHandler(self.handleCloseFinalizer, "close")   
+        setUpHandler(self.handleCloseFinalizer, "close")
+        setUpHandler(self.handle_ping, "ping")   
         setUpHandler(self.handle_foobar, "foobar")    
         setUpHandler(self.handleIsPackageDirty,  'isPackageDirty')
         setUpHandler(self.handlePackageFileName, 'getPackageFileName')
@@ -456,14 +457,15 @@ class MainPage(RenderableLivePage):
                   'loadErrors': G.application.loadErrors,
                   'showIdevicesGrouped': G.application.config.showIdevicesGrouped == '1',
                   'pathSep': os.path.sep,
-                  'appMode' : G.application.config.appMode
+                  'appMode' : G.application.config.appMode,
+                  'authoringIFrameSrc' : '%s/authoring' % self.package.name
                  }
-        if ctx is not None:
+        #if ctx is not None:
             #clientHandleId = IClientHandle(ctx).handleId
             #upgrade to nevow attempt
-            clientHandleId = "0"
-            config['authoringIFrameSrc'] = '%s/authoring?clientHandleId=%s' % \
-                (self.package.name, clientHandleId)
+        #    clientHandleId = "0"
+            #config['authoringIFrameSrc'] = '%s/authoring?clientHandleId=%s' % \
+            #    (self.package.name, clientHandleId)
         
         if G.application.config.appMode == "WEBAPP":
             if self.session.webservice_user is not None:
@@ -793,6 +795,12 @@ class MainPage(RenderableLivePage):
             return EXEBackEndService.get_instance(\
                           ).abs_path_to_user_path(
                           self.session.webservice_user, abs_path)
+    
+    def handle_ping(self, client, data=None):
+        """
+        Reply to the client so it knows it still has an active connection
+        """
+        client.sendScript("eXe.app.pong();");
     
     def handleSavePackage(self, client, filename=None, onDone=None):
         """
@@ -1386,7 +1394,10 @@ class MainPage(RenderableLivePage):
                 shutil.rmtree(G.application.resourceDir, True)                
             except:
                 log.debug('Don\'t delete temp directorys. ')
-            reactor.callLater(2, reactor.stop)
+            
+            if G.application.config.appMode != Config.MODE_WEBAPP:
+                log.info("Closing because there are no active clients left")
+                reactor.callLater(2, reactor.stop)
         else:
             log.debug("Not quiting. %d clients alive." % len(self.clientHandleFactory.clientHandles))
 
@@ -1815,7 +1826,7 @@ class CallableInstanceMethod:
         arg_arr.pop(0)
         
         #most eXe functions have a blank placeholder string
-        if arg_arr[0] == "":
+        if len(arg_arr) > 0 and arg_arr[0] == "":
             del arg_arr[0] 
         
         #replace the blank string

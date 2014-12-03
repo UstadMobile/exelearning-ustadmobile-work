@@ -224,4 +224,7 @@ class WebServer:
                         reactor.callLater(10, self.monitor)
                         return
             G.application.config.configParser.set('user', 'lastDir', G.application.config.lastDir)
-            reactor.stop()
+            log.info("Monitor has no more client handles")
+            if G.application.config.appMode != Config.MODE_WEBAPP:
+                log.info("Monitor closing down - no more client handles")
+                reactor.stop()
