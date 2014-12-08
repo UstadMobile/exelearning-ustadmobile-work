@@ -35,6 +35,7 @@ from exe.export.pages              import Page, uniquifyNames
 from exe                      	   import globals as G
 from exe.engine.beautifulsoup      import BeautifulSoup
 from htmlentitydefs                import name2codepoint
+from exe.export.websitepage        import WebsitePage
 
 log = logging.getLogger(__name__)
 
@@ -246,7 +247,7 @@ class Epub3Page(Page):
     def __init__(self, name, depth, node):
         super(Epub3Page, self).__init__(name, depth, node)
 
-    def save(self, outputDirPage):
+    def save(self, outputDirPage, ustadmobile_mode = False):
         """
         This is the main function.  It will render the page and save it to a
         file.
@@ -255,10 +256,10 @@ class Epub3Page(Page):
         self.node is the root node. 'outputDirPage' must be a 'Path' instance
         """
         out = open(outputDirPage / self.name + ".xhtml", "wb")
-        out.write(self.render())
+        out.write(self.render(ustadmobile_mode = ustadmobile_mode))
         out.close()
 
-    def render(self):
+    def render(self, ustadmobile_mode = False):
         """
         Returns an XHTML string rendering this page.
         """
@@ -310,6 +311,7 @@ class Epub3Page(Page):
             html += u'<!--[if lt IE 9]><script type="text/javascript" src="exe_html5.js"></script><![endif]-->' + lb
         style = G.application.config.styleStore.getStyle(self.node.package.style)
 
+            
         # jQuery
         if style.hasValidConfig:
             if style.get_jquery() == True:
@@ -328,6 +330,12 @@ class Epub3Page(Page):
         # Some styles might have their own JavaScript files (see their config.xml file)
         if style.hasValidConfig:
             html += style.get_extra_head()
+        
+        # UstadMobile
+        if ustadmobile_mode is True:
+            html += WebsitePage.makeUstadMobileHeadElement()
+            html += WebsitePage.make_tincan_js_elements()
+        
         html += u"</head>" + lb
         html += u'<body class="exe-epub3"><script type="text/javascript">document.body.className+=" js"</script>' + lb
         html += u"<div id=\"outer\">" + lb
@@ -390,7 +398,7 @@ class Epub3Page(Page):
 
 
 class Epub3Cover(Epub3Page):
-    def render(self):
+    def render(self, ustadmobile_mode = False):
         html = '''<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">

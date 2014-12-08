@@ -145,7 +145,7 @@ class WebsitePage(Page):
         html += WebsitePage.make_tincan_js_elements()
         
         if ustadMobileMode == True:
-            html += WebsitePage.makeUstadMobileHeadElement(escape(self.node.titleLong))
+            html += WebsitePage.makeUstadMobileHeadElement()
             
         if ustadMobileTestMode == True:
             print("if ustadMobileTestMode == True -> here")
@@ -435,7 +435,7 @@ class WebsitePage(Page):
     respectively
     """
     @classmethod
-    def makeUstadMobileHeadElement(cls, title):
+    def makeUstadMobileHeadElement(cls):
         html = u""
         html += """<style type='text/css'>
                 #main-wrapper { padding: 0px; }

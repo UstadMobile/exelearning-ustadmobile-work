@@ -341,8 +341,12 @@ UstadMobileContentZone.prototype = {
             }
         });
         
-        contentEl.find(".MultiSelectIdevice .question").each(function(index) {
-            var idAttr = $(this).attr("id");
+        contentEl.find(".MultiChoiceIdevice .question").each(function(index) {
+            var idAttr = $(this).find(".block").attr("id");
+            if(!idAttr) {
+                //not in the right place here...
+                return;
+            }
             var prefix = "taquestion";
             var questionId = idAttr.substring(prefix.length);
             if(EXETinCan) {
@@ -989,6 +993,12 @@ UstadMobileContentZone.prototype = {
         }
     }
 };
+
+//Enhance JQueryMobile based items
+$(function() {
+    $("#main").enhanceWithin();
+});
+
 
 function openTOCPage(){
     UstadMobile.getInstance().goPage(UstadMobile.PAGE_TOC);

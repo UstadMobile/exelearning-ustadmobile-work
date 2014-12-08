@@ -37,26 +37,30 @@ from exe.engine.error         import Error
 from exe.engine.path          import Path, TempDirPath
 from exe.export.pages         import uniquifyNames
 from exe.export.websitepage   import WebsitePage
+from exe.export.epub3export import *
 from zipfile                  import ZipFile, ZIP_DEFLATED
 from exe.export.websiteexport import *
 from exe.export.websitepage   import *
 from exe.export.xmlpage         import XMLPage
 from exe.export.exportmediaconverter    import *
 
+from exe.engine.persist import encodeObject
+from exe.engine.persistxml import encodeObjectToXML
+
 import sys, os, fnmatch, glob, shutil, codecs, md5
 
 log = logging.getLogger(__name__)
 
 # ===========================================================================
-class XMLExport(WebsiteExport):
+class XMLExport(Epub3Export):
     
      
      
     """
-    WebsiteExport will export a package as a website of HTML pages
+    UstadMobile Export will export as an epub file with mobile enhancements
     """
     def __init__(self, config, styleDir, filename, langOverride=None, forceMediaOnly=False):
-        WebsiteExport.__init__(self, config, styleDir, filename)
+        Epub3Export.__init__(self, config, styleDir, filename)
         self.langOverride = langOverride
         self.forceMediaOnly = forceMediaOnly
         self.ustadMobileMode = True
@@ -76,23 +80,26 @@ class XMLExport(WebsiteExport):
         Cleans up the previous packages pages and performs the export
         TODO: Make output directory for each type of export media profile
         """
-        outputDir = self.filename
-        currentOutputDir = Path(outputDir/package.name)
-        WebsiteExport.current_package_name = package.name
-        WebsiteExport.current_xapi_prefix = \
+        #outputDir = self.filename
+        
+        #make in a temp directory first
+        outputDir = TempDirPath()
+        metainfPages = Path(outputDir.abspath() + '/META-INF')
+        metainfPages.mkdir()
+        contentPages = Path(outputDir.abspath() + '/EPUB')
+        # contentPages = outputDir/'Content'
+        contentPages.mkdir()
+        
+        
+        mimetypeFile = open(outputDir.abspath() + '/mimetype', "w")
+        mimetypeFile.write('application/epub+zip')
+        mimetypeFile.close()
+        
+        Epub3Export.current_package_name = package.name
+        Epub3Export.current_xapi_prefix = \
             EXETinCan.get_tincan_prefix_for_pkg(package)
-        WebsiteExport.current_package_title = \
+        Epub3Export.current_package_title = \
             package.title 
-        
-        #Added for course test mode.
-        self.ustadMobileTestMode = package.ustadMobileTestMode
-        
-        #copy needed files
-        if not outputDir.exists(): 
-            outputDir.mkdir()
-        
-        if not currentOutputDir.exists():
-            currentOutputDir.mkdir()
         
         #Command line option to override language for export
         if self.langOverride != None:
@@ -120,7 +127,7 @@ class XMLExport(WebsiteExport):
         if 'FORCEMEDIAONLY' in os.environ:
             ExportMediaConverter.autoMediaOnly = True
         
-        ExportMediaConverter.setWorkingDir(currentOutputDir)
+        ExportMediaConverter.setWorkingDir(contentPages)
 
         indexPageXML = XMLPage("index", 1, package.root)
         self.pages = [ indexPageXML ]
@@ -132,9 +139,9 @@ class XMLExport(WebsiteExport):
         
         uniquifyNames(self.pages)
         
-        self.generateJQueryMobileTOC(package.root, currentOutputDir)
+        self.generateJQueryMobileTOC(package.root, contentPages)
         
-        self.copyFilesXML(package, currentOutputDir)
+        self.copyFilesXML(package, contentPages)
         
     
         prevPage = None
@@ -142,43 +149,48 @@ class XMLExport(WebsiteExport):
         
 
         for nextPage in self.pages[1:]:
-            pageDevCount = thisPage.save(currentOutputDir, prevPage, \
+            pageDevCount = thisPage.save(contentPages, prevPage, \
                                          nextPage, self.pages, nonDevices)
             numDevicesByPage[thisPage.name] = pageDevCount
             prevPage = thisPage
             thisPage = nextPage
              
-        pageDevCount = thisPage.save(currentOutputDir, prevPage, None, self.pages, nonDevices)
+        pageDevCount = thisPage.save(contentPages, prevPage, None, self.pages, nonDevices)
         numDevicesByPage[thisPage.name] = pageDevCount
         
-        self._writeTOCXML(currentOutputDir, numDevicesByPage, nonDevices, package)
+        self._writeTOCXML(contentPages, numDevicesByPage, nonDevices, package)
         
         #now go through and make the HTML output
         common.setExportDocType("HTML5")
-        self.pages = [ WebsitePage(self.prefix + "index", 0, package.root) ]
-        self.generatePages(package.root, 1)
+        
+        self.pages = [ Epub3Cover("cover", 1, package.root) ]
+        self.generatePages(package.root, 2)
         uniquifyNames(self.pages)
         
-        prevPage = None
-        thisPage = self.pages[0]
+        cover = None
+        for page in self.pages:
+            page.save(contentPages, ustadmobile_mode = True)
+            if hasattr(page, 'cover'):
+                cover = page.cover
+                
+        # Create the nav.xhtml file
+        container = NavEpub3(self.pages, contentPages)
+        container.save()
+
+        # Create the publication file
+        publication = PublicationEpub3(self.config, contentPages, package, self.pages, cover)
+        publication.save("package.opf")
+
+        # Create the container file
+        container = ContainerEpub3(metainfPages)
+        container.save("container.xml")
         
-        for nextPage in self.pages[1:]:
-            #Added parameter for course test mode.
-            thisPage.save(currentOutputDir, prevPage, nextPage, self.pages, \
-                          ustadMobileMode = True, \
-                          ustadMobileTestMode = package.ustadMobileTestMode, \
-                          skipNavLinks = True)
-            prevPage = thisPage
-            thisPage = nextPage
-        
-        #the last page
-        #Added parameter for course test mode.
-        thisPage.save(currentOutputDir, prevPage, None, self.pages, \
-                      ustadMobileTestMode = package.ustadMobileTestMode, \
-                      ustadMobileMode = True, skipNavLinks = True)
-        
-        #now make filelists
-        self.generateContentListXML(currentOutputDir, package)
+        self.generateContentListXML(contentPages, package)
+
+        # Zip it up!
+        self.filename.safeSave(self.doZip, _(u'EXPORT FAILED!\nLast succesful export is %s.'), outputDir)
+        # Clean up the temporary dir
+
         
     """
     
@@ -204,7 +216,7 @@ class XMLExport(WebsiteExport):
         """ % jsSettings
 
         output += WebsitePage.make_tincan_js_elements()
-        output += WebsitePage.makeUstadMobileHeadElement(tocTitle)
+        output += WebsitePage.makeUstadMobileHeadElement()
         #this has to come after ustadmobile.js scripts load
         output += """
             <script type="text/javascript">
@@ -273,21 +285,21 @@ class XMLExport(WebsiteExport):
         #go through styles and see if there is anything else to mop up
         #bad - this was copy/pasted but should go in a util function at sometime
         styleFiles = []
-        if os.path.isdir(self.stylesDir):
+        if os.path.isdir(self.styleDir):
             # Copy the style sheet files to the output dir
-            styleFiles  = [self.stylesDir/'..'/'base.css']
-            styleFiles += [self.stylesDir/'..'/'popup_bg.gif']
-            styleFiles += self.stylesDir.files("*.css")
-            styleFiles += self.stylesDir.files("*.jpg")
-            styleFiles += self.stylesDir.files("*.gif")
-            styleFiles += self.stylesDir.files("*.png")
-            styleFiles += self.stylesDir.files("*.js")
-            styleFiles += self.stylesDir.files("*.html")
-            styleFiles += self.stylesDir.files("*.ico")
-            styleFiles += self.stylesDir.files("*.ttf")
-            styleFiles += self.stylesDir.files("*.eot")
-            styleFiles += self.stylesDir.files("*.otf")
-            styleFiles += self.stylesDir.files("*.woff")
+            styleFiles  = [self.styleDir/'..'/'base.css']
+            styleFiles += [self.styleDir/'..'/'popup_bg.gif']
+            styleFiles += self.styleDir.files("*.css")
+            styleFiles += self.styleDir.files("*.jpg")
+            styleFiles += self.styleDir.files("*.gif")
+            styleFiles += self.styleDir.files("*.png")
+            styleFiles += self.styleDir.files("*.js")
+            styleFiles += self.styleDir.files("*.html")
+            styleFiles += self.styleDir.files("*.ico")
+            styleFiles += self.styleDir.files("*.ttf")
+            styleFiles += self.styleDir.files("*.eot")
+            styleFiles += self.styleDir.files("*.otf")
+            styleFiles += self.styleDir.files("*.woff")
             
         filelist += styleFiles
         
@@ -513,13 +525,13 @@ class XMLExport(WebsiteExport):
         Returns a list as per Package.make_system_copy_list
         """
         file_list = []
-        file_list.append([self.stylesDir.files("icon_*.png"), 
+        file_list.append([self.styleDir.files("icon_*.png"), 
                           outputDir])
         
-        file_list.append([self.stylesDir.parent.files("icon_*.png"),
+        file_list.append([self.styleDir.parent.files("icon_*.png"),
                           outputDir])
         
-        file_list.append([self.stylesDir.files("icon_*.gif"),
+        file_list.append([self.styleDir.files("icon_*.gif"),
                           outputDir])
         
         file_list.append([[Path(self.templatesDir/"deviceframe.html"),
@@ -545,7 +557,29 @@ class XMLExport(WebsiteExport):
         copy_list= self.make_xml_copy_list(package, outputDir)
         WebsiteExport.run_copy_list(copy_list)
         self.copyFiles(package, outputDir, um_mode = True)
+    
+    def copyFiles(self, package, outputDir, um_mode = False):
+        """
+        Copy all the files used by the website.
+        Parameters
+        ----------
+        package : Package
+            package that is being exported
+        outputDir : Path
+            The end directory being exported to
+        """
+        package.resourceDir.copyfiles2(outputDir)
         
+        copy_list = package.make_system_copy_list(self.styleDir,
+                              self.scriptsDir, self.templatesDir,
+                              self.imagesDir, self.cssDir, outputDir,
+                              ustad_mobile_mode = um_mode)
+        WebsiteExport.run_copy_list(copy_list)
+        
+        if hasattr(package, 'exportSource') and package.exportSource:
+            (outputDir/'content.data').write_bytes(encodeObject(package))
+            (outputDir/'contentv3.xml').write_bytes(encodeObjectToXML(package))
+    
     
     def copy_sub_dir_list(self, template_src_subdir, target_subdir, extensions, out_dir):
         """

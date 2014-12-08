@@ -1535,9 +1535,12 @@ class MainPage(RenderableLivePage):
     """
     def exportXML(self, client, filename, stylesDir):
         try:
+            filename = self.b4save(client, filename, '.epub', _(u'EXPORT FAILED!'))
             xmlExport = XMLExport(self.config, stylesDir, filename)
             xmlExport.export(self.package)        
         except Exception, e:
+            import traceback
+            print traceback.format_exc()
             client.alert(_('EXPORT FAILED!\n%s') % str(e))
             raise
         if client:
