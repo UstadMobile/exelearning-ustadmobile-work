@@ -18,6 +18,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # ===========================================================================
 
+#compy.py deprecated - silence to avoid py2exe popup error
+import warnings
+warnings.simplefilter("compy")
+
 from twisted.web import server, resource
 from twisted.internet import reactor, defer
 from nevow import compy, appserver, inevow
