@@ -5,6 +5,7 @@ MYDIR=$(pwd)
 PYTHONPATH=$MYDIR
 export PYTHONPATH
 
-python testing/testustadmobileexport.py
+python testing/runtests.py
+
 
 

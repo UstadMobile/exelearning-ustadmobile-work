@@ -18,14 +18,32 @@
 # ===========================================================================
 
 import unittest
+
+import sys
+import os
+if not '.' in sys.path:
+    sys.path.insert(0, '.')
+
 from os.path                   import join
 from utils                     import SuperTestCase
 from exe.engine.package        import Package
-from exe.engine.config         import Config
+#from exe.engine.config         import Config
 from exe.engine.packagestore   import PackageStore
 from exe.engine.node           import Node
 from exe.engine.genericidevice import GenericIdevice
-from exe.engine.path           import Path
+from exe.engine.path          import Path, TempDirPath
+
+# Choose which ConfigParser we'll use 
+# (avoid dumping files in wokring dir)
+if sys.platform[:3] == "win":
+    from exe.engine.winconfig import WinConfig
+    Config = WinConfig
+elif sys.platform[:6] == "darwin":
+    from exe.engine.macconfig import MacConfig
+    Config = MacConfig
+else:
+    from exe.engine.linuxconfig import LinuxConfig
+    Config = LinuxConfig
 
 
 # ===========================================================================
@@ -47,6 +65,9 @@ class TestPackage(SuperTestCase):
         package.description = "Nice test package"
         Config._getConfigPathOptions = lambda s: ['exe.conf']
         config  = Config()
+        SuperTestCase.update_config_parser(config.configParser)
+        config.loadSettings()
+                
         filePath = config.dataDir/'package1.elp'
         package.save(filePath)
         
