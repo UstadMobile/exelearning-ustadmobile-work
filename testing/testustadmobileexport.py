@@ -22,12 +22,20 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # ===========================================================================
 import unittest
+
+import sys
+import os
+if not '.' in sys.path:
+    sys.path.insert(0, '.')
+
+
 from exe.engine.package       import Package
 from exe.engine.path          import Path, TempDirPath
 from exe                      import globals as G
 from exe.export.xmlexport     import XMLExport
 from exe.export.exportmediaconverter import ENGINE_IMAGE_SIZES, ENGINE_AUDIO_FORMATS, ENGINE_VIDEO_FORMATS
 from utils import TestUtils
+from zipfile import ZipFile
 
 import shutil
 import sys
@@ -39,6 +47,8 @@ class TestUstadMobileExport(unittest.TestCase):
         
         # Delete the output dir
         self.outdir = TempDirPath()
+        self.epubOutPath = self.outdir/"ustad1.epub"
+        self.extract_dir = None
         
         from exe.application import Application
         G.application = None
@@ -52,13 +62,6 @@ class TestUstadMobileExport(unittest.TestCase):
         G.application.loadConfiguration()
         G.application.preLaunch()
         
-        #from exe.application import Application
-        #application = Application()
-        #application.standalone = True
-        
-        
-        #application.loadConfiguration()
-
 
     def tearDown(self):
         from exe import globals
@@ -146,8 +149,6 @@ class TestUstadMobileExport(unittest.TestCase):
 
 
     def testUstadMobileExport(self):
-        # Delete the output dir
-        outdir = self.outdir
         # Load a package
         filePath = Path("testing/ustad1.elp")
         
@@ -155,8 +156,17 @@ class TestUstadMobileExport(unittest.TestCase):
         self.assertIsNotNone(package, "Failed to load package")
         
         styles_dir = G.application.config.stylesDir / package.style
-        xmlExport = XMLExport(G.application.config, styles_dir, outdir)
+        xmlExport = XMLExport(G.application.config, styles_dir,
+                              self.epubOutPath)
         xmlExport.export(package)
+        
+        
+        self.extract_dir = TempDirPath()
+        zip_file = ZipFile(self.epubOutPath)
+        zip_file.extractall(self.extract_dir)
+        
+        outdir = self.extract_dir/"EPUB"
+        
         
         #check that the modification time on our resource files 
         #are as per original so they can be easily cached
@@ -164,7 +174,7 @@ class TestUstadMobileExport(unittest.TestCase):
         TestUtils.check_copy_list_mod_time(xml_copy_list,self)
         
         
-        mainFolder = Path(outdir/package.name)
+        mainFolder = Path(self.extract_dir/"EPUB")
         assert mainFolder.exists()
         
         exeTocPath = Path(mainFolder / "exetoc.xml")

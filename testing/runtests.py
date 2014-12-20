@@ -19,7 +19,8 @@
 # ===========================================================================
 
 import sys
-sys.path.insert(0, '..')
+import os
+sys.path.insert(0, '.')
 import unittest
 from testconfig        import TestConfig
 from testchecker import TestChecker
