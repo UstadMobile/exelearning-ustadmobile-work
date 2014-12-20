@@ -20,7 +20,7 @@
 
 #compy.py deprecated - silence to avoid py2exe popup error
 import warnings
-warnings.simplefilter("compy")
+warnings.simplefilter("ignore")
 
 from twisted.web import server, resource
 from twisted.internet import reactor, defer
