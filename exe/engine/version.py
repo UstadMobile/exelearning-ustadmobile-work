@@ -28,8 +28,8 @@ pkg_version = None
 try:
     from exe.engine.path import Path
     import sys
-    base_dir = Path(sys.argv[0]).abspath().dirname()
-    line = open(base_dir/'../debian/changelog').readline()
+    base_dir = Path(__file__).abspath().dirname()
+    line = open(base_dir/'../../debian/changelog').readline()
     release = line.split(':')[1].split(')')[0]
 except:
     try:
