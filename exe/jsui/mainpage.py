@@ -191,8 +191,9 @@ class MainPage(RenderableLivePage):
         if not self.package.previewDir:
             stylesDir = self.config.stylesDir / self.package.style
             self.package.previewDir = TempDirPath()
-            self.exportXML(None, self.package.previewDir, stylesDir)
-            self.previewPage = File(self.package.previewDir / self.package.name)
+            self.exportXML(None, self.package.previewDir, stylesDir, 
+                           preview_mode = True)
+            self.previewPage = File(self.package.previewDir /"EPUB")
         
         return self.previewPage
     
@@ -1533,11 +1534,17 @@ class MainPage(RenderableLivePage):
     """
     Exports to Ustad Mobile XML
     """
-    def exportXML(self, client, filename, stylesDir):
+    def exportXML(self, client, filename, stylesDir, preview_mode = False):
         try:
-            filename = self.b4save(client, filename, '.epub', _(u'EXPORT FAILED!'))
+            if not preview_mode:
+                filename = self.b4save(client, filename, '.epub', _(u'EXPORT FAILED!'))
+            
             xmlExport = XMLExport(self.config, stylesDir, filename)
-            xmlExport.export(self.package)        
+            
+            if not preview_mode: 
+                xmlExport.export(self.package)
+            else:
+                xmlExport.export_to_dir(self.package, filename)
         except Exception, e:
             import traceback
             print traceback.format_exc()

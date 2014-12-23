@@ -95,6 +95,8 @@ var containerChangeFn = function() {
 
     QUnit.module("UstadMobile");
     
+    testISO8601Format();
+    
     testLoadScript();
     
     testLoadScriptOnceOnly();
@@ -103,6 +105,10 @@ var containerChangeFn = function() {
         
     testUstadMobileImplementationLoads();
     
+    
+    testLoadAndCacheAssignedCourses();
+    
+    //testLoadCourseInfo();
     
     var audioEl = document.createElement("audio");
     audioEl.preload = "auto";
@@ -126,7 +132,7 @@ var containerChangeFn = function() {
         
     //Set timeout to 60seconds (download a course)
     QUnit.testTimeout = 60000;
-    testUstadMobileCourseDownloadById(5);
+    //testUstadMobileCourseDownloadById(5);
     
     testPageLocalization(); 
     
@@ -139,14 +145,84 @@ var containerChangeFn = function() {
     //Must run after looking for courses
     testHTTPServer();
     
-    
     //make sure courses open
     testBookOpen();
     
-    //make sure if we are using iframes that they can be closed
-    testCloseCourseIframe();
     
 }());
+
+/**
+ * Test that we can load course info JSON through the API
+ */
+function testLoadCourseInfo() {
+    asyncTest("Test loading course info by ID", function() {
+        UstadMobile.getInstance().runWhenImplementationReady(function() {
+            var theURL = UstadMobileAppZone.getInstance().getUMCloudEndpoint()
+                + "get_course_blocks/";
+            UstadMobileAppZone.getInstance().loadCourseInfo(validUsername,
+                validPassword, validCourseID, theURL, function(data, err) {
+                    ok(!err, "No error comes back loading course info");
+                    ok(data.title, "Course has title");
+                    ok(data.description, "Course has description");
+                    ok(data.blocks.length > 0, "Course has blocks");
+                    
+                    UstadMobileAppZone.getInstance().cacheCourseInfo(data);
+                    
+                    var cachedCourseInfo = UstadMobileAppZone.getInstance(
+                            ).loadCachedCourseInfo(validCourseID);
+                    ok(cachedCourseInfo !== null, "Apparently loaded cached info");
+                    
+                    start();
+                });
+        });
+    });
+}
+
+function testLoadAndCacheAssignedCourses() {
+    asyncTest("Test loading assigned courses", function() {
+        UstadMobile.getInstance().runWhenImplementationReady(function() {
+            var theURL = UstadMobileAppZone.getInstance().getUMCloudEndpoint()
+                + "assigned_courses/";
+            UstadMobileAppZone.getInstance().loadAssignedCoursesFromServer(
+                   validUsername, validPassword, theURL, function(coursesObj, err) {
+                       ok(!err, "No error loading assigned courses");
+                       ok(coursesObj.length > 0, "Found assigned courses");
+                       for(var i = 0; i < coursesObj.length; i++) {
+                           ok(coursesObj[i].id, "Course has ID");
+                           ok(coursesObj[i]['last-modified'], 
+                              "Course has last modified");
+                           ok(coursesObj[i]['title'], "Course has title");
+                       }
+                       
+                       //now try and cache them and try getting them back
+                       UstadMobileAppZone.getInstance().cacheAssignedCourses(
+                               validUsername, coursesObj);
+                       //ok(UstadMobileAppZone.getInstance().loadCachedAssignedCourses(
+                       //        validUsername) == coursesObj, 
+                       //         "Courses obj loads back from lcoal storage");
+                       start();
+                   });
+        });
+    });
+}
+
+/**
+ * Define tests to check that 8601 duration formatting for TinCan works
+ */
+function testISO8601Format() {
+    test("Format 8601 Duration", function() {
+        var twoHours = (2*60*60*1000);
+        ok(UstadMobileUtils.formatISO8601Duration(twoHours) === "PT2H0M0S",
+            "Format 2hours OK");
+        var twoHours30Mins = twoHours+(30*60*1000);
+        ok(UstadMobileUtils.formatISO8601Duration(twoHours30Mins) === "PT2H30M0S",
+            "Format 2hours30mins OK");
+        //extra 20ms should be ignored
+        var twoHours30Mins20Secs = twoHours30Mins + (20*1000)+200;
+        ok(UstadMobileUtils.formatISO8601Duration(twoHours30Mins20Secs) ===
+                "PT2H30M20S", "Format 2hr30min20s OK");
+    });
+}
 
 function testSequentialScriptLoad() {
     asyncTest("Test sequential script load", function() {
@@ -167,7 +243,6 @@ function testSequentialScriptLoad() {
 
 function testSoundPlay(mediaEl, testName, delay, setSrc) {
     asyncTest(testName, function() {
-        //debugger;
         expect(1);
         if(setSrc === true) {
             if(window.cordova) {
@@ -319,61 +394,32 @@ function testLoadScriptOnceOnly() {
     });
 }
 
-
-var numBooksOpened = 0;
 function testBookOpen() {
     if(UstadMobile.getInstance().isNodeWebkit()) {
         asyncTest("Check book open triggers onload event for content page", function() {
             expect(1);
-            var bookList = UstadMobileBookList.getInstance().coursesFound;
-            
-            
-            //debugger;
             UstadMobile.getInstance().runAfterHTTPReady(function(){
-                for(var i = 0; i < bookList.length; i++) {
-                    UstadMobileBookList.getInstance().openBLPage(i,function() {
-                        console.log("course display created");
-                    }, false, function(evt) {
-                        //debugger;
-                        var frameEl = evt.target;
-                        console.log("Loaded  " + $(frameEl).attr('src'));
-                        $(frameEl).remove();
-                        numBooksOpened++;
-                        if(numBooksOpened === bookList.length) {
-                            ok(numBooksOpened ===bookList.length, "All " 
-                                    + bookList.length 
-                                    + " packages in list triggered onload for frame");
-                            start();
-                        }
-                    });
-                }
+                var bookList = UstadMobileBookList.getInstance().coursesFound;
+                var currentBook = 0;
+                var checkBookLoadFn = function() {
+                    UstadMobile.getInstance().systemImpl.showCourse(
+                        bookList[currentBook],
+                        null, false, function(evt, params) {
+                            currentBook++;
+                            if(currentBook < bookList.length) {
+                                checkBookLoadFn();
+                            }else {
+                                //its ok because we got here.
+                                ok(true, "Epubs loaded");
+                                start();
+                            }
+                        }, null);
+                };
+                checkBookLoadFn();
             });
         });
     }
 }
-
-function testCloseCourseIframe() {
-    if(UstadMobile.getInstance().isNodeWebkit()) {
-        asyncTest("Check can close content iframe", function() {
-            expect(1);
-            UstadMobile.getInstance().runAfterHTTPReady(function(){
-                UstadMobileBookList.getInstance().openBLPage(0,function() {
-                        console.log("course display created - lets close it");
-                    }, false, function(frameEl) {
-                        //close it
-                        var framesClosed = 
-                            UstadMobileBookList.getInstance().closeBlCourseIframe();
-                        ok(framesClosed > 0, "Found and closed content iframe");
-                        start();
-                    });
-            });
-        });
-    }
-}
-
-
-//This global is used to see when we got ajax back from all the courses
-var numBooksLoadedCount = 0;
 
 function testHTTPServer() {
     if(UstadMobile.getInstance().isNodeWebkit() || UstadMobile.getInstance().isCordova()) {
@@ -399,45 +445,6 @@ function testHTTPServer() {
                 });
             });
         });
-
-        //make sure that all courses detected are accessible via HTTP
-
-
-        
-        
-        
-        
-        asyncTest("Check all courses are available", function() {
-            //there will be bookList.length callbacks
-            expect(UstadMobileBookList.getInstance().coursesFound.length);
-            
-            UstadMobile.getInstance().runAfterHTTPReady(function(){
-                var baseURL = UstadMobile.getInstance().systemImpl.getHTTPBaseURL();
-                var bookList = UstadMobileBookList.getInstance().coursesFound;
-                
-                //debugger;
-                for(var i = 0; i < bookList.length; i++) {
-                    var courseEntry = bookList[i];
-                    var folderName = courseEntry.relativeURI;
-                    var urlToLoad = baseURL + UstadMobile.CONTENT_DIRECTORY +
-                            "/" + folderName + "/index.html";
-                    var thisCourseURL = urlToLoad;
-                    console.log("Test load : " + urlToLoad);
-                    $.ajax({
-                        url: urlToLoad,
-                        dataType: "html"
-                    }).done(function(data, textStatus, jqXHR){
-                        ok(textStatus === "success", 
-                            "Loaded " + this.url + " OK");
-                        numBooksLoadedCount++;
-                        if(numBooksLoadedCount === bookList.length) {
-                            start();
-                        }
-                    });
-                }
-            });
-        });
-        
     }
 }
 

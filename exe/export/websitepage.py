@@ -558,11 +558,11 @@ class WebsitePage(Page):
     """
     @classmethod
     def getUstadMobileScriptList(cls):
-        #Temp: Qunit removed due to conflict with imagemapster - "qunit-1.12.0.js",  "ustadmobile-test.js", 
-        return ["ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile.min.js",\
-                 "ustadmobile-common.js", "ustadmobile-constants.js",\
+        return ["ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile.min.js",
+                 "ustadmobile-common.js", "ustadmobile-constants.js",
                  "ustadmobile-booklist.js", "jquery.touchSwipe.min.js",
-                 "ustadmobile-contentzone.js", "ustadmobile-localization.js"]
+                 "ustadmobile-contentzone.js", "ustadmobile-localization.js",
+                 "ustadjs.js"]
     
     """
     List of .js files that are needed by UstadMobile TestMode pages
@@ -572,6 +572,12 @@ class WebsitePage(Page):
         #Temp: Qunit removed due to conflict with imagemapster - "qunit-1.12.0.js",  "ustadmobile-test.js", 
         return [ "qunit-1.12.0.js",  "ustadmobile-test.js"]
     
+    """
+    List of other files to copy when in UstadMobile mode
+    """
+    @classmethod
+    def getUstadMobileFileList(cls):
+        return ["ustad_contentepubrunner.html"]
     
     """
     List of .css files that are needed by UstadMobile Pages

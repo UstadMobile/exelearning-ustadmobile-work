@@ -72,18 +72,7 @@ class XMLExport(Epub3Export):
         return  common.escape_for_attrib(html)
     
                             
-        
-
-    def export(self, package):
-        """ 
-        Export to XML files
-        Cleans up the previous packages pages and performs the export
-        TODO: Make output directory for each type of export media profile
-        """
-        #outputDir = self.filename
-        
-        #make in a temp directory first
-        outputDir = TempDirPath()
+    def export_to_dir(self, package, outputDir):
         metainfPages = Path(outputDir.abspath() + '/META-INF')
         metainfPages.mkdir()
         contentPages = Path(outputDir.abspath() + '/EPUB')
@@ -185,7 +174,19 @@ class XMLExport(Epub3Export):
         container = ContainerEpub3(metainfPages)
         container.save("container.xml")
         
-        self.generateContentListXML(contentPages, package)
+        self.generateContentListXML(contentPages, package)    
+
+    def export(self, package):
+        """ 
+        Export to XML files
+        Cleans up the previous packages pages and performs the export
+        TODO: Make output directory for each type of export media profile
+        """
+        #outputDir = self.filename
+        
+        #make in a temp directory first
+        outputDir = TempDirPath()
+        self.export_to_dir(package, outputDir)
 
         # Zip it up!
         self.filename.safeSave(self.doZip, _(u'EXPORT FAILED!\nLast succesful export is %s.'), outputDir)

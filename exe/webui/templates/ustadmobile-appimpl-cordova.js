@@ -173,9 +173,10 @@ UstadMobileAppImplCordova.prototype.checkPaths = function() {
 UstadMobileAppImplCordova.prototype.startHTTPServer = function(successCallback, errorCallback) {
     this.cordovaHttpd = ( cordova && cordova.plugins && cordova.plugins.CorHttpd ) ? cordova.plugins.CorHttpd : null;
     this.cordovaHTTPURL = "";
+    var portNum = 3000;
     this.cordovaHttpd.startServer({
         'www_root': "/mnt/sdcard/ustadmobileContent",
-        'port' : 3000
+        'port' : portNum
     }, function(url) {
         console.log("HTTP Server running on " + url);
         
@@ -184,7 +185,8 @@ UstadMobileAppImplCordova.prototype.startHTTPServer = function(successCallback, 
             url += '/';
         }
         
-        UstadMobile.getInstance().systemImpl.cordovaHTTPURL = url;
+        UstadMobile.getInstance().systemImpl.cordovaHTTPURL = 
+            "http://localhost:" + portNum + "/";
         
         var mountOKFunction = function(url) {
             console.log("Mounted " + url + " ok");
@@ -194,7 +196,7 @@ UstadMobileAppImplCordova.prototype.startHTTPServer = function(successCallback, 
             console.log("ERROR: Could not mount : " + err);
         };
         
-        var subDirsToMount = ["js", "jqm", "res"];
+        var subDirsToMount = ["js", "jqm", "res", "css"];
         for(var i = 0; i < subDirsToMount.length; i++) {
             console.log("Request to mount : " + subDirsToMount[i]);
             UstadMobile.getInstance().systemImpl.cordovaHttpd.mountDir(
@@ -203,15 +205,19 @@ UstadMobileAppImplCordova.prototype.startHTTPServer = function(successCallback, 
                 subDirsToMount[i], mountOKFunction, mountFailFunction);
         }
         
-        //iframe closer
+        //close the content window
         var httpdSvr = UstadMobile.getInstance().systemImpl.cordovaHttpd;
         httpdSvr.registerHandler(UstadMobile.URL_CLOSEIFRAME, 
             function(resultArr) {
                 var responseId = resultArr[0];
                 var uri = resultArr[1];
-                UstadMobileBookList.getInstance().closeBlCourseIframe();
+                var winRef = UstadMobileAppImplCordova.getInstance().courseWinRef;
+                if(winRef !== null) {
+                    winRef.close();
+                }
+                
                 httpdSvr.sendHandlerResponse(responseId, 
-                    "Closed Iframe", function() {
+                    "Closed Course inappbrowser", function() {
                         console.log("response sent back OK");
                     }, function(err) {
                         console.log("was an error sending response");
@@ -219,6 +225,23 @@ UstadMobileAppImplCordova.prototype.startHTTPServer = function(successCallback, 
             }, function(err) {
                 console.log("Error registering handler");
             });
+        
+        httpdSvr.registerHandler(UstadMobile.URL_TINCAN_QUEUE,
+            function(resultArr) {
+                var responseId = resultArr[0];
+                var uri = resultArr[1];
+                var stmtStr = resultArr[2]['statement'];
+                UstadMobileAppZone.getInstance().queueTinCanStatement(stmtStr);
+                
+                httpdSvr.sendHandlerResponse(responseId, 
+                    "Didnt really record anything", function() {
+                        console.log("response sent back OK");
+                    }, function(err) {
+                        console.log("was an error sending response");
+                    });
+
+            }
+        );
         
         httpdSvr.registerHandler(UstadMobile.URL_PAGECLEANUP, 
             function(resultArr) {
@@ -279,6 +302,12 @@ UstadMobileAppImplCordova.prototype.getHTTPURLForAppFile = function(appFileName)
 };
 
 /**
+ * The reference to the inappbrowser window opened for the course
+ */
+UstadMobileAppImplCordova.prototype.courseWinRef = null;
+
+
+/**
  * Shows the course represented by the UstadMobileCourseEntry object
  * courseObj in the correct way for this implementation.  Shows an iframe.
  * 
@@ -293,14 +322,19 @@ UstadMobileAppImplCordova.prototype.showCourse = function(courseObj,
     
     var httpURL = this.cordovaHTTPURL + UstadMobile.CONTENT_DIRECTORY + 
             "/" + courseObj.getHttpURI();
+    httpURL = UstadMobileAppZone.getInstance().appendTinCanParamsToURL(httpURL);
         
     var destURI = UstadMobile.getInstance().contentDirURI + courseObj.relativeURI;
     var filesToCopy = UstadMobileBookList.getInstance().appFilesToCopyToContent;
     
     var copyJob = this.makeCopyJob(filesToCopy, 
         destURI, function() {
-            UstadMobileBookList.getInstance().showCourseIframe(httpURL, onshowCallback,
+            /*UstadMobileBookList.getInstance().showCourseIframe(httpURL, onshowCallback,
                 show, onloadCallback, onerrorCallback);
+            */
+           UstadMobileAppImplCordova.getInstance().courseWinRef = 
+                window.open(httpURL, "_blank", 
+                "location=no,toolbar=no,mediaPlaybackRequiresUserAction=no");
         });
         
     copyJob.copyNextFile();
@@ -520,7 +554,6 @@ UstadMobileCordovaScanner.prototype = {
         var fileFullPath = fileEntry.toURL();
         
         debugLog("Found " + fileFullPath + " is an EXE directory - adding...");
-        var folderName = fileEntry.getParent();
         fileEntry.getParent(function(parentEntry) {
             debugLog("Got a parent Book directory name");
             debugLog("The full path = " + parentEntry.fullPath);
@@ -529,14 +562,15 @@ UstadMobileCordovaScanner.prototype = {
             var courseEntryObj = new UstadMobileCourseEntry(folderName, "",
                 fileFullPath, null, folderName);
             UstadMobileBookList.getInstance().addCourseToList(courseEntryObj);
+            umScanner.scanNextDirectoryIndex();
         }, function(error) {
             debugLog("failed to get parent directory folderName: " + folderName 
                     + " with an error: " + error);
+            umScanner.scanNextDirectoryIndex();
         });
         debugLog("Before we scan the directory, the number of Books Found is: "
                 + UstadMobileBookList.getInstance().coursesFound.length);
             
-        umScanner.scanNextDirectoryIndex();
     },
     
     /*

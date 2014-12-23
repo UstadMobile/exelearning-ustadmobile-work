@@ -1623,6 +1623,9 @@ class Package(Persistable):
             for um_css in WebsitePage.getUstadMobileCSSList():
                 um_files.append(Path(template_dir/um_css))
             
+            for um_file in WebsitePage.getUstadMobileFileList():
+                um_files.append(Path(template_dir/um_file))
+            
             copy_list.append([um_files,out_dir])
             
         if hasattr(self, 'exportSource') and self.exportSource:

@@ -73,19 +73,88 @@ UstadMobileAppZone.getInstance = function() {
     return UstadMobileAppZone.mainInstance;
 };
 
+/**
+ * Prefix for assigned courses - will be stored as STORAGE_PREFIX_COURSES.username
+ * 
+ * @type type String
+ */
+UstadMobileAppZone.STORAGE_PREFIX_COURSES = "ustad_user_courses.";
+
+
+/**
+ * Prefix for course info (JSON description the course and its component blocks 
+ * 
+ * @type String
+ */
+UstadMobileAppZone.STORAGE_PREFIX_COURSEINFO = "ustad_courseinfo.";
+
+
+/**
+ * Prefix we use to save the time that we last fetched course information (in
+ * unix time number of seconds since epoch)
+ * 
+ * @type String
+ */
+UstadMobileAppZone.STORAGE_PREFIX_COURSEINFOTIME = "ustad_courseinfo_time.";
+
 UstadMobileAppZone.prototype = {
+    
+    /**
+     * The time (in ms) to wait between Queue runs
+     * 
+     * @type Number
+     */
+    tincanQueueWaitTime: (1000*60*1),
+    
+    /**
+     * Reference to the interval for transmitting the queue
+     * 
+     * @type type
+     */
+    tincanQueueTransmitInterval : null,
     
     init: function() {
         //Make sure the implementation (e.g. cordova, NodeWebKit is ready)
         UstadMobile.getInstance().runWhenImplementationReady(function() {
             var systemImpl = UstadMobile.getInstance().systemImpl;
             systemImpl.startHTTPServer();
+            UstadMobileAppZone.getInstance().updateAssignedCourses();
+            UstadMobile.getInstance().displayUsername();
             
             //UstadMobile.getInstance().systemImpl.getSystemLang(function(lang){
             //});
         });
-
+        
+        //If we are resetting all tin can matters - we are not doing so now...
+        /*
+        localStorage.removeItem(
+                getTinCanQueueInstance().TINCAN_LOCALSTORAGE_INDEXVAR);
+        localStorage.removeItem(
+                getTinCanQueueInstance().TINCAN_LOCALSTORAGE_PENDINGSTMTSVAR);
+        */
+       
+        this.tincanQueueTransmitInterval = setInterval(function() {
+            UstadMobileAppZone.getInstance().transmitTinCanQueue();
+        }, this.tincanQueueWaitTime);
     },
+    
+    /**
+     * Check the courses that the user is assigned to via the server, start
+     * downloads etc. where needed
+     * 
+     */
+    updateAssignedCourses: function() {
+        if(this.getCurrentUsername()) {
+            var umApp = UstadMobileAppZone.getInstance();
+            umApp.loadAssignedCoursesFromServerDefault(function(coursesObj, err) {
+                if(coursesObj) {
+                    umApp.cacheAssignedCourses(umApp.getCurrentUsername(),
+                        coursesObj);
+                }
+            });
+        }
+    },
+    
     
     /**
      * Log the user out and return to the login screen
@@ -123,6 +192,293 @@ UstadMobileAppZone.prototype = {
         }
 
         $.mobile.changePage(linkToOpen, { changeHash: true, transition: transitionMode});
+    },
+    
+    /**
+     * Get the MBOX suffix to add to a username
+     * 
+     * @returns String MBox suffix to add e.g. @server.com
+     */
+    getMboxSuffix: function() {
+        return "@ustadmobile.com";
+    },
+    
+    /**
+     * Gets the tincan endpoint
+     * 
+     * TODO: Allow users to change this, save in localstorage
+     * 
+     * @returns String TinCan endpoint URL
+     */
+    getTinCanEndpoint: function() {
+        return "http://umcloud1.ustadmobile.com/umlrs/";
+    },
+    
+    /**
+     * Gets the Cloud Server endpoint
+     * 
+     * TODO: Allow users to change this, save in localstorage
+     * 
+     */
+    getUMCloudEndpoint: function() {
+        return "http://umcloud1.ustadmobile.com/";
+    },
+    
+    /**
+     * Load the JSON information about a given course from the server
+     * 
+     * @param String username 
+     * @param String password
+     * @param String courseid the TINCAN ID of the course to list out
+     * @param String httpURL HTTP url send post request to
+     * @param function callback function to run when done
+     * 
+     */
+    loadCourseInfo: function(username, password, courseid, httpURL, callback) {
+        debugger;
+        $.ajax({
+            method : "POST",
+            url : httpURL,
+            dataType : "json",
+            data: {
+                "username" : username,
+                "password" : password,
+                "courseid" : encodeURIComponent(courseid)
+            }
+        }).done(function(data){
+            debugger;
+            UstadMobileUtils.runCallback(callback, [data, null], this);
+        }).fail(function(jqXHR, textStatus){
+            console.log("REQUEST FAIL: "  + jqXHR.responseText);
+            debugger;
+            UstadMobileUtils.runCallback(callback, [null, textStatus], this);
+        });
+    },
+    
+    /**
+     * Cache information about the course and save when it was last modified
+     * 
+     * @param {type} courseInfo
+     * @returns {undefined}
+     */
+    
+    cacheCourseInfo: function(courseInfo) {
+        localStorage.setItem(UstadMobileAppZone.STORAGE_PREFIX_COURSEINFO 
+            + courseInfo.id, JSON.stringify(courseInfo));
+        var timeNow = Math.floor((new Date().getTime())/1000);
+        localStorage.setItem(UstadMobileAppZone.STORAGE_PREFIX_COURSEINFOTIME
+            + courseInfo.id, ""+timeNow);
+    },
+    
+    /**
+     * Get the course info (blocks, id, etc) that we have cached if available
+     * 
+     * @return cached info about course, or null if we don't have it
+     */
+    loadCachedCourseInfo: function(courseID) {
+        var courseVal = localStorage.getItem(
+            UstadMobileAppZone.STORAGE_PREFIX_COURSEINFO + courseID);
+        if(courseVal) {
+            return JSON.parse(courseVal);
+        }else {
+            return null;
+        }
+    },
+    
+    
+    /**
+     * Load the assigned courses from the named server for the given username
+     * and password
+     * 
+     * @param String username
+     * @param String password
+     * @param String httpURL URL to load from (e.g. assigned_courses)
+     * @param function callback to run when courses are loaded - take two params 
+     * (courses and err).  
+     * 
+     */
+    loadAssignedCoursesFromServer: function(username, password, httpURL, callback) {
+        $.ajax({
+            method: "POST",
+            url: httpURL,
+            data: {
+                "username" : username,
+                "password" : password
+            },
+            dataType: "json"
+        }).done(function(data){
+            UstadMobileUtils.runCallback(callback, [data, null], this);
+        }).fail(function(jqXHR, textStatus){
+            console.log("REQUEST FAIL: "  + jqXHR.responseText);
+            UstadMobileUtils.runCallback(callback, [null, textStatus], this);
+        });
+    },
+    
+    /**
+     * Load assigned courses from the server for the current user against the 
+     * current default UMCLOUD server
+     * 
+     * @param callback function callback to run when loaded
+     */
+    loadAssignedCoursesFromServerDefault: function(callback) {
+        var url = this.getUMCloudEndpoint() + "assigned_courses/";
+        this.loadAssignedCoursesFromServer(this.getCurrentUsername(),
+            this.getCurrentPass(), url, callback);
+    },
+    
+    /**
+     * Update the user assigned courses display
+     * 
+     * @param coursesObj Assigned courses object (optional) - otherwise use cached version
+     */
+    updateAssignedCoursesDisplay: function(coursesObj) {
+        if(!this.getCurrentUsername()) {
+            return;
+        }
+        
+        if(typeof coursesObj === "undefined") {
+            coursesObj = this.loadCachedAssignedCourses(
+                    this.getCurrentUsername());
+        }
+        
+        if($("#UMAssignedCoursesList").length > 0 && coursesObj) {
+            $("#UMAssignedCoursesList").html(this.makeUserCourseListHTML(
+                    coursesObj));
+        }
+    },
+    
+    /**
+     * Cache the assigned courses for a user to localStorage
+     * 
+     * @param username String Username to save courses for
+     * @param courses Object The assigned courses object as it comes back from cloud
+     */
+    cacheAssignedCourses: function(username, courses) {
+        localStorage.setItem(UstadMobileAppZone.STORAGE_PREFIX_COURSES 
+            + username, JSON.stringify(courses))
+    },
+    
+    /**
+     * Get the list of courses for the given user from the cache
+     * 
+     * @param username String the username to load courses for
+     * @returns Object of assigned courses as returned from server or null if we don't have it
+     */
+    loadCachedAssignedCourses: function(username) {
+        var retVal = localStorage.getItem(UstadMobileAppZone.STORAGE_PREFIX_COURSES 
+            + username);
+        if(retVal) {
+            return JSON.parse(retVal);
+        }else {
+            return null;
+        }
+    },
+    
+    /**
+     * Make the HTML that will show the courses assigned to this user
+     * 
+     * @param coursesObj Courses object of assigned courses
+     * @return the HTML showign the course list for this user
+     */
+    makeUserCourseListHTML: function(coursesObj) {
+        var html = "<div class='userCourseList'>";
+        for(var i = 0; i < coursesObj.length; i++) {
+            html += "<div class='userCourseItem'"
+                + "data-courseid=\""+coursesObj[i].id + "\">";
+            html += "<h4>" + coursesObj[i].title + "</h4>";
+            html += "</div>";
+        }
+        
+        html += "</div>";
+        return html;
+    },
+    
+    
+    /**
+     * Return a TinCan Actor object for the currently logged in user
+     * 
+     * @returns 
+     */
+    getTinCanActor: function() {
+        var currentUsername = localStorage.getItem("username");
+        var actor = null;
+        if(currentUsername) {
+            actor = new TinCan.Agent({
+                "objectType" : "Agent",
+                "name" : currentUsername,
+                "mbox" : "mailto:" + currentUsername + this.getMboxSuffix()
+            });
+        }
+        
+        return actor;
+    },
+    
+    /**
+     * Get the current LRS username
+     * 
+     * @returns String current cloud user
+     * @method
+     */
+    getCurrentUsername: function() {
+        return localStorage.getItem("username");
+    },
+    
+    /**
+     * Get the password for the current LRS user
+     * 
+     * @returns String current cloud password
+     * @method
+     */
+    getCurrentPass: function() {
+        return localStorage.getItem("password");
+    },
+    
+    /**
+     * Append actor and proxy URLs to the course URL for launch
+     * 
+     * @param url String the course URL
+     * @returns Course URL with parameters for TINCAN statements to come back
+     */
+    appendTinCanParamsToURL: function(url) {
+        var tincanActor = this.getTinCanActor();
+        if(tincanActor) {
+            url += "?actor=" + encodeURIComponent(JSON.stringify(tincanActor));
+            url += "&exetincanproxy=" + encodeURIComponent(
+                    UstadMobile.URL_TINCAN_QUEUE);
+        }
+        
+        return url;
+    },
+    
+    /**
+     * Put a tincan statement in the queue
+     * 
+     * @param {String} stmtJSON - JSON string representing the statement
+     */
+    queueTinCanStatement: function(stmtJSON) {
+        var stmt = new TinCan.Statement(JSON.parse(stmtJSON),
+            {'storeOriginal' : true});
+        getTinCanQueueInstance().queueStatement(stmt);
+    },
+    
+    /**
+     * Send what is in our TinCan Queue to the LRS server
+     * 
+     * @returns {undefined}
+     */
+    transmitTinCanQueue: function() {
+        var tinCanObj = new TinCan();
+        var tinCanLRS = new TinCan.LRS({
+            "endpoint" : this.getTinCanEndpoint(),
+            "version" : "1.0.0",
+            "user" : this.getCurrentUsername(),
+            'auth' : "Basic " + btoa(this.getCurrentUsername()
+                + ":" + this.getCurrentPass())
+        }); 
+
+        tinCanObj.recordStores[0] = tinCanLRS;
+        
+        getTinCanQueueInstance().sendStatementQueue(tinCanObj);
     },
     
     jsonInfo2HTML: function(obj) {
