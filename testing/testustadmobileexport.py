@@ -36,6 +36,8 @@ from exe.export.xmlexport     import XMLExport
 from exe.export.exportmediaconverter import ENGINE_IMAGE_SIZES, ENGINE_AUDIO_FORMATS, ENGINE_VIDEO_FORMATS
 from utils import TestUtils
 from zipfile import ZipFile
+from xml.etree import ElementTree
+
 
 import shutil
 import sys
@@ -155,6 +157,23 @@ class TestUstadMobileExport(unittest.TestCase):
         package = Package.load('testing/ustad1.elp')
         self.assertIsNotNone(package, "Failed to load package")
         
+        
+        #test the tincan.xml generation
+        desc_text = "Description Test"
+        package.set_description(desc_text)
+        
+        self.assertEqual(desc_text, package.get_tincan_description(), 
+                         "Description set and picked up")
+        
+        #test description will be title when description is blank
+        package.set_description("")
+        self.assertEqual(package.get_tincan_title(), 
+                     package.get_tincan_description(),
+                     "Description blank, tincan desc = title")
+        
+        
+        
+        
         styles_dir = G.application.config.stylesDir / package.style
         xmlExport = XMLExport(G.application.config, styles_dir,
                               self.epubOutPath)
@@ -178,6 +197,35 @@ class TestUstadMobileExport(unittest.TestCase):
         assert mainFolder.exists()
         
         exeTocPath = Path(mainFolder / "exetoc.xml")
+        
+        
+        #check the tincan.xml
+        tincan_etree_doc = ElementTree.parse(
+                         self.extract_dir/"tincan.xml")
+        namespaces = {"tincan" : 
+                            "http://projecttincan.com/tincan.xsd"}
+        tincan_etree = tincan_etree_doc.getroot()
+        
+        
+        launch_el_arr = tincan_etree.findall(
+                         "tincan:activities/tincan:activity/tincan:launch",
+                         namespaces)
+        self.assertEqual(len(launch_el_arr), 1, 
+                         "1 activity with launch")
+        self.assertEqual(
+            tincan_etree.find(
+                "tincan:activities/tincan:activity[0]/tincan:name", 
+                namespaces).text,
+            package.get_tincan_title())
+        
+        self.assertEqual(
+            tincan_etree.find(
+               "tincan:activities/tincan:activity[0]/tincan:description",
+               namespaces).text,
+            package.get_tincan_description(),
+            "Description serialized matchese tincan desc")
+        
+        
         str = exeTocPath.open().read()
         from xml.dom.minidom import parse, parseString
         dom = parseString(str)

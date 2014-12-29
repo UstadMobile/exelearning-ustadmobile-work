@@ -78,7 +78,12 @@ class TestPackage(SuperTestCase):
         # Package name should have been set when it was saved
         self.assertEquals(package.name, "package1")
         self.assertEquals(package1.name, "package1")
+    
+    def testTinCanAttrs(self):
+        package = self.package
+        orig_title = package.title
         
+    
 
     def testfindNode(self):
         package = self.package

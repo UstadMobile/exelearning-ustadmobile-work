@@ -50,6 +50,8 @@ from exe.engine.persistxml     import encodeObjectToXML, decodeObjectFromXML
 from exe.engine.lom import lomsubs
 from exe.engine.checker import Checker
 from exe.webui import common
+from xml.etree import ElementTree
+
 import os
 
 log = logging.getLogger(__name__)
@@ -1640,6 +1642,54 @@ class Package(Persistable):
                           Path(out_dir/'fdl.html') ]) 
         
         return copy_list
+    
+    def make_tincan_xml(self):
+        """
+        Make an etree element the represents the tincan.xml file
+        """
+        tincan_doc = ElementTree.Element("tincan")
+        tincan_doc.set("xmlns", "http://projecttincan.com/tincan.xsd")
+        course_tincan_id = self.xapi_prefix \
+            + self.dublinCore.identifier
+        
+        activities_el = ElementTree.SubElement(tincan_doc, 
+                                   "activities")
+        course_el = ElementTree.SubElement(activities_el, "activity",
+                       {"id": course_tincan_id,
+                        "type" : "http://adlnet.gov/expapi/activities/course"})
+        name_el  = ElementTree.SubElement(course_el, "name",
+                                          {"lang" : self.lang})
+        course_el.find("name").text = self.get_tincan_title()
+        
+        description_el = ElementTree.SubElement(course_el, 
+                            "description", 
+                            {"lang" : self.lang})
+        description_el.text = self.get_tincan_description()
+        
+        launch_el = ElementTree.SubElement(course_el, "launch")
+        launch_el.text = str("ustad_contentepubrunner.html")
+        launch_el.set("lang", self.lang)
+        
+        return tincan_doc
+    
+    def get_tincan_description(self):
+        """Get the description to use for tincan.xml
+        If description is set for meta data - use it
+        otherwise use title
+        """
+        if len(self._description) > 0:
+            return self._description
+        else:
+            return self.get_tincan_title()
+            
+    
+    def get_tincan_title(self):
+        """Get the title to use for tincan for the package"""
+        if len(self.title) > 0:
+            return self.title
+        else:
+            return _("Untitled Project")
+    
         
     def getUserResourcesFiles(self, node):
         resourceFiles = set()

@@ -48,6 +48,7 @@ from exe.engine.persist import encodeObject
 from exe.engine.persistxml import encodeObjectToXML
 
 import sys, os, fnmatch, glob, shutil, codecs, md5
+from xml.etree import ElementTree
 
 log = logging.getLogger(__name__)
 
@@ -76,7 +77,6 @@ class XMLExport(Epub3Export):
         metainfPages = Path(outputDir.abspath() + '/META-INF')
         metainfPages.mkdir()
         contentPages = Path(outputDir.abspath() + '/EPUB')
-        # contentPages = outputDir/'Content'
         contentPages.mkdir()
         
         
@@ -149,6 +149,9 @@ class XMLExport(Epub3Export):
         
         self._writeTOCXML(contentPages, numDevicesByPage, nonDevices, package)
         
+        #save the tincan.xml file
+        self.write_tincan_xml(outputDir, package)
+        
         #now go through and make the HTML output
         common.setExportDocType("HTML5")
         
@@ -174,7 +177,16 @@ class XMLExport(Epub3Export):
         container = ContainerEpub3(metainfPages)
         container.save("container.xml")
         
+        
         self.generateContentListXML(contentPages, package)    
+
+    def write_tincan_xml(self, outputDir, package):
+        """Save the tincan.xml file to the outputDir"""
+        
+        tcxml = package.make_tincan_xml()
+        tcfile = open(outputDir/"tincan.xml", "w")
+        tcfile.write(ElementTree.tostring(tcxml, encoding="utf8"))
+        tcfile.close()
 
     def export(self, package):
         """ 
