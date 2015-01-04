@@ -242,6 +242,14 @@ UstadMobile.PAGE_LOGIN = "index.html";
  */
 UstadMobile.PAGE_CONTENT_MENU = "ustadmobile_menupage_content.html";
 
+
+/**
+ * Default TinCan Prefix for activities that have no tincan.xml file
+ * @type String
+ */
+UstadMobile.TINCAN_DEFAULT_PREFIX = 
+        "http://www.ustadmobile.com/um-tincan/activities/";
+
 UstadMobile.prototype = {
     
     /**
@@ -496,8 +504,8 @@ UstadMobile.prototype = {
             umObj.initScriptsToLoad.push("ustadjs.js");
         }else {
             umObj.initScriptsToLoad.push("lib/ustadjs.js");
-            umObj.initScriptsToLoad.push("js/tincan.js");
-            umObj.initScriptsToLoad.push("js/tincan_queue.js");
+            umObj.initScriptsToLoad.push("lib/tincan.js");
+            umObj.initScriptsToLoad.push("lib/tincan_queue.js");
             umObj.initScriptsToLoad.push("js/ustadmobile-getpackages.js");
             if(UstadMobile.getInstance().isNodeWebkit()) {
                 umObj.initScriptsToLoad.push("js/ustadmobile-http-server.js");
@@ -715,27 +723,36 @@ UstadMobile.prototype = {
      * @param runtimeCallback {function} callback to run on fail/success passes data, textStatus, jqXHR from $.ajax
      */
     loadRuntimeInfo: function(runtimeCallback) {
-        $.ajax({
-            url: "ustad_runtime.json",
-            dataType: "json"
-        }).done(function(data, textStatus, jqXHR) {
-            UstadMobile.getInstance().runtimeInfo = data;
+        var queryVars = {};
+        if(window.location.search.length > 2) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i=0;i<vars.length;i++) {
+                var pair = vars[i].split("=");
+                queryVars[pair[0]] = decodeURIComponent(pair[1]);
+            }
+        }
+        
+        if(queryVars['ustad_runtime']) {
+            UstadMobile.getInstance().runtimeInfo = JSON.parse(
+                    queryVars['ustad_runtime']);
+            var runtimeData = UstadMobile.getInstance().runtimeInfo;
             UstadMobile.getInstance().runtimeInfoLoaded = true;
-            if(data['baseURL']) {
-                localStorage.setItem("baseURL", data['baseURL']);
+            if(runtimeData['baseURL']) {
+                localStorage.setItem("baseURL", runtimeData['baseURL']);
             }
             if(typeof runtimeCallback !== "undefined" && runtimeCallback !== null) {
-                runtimeCallback(data, textStatus, jqXHR);
+                runtimeCallback(runtimeData);
             }
             UstadMobile.getInstance().fireRuntimeInfoLoadedEvent();
-        }).fail(function(data, textStatus, jqXHR) {
+        }else {
             UstadMobile.getInstance().runtimeInfoLoaded = true;
-            console.log("Package does not have ustad_runtime.json");
+            console.log("page does not have runtime arguments provided");
             if(typeof runtimeCallback !== "undefined" && runtimeCallback !== null) {
-                runtimeCallback(data, textStatus, jqXHR);
+                runtimeCallback(null);
             }
             UstadMobile.getInstance().fireRuntimeInfoLoadedEvent();
-        });
+        }
     },
     
     /**
@@ -990,6 +1007,19 @@ UstadMobile.prototype = {
             pgEl.children(".ustad_fb_popup").attr("id", "ustad_fb_" + thisPgId);
         }
         
+        var zoneObj = null;
+        try {
+            zoneObj = UstadMobile.getInstance().getZoneObj();
+        }catch (err) {
+            //do nothing
+        }
+        
+        if(zoneObj) {
+            var currentUsername = zoneObj.getCurrentUsername();
+            if(currentUsername) {
+                pgEl.find("#ustad_user_button").text(currentUsername);
+            }
+        }
     },
     
     /**

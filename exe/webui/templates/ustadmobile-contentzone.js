@@ -107,19 +107,6 @@ UstadMobileContentZone.prototype = {
     transitionInProgress: false,
     
     /**
-     * The time (in ms since epoch) that the current page was opened
-     * @type number
-     */
-    pageOpenUtime: 0,
-    
-    /**
-     * The name of the page for which we are currently counting time
-     * 
-     * @type String
-     */
-    pageOpenXAPIName : null,
-    
-    /**
      * Run startup routines for the content zone - setup event handlers for making
      * Table of Content links safe, etc.
      * 
@@ -128,31 +115,9 @@ UstadMobileContentZone.prototype = {
     init: function() {
         $( ":mobile-pagecontainer" ).on("pagecontainershow",
             this.triggerPageShowOnCurrent);
-        
-        $(document).one("pagebeforecreate", function() {
-            UstadMobileContentZone.getInstance().makeLaunchedStatement();
-        });
     },
     
-    /**
-     * Make a statement that this content block (ELP file) file has been launched
-     * by the user - makes a statement with verb launched, the id of the tincan
-     * prefix.
-     * 
-     */
-    makeLaunchedStatement: function() {
-        var courseTitle = $("BODY").attr("data-package-title");
-        if(!courseTitle) {
-            courseTitle = "Course";
-        }
-        
-        if(EXETinCan.getInstance().getActor()) {
-            var stmt = EXETinCan.getInstance().makeLaunchedStmt(
-                    EXETinCan.getInstance().getTinCanIDURLPrefix(),
-                    courseTitle, courseTitle);
-            EXETinCan.getInstance().recordStatement(stmt);
-        }
-    },
+    
     
     /**
      * Return the active username (e.g. from tincan actor)
@@ -190,7 +155,7 @@ UstadMobileContentZone.prototype = {
                     answerId = answerFor.substring(1);
                 }else {
                     //multi select checkbox
-                    answerId = $(this).children("A").first().attr("href");
+                    answerId = $(this).children("a").first().attr("href");
                     answerId = answerId.split("-")[1];
                 }
 
@@ -242,14 +207,17 @@ UstadMobileContentZone.prototype = {
         
         UstadMobile.getInstance().runAfterRuntimeInfoLoaded(function() {
             if(UstadMobile.getInstance().getRuntimeInfoVal("FixAttachmentLinks") === true) {
-                contentEl.find(".FileAttachIdeviceInc .exeFileList A").each(function() {
+                contentEl.find(".FileAttachIdeviceInc .exeFileList a").each(function() {
                     var href= $(this).attr('href');
-                    if(href.indexOf("startdownload=true") === -1) {
+                    debugger;
+                    if($(this).attr("data-startdownload-url")) {
                         var ajaxHref = href + "?startdownload=true";
-                        $(this).attr("href", "#");
                         $(this).attr("data-startdownload-url", ajaxHref);
+                        $(this).attr("href", "#");
+                        debugger;
                         $(this).on("click", function() {
                             var hrefToOpen = $(this).attr("data-startdownload-url");
+                            debugger;
                             $.ajax({
                                 url: hrefToOpen,
                                 dataType : "text"
@@ -258,7 +226,7 @@ UstadMobileContentZone.prototype = {
                     }
                 });
 
-                contentEl.find("A").each(function() {
+                contentEl.find("a").each(function() {
                     var href = $(this).attr("href");
                     if(typeof href !== "undefined" && href !== null){
                         if(href.substring(0,7)==="http://" ||
@@ -369,16 +337,7 @@ UstadMobileContentZone.prototype = {
         UstadMobileContentZone.getInstance().stopPageTimeCounter(pageSelector);
     },
     
-    /**
-     * Start counting the time that the user has been on the current page 
-     * 
-     * @param String pageName - relative name of page (e.g. without .html suffix)
-     * @method startPageTimeCounter
-     */
-    startPageTimeCounter: function(pageName) {
-        this.pageOpenUtime = new Date().getTime();
-        this.pageOpenXAPIName = pageName;
-    },
+    
     
     /**
      * Stop counting the current page, make a TinCan API statement about it and
