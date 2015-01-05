@@ -133,15 +133,41 @@ class PublicationEpub3(object):
 
         return xmlStr
 
+    def check_metadata_for_epub(self, metadata_dict, package):
+        """
+        Make sure that the metadata_dict has a title and identifier
+        as required by the EPUB spec (title will fall back to
+        package.name)
+        
+        Parameters
+        ----------
+        item_dict : dict
+            Dictionary of metadata
+        package : Package
+            Package from which to source alternative values
+        """
+        
+        for key, value in metadata_dict.items():
+            if key == 'identifier':
+                if not value:
+                    value = package.dublinCore.identifier
+                    metadata_dict[key] = value
+            
+            if key == 'title':
+                if not value:
+                    metadata_dict[key] = package.name
+            
+        return metadata_dict
+
     def createMetadata(self):
         lrm = self.package.dublinCore.__dict__.copy()
+        lrm = self.check_metadata_for_epub(lrm, self.package)
         xml = u'<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n'
         for key, value in lrm.items():
             pub_id = ''
             if key == 'identifier':
                 pub_id = ' id="pub-id"'
-                if not value:
-                    self.package.dublinCore.identifier = value = str(uuid.uuid4())
+            
             if value:
                 xml += u'<dc:%s%s>%s</dc:%s>\n' % (key, pub_id, escape(value), key)
         xml += u'<meta property="dcterms:modified">%s</meta>' % datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -470,7 +496,7 @@ class Epub3Export(object):
         # print outputDir.abspath()
 
         # Export the package content
-        self.pages = [Epub3Cover("cover", 1, package.root)]
+        self.pages = [self.make_cover_page(package)]
 
         self.generatePages(package.root, 2)
         uniquifyNames(self.pages)
@@ -590,7 +616,8 @@ class Epub3Export(object):
         container.save()
 
         # Create the publication file
-        publication = PublicationEpub3(self.config, contentPages, package, self.pages, cover)
+        #publication = PublicationEpub3(self.config, contentPages, package, self.pages, cover)
+        publication = self.make_publication_epub3(contentPages, package, cover)
         publication.save("package.opf")
 
         # Create the container file
@@ -602,6 +629,32 @@ class Epub3Export(object):
         # Clean up the temporary dir
 
         outputDir.rmtree()
+
+    def make_cover_page(self, package):
+        """Return a Epub3Cover for the given package
+        Parameters
+        ----------
+        package : Package
+            Package to create a cover page for
+        """
+        return Epub3Cover("cover", 1, package.root)
+
+    def make_publication_epub3(self, contentPagesDir, package, cover):
+        """Return a PublicationEpub3 for this export
+        Call only after self.pages has been generated
+        
+        Parameters
+        ----------
+        contentPagesDir : Path
+            The directory where the contents of the package have been 
+            exported to (e.g. the 'EPUB' dir) 
+        package : Package
+            The package being exported
+        cover : Epub3Cover
+            The cover page
+        """
+        publication = PublicationEpub3(self.config, contentPagesDir, package, self.pages, cover)
+        return publication
 
     def doZip(self, fileObj, outputDir):
         """

@@ -148,8 +148,8 @@ class TestUstadMobileExport(unittest.TestCase):
             self.assertTrue(hasImg or hasAudio, \
                             "%s is a mediaslide with no audio, image or video!" % href)
     
-
-
+    
+    
     def testUstadMobileExport(self):
         # Load a package
         filePath = Path("testing/ustad1.elp")
@@ -177,7 +177,10 @@ class TestUstadMobileExport(unittest.TestCase):
         styles_dir = G.application.config.stylesDir / package.style
         xmlExport = XMLExport(G.application.config, styles_dir,
                               self.epubOutPath)
+        
+        
         xmlExport.export(package)
+        
         
         
         self.extract_dir = TempDirPath()
@@ -185,6 +188,26 @@ class TestUstadMobileExport(unittest.TestCase):
         zip_file.extractall(self.extract_dir)
         
         outdir = self.extract_dir/"EPUB"
+        
+        
+        #test that we can force it to have a title and identifier
+        missing_metadata_dict = {"title" : "", "identifier" : ""}
+        
+        cover = xmlExport.make_cover_page(package)
+        self.assertIsNotNone(cover, "Can create cover for package")
+        publication= xmlExport.make_publication_epub3(outdir, package, cover)
+        self.assertIsNotNone(publication, "Can create publication object")
+        
+        
+        fixed_metadata = publication.check_metadata_for_epub(
+                           missing_metadata_dict, package)
+        self.assertTrue(len(fixed_metadata['title']) > 0, 
+                        "Title Added")
+        
+        self.assertEqual(fixed_metadata['identifier'],
+                         package.dublinCore.identifier,
+                         "Identifier added from dublin core")
+        
         
         
         #check that the modification time on our resource files 

@@ -263,9 +263,11 @@ Ext.application({
         	eXe.app.getController('Toolbar').toolsWizard();
         }
         
+        /* System is f***d up when you open a large file
         this.checkConnectionInterval = setInterval(function() {
         	eXe.app.checkConnectionLive();
         }, eXe.app.pingIntervalDuration);
+        */
         
         /* Disabled due to new insert menu
 
