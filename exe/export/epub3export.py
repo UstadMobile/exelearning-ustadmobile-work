@@ -160,6 +160,9 @@ class PublicationEpub3(object):
         return metadata_dict
 
     def createMetadata(self):
+        #make sure we have a dublin core identifier
+        Epub3Export.check_package_identifier(self.package)
+        
         lrm = self.package.dublinCore.__dict__.copy()
         lrm = self.check_metadata_for_epub(lrm, self.package)
         xml = u'<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n'
@@ -615,8 +618,7 @@ class Epub3Export(object):
         container = NavEpub3(self.pages, contentPages)
         container.save()
 
-        # Create the publication file
-        #publication = PublicationEpub3(self.config, contentPages, package, self.pages, cover)
+        
         publication = self.make_publication_epub3(contentPages, package, cover)
         publication.save("package.opf")
 
@@ -629,6 +631,17 @@ class Epub3Export(object):
         # Clean up the temporary dir
 
         outputDir.rmtree()
+
+    @classmethod
+    def check_package_identifier(cls, package):
+        """Make sure the package has a dublin core identifier
+        Parameters
+        ----------
+        package : Package
+            The package to check for an identifier on
+        """
+        if not package.dublinCore.identifier:
+            package.dublinCore.identifier = str(uuid.uuid4())
 
     def make_cover_page(self, package):
         """Return a Epub3Cover for the given package

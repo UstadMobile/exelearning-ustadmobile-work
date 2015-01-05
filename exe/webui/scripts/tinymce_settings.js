@@ -25,6 +25,7 @@ tinymce.init({
 	fixed_toolbar_container: "#externalToolbarHolder",
 	menubar: false,
     file_browser_callback : exe_tinymce.chooseImage,
+    entity_encoding: 'raw',
     //see plugin note above if changing
     plugins: [
 	      "advlist autolink lists link image charmap print preview anchor",

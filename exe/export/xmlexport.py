@@ -170,7 +170,7 @@ class XMLExport(Epub3Export):
         container.save()
 
         # Create the publication file
-        publication = PublicationEpub3(self.config, contentPages, package, self.pages, cover)
+        publication = self.make_publication_epub3(contentPages, package, cover)
         publication.save("package.opf")
 
         # Create the container file
