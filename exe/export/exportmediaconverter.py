@@ -167,7 +167,7 @@ class ExportMediaConverter(object):
         #    return None
         
         sizeResults = {}
-         
+                 
         img = Image.open(imgPath)
         origWidth = img.size[0]
         origHeight = img.size[1]
@@ -268,19 +268,21 @@ class ExportMediaConverter(object):
             if currentHeight is not None:
                 resizeParams['height'] = int(currentHeight)
             
-            imgPath = ExportMediaConverter.workingDir/imgSrc
             resizeResult = None
-            
-            htmlContentLower = htmlContent.lower()
             endOfTagIndex = htmlContentLower.find(">", startIndex);
-            tagContent = htmlContent[startIndex:endOfTagIndex+1]
             
-             
-            if imgPath in self.resizedImages:
-                resizeResult = self.resizedImages[imgPath] #here should add the -res to it
-            else:
-                resizeResult = self.resizeImg(imgPath, -1, -1, resizeParams, mediaParams)
-            
+            if not imgSrc.startswith(('http://', 'https://')):
+                imgPath = ExportMediaConverter.workingDir/imgSrc
+                
+                htmlContentLower = htmlContent.lower()
+                tagContent = htmlContent[startIndex:endOfTagIndex+1]
+                
+                 
+                if imgPath in self.resizedImages:
+                    resizeResult = self.resizedImages[imgPath] #here should add the -res to it
+                else:
+                    resizeResult = self.resizeImg(imgPath, -1, -1, resizeParams, mediaParams)
+                
                     
             if resizeResult is not None:
                 widthAttribInfo = {}
