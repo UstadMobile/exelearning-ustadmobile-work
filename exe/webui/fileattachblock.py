@@ -25,6 +25,8 @@ import logging
 from exe.webui.block            import Block
 from exe.webui.element          import TextAreaElement
 from exe.engine.extendedfieldengine        import *
+import urllib2
+
 log = logging.getLogger(__name__)
 
 
@@ -152,8 +154,9 @@ class FileAttachBlockInc(Block):
                 
                 html += "<br/>"
             else:
+                link_filename = urllib2.quote(fileElement.getFileName())
                 html += "<li><a href='%(prefix)s%(filename)s' target='_blank'>%(desc)s" % \
-                    {"filename" : fileElement.getFileName(), "desc" : fileElement.getDescription(),\
+                    {"filename" : link_filename, "desc" : fileElement.getDescription(),\
                      "prefix" : prefix}
                 html += "<span> (" + c_('New Window')+")</span></a></li>\n"
                 
