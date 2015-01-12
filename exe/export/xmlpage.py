@@ -130,6 +130,7 @@ class XMLPage(Page):
         return numRealDevices
     
     def render_tincan_xml(self):
+        from xmlexport import XMLExport
         xml = ""
         #put in TinCan IDs
         xml += "<tincan id='%s'>" % \
@@ -138,7 +139,8 @@ class XMLPage(Page):
                                       pagename = self.name)
         xml += "<activitydef>"
         xml += EXETinCan.dump_json(
-                           self.get_tincan_activity_definition())
+                           self.get_tincan_activity_definition(), 
+                           escape_xml=True)
         xml += "</activitydef>"
         xml += "</tincan>"
         

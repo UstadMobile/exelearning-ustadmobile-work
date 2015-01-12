@@ -27,10 +27,15 @@ class EXETinCan(object):
     
     
     @classmethod
-    def dump_json(cls, json_obj):
+    def dump_json(cls, json_obj, escape_xml = False):
         """Dump TinCan data to JSON - do some cleanup to remove &nbsp; etc"""
         json_str = json.dumps(json_obj, ensure_ascii=False)
         json_str = json_str.replace("&nbsp", "&#160")
+        if escape_xml is True:
+            import re 
+            json_str = re.sub(r'&\s', '&amp;', json_str) 
+            json_str = re.sub(r'<', '&lt;', json_str)
+            json_str = re.sub(r'>', '&gt;', json_str)
         
         return json_str
     
