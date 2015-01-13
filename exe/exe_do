@@ -251,7 +251,7 @@ exclusive.').encode(sys.stdout.encoding))
             print _(u"exe_do: error: Unable to set values from '%s'.\nThe \
 error was:") % (path)
             print sys.exc_value
-            exit()
+            exit(1)
 
     if options.report:
         options.x = 'report'
@@ -272,6 +272,7 @@ inputf)
             print _(u"exe_do: error: Unable to export from '%s'.\nThe \
 error was:") % (inputf)
             print sys.exc_value
+            exit(1)
     if options.i:
         i = CmdlineImporter(application.config, {"import": options.i,
                                                  "from-source": options.from_source})
@@ -283,3 +284,4 @@ outputf)
             print _(u"exe_do: error: Unable to import '%s'.\nThe \
 error was:") % (inputf)
             print unicode(sys.exc_value)
+            exit(1)
