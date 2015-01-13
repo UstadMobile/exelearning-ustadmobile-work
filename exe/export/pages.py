@@ -137,7 +137,7 @@ class Page(object):
 
 
 # ===========================================================================
-def uniquifyNames(pages):
+def uniquifyNames(pages, suffix=".html"):
     """
     Make sure all the page names are unique
     """
@@ -159,4 +159,4 @@ def uniquifyNames(pages):
         # for export, temporarily set this unique name on the node itself,
         # such that any links to it can use the proper target; also
         # including the quote() & ".html", as per WebsitePage's:
-        page.node.tmp_export_filename = quote(page.name) + ".html"
+        page.node.tmp_export_filename = quote(page.name) + suffix

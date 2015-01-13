@@ -202,8 +202,11 @@ UstadMobileContentZone.prototype = {
             }
         });
 
-        contentEl.find(".MultichoiceIdevice LABEL, "
-                + ".MultiSelectIdevice LABEL").each(fixItFunction);
+        contentEl.find(".MultichoiceIdevice label, "
+                + ".MultiSelectIdevice label").each(fixItFunction);
+        
+        //stop JQueryMobile AJAX transition on internal links
+        contentEl.find("a").attr("data-ajax", "false");
         
         UstadMobile.getInstance().runAfterRuntimeInfoLoaded(function() {
             if(UstadMobile.getInstance().getRuntimeInfoVal("FixAttachmentLinks") === true) {
@@ -215,7 +218,6 @@ UstadMobileContentZone.prototype = {
                         $(this).attr("href", "#");
                         $(this).on("click", function() {
                             var hrefToOpen = $(this).attr("data-startdownload-url");
-                            debugger;
                             $.ajax({
                                 url: hrefToOpen,
                                 dataType : "text"

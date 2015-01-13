@@ -126,7 +126,7 @@ class XMLExport(Epub3Export):
         self.pkgNodeToPageDict = self.generatePagesXML(package.root, 1)
         self.pkgNodeToPageDict[package.root] = indexPageXML
         
-        uniquifyNames(self.pages)
+        uniquifyNames(self.pages, suffix = ".xhtml")
         
         self.generateJQueryMobileTOC(package.root, contentPages)
         
@@ -157,7 +157,7 @@ class XMLExport(Epub3Export):
         
         self.pages = [ Epub3Cover("cover", 1, package.root) ]
         self.generatePages(package.root, 2)
-        uniquifyNames(self.pages)
+        uniquifyNames(self.pages, suffix=".xhtml")
         
         cover = None
         for page in self.pages:

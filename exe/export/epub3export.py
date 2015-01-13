@@ -389,7 +389,8 @@ class Epub3Page(Page):
                     html += htmlentitydecode(block.renderJavascriptForWeb())
                 if idevice.title != "Forum Discussion":
                     html += htmlentitydecode(self.processInternalLinks(
-                        block.renderView(self.node.package.style)))
+                        block.renderView(self.node.package.style), 
+                        self.node.package))
             html += u'</' + articleTag + '>' + lb  # iDevice div
 
         html += u"</" + sectionTag + ">" + lb  # /#main
@@ -416,14 +417,14 @@ class Epub3Page(Page):
         common.setExportDocType(old_dT)
         return html
 
-    def processInternalLinks(self, html):
+    def processInternalLinks(self, html, package):
         """
         take care of any internal links which are in the form of:
            href="exe-node:Home:Topic:etc#Anchor"
         For this SCORM Export, go ahead and remove the link entirely,
         leaving only its text, since such links are not to be in the LMS.
         """
-        return common.removeInternalLinks(html)
+        return common.renderInternalLinkNodeFilenames(package, html)
 
 
 class Epub3Cover(Epub3Page):
@@ -502,7 +503,7 @@ class Epub3Export(object):
         self.pages = [self.make_cover_page(package)]
 
         self.generatePages(package.root, 2)
-        uniquifyNames(self.pages)
+        uniquifyNames(self.pages, suffix = ".xhtml")
 
         cover = None
         for page in self.pages:

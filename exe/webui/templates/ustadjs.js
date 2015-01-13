@@ -72,7 +72,43 @@ UstadJS = {
         if(typeof fn !== "undefined" && fn !== null) {
             fn.apply(context, args);
         }   
-    }
+    },
+    
+    /**
+     * Remove the query portion of a URL (if present)
+     * 
+     * @param fullURL {String} URL possibly including a query string
+     * 
+     * @returns {String} the URL without the query string if it was there...
+     */
+    removeQueryFromURL: function(fullURL) {
+        if(fullURL.indexOf("?") !== -1) {
+            return fullURL.substring(0, fullURL.indexOf("?"));
+        }else {
+            return fullURL;
+        }
+    },
+    
+    /**
+     * From the given url, which may be relative or absolute; construct an 
+     * absoulte url.  Will use location object to determine current base URL
+     * 
+     * @method
+     * 
+     * @param {String} url Given url which may be absolute (e.g. starts with http:// or https://) or relative
+     * 
+     * @returns {String} URL made absoulute if it was not before
+     */
+    makeAbsoluteURL: function(url) {
+        if(url.indexOf("://") !== -1) {
+            return url;
+        } else {
+            var absURL = location.href.substring(0, 
+                location.href.lastIndexOf("/")+1);
+            absURL += url;
+            return absURL;
+        }
+    },
 };
 
 var UstadJSOPF = null;
@@ -128,10 +164,13 @@ UstadJSOPF.prototype = {
             this.spine.push(this.items[itemID]);
         }
         
-        //now load meta data: according to OPF spec there must be at least one title
+        //now load meta data: according to OPF spec there must be at least one title 
+        //and one identifier
         var manifestEl = this.xmlDoc.getElementsByTagName("metadata")[0];
         var titleEl = manifestEl.getElementsByTagNameNS("*", "title")[0];
+        var idEl = manifestEl.getElementsByTagNameNS("*", "identifier")[0];
         this.title = titleEl.textContent;
+        this.identifier = idEl.textContent;
     },
     
     /**
@@ -165,6 +204,130 @@ UstadJSOPFItem.prototype = {
     href : null,
     scripted: null
 };
+
+var UstadJSTinCanXML = null;
+
+UstadJSTinCanXML = function() {
+    //original XML source document
+    this.xmlDoc = null;
+    
+    //the launch activity (TinCan.Activity)
+    this.launchActivity = null;
+    this.launchActivityID = null;
+    
+    //the launchable activity
+    this._launchActivityEl = null;
+};
+
+
+/**
+ * Figure out which element to use by language for an activity (e.g. launch, resource)
+ * 
+ * matches the user language, if not look for default language, otherwise use
+ * first occuring launch element
+ * 
+ * @param tagName {String} Tag name -e.g. launch or resource
+ * @param activityEl {Object} DOM node representing the activity element
+ * @param userLang {String} The language the user wants (e.g. UI Language)
+ * @param defaultLang {String} the system default fallback language (e.g. 
+ * 
+ * @returns {String} 
+ */
+UstadJSTinCanXML.getElementByLang = function(tagName, activityEl, userLang, defaultLang) {
+    var launchEls = activityEl.getElementsByTagName(tagName);
+    
+    if(!defaultLang) {
+        defaultLang = "en";
+    }
+    
+    var langsToMatch = [userLang, defaultLang];
+    var matchedNodes = [null, null];
+    var matchedStrs = [null, null];
+    
+    for(var i = 0; i < launchEls.length; i++) {
+        var thisLang = launchEls[i].getAttribute("lang");
+        if(thisLang) {
+            var thisLangLower = thisLang.toLowerCase();
+            for(var j = 0; j < langsToMatch.length; j++) {
+                if(thisLangLower === langsToMatch[j].toLowerCase()) {
+                    //full match of user string
+                    matchedNodes[j] = launchEls[i];
+                    matchedStrs[j] = thisLang;
+                }else if(!matchedNodes[j] && thisLangLower.substring(0, 2) === langsToMatch[j].substring(0, 2)) {
+                    //match first part of user string e.g. en-US instead of en-GB
+                    matchedNodes[j] = launchEls[i];
+                    matchedStrs[j] = thisLang.substring(0, 2);
+                }
+            }
+        }
+    }
+    
+    for(var h = 0; h < matchedNodes.length; h++) {
+        if(matchedNodes[h]) { 
+            return matchedNodes[h];
+        }
+    }
+    
+    //no match of user language or default - return the first launch element
+    return launchEls[0];
+};
+
+
+
+UstadJSTinCanXML.prototype = {
+    
+    /**
+     * 
+     * @param {Object} tcXMLSrc String or xml document
+     * @returns {undefined}
+     */
+    loadFromXML: function(tcXMLSrc) {
+        if(typeof tcXMLSrc === "string") {
+            var parser = new DOMParser();
+            tcXMLSrc  = parser.parseFromString(tcXMLSrc, "text/xml");
+        }
+        
+        this.xmlDoc = tcXMLSrc;
+        
+        var activityElements = this.xmlDoc.getElementsByTagName("activity");
+        for(var i = 0; i < activityElements.length; i++) {
+            var launchEls = activityElements[i].getElementsByTagName("launch");
+            
+            if(launchEls.length > 0) {
+                this.launchActivityID = activityElements[i].getAttribute("id");
+                this._launchActivityEl = activityElements[i];
+                break;
+            }
+        }
+    },
+    
+    /**
+     * Sets the launch activity info by language
+     * 
+     * @param {String} userLang user set language
+     * @param {String} defaultLang default fallback language (optional)
+     */
+    makeLaunchedActivityDefByLang: function(userLang, defaultLang) {
+        var launchNameEl = UstadJSTinCanXML.getElementByLang("name", 
+            this._launchActivityEl, userLang, defaultLang);
+        var descEl = UstadJSTinCanXML.getElementByLang("description",
+            this._launchActivityEl, userLang, defaultLang);
+        var launchLang = launchNameEl.getAttribute("lang");
+        
+        var myDefinition = {
+            type : "http://adlnet.gov/expapi/activities/lesson",
+            name : { },
+            description : { }
+    	};
+        
+        myDefinition.name[launchLang] = launchNameEl.textContent;
+        myDefinition.description[launchLang] = descEl.textContent;
+        
+        return myDefinition;
+    }
+};
+
+
 
 /*
 
@@ -214,7 +377,10 @@ GNU General Public License for more details.
             //the UstadJSOPF object being represented
             "opf" : null,
             "height" : "100%",
-            "num_pages" : 0
+            "num_pages" : 0,
+            //the query parameters to add (e.g. tincan params) 
+            "page_query_params": null,
+            "pageloaded" : null
         },
         
         /**
@@ -242,18 +408,33 @@ GNU General Public License for more details.
             }
         },
         
-        
+        /**
+         * Add the appropriate query parameters to the given url
+         * 
+         * @param {String} url URL to add parameters to
+         * @returns {String} the url with query parameters (if any)
+         */
+        appendParamsToURL: function(url) {
+            if(this.options.page_query_params) {
+                return url + "?" + this.options.page_query_params;
+            }else {
+                return url;
+            }
+        },
         
         iframeLoadEvt: function(evt) {
             //figure out where we are relative to package.opf
-            var iframeSrc = evt.target.src;
+            var iframeSrc = evt.target.contentWindow.location.href;
             var relativeURL = iframeSrc.substring(iframeSrc.indexOf(
                     this.options.baseurl) + this.options.baseurl.length);
+            relativeURL = UstadJS.removeQueryFromURL(relativeURL);
             this.options.spine_pos = this.options.opf.getSpinePositionByHref(
                     relativeURL);
             $(this.element).trigger("pageloaded", evt, {"relativeURL" :
                         relativeURL});
+            this._trigger("pageloaded", null, {"url" : relativeURL});
         },
+        
         
         /**
          * Load publication by path specified to the OPF file
@@ -262,9 +443,11 @@ GNU General Public License for more details.
          * @param {function} callback
          */
         loadfromopf: function(opfURL, callback) {
-            var opfBaseURL = location.href.substring(0, 
-                location.href.lastIndexOf("/")+1);
+            
+            //convert the URL to being absolute for the iframe
+            var opfBaseURL = "";
             opfBaseURL += opfURL.substring(0, opfURL.lastIndexOf("/")+1);
+            opfBaseURL = UstadJS.makeAbsoluteURL(opfBaseURL);
             
             this.options.baseurl = opfBaseURL;
             $.ajax(opfURL, {
@@ -273,6 +456,8 @@ GNU General Public License for more details.
                 this.options.opf = new UstadJSOPF();
                 this.options.opf.loadFromOPF(data);
                 var firstURL = opfBaseURL + this.options.opf.spine[0].href;
+                firstURL = this.appendParamsToURL(firstURL);
+                
                 this.options.num_pages = this.options.opf.spine.length;
                 
                 this.iframeElement.setAttribute("src",firstURL);
@@ -323,10 +508,21 @@ GNU General Public License for more details.
             var nextIndex = this.options.spine_pos + increment;
             var nextURL = this.options.baseurl + 
                     this.options.opf.spine[nextIndex].href;
+            nextURL = this.appendParamsToURL(nextURL);
             this.iframeElement.setAttribute("src", nextURL);
             $(this.iframeElement).one("load", null, $.proxy(function() {
                         UstadJS.runCallback(callback, this, ["success"]);
                     }, this));
+        },
+        
+        currenttitle: function() {
+            var pgTitle = null;
+            var titleEls = this.iframeElement.contentDocument.getElementsByTagName("title");
+            if(titleEls.length > 0) {
+                pgTitle = titleEls[0].textContent;
+            }
+            
+            return pgTitle;
         }
     });
 }(jQuery));
