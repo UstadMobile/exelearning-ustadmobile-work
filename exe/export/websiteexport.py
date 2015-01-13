@@ -283,6 +283,8 @@ class WebsiteExport(object):
                 #this is a list of files to copy to dst which should be
                 #a directory
                 for src_file in src:
+                    if src_file.basename() == "content.css":
+                        life = 42
                     src_file.copyfile2(dst/src_file.basename())
     
     

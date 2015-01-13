@@ -39,6 +39,7 @@ from nevow.i18n import render as render_i18n
 from datetime import datetime
 import email.utils as eut
 import time
+from exe.engine.path             import Path
 
 import logging
 log = logging.getLogger(__name__)
@@ -275,7 +276,24 @@ class File(static.File):
         elif "Pragma" in cache_info and cache_info['Pragma'] != "": 
             request.setHeader("Pragma", cache_info['Pragma'])
         
-        if "if-modified-since" in request.received_headers:
+        etag_checked = False
+        if "ETag" in cache_info:
+            md5sum = Path(self.path).md5
+            etag_checked = True
+            
+            etag_matched = False
+            if "if-none-match" in request.received_headers:
+                if md5sum == request.received_headers['if-none-match']:
+                    etag_matched = True
+            
+            if etag_matched is True:
+                request.setResponseCode(304)
+                return ""
+            else:
+                request.received_headers.pop("if-modified-since", None)
+                request.setHeader("ETag", md5sum)
+        
+        if "if-modified-since" in request.received_headers and etag_checked is False:
             #client_date_str = request.received_headers['if-modified-since']
             
             #client_utime = time.mktime(client_time.timetuple())
@@ -291,8 +309,7 @@ class File(static.File):
             if not file_mod_time > client_mtime:
                 request.setResponseCode(304)
                 return ""
-            
-            
-            
+        
+        
             
         return static.File.render(self, request)

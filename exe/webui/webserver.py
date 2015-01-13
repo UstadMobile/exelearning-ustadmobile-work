@@ -166,8 +166,9 @@ class WebServer:
         
         # preview parameters
         preview_cache_params = {
-                                "Cache-Control" : "public, must-revalidate",
-                                "Expires" : ""
+                                "Cache-Control" : "public, must-revalidate, max-age=10",
+                                "Expires" : "",
+                                "ETag" : ""
                                 }
         
         webDir = self.config.webDir
@@ -181,11 +182,12 @@ class WebServer:
         for sdir in static_dirs:
             File.append_regex_headerset(sdir, static_cache_params)
         
-        for ext in preview_cache_ext:
-            for preview_type in ["preview", "previewmobile"]:
-                regex_str = ".*\\/%s\\/.*\\.%s$" % (preview_type, ext)
-                File.append_regex_headerset(regex_str, 
-                                            static_cache_params)
+        #for ext in preview_cache_ext:
+        #    for preview_type in ["preview", "previewmobile"]:
+        #        regex_str = ".*\\/%s\\/.*\\.%s$" % (preview_type, ext)
+        #        File.append_regex_headerset(regex_str, 
+        #                                    static_cache_params)
+        
         for preview_type in ["preview", "previewmobile"]:
             regex_str = ".*\\/%s\\/.*" % preview_type
             File.append_regex_headerset(regex_str, preview_cache_params)
