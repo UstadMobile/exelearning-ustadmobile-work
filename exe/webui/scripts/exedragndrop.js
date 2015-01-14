@@ -43,7 +43,7 @@ EXEDragNDrop.prototype = {
 		}
 		
 		var parentWidth = 
-			  $("#id" + this.ideviceid +" DIV.iDevice_content_wrapper").width();
+			  $("#id" + this.ideviceid +" div.iDevice_content_wrapper").width();
 		var ratio = parentWidth / origDimensionsArr[0];
 		
 		var newWidth = parentWidth;
@@ -180,6 +180,9 @@ EXEDragNDrop.prototype = {
 		$("#width" + imgFieldId).on("change", picEvtHandleFunction);
 		$("#height" + imgFieldId).on("change", picEvtHandleFunction);
 		$("#img" + imgFieldId).on("load", picEvtHandleFunction);
+		
+		//make sure that the size itself is set now
+		this.updateEditorSizeFromPic();
 	},
     
 	updateEditorSizeFromPic: function(evt) {
@@ -273,8 +276,6 @@ EXEDragNDrop.prototype = {
         	        		+ "Area " + targetElsArr[j][1] + "</option>");
         		}
         	}
-        	//alert(thisIndex);
-        	//$(this).append(targetEls);
         	var selectedVal = $(this).attr("data-currentval");
         	$(this).val(selectedVal);
         });
@@ -366,9 +367,9 @@ EXEDragNDrop.prototype = {
 };
 
 function initDragNDrop(containerSelector) {
+	containerSelector = containerSelector || "body";
 	containerSelector = checkActivePageContainer(containerSelector);
     $(containerSelector + " .exednd_container").each(function() {
-        var x = 0;
         var dndIdeviceId = $(this).attr("data-exedndid");
         EXEDragNDropInstance[dndIdeviceId] = new EXEDragNDrop(
         		dndIdeviceId);
@@ -383,9 +384,6 @@ function initDragNDrop(containerSelector) {
 
 $(function() {
     initDragNDrop();
-    $(document).on("execontentpageshow", function(evt) {
-    	initDragNDrop(evt.targetSelector);
-    });
     $(".exednd_editor_accordion").accordion({heightStyle: "fill"});
     $(".exednd_area_tabdiv").tabs();
     $(".exednd_area_feedbacktabs").tabs();
