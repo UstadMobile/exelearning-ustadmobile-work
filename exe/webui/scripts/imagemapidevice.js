@@ -34,52 +34,6 @@ var imageMapIdeviceIdPrefix = "imagemapidevice_img_";
 
 ImageMapIdevice.prototype = {
     
-    /**
-     * 
-     * @param {Array} data event data
-     * @return {boolean} returns true
-     */
-    handleClick : function(data) {
-        var key = data.key;
-        var ideviceId = key.substring(0, key.indexOf("_"));
-        var tipHasContents = true;
-        var tipContentEl =$("#imageMapToolTip_" +ideviceId + "_"
-        		+ key).clone(); 
-		tipContentEl.find("audio").remove();
-		
-        var tipContents = tipContentEl.text();
-        tipContents = exeUtilRemoveWhiteSpace(tipContents);
-        if(tipContents.length == 0) {
-        	var numImg = $("#imgmap_area_" + key + " img").length;
-        	var numVideo = $("#imgmap_area_" + key + " video").length
-        	tipHasContents = (numImg > 0 || numVideo > 0);
-        }
-        
-        /*Show tips only if they are not blank*/
-        if(tipHasContents) {
-        	$("#imagemapidevice_img_" + ideviceId).mapster("tooltip", key);
-        }
-        
-        //find media to play
-        var elementId = "imageMapToolTip_" + ideviceId + "_" + key;
-        var tooltipEl = document.getElementById(elementId);
-        var audioElements = findAllMediaInElement(tooltipEl);
-        for(var i = 0; i < audioElements.length; i++) {
-            playAndReset(audioElements[i]);
-        }
-        
-        return false;
-    },
-    
-    /**
-     * Get rid of all global references to this, unbind mapster
-     */
-    dispose: function(evt) {
-        $("#id" + evt.ideviceId).mapster("unbind", false);
-        imageMapIdevices[evt.ideviceId] = null;
-        console.log("Disposed of imagemapidevice for id: " + evt.ideviceId);
-    },
-    
     
     /**
      * Initiate this using ImageMapster JQuery plugin
@@ -87,51 +41,72 @@ ImageMapIdevice.prototype = {
      * @method initMapIdevice
      */
     initMapIdevice : function(cfg) {
-    
-
-        
-    	this.cfg = cfg;
+        this.cfg = cfg;
     	
-        //build areas
-        var areasArg = [];
+
         
         
         //go through the areas and see if there are corresponding tips
         var areaSelector = "#imagemapidevice_map_" + this.ideviceId + " area";
         var initIdeviceId = this.ideviceId;
         
-        $("#id" + this.ideviceId).on("ideviceremove", this.dispose);
-        
         $(areaSelector).each(function() {
             var dataKeyVal = $(this).attr("data-key");
-            var imageMapToolTipSelector = "#imageMapToolTip_" + initIdeviceId 
-                    + "_" + dataKeyVal;
-            var htmlToolTip = $(imageMapToolTipSelector).html();
-            var areasArgIndex = areasArg.length;
-            areasArg[areasArgIndex] = {
-                key : dataKeyVal
-            };
+            var tooltipDivSel = "#imageMapToolTip_"+ initIdeviceId
+                + "_" + dataKeyVal;
             
-            if(htmlToolTip !== "" && htmlToolTip !== null) {
-                areasArg[areasArgIndex]['toolTip'] = htmlToolTip;
+            var tipHasContents = true;
+            var tipContents = $(tooltipDivSel).text();
+            tipContents = exeUtilRemoveWhiteSpace(tipContents);
+            if(tipContents.length === 0) {
+            	var numImg = $(tooltipDivSel + " img").length;
+            	var numVideo = $(tooltipDivSel + " video").length
+            	tipHasContents = (numImg > 0 || numVideo > 0);
             }
+                
+            if(tipHasContents) {
+                $(this).tooltipster({
+                    animation: 'fade',
+                    content : $(tooltipDivSel).html(),
+                    contentAsHTML: true
+                });
+            }
+            
+            var evtHandler = function(evt) {
+                //find media to play if we haven't just played it
+                var timeLastPlayed = 0;
+                if($(this).attr("data-last-played")) {
+                    timeLastPlayed = parseInt($(this).attr("last-played"));
+                }
+                var timeNow = new Date().getTime();
+                
+                if(timeNow - timeLastPlayed < 1000) {
+                    return false;
+                }else {
+                    $(this).attr("data-last-played", timeNow);
+                }
+                
+                var elementId = $(this).attr("id");
+                var tooltipEl = document.getElementById(elementId);
+                var audioElements = findAllMediaInElement(tooltipEl);
+                for(var i = 0; i < audioElements.length; i++) {
+                    playAndReset(audioElements[i]);
+                }
+                
+                return false;
+            };
+            $(this).on("click", evtHandler);
+            $(this).mouseover(evtHandler);
         });
         
-        $("#imagemapidevice_img_" + this.ideviceId).mapster({
-               stroke : false,
-               mapKey: 'data-key',
-               fillColor: 'ff0000',
-               fillOpacity: 0.0,
-               onClick: this.handleClick,
-               
-               areas : areasArg
-            });
         var parentWidth = 
-     		  $("#id" + this.ideviceId +" DIV.iDevice_content_wrapper").width();
+     		  $("#id" + this.ideviceId +" div.iDevice_content_wrapper").width();
         var ratio = parentWidth / this.cfg['width'];
         var newHeight = Math.round(this.cfg['height'] * ratio);
-        $("#imagemapidevice_img_" + this.ideviceId).mapster("resize",
-        		parentWidth, newHeight, 0);
+
+        $("#imagemapidevice_img_" + this.ideviceId).css("width", parentWidth);
+        $("#imagemapidevice_img_" + this.ideviceId).css("height", newHeight);
+        $("#imagemapidevice_img_" + this.ideviceId).rwdImageMaps();
 		$("imagemapidevice_img_" + this.ideviceId).attr(
 		    'data-idevice-init', 'done');
     },
@@ -240,7 +215,6 @@ ImageMapIdevice.prototype = {
     	    
     	var ratio = newWidth / setWidth;
     	var newHeight = Math.round(setHeight * ratio);
-    	//alert(newWidth + "," + newHeight);
     	return [newWidth, newHeight];
     }    
 };
@@ -263,22 +237,12 @@ function imageMapIdevicePageInit(containerSelector) {
                 	imageMapIdevices[realId].initEditor();
                 }else {
 	                var sizes = imageMapIdevices[realId].calcMapsterSize();
-	                if(sizes[0] > 0) {
-	                    imageMapIdevices[realId].initMapIdevice({
-	                        width : sizes[0],
-	                        height: sizes[1],
-	                        growToFit : true
-	                    }); 
-	                }else {
-	                    imageMapIdevices[realId] = null;
-	                    $(document).on("pageshow", function() {
-	                        imageMapIdevicePageInit();
-	                    });
-	                    
-	                    $(document).on("execontentpageshow", function(evt) {
-	                        imageMapIdevicePageInit(evt.targetSelector);
-	                    });
-	                }
+                    imageMapIdevices[realId].initMapIdevice({
+                        width : sizes[0],
+                        height: sizes[1],
+                        growToFit : true
+                    }); 
+	                
                 }
             }
         }
@@ -291,8 +255,6 @@ function imageMapIdevicePageInit(containerSelector) {
 Init - lets get going
 */
 $(function() {
-    $(document).on("execontentpageshow", function(evt) {
-                        imageMapIdevicePageInit(evt.targetSelector);
-                    });
     imageMapIdevicePageInit();
 });
+

@@ -53,28 +53,15 @@ class ImageMapIdevice(Idevice):
         
         #use the new system_scripts method
         self.system_scripts = ["imagemapidevice.js", \
-                                    "jquery.imagemapster.js"]
+                                    "jquery.tooltipster.js",
+                                    "tooltipster.css",
+                                    "jquery.rwdImageMaps.js"]
         
     """
     Get the scripts that we need 
     """
     def uploadNeededScripts(self):
-        from exe import globals
-        import os,sys
-        scriptFileNames = ['imagemapidevice-0.1.js', 'jquery.imagemapster.js']
-        
-        #if this is the case... aint gonna work
-        if self.parentNode is None or self.parentNode.package is None:
-            return
-        
-        for scriptName in scriptFileNames:
-            from exe import globals 
-            scriptSrcFilename = \
-                globals.application.config.webDir/"templates"/scriptName
-            gameScriptFile = Path(scriptSrcFilename)
-            if gameScriptFile.isfile() and \
-            (gameScriptFile.md5 not in self.parentNode.package.resources):
-                Resource(self, gameScriptFile)
+        pass
         
     def add_map_area(self, num_areas_to_add = 1):
         default_width = 100
