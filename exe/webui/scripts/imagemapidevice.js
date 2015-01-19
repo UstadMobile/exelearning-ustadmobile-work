@@ -52,6 +52,7 @@ ImageMapIdevice.prototype = {
         
         $(areaSelector).each(function() {
             var dataKeyVal = $(this).attr("data-key");
+            var evtNames = $(this).attr("data-activate-on");
             var tooltipDivSel = "#imageMapToolTip_" + dataKeyVal;
             
             var tipHasContents = true;
@@ -69,11 +70,17 @@ ImageMapIdevice.prototype = {
             }
                 
             if(tipHasContents) {
-                $(this).tooltipster({
-                    animation: 'fade',
-                    content : $(tooltipDivSel).html(),
-                    contentAsHTML: true
-                });
+            	var tooltipOptions = {
+	                animation: 'fade',
+	                content : $(tooltipDivSel).html(),
+	                contentAsHTML: true
+                };
+            	
+            	if(evtNames === "click") {
+            		tooltipOptions['trigger'] = 'click';
+            	}
+            	
+                $(this).tooltipster(tooltipOptions);
             }
             
             var evtHandler = function(evt) {
@@ -99,8 +106,13 @@ ImageMapIdevice.prototype = {
                 
                 return false;
             };
+            
             $(this).on("click", evtHandler);
-            $(this).mouseover(evtHandler);
+            
+            //Apply only if both are enabled
+            if(evtNames === "hover click") {
+            	$(this).mouseover(evtHandler);            	
+            }
         });
         
         var parentWidth = 

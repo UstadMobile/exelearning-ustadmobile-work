@@ -212,12 +212,16 @@ class ImageMapAreaElement(Element):
         field_id = self.field.id
         coords_text_field_id = self.field.main_fields.fields['coords'].id
         coords = self.field.main_fields.fields['coords'].content
+        activateon = self.field.main_fields.fields['activateon'].content
+        
         html = """<area shape='rect' alt='%(field_id)s' 
             id='imgmap_area_%(field_id)s'
             data-coords-fieldid='%(coords_text_field_id)s'
+            data-activate-on="%(activateon)s" 
             coords='%(coords)s' data-key='%(field_id)s' href='#'/>
         """ % {'field_id' : field_id, 'coords' : coords,
-               'coords_text_field_id' : coords_text_field_id}
+               'coords_text_field_id' : coords_text_field_id,
+               'activateon' : activateon }
         
         return html
     
