@@ -53,6 +53,18 @@ function exeWriteSFXAudioTags() {
 
 //exeWriteSFXAudioTags();
 
+/**
+ * Convert the HTMLCollection (e.g. return result of 
+ * getElementsByTagName) to a normal array type;
+ */
+function convertHTMLCollectionToArray(htmlList) {
+	var retVal = [];
+	for(var i = 0 ; i < htmlList.length; i++) {
+		retVal[i] = htmlList[i];
+	}
+	
+	return retVal;
+}
 
 /*
  Finds all the audio and video tags that are in a given domElement
@@ -60,21 +72,14 @@ function exeWriteSFXAudioTags() {
  tags for feedback purposes
 */
 function findAllMediaInElement(domElement) {
-    var foundElements = new Array();
-    for(var i = 0; i < domElement.childNodes.length; i++) {
-        var currentChild = domElement.childNodes[i];
-        if(currentChild.nodeName == "AUDIO" | currentChild.nodeName == "VIDEO") {
-            foundElements[foundElements.length] = currentChild;
-        }
-        if(currentChild.childNodes.length > 0) {
-            var subMediaElements = findAllMediaInElement(currentChild);
-            for(var j = 0; j < subMediaElements.length; j++) {
-                foundElements[foundElements.length] = subMediaElements[j];
-            }
-            
-        }
-    }
+    var audioTags = convertHTMLCollectionToArray(
+    	domElement.getElementsByTagNameNS("*", "audio"));
+    var videoTags = convertHTMLCollectionToArray(
+    		domElement.getElementsByTagNameNS("*", "video"));
+    var numFound = audioTags.length + videoTags.length;
 
+    return audioTags.concat(videoTags);
+    
     return foundElements;
 }
 

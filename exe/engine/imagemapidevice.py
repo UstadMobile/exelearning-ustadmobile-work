@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 # ===========================================================================
 class ImageMapIdevice(Idevice):
     
-    persistenceVersion = 4
+    persistenceVersion = 5
     
     def __init__(self, content=""):
         Idevice.__init__(self, x_(u"Image Map"), 
@@ -90,6 +90,13 @@ class ImageMapIdevice(Idevice):
         self.system_scripts = ["imagemapidevice.js", \
                                     "jquery.imagemapster.js"] 
         
+    def upgradeToVersion5(self):
+        """move away from imagemapster due to bug using
+        it with XHTML"""
+        self.system_scripts = ["imagemapidevice.js", \
+                                    "jquery.tooltipster.js",
+                                    "tooltipster.css",
+                                    "jquery.rwdImageMaps.js"]
    
 class ImageMapAreaField(Field):
     

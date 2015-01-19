@@ -369,6 +369,8 @@ class Epub3Page(Page):
         html += u'<body class="exe-epub3"><script type="text/javascript">document.body.className+=" js"</script>' + lb
         html += u"<div id=\"outer\">" + lb
         html += u"<" + sectionTag + " id=\"main\">" + lb
+        if ustadmobile_mode is True:
+            html += "<div data-role=\"page\">" + lb
         html += u"<" + headerTag + " id=\"nodeDecoration\">"
         html += u'<h1 id=\"nodeTitle\">'
         html += escape(self.node.titleLong)
@@ -393,6 +395,9 @@ class Epub3Page(Page):
                         self.node.package))
             html += u'</' + articleTag + '>' + lb  # iDevice div
 
+        if ustadmobile_mode is True:
+            html += u"</div>" + lb #end JQM Page
+        
         html += u"</" + sectionTag + ">" + lb  # /#main
         html += self.renderLicense()
         html += unicode(BeautifulSoup(self.renderFooter(), convertEntities=BeautifulSoup.XHTML_ENTITIES))

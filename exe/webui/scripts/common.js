@@ -53,6 +53,18 @@ function exeWriteSFXAudioTags() {
 
 //exeWriteSFXAudioTags();
 
+/**
+ * Convert the HTMLCollection (e.g. return result of 
+ * getElementsByTagName) to a normal array type;
+ */
+function convertHTMLCollectionToArray(htmlList) {
+	var retVal = [];
+	for(var i = 0 ; i < htmlList.length; i++) {
+		retVal[i] = htmlList[i];
+	}
+	
+	return retVal;
+}
 
 /*
  Finds all the audio and video tags that are in a given domElement
@@ -60,7 +72,15 @@ function exeWriteSFXAudioTags() {
  tags for feedback purposes
 */
 function findAllMediaInElement(domElement) {
-    var foundElements = new Array();
+    var audioTags = convertHTMLCollectionToArray(
+    	domElement.getElementsByTagNameNS("*", "audio"));
+    var videoTags = convertHTMLCollectionToArray(
+    		domElement.getElementsByTagNameNS("*", "video"));
+    var numFound = audioTags.length + videoTags.length;
+
+    return audioTags.concat(videoTags);
+    
+    /*
     for(var i = 0; i < domElement.childNodes.length; i++) {
         var currentChild = domElement.childNodes[i];
         if(currentChild.nodeName == "AUDIO" | currentChild.nodeName == "VIDEO") {
@@ -74,7 +94,7 @@ function findAllMediaInElement(domElement) {
             
         }
     }
-
+	*/
     return foundElements;
 }
 
@@ -327,16 +347,20 @@ function getFeedback(optionId, optionsNum, ideviceId, mode) {
     }    
     
     //try and send TINCAN statement
-    if(EXETinCan && EXETinCan.getInstance().getActor()) {
-    	if(mode === 'multi') {
+    /*
+     * DISABLED DUE TO ERRORS IN PARSING THESE JSONs
+    if(EXETinCan) {
+    	
+    	if(mode == 'multi') {
     		var tinCanDefinition = JSON.parse($("#tcdef_"+ideviceId).text()); 
     		var tinCanAnsMap = JSON.parse($("#tc_ansmap_"+ideviceId).text()); 
-    		EXETinCan.getInstance().makeMCQTinCanStatement(
-    				tinCanDefinition,ideviceId, tinCanAnsMap["answerMap"][optionId]['id'], 
-    				tinCanAnsMap["answerMap"][optionId]['iscorrect']);
+    		getEXETinCanInstance().makeMCQTinCanStatement(
+    				tinCanDefinition,ideviceId, tinCanAnsMap[optionId]['id'], 
+    				tinCanAnsMap[optionId]['iscorrect']);
     	}
     	
-    }    
+    }*/
+    
 }
 
 // Cloze Field Stuff /////////////////////////////////////////////////
@@ -1406,7 +1430,7 @@ this.idRef.onmouseup=function(){dO.currID=null}
 }
 
 if(dO.ns4)document.captureEvents(Event.MOUSEMOVE);
-//document.onmousemove=trckM;
+document.onmousemove=trckM;
 
 
 window.onresize=function(){
@@ -1414,9 +1438,6 @@ if(dO.ns4)setTimeout('history.go(0)',300);
 }
 
 var $exe = {
-		
-	pageName: "",
-		
     init : function(){
         var d = document.body.className;
         $exe.addRoles();
@@ -1441,34 +1462,6 @@ var $exe = {
         	//load required files
         	$exe.initTestMode();
         }
-        
-        this.pageName = this.pageBaseName(document.location.href);
-    },
-    
-    pageBaseName: function(url) {
-    	//get rid of up to the last slash
-    	if(url.lastIndexOf("/") !== -1) {
-    		url = url.substring(url.lastIndexOf("/")+1);
-    	}
-    	
-    	if(url.indexOf("?") !== -1) {
-    		url = url.substring(0, url.indexOf("?"));
-    	}
-    	
-    	var htmlSuffix = ".html";
-        if(url.indexOf(htmlSuffix) === url.length - htmlSuffix.length) {
-            url = url.substring(0, url.length - htmlSuffix.length);
-        }
-        
-        return url;
-    },
-    
-    updateCurrentPageName: function(url) {
-    	this.pageName = this.pageBaseName(url);
-    },
-    
-    getCurrentPageName: function() {
-    	return this.pageName;
     },
     
     initTestMode: function() {
@@ -1762,63 +1755,5 @@ function exeUtilRemoveWhiteSpace(str) {
  *  @param activeContainerSelector String selector given - can be undefined
  */
 function checkActivePageContainer(activeContainerSelector) {
-	if(typeof activeContainerSelector === "undefined") {
-	    if(typeof UstadMobile !== "undefined") {
-	        activeContainerSelector = UstadMobileContentZone.getInstance(
-	            ).contentPageSelectors[UstadMobile.MIDDLE];
-	        if(activeContainerSelector === null) {
-	        	//actually is the first page to load from TOC 
-	        	//selector id not known
-	        	activeContainerSelector = "";
-	        }
-	    }else {
-	        activeContainerSelector = "#main";
-	    }
-	}
-	
-	return activeContainerSelector;
+	return activeContainerSelector || "body";
 }
-
-/**
- * HTML Based Idevice support 
- */
-
-//JQuery Plugin
-(function($){	
-	/**
-	 * Find all idevices in the given element and create them as 
-	 * widgets
-	 * 
-	 * @param resPath String path to device.js files or "" for flat
-	 */
-	$.fn.enhanceIdevicesWithin = function(scriptPath) {
-		$(this).find("div[data-idevice-type]").each(function(index) {
-			var ideviceName = $(this).attr("data-idevice-type");
-			var scriptSrc = "/scripts/htmlidevices/" +ideviceName 
-				+ "/" + ideviceName + ".js";
-			if(typeof scriptPath !== "undefined" && scriptPath === "") {
-				scriptSrc = ideviceName + ".js";
-			}
-			
-			$exe.loadScript(scriptSrc, $.proxy(function() {
-				var editable = 
-					$(this).parent().hasClass(
-							"idevice_authoring_container");
-				$(this)[ideviceName]({"editable" : editable});
-			}, this), function() {
-				console.log("enhanceIdevicesWithin FAIL with " 
-						+ scriptSrc);
-			});
-			
-			
-		});
-	}	
-}(jQuery));
-
-$(function() {
-	if(document.location.href.indexOf("/authoring") !== -1) {
-		$("BODY").enhanceIdevicesWithin();
-	}else {
-		$("BODY").enhanceIdevicesWithin("");
-	}
-});

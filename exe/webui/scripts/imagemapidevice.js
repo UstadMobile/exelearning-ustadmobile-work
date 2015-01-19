@@ -52,11 +52,15 @@ ImageMapIdevice.prototype = {
         
         $(areaSelector).each(function() {
             var dataKeyVal = $(this).attr("data-key");
-            var tooltipDivSel = "#imageMapToolTip_"+ initIdeviceId
-                + "_" + dataKeyVal;
+            var tooltipDivSel = "#imageMapToolTip_" + dataKeyVal;
             
             var tipHasContents = true;
-            var tipContents = $(tooltipDivSel).text();
+            
+            var tipContentsEl = $(tooltipDivSel).clone(true);
+            tipContentsEl.find("audio").remove();
+            tipContentsEl.find("video").remove();
+            
+            var tipContents = tipContentsEl.text();
             tipContents = exeUtilRemoveWhiteSpace(tipContents);
             if(tipContents.length === 0) {
             	var numImg = $(tooltipDivSel + " img").length;
@@ -86,7 +90,7 @@ ImageMapIdevice.prototype = {
                     $(this).attr("data-last-played", timeNow);
                 }
                 
-                var elementId = $(this).attr("id");
+                var elementId = "imageMapToolTip_" + $(this).attr("data-key");
                 var tooltipEl = document.getElementById(elementId);
                 var audioElements = findAllMediaInElement(tooltipEl);
                 for(var i = 0; i < audioElements.length; i++) {
@@ -226,7 +230,8 @@ ImageMapIdevice.prototype = {
  */
 function imageMapIdevicePageInit(containerSelector) {
 	containerSelector = checkActivePageContainer(containerSelector);
-    $(containerSelector + " .imagemapidevice_img").each(function() {
+	var jqResult = $(containerSelector + " .imagemapidevice_img"); 
+    jqResult.each(function() {
         var elId = this.id;
         if(elId != null && elId.length > 1) {
             var realId = elId.substring(imageMapIdeviceIdPrefix.length);
@@ -247,6 +252,13 @@ function imageMapIdevicePageInit(containerSelector) {
             }
         }
     });
+    
+    if(jqResult.length > 0) {
+    	$exe.loadScript("tooltipster.css");
+    }
+    
+    jqResult = null;
+    
 }
 
 
@@ -257,4 +269,3 @@ Init - lets get going
 $(function() {
     imageMapIdevicePageInit();
 });
-

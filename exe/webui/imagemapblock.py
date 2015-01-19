@@ -223,9 +223,7 @@ class ImageMapAreaElement(Element):
     
     
     def get_tooltip(self, preview_mode = False):
-        html = u""
-        tooltip_id = self.field.idevice.id + "_" + self.field.id
-        html += "<div id='imageMapToolTip_%s'>\n" % tooltip_id
+        html = u"<div id='imageMapToolTip_%s'>\n" %self.field.id
         if preview_mode == False:
             html += self.elements['tooltip'].renderView()
         else:
