@@ -100,7 +100,7 @@ class ImageMapIdevice(Idevice):
    
 class ImageMapAreaField(Field):
     
-    persistenceVersion = 2
+    persistenceVersion = 3
     
     def __init__(self, idevice, coords=""):
         Field.__init__(self, x_("Image Map Area"), x_("Image Map Area"))
@@ -116,8 +116,9 @@ class ImageMapAreaField(Field):
            'shape' : ['choice', x_('Area Shape'), x_('Area Shape'),\
                                 {'choices' : [['rect', x_('Rectangle')] ] }],\
            'activateon' : ['choice', x_('Activate When'), x_('Activate When'),\
-                            {'choices' : [['hover click', x_("User clicks, taps, or mouse hovers over area")],
-                                          ['click', x_("Only when user clicks or taps the area")]]} ],
+                            {'choices' : [['click', x_("Only when user clicks or taps the area")],
+                                          ['hover click', x_("User clicks, taps, or mouse hovers over area")]]
+                                          } ],
            'coords' : ['text', "Coordinates", "Coordinates",
                        {"defaultval" : coords}]\
                        }
@@ -128,9 +129,12 @@ class ImageMapAreaField(Field):
     def upgradeToVersion2(self):
         self.main_fields.fieldOrder = ["tooltip", "activateon", "shape", "coords"]
         self.main_fields.fieldInfoDict['activateon'] = ['choice', x_('Activate When'), x_('Activate When'),\
-                            {'choices' : [['hover click', x_("User clicks, taps, or mouse hovers over area")],
-                                          ['click', x_("Only when user clicks or taps the area")]],
+                            {'choices' : [['click', x_("Only when user clicks or taps the area")],
+                                          ['hover click', x_("User clicks, taps, or mouse hovers over area")]],
                              'defaultVal' : 'hover click'} ]
         self.main_fields.makeFields()
         self.main_fields.fields['activateon'].content = "hover click"
+        
+    def upgradeToVersion3(self):
+        self.main_fields.fields['activateon'].content = "click"
         

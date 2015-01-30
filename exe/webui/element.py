@@ -2880,6 +2880,10 @@ class QuizQuestionElement(Element):
     
     
     def _render_tincan_all(self, desc_max_length=64):
+        """ Disabled as this is rendering HTML entities
+        where they should not be and will shortly be moved
+        into the tincan.xml file instead.
+        """
         html = ""
         html += "<div id='tc_ansmap_%s' class='tcdiv'>" % self.id
         html += "{ \"answerMap\" : ["
@@ -2915,7 +2919,8 @@ class QuizQuestionElement(Element):
         html += self.render_tincan_definition(64)
         html += "</div>"
         
-        return html
+        #return html
+        return ""
 
     
     def renderView(self, img1=None, img2=None):
