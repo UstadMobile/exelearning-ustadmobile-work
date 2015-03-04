@@ -33,7 +33,8 @@ tinymce.init({
 	      "insertdatetime media table contextmenu paste textcolor"
 	  ],
     toolbar: "undo redo | styleselect | fontselect | fontsizeselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | forecolor backcolor ",
-	setup: function(ed) {
+    fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt 60pt 72pt 88pt 100pt 112pt 124pt",
+    setup: function(ed) {
 		ed.on("init", function(e) {
 			EXEAuthoringDefaultPrompts.setupTinyMCEEditor(ed);
 		});
