@@ -2471,6 +2471,8 @@ class QuizOptionElement(Element):
         self.feedbackElement.id = self.feedbackId
         
         self.scoreElement = TextElement(field.scoreTextField)
+        self.branchTypeElement = TextElement(field.branchTypeField)
+        self.branchHrefElement = TextElement(field.branchHrefField)
         
 
     def process(self, request):
@@ -2489,6 +2491,8 @@ class QuizOptionElement(Element):
             self.feedbackElement.process(request)
                         
         self.scoreElement.process(request)
+        self.branchTypeElement.process(request)
+        self.branchHrefElement.process(request)
         
         if ("c"+self.field.question.id in request.args \
         and request.args["c"+self.field.question.id][0]==str(self.index) \
@@ -2608,6 +2612,50 @@ class QuizOptionElement(Element):
                          default_prompt = self.feedbackElement.field.default_prompt)
         
         html += self.scoreElement.renderEdit()
+        
+        html += "<strong>Branching:</strong>"
+        html += "<select name='%s'>" % self.branchTypeElement.id
+        current_branch_type = ""
+        if self.branchTypeElement.field.content:
+            current_branch_type = self.branchTypeElement.field.content
+        
+        if current_branch_type != "":
+            html += "<option value='' selected='selected'>None</option>"
+        else:
+            html += "<option value=''>None</option>"
+        
+        if current_branch_type != "aftermedia":
+            html += "<option value='aftermedia'>After feedback sound/video plays</option>"
+        else:
+            html += "<option value='aftermedia' selected='selected'>After feedback sound/video plays</option>"
+        
+        if current_branch_type != "immediate":
+            html += "<option value='immediate'>Immediate</option>"
+        else:
+            html += "<option value='immediate' selected='selected'>Immediate</option>"
+
+        html += "</select>"
+        
+        html += "<strong>Go To</strong>"
+                
+        #make a list of internal links
+        html += "<select name='%s'>" % self.branchHrefElement.id
+        internal_links = this_package.get_internal_links()
+        current_link_val = ""
+        if self.branchHrefElement.field.content:
+            current_link_val = self.branchHrefElement.field.content
+        for link in internal_links:
+            selected_str = ""
+            if current_link_val == link['value']:
+                selected_str = " selected='selected' "
+            link_obj = {
+                'value' : link['value'], 
+                'title' : link['title'],
+                'selected' : selected_str
+            }
+            html += "<option value='%(value)s' %(selected)s>%(title)s</option>" % link_obj
+        html += "</select>"
+        
          
         html += "</td></tr>\n"
 
@@ -2693,7 +2741,11 @@ class QuizOptionElement(Element):
             else:
                 feedbackStr = "<p>" + c_("Wrong")+"</p>"+lb
 
-        html  = '<'+sectionTag+' id="sa%sb%s" class="feedback js-hidden">' % (str(self.index), self.field.question.id)
+        html  = '<'+sectionTag+' id="sa%sb%s" class="feedback js-hidden" ' % (str(self.index), self.field.question.id)
+        html += ' data-branch-type="%s" data-branch-href="%s"' % (self.branchTypeElement.renderView(),
+                                                                      self.branchHrefElement.renderView())
+        html += '>'
+        
         if dT != "HTML5":
             html  += '<a name="sa%sb%s"></a>' % (str(self.index), self.field.question.id)
         html += lb

@@ -3639,6 +3639,14 @@ class QuizOptionField(Field):
         
         self.scoreTextField.idevice = idevice
         
+        self.branchTypeField = TextField(x_("Branching Type"),
+                                         x_("Branching Type"), u"")
+        self.branchTypeField.idevice = idevice
+        
+        self.branchHrefField = TextField(x_("Branch To"),
+                                         x_("Branch To"), u"")
+        self.branchHrefField.idevice = idevice
+        
 
     def getResourcesField(self, this_resource):
         """

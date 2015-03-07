@@ -80,21 +80,6 @@ function findAllMediaInElement(domElement) {
 
     return audioTags.concat(videoTags);
     
-    /*
-    for(var i = 0; i < domElement.childNodes.length; i++) {
-        var currentChild = domElement.childNodes[i];
-        if(currentChild.nodeName == "AUDIO" | currentChild.nodeName == "VIDEO") {
-            foundElements[foundElements.length] = currentChild;
-        }
-        if(currentChild.childNodes.length > 0) {
-            var subMediaElements = findAllMediaInElement(currentChild);
-            for(var j = 0; j < subMediaElements.length; j++) {
-                foundElements[foundElements.length] = subMediaElements[j];
-            }
-            
-        }
-    }
-	*/
     return foundElements;
 }
 
@@ -154,15 +139,13 @@ function getMaxMediaDuration(domElement, autoplay) {
     var longestClipLength = 0;
     var mediaItems = findAllMediaInElement(domElement);
     for(var i = 0; i < mediaItems.length; i++) {
-
-        //test here for HTML 5 audio and video support
-        if(autoplay == true) {
-            mediaItems[i].play();
-        }
-        if(mediaItems[i].duration > longestClipLength) {
+    	if(mediaItems[i].duration > longestClipLength) {
             longestClipLength = mediaItems[i].duration;
         }
-
+    	
+    	if(autoplay) {
+    		mediaItems[i].play();
+    	}
     }
 
     return longestClipLength;
@@ -341,8 +324,34 @@ function getFeedback(optionId, optionsNum, ideviceId, mode) {
         // Multi choice iDevice (mode=='multi')
         for (i = 0; i< optionsNum; i++) { 
             id = "sa" + i + "b" +ideviceId;
-            if(i==optionId) document.getElementById(id).style.display = "block";
-            else document.getElementById(id).style.display = "none";
+            var feedbackEl = document.getElementById(id);
+            if(i==optionId) {
+            	feedbackEl.style.display = "block";
+            	//try and play any media that is contained within feedback
+                var mediaInFeedback = findAllMediaInElement(feedbackEl);
+                for(var j = 0; j < mediaInFeedback.length; j++) {
+                	playAndReset(mediaInFeedback[j]);
+                }
+                
+                var branchType = feedbackEl.getAttribute("data-branch-type");
+                if(branchType && branchType !== "") {
+                	var branchHref = feedbackEl.getAttribute("data-branch-href");
+                	if(branchHref.substring(0,9) !== "exe-node:") {
+                		if(branchType === "aftermedia") { 
+                    		var delay = getMaxMediaDuration(feedbackEl) * 1000;
+                    		setTimeout(function() {
+                    			$exe.openInternalLink(branchHref);
+                    		}, delay);
+                    	}else if(branchType === "immediate") {
+                    		$exe.openInternalLink(branchHref);
+                    	}
+                	}
+                }
+            } else {
+            	feedbackEl.style.display = "none";
+            }
+            
+            
         }
     }    
     
@@ -1730,6 +1739,17 @@ var $exe = {
                 e.value = $exe_i18n.showFeedback
             }
         }
+    },
+    
+    /**
+     * Opens the internal page link given by HREF
+     * 
+     * Note: for scrollers/epubs etc. this might be done by an HTTP
+     * call or such
+     * 
+     */
+    openInternalLink: function(href) {
+    	document.location.href = href;
     }
 }
 
