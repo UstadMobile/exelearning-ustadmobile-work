@@ -584,6 +584,7 @@ class WebsitePage(Page):
     """
     @classmethod
     def getUstadMobileCSSList(cls):
-        return ["jqm-base.css", "jqm-app-theme.css", 
-                "jqm-content-theme.css", "ustadmobile.css"]
+        return ["jquerymobiletheme.min.css", 
+                "jquery.mobile.icons.min.css",
+                "jquery.mobile.structure.css"]
     

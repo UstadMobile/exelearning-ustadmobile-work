@@ -330,11 +330,6 @@ class XMLExport(Epub3Export):
         for file in jqmImageDir.files():
             html5Content += "<file>images/%s</file>\n" % file.name
         
-        #FontAwesome library
-        jqmFontDir = outputDir/"fonts"
-        for file in jqmFontDir.files():
-            html5Content += "<file>fonts/%s</file>\n" % file.name
-        
         html5Content += "</ustadpackage>"
         html5ListFile.write(html5Content)
         html5ListFile.close()
@@ -554,9 +549,8 @@ class XMLExport(Epub3Export):
         file_list.extend(self.copy_sub_dir_list("ustad-jqmimages", 
                             "images", ['png', 'gif'], outputDir))
         
-        file_list.extend(self.copy_sub_dir_list("fontawesome-fonts",
-                         "fonts", ['otf', 'svg', 'eot', 'svg', 'woff', 'ttf'], 
-                          outputDir))
+        file_list.extend(self.copy_sub_dir_list("ustad-jqmimages/icons-png", 
+                            "images/icons-png", ['png'], outputDir))
         
         file_list.extend(self.copy_sub_dir_list("ustad-locale", "locale", ['js'], 
                                                 outputDir))

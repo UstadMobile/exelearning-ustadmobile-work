@@ -3612,7 +3612,7 @@ class QuizOptionField(Field):
     Used by the QuizQuestionField, as part of the Multi-Choice iDevice.
     """
 
-    persistenceVersion = 2
+    persistenceVersion = 3
 
     def __init__(self, question, idevice, name="", instruc="", answer_prompt = "", feedback_prompt = ""):
         """
@@ -3703,6 +3703,15 @@ class QuizOptionField(Field):
                                         u"")
         
         self.scoreTextField.idevice = self.idevice
+        
+    def upgradeToVersion3(self):
+        self.branchTypeField = TextField(x_("Branching Type"),
+                                         x_("Branching Type"), u"")
+        self.branchTypeField.idevice = self.idevice
+        
+        self.branchHrefField = TextField(x_("Branch To"),
+                                         x_("Branch To"), u"")
+        self.branchHrefField.idevice = self.idevice
 
 #===============================================================================
 
