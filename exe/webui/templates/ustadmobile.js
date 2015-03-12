@@ -62,7 +62,12 @@ var ustadMobileInstance = null;
  * @constructor
  */
 UstadMobile = function() {
-    
+    /** 
+     * Main app controller for title, menu items etc.
+     * 
+     * @type {UstadMobileAppController} 
+     */
+    this.appController = null;
 };
 
 /**
@@ -503,6 +508,10 @@ UstadMobile.prototype = {
             umObj.initScriptsToLoad.push("ustadmobile-contentzone.js");
             umObj.initScriptsToLoad.push("ustadjs.js");
         }else {
+            umObj.initScriptsToLoad.push("js/ustadmobile-controllers.js");
+            umObj.initScriptsToLoad.push("js/ustadmobile-views.js");
+            umObj.initScriptsToLoad.push("js/ustadmobile-models.js");
+            
             umObj.initScriptsToLoad.push("lib/ustadjs.js");
             umObj.initScriptsToLoad.push("lib/tincan.js");
             umObj.initScriptsToLoad.push("lib/tincan_queue.js");
@@ -517,6 +526,8 @@ UstadMobile.prototype = {
                 "cordova" : null);
             if(implName !== null) {
                 umObj.initScriptsToLoad.push("js/ustadmobile-appimpl-" 
+                        + implName + ".js");
+                umObj.initScriptsToLoad.push("js/ustadmobile-views-" 
                         + implName + ".js");
             }
         }
@@ -623,7 +634,7 @@ UstadMobile.prototype = {
         //required to make sure exe created pages show correctly
         console.log("UstadMobile: Running Pre-Init");
         $("body").addClass("js");
-        this.loadPanel();
+        //this.loadPanel();
         
         if(UstadMobile.getInstance().getZone() === UstadMobile.ZONE_CONTENT) {
             this.loadRuntimeInfo();
@@ -1233,7 +1244,7 @@ UstadMobileUtils.runCallback = function(fn, args, thisObj) {
     if(typeof fn !== "undefined" && fn !== null) {
         fn.apply(thisObj, args);
     }
-}
+};
 
 /**
  * Utility method to run a function if a property is true, if not apppend to
@@ -1247,7 +1258,267 @@ UstadMobileUtils.runOrWait = function(runNow, fn, args, thisObj, waitingList) {
     }else {
         waitingList.push(fn);
     }
+};
+
+/**
+ * Simplify callback hell situation; run each function in the array.  
+ * Each function must have it's successFn and failFn as the last two arguments
+ * 
+ * When a function succeed all the arguments that it provided to the success callback
+ * will be passed in the same order to the next function in the array,
+ * 
+ * When any part fails the final failFn will be called
+ *  
+ *    
+ * @param {type} fnList
+ * @param {type} successFn
+ * @param {type} failFn
+ * @returns {undefined}
+ */
+UstadMobileUtils.waterfall = function(fnList, successFn, failFn) {
+    if(fnList.length < 1) {
+        UstadMobileUtils.runCallback(successFn, [], this);
+        return;
+    }
+    
+    var lastResultArgs = [];
+    var runItFn = function(index) {       
+        //success function
+        lastResultArgs.push(function() {
+            lastResultArgs = Array.prototype.slice.call(arguments);
+            if(index < (fnList.length - 1)) {
+                runItFn(index+1);
+            }else {
+                UstadMobileUtils.runCallback(successFn, lastResultArgs, this);
+            }
+        });
+        lastResultArgs.push(failFn);
+        fnList[index].apply(this, lastResultArgs);
+    };
+    
+    runItFn(0);
+};
+
+UstadMobileUtils.asyncMapAdvanced = function(fn, argArr, options, successFn, failFn) {
+    var resultMap = [];
+    
+    var numFns = (fn.constructor === Array) ? fn.length : argArr.length;
+    
+    if(fn.constructor === Array && fn.length === 0) {
+        UstadMobileUtils.runCallback(successFn, [], this);
+        return;
+    }
+    
+    var runItFn = function(index) {
+        var thisArgArr = argArr[index] ? UstadMobileUtils.ensureIsArray(
+                argArr[index]) : [];
+        if(options.beforerun) {
+            options.beforerun(index, argArr, resultMap);
+        }
+        
+        thisArgArr.push(function() {
+            var successArgArr = Array.prototype.slice.call(arguments);
+            resultMap.push(successArgArr);
+            if(index < (numFns-1)) {
+                runItFn(index+1);
+            }else {
+                UstadMobileUtils.runCallback(successFn, [resultMap], this);
+            }
+        });
+        thisArgArr.push(failFn);
+        var fn2Apply = fn.constructor === Array ? fn[index] : fn;
+        
+        var fnContext = options.context ? options.context : this;
+        fn2Apply.apply(fnContext, thisArgArr);
+    };
+    
+    runItFn(0);
+};
+
+/**
+ * For each item in arg array call the given function.  
+ * It will be assumed that the last arguments will be the successFn and failFn
+ * 
+ */
+UstadMobileUtils.asyncMap = function(fn, argArr, successFn, failFn) {
+    var resultMap = [];
+    
+    var numFns = (fn.constructor === Array) ? fn.length : argArr.length;
+    
+    if(fn.constructor === Array && fn.length === 0) {
+        UstadMobileUtils.runCallback(successFn, [], this);
+        return;
+    }
+    
+    var runItFn = function(index) {
+        var thisArgArr = argArr[index] ? UstadMobileUtils.ensureIsArray(
+                argArr[index]) : [];
+        thisArgArr.push(function() {
+            var successArgArr = Array.prototype.slice.call(arguments);
+            resultMap.push(successArgArr);
+            if(index < (numFns-1)) {
+                runItFn(index+1);
+            }else {
+                UstadMobileUtils.runCallback(successFn, [resultMap], this);
+            }
+        });
+        thisArgArr.push(failFn);
+        var fn2Apply = fn.constructor === Array ? fn[index] : fn;
+        fn2Apply.apply(this, thisArgArr);
+    };
+    
+    runItFn(0);
+};
+
+/**
+ * Make sure that the given arg is an array so it can be used in function.apply
+ * etc.
+ * 
+ * If it's already an array - return as is, otherwise return a new single item
+ * array
+ * 
+ * @param {Object|Array} arg
+ * @returns {Array} original array if that was provided, or array with one entry otherwise
+ */
+UstadMobileUtils.ensureIsArray = function(arg) {
+    if(arg.constructor === Array) {
+        return arg;
+    }else {
+        return [arg];
+    }
+};
+
+/**
+ * Used to flatten the result of asyncMap - e.g. when asyncResult returns
+ * it will provide an array for each entry.  If the callback provided one value
+ * then it will be an array of arrays each with one entry.
+ * 
+ * flattenArray will turn this into a single array.
+ * 
+ * @param {Array} arr - Array which contains arrays with one entry each
+ * @returns {Array}
+ */
+UstadMobileUtils.flattenArray = function(arr) {
+    var retVal = [];
+    for(var i = 0; i < arr.length; i++) {
+        retVal.push(arr[i].length >= 1 ? arr[i][0] : null);
+    }
+    
+    return retVal;
+};
+
+/**
+ * If parameter seperator is specified; use it; otherwise use /
+ * 
+ * @param {String} seperator (optional)
+ * @returns {undefined}
+ */
+UstadMobileUtils.getSeperator = function(seperator) {
+    if(typeof seperator === "undefined" || seperator === null) {
+        return "/";
+    }else {
+        return seperator;
+    }
+};
+
+/**
+ * Gets the extension of a file - e.g. ".epub" for somefile.epub
+ * 
+ * @param {String} name
+ * @returns {String} the extension of the file
+ */
+UstadMobileUtils.getExtension = function(name) {
+    var lastDotPos = name.lastIndexOf(".");
+    if(lastDotPos === -1) {
+        return null;
+    }else {
+        return name.substring(lastDotPos);
+    }
+};
+
+/**
+ * Split up the path into components according to the seperator
+ * 
+ * @param {type} path
+ * @param {type} seperator
+ * @returns {undefined}
+ */
+UstadMobileUtils.splitPath = function(path, seperator) {
+    seperator = UstadMobileUtils.getSeperator(seperator);
+    return path.split(seperator);
+};
+
+/**
+ * Chop off the last part of the filename 
+ * 
+ */
+UstadMobileUtils.getFilename = function(path, seperator) {
+    var pathParts = UstadMobileUtils.splitPath(path, seperator);
+    return pathParts[pathParts.length-1];
+};
+
+/**
+ * Use to remove trailing slash when needed - will remove as many trailing
+ * slashes as occur at the end of a path
+ * 
+ * e.g. /file/dir/ -> /file/dir and /file/somedir/// to /file/somedir
+ * 
+ * @param {string} path
+ * @param {string} [seperator=/] the seperator - must be of length 1
+ * 
+ * @returns the path with any trailing seperators removed
+ */
+UstadMobileUtils.removeTrailingSeperators = function(path, seperator) {
+    var sepChar = UstadMobileUtils.getSeperator(seperator);
+    var retVal = path;
+    while(retVal.charAt(retVal.length-1) === sepChar) {
+        retVal = retVal.substring(0, retVal.length-1);
+    }
+    
+    return retVal;
+};
+
+/**
+ * Get everything except the last part of the path
+ */
+UstadMobileUtils.getPath = function(completePath, seperator) {
+    seperator = UstadMobileUtils.getSeperator(seperator);
+    
+    //in case the last character is a trailing slash
+    if(completePath.lastIndexOf(seperator) === completePath.length-1) {
+        completePath = completePath.substring(0, completePath.length-1);
+    }
+    
+    return completePath.substring(0, completePath.lastIndexOf("/"));
+};
+
+/**
+ * Chop off the last part of the URL
+ * 
+ * e.g. file://localhost/some/dir/file - file://localhost/some/dir
+ * 
+ * @param {type} url
+ * @param {type} seperator
+ * @returns {undefined}
+ */
+UstadMobileUtils.getURLParent = function(url, seperator) {
+    seperator = UstadMobileUtils.getSeperator(seperator);
+    return url.substring(0, url.lastIndexOf(seperator));
 }
+
+/**
+ * Return the default value if the valProvided is undefined, otherwise
+ * the value itself
+ * 
+ * @return valProvided if defined, defaultVal otherwise
+ */
+UstadMobileUtils.defaultVal = function(valProvided, defaultVal) {
+    if(typeof valProvided === "undefined") {
+        return defaultVal;
+    }else {
+        return valProvided;
+    }
+};
 
 /**
  * Joins an array of Strings together with one and only one seperator between
@@ -1258,12 +1529,10 @@ UstadMobileUtils.runOrWait = function(runNow, fn, args, thisObj, waitingList) {
  * @returns string Path components joined into one string
  */
 UstadMobileUtils.joinPath = function(pathArr, seperator) {
-    if(typeof seperator === "undefined" || seperator === null) {
-        seperator = "/";
-    }
+    seperator = UstadMobileUtils.getSeperator(seperator);
     
     if(pathArr.length === 1) {
-        return pathArr[1];
+        return pathArr[0];
     }
     
     var retVal = pathArr[0];
@@ -1281,11 +1550,35 @@ UstadMobileUtils.joinPath = function(pathArr, seperator) {
     }
     
     return retVal;
-}
+};
+
+/**
+* Turns search query variables into a dictionary - adapted from
+* http://css-tricks.com/snippets/javascript/get-url-variables/
+* 
+* @param {string} queryStr Input query string
+* @method getQueryVariable
+*/
+UstadMobileUtils.getQueryVariables = function(queryStr) {
+    var locationQuery = window.location.search.substring.length >= 1 ?
+        window.location.search.substring(1) : "";
+    var query = (typeof queryStr !== "undefined") ? queryStr : 
+        locationQuery;
+    
+    var retVal = {};
+    if(window.location.search.length > 2) {
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            retVal[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+        }
+    }
+    return retVal;
+};
 
 UstadMobileUtils.debugLog = function(msg) {
     console.log(msg);
-}
+};
 
 /**
  * Format an ISO8601 duration for the given number of milliseconds difference
@@ -1370,6 +1663,14 @@ UstadMobileUtils.playMediaElement = function(mediaEl, onPlayCallback) {
 
 
 /**
+ * 
+ * @callback UstadMobileFailCallback
+ * @param {Object} error object
+ * @param {string} errStr text of error if any
+ * 
+ */
+
+/**
  * Abstract class that defines what an implementation of the app needs to be 
  * able to do - e.g. get the default language of the system, file system scans, 
  * etc.  There will be an implementation for Cordova and NodeWebKit
@@ -1438,20 +1739,6 @@ UstadMobileAppImplementation.prototype = {
     },
     
     /**
-     * Shows the course represented by the UstadMobileCourseEntry object
-     * courseObj in the correct way for this implementation
-     * 
-     * @param courseObj {UstadMobileCourseEntry} CourseEntry to be shown
-     * @param onshowCallback function to run when the course element (eg iframe) is out
-     * @param show boolean whether or not to make the course itself visible
-     * @param onloadCallback function to run when the course has loaded/displayed
-     * @parma onerrorCallback function to run when the course has failed to load
-     */
-    showCourse: function(courseObj, onshowCallback, show, onloadCallback, onerrorCallback) {
-       
-    },
-    
-    /**
      * Return a JSON string with system information - e.g. for reporting with
      * bug reports etc.
      * 
@@ -1460,10 +1747,552 @@ UstadMobileAppImplementation.prototype = {
      */
     getSystemInfo: function(callback) {
         
+    },
+    
+    /**
+     * Callback when writing string to disk was successful
+     * @callback writeStringToFileSuccess
+     * @param result {Object} misc result properties
+     */
+    
+    /**
+     * 
+     * @callback UstadMobileAppImplementation~writeStringToFileFail
+     * @param errStr {string} error as a string
+     * @param err {Object} error as an object
+     */
+    
+    /**
+     * Write a string to a file
+     * 
+     * @abstract
+     * @param dest {FileEntry|string} destination to save text in file to
+     * @param str {string} String contents to be written to file
+     * @param options {Object} options
+     * @param successFn {writeStringToFileSuccess} success callback
+     * @param failFn {UstadMobileAppImplementation~writeStringToFileFail} failure callback
+     * 
+     */
+    writeStringToFile: function(dest, str, options, successFn, failFn) {
+        
+    },
+    
+    
+    readStringFromFile: function(src, options, successFn, failFn) {
+        
+    },
+    
+    /**
+     * 
+     * @callback fileExistsSuccessCB
+     * @param {boolean} exists true/false if file exists
+     */
+    
+    /**
+     * Check to see if the given file exists as either a file or directory
+     * 
+     * @abstract
+     * @param {FileEntry|string} file the file entry to look for
+     * @param {fileExistsSuccessCB} successFn
+     * @param {type} failFn
+     */
+    fileExists: function(file, successFn, failFn) {
+        
+    },
+    
+    /**
+     * Remove the given file
+     * 
+     * @abstract
+     * @param {FileEntry|string} file file to be removed
+     * @param {function} successFn callback to run when successful
+     * @param {UstadMobileFailCallback} failFn callback when failed
+     */
+    removeFile: function(file, successFn, failFn) {
+        
+    },
+    
+    /**
+     * Delete a file if it exists; if it does not exist, do nothing
+     * 
+     * @param {FileEntry|string} file FileEntry object or URI string to file
+     * @param {function} successFn called when the file is removed OK or does not exist
+     * @param {function} failFn called when something goes wrong
+     */
+    removeFileIfExists: function(file, successFn, failFn) {
+        UstadMobile.getInstance().systemImpl.fileExists(file, function(fileFound) {
+            if(fileFound) {
+                UstadMobile.getInstance().systemImpl.removeFile(file, successFn, 
+                    failFn);
+            }else {
+                UstadMobileUtils.runCallback(successFn, [], this);
+            }
+        }, failFn);
+    },
+    
+    /**
+     * Concatenate multiple files in order into one file
+     * 
+     * @param {Array} array of type FileEntry or URI strings
+     * @param 
+     */
+    concatenateFiles: function(files, options, successFn, failFn) {
+        
+    },
+    
+    /**
+     * @callback UstadMobileAppImplementation~downloadSuccessCB
+     * @param 
+     */
+    
+    /**
+     * Downloads a file or part of a file to a given fileURI.  Makes only one 
+     * attempt at download.
+     * 
+     * @abstract
+     * @param {string} url Absolute url to be downloaded
+     * @param {string} fileURI Local File URI where this file is to be downloaded
+     * @param {Object} options misc options
+     * @param {number} [options.frombyte=0] Range to start downloading from 
+     * requires range support on the server
+     * @param {number} [options.tobyte] Range to download until - requires range
+     * support from the server
+     * @param {boolean} [options.keepIncompleteFile] - if a download fails, leave it
+     * @param 
+     * @returns {undefined}
+     */
+    downloadUrlToFileURI: function(url, fileURI, options, successFn, failFn) {
+        
+    },
+    
+    renameFile : function(srcFile, newName, options, successFn, failFn) {
+        
+    },
+    
+    fileSize: function(file, successFn, failFn) {
+        
+    },
+    
+    mkBlob: function(arrParts, contentType) {
+        var blobResult = null;
+        try {
+            blobResult = new Blob(arrParts, contentType);
+        }catch(e) {
+            var ourBlobBuilder = window.BlobBuilder || 
+                         window.WebKitBlobBuilder || 
+                         window.MozBlobBuilder || 
+                         window.MSBlobBuilder;
+            if(ourBlobBuilder) {
+                var bb = new ourBlobBuilder();
+                for(var i = 0; i < arrParts.length; i++) {
+                    bb.append(arrParts[i]);
+                }
+                blobResult = bb.getBlob(contentType.type);
+            }
+        }
+        
+        return blobResult;
+    },
+    
+    /**
+     * Make a new directory
+     * 
+     * @abstract
+     * @param {string} dirURI file URI for the directory to be made
+     * @param {Object} options
+     * @param {function} successFn callback when completed successfully
+     * @param {function} failFn callback when failed
+     */
+    makeDirectory: function(dirURI, options, successFn, failFn) {
+        
+    },
+    
+    /**
+     * Remove the directory and it's contents recursively
+     * 
+     * @param {string} dirURI Directory to remove
+     * @param {Object} options
+     * @param {function} successFn success callback with no arguments provided
+     * @param {function} failFn error callback given the error that occurred
+     */
+    removeRecursively: function(dirURI, options, successFn, failFn) {
+        
+    },
+    
+    /**
+     * Unzips a given zip file to a given directory
+     * 
+     * @param {string|FileEntry} zipSrc source zip file
+     * @param {string|DirectoryEntry} destDir directory to unzip into
+     * @param {Object} options
+     * @param {function} [options.onprogress] progress event handler
+     * @param {function} successFn success callback that takes destDirEntry arg
+     * @param {function} failFn failure callback
+     */
+    unzipFile: function(zipSrc, destDir, options, successFn, failFn) {
+        
     }
     
 };
 
+var UstadMobileResumableDownload = function() {
+    this.srcURL = null;
+    
+    this._onprogress = null;
+    
+    //the number of bytes we have got so far
+    this.bytesDownloadedOK = 0;
+    
+    //the size of this file
+    this.fileSize = "";
+    
+    //file etag if provided
+    this.etag = "";
+    
+    this.srcURL = "";
+    
+    //the destination file where this eventually be written
+    this.destURI = "";
+    
+    this.tryCount = 0;
+    
+    this.maxRetries = 20;
+    
+    this.onprogress = null;
+    
+    /** 
+     * If we found a previous attempt, where that started from
+     */
+    this.startedFrom = 0;
+};
+
+UstadMobileResumableDownload.prototype.info2JSON = function() {
+    return {
+        "fileSize" : this.fileSize,
+        "srcURL" : this.srcURL,
+        "destURI" : this.destURI
+    };
+};
+
+UstadMobileResumableDownload.prototype.getInfo = function(successFn, failFn) {
+    var thatDownload = this;
+    UstadMobileUtils.waterfall([
+        function(successFnW, failFnW) {
+            $.ajax(thatDownload.srcURL, {
+                type: "HEAD"
+            }).done(successFnW).fail(failFnW);
+        },
+        function(data, textStatus, jqXHR, successFnW, failFnW) {
+            if(jqXHR.getResponseHeader('Content-Length')) {
+                thatDownload.fileSize = parseInt(jqXHR.getResponseHeader(
+                    'Content-Length'));
+            }
+            UstadMobile.getInstance().systemImpl.writeStringToFile(
+                thatDownload.destURI + ".dlinfo", 
+                JSON.stringify(thatDownload.info2JSON()), {},
+                successFnW, failFnW);
+        }], 
+        function() {
+            UstadMobileUtils.runCallback(successFn, [thatDownload], this);
+        }, failFn);
+};
+
+/**
+ * Check and see if there was a previous attempt - look for a .dlinfo file.
+ * 
+ * If found look for a .inprogress file, append this to to the .part file
+ * 
+ * @param {type} successFn
+ * @param {type} failFn
+ * @returns {undefined}
+ */
+UstadMobileResumableDownload.prototype.checkPreviousAttempt = function(successFn, failFn) {
+    var thatDownload = this;
+    var dlInfoURI = this.destURI + ".dlinfo";
+    var inprogURI = this.destURI + ".inprogress";
+    var partFileURI = this.destURI + ".part";
+    var dlInfoJSON = null;
+    
+        
+    UstadMobile.getInstance().systemImpl.fileExists(dlInfoURI, function(dlInfoExists) {
+        if(!dlInfoExists) {
+            UstadMobileUtils.runCallback(successFn, [], this);
+        }else {
+            UstadMobileUtils.waterfall([
+                function(successFnW2, failFnW2) {
+                    UstadMobile.getInstance().systemImpl.readStringFromFile(
+                        dlInfoURI, {}, successFnW2, failFnW2);
+                },function(jsonInfoStr, successFnW2, failFnW2) {
+                    dlInfoJSON = JSON.parse(jsonInfoStr);
+                    UstadMobile.getInstance().systemImpl.fileExists(inprogURI, 
+                        successFnW2, failFnW2);
+                },
+                function(inprogexists, successFnW2, failFnW2) {
+                    if(inprogexists) {
+                        UstadMobile.getInstance().systemImpl.concatenateFiles(
+                            [inprogURI], partFileURI, {"append" : true},
+                            successFnW2, failFnW2);
+                    }else {
+                        UstadMobileUtils.runCallback(successFnW2, 
+                            [partFileURI], this);
+                    }
+                },function(partFile, successFnW2, failFnW2) {
+                    UstadMobile.getInstance().systemImpl.removeFileIfExists(
+                        inprogURI, successFnW2, failFnW2);
+                },function(successFnW2, failFnW2) {
+                    UstadMobile.getInstance().systemImpl.fileExists(partFileURI,
+                        successFnW2, failFnW2);
+                },function(partFileExists, successFnW2, failFnW2) {
+                    if(partFileExists) {
+                        UstadMobile.getInstance().systemImpl.fileSize(partFileURI,
+                            successFnW2, failFnW2);
+                    }else {
+                        UstadMobileUtils.runCallback(successFnW2, [0], this);
+                    }
+                },function(bytesDownloaded, successFnW2, failFnW2) {
+                    thatDownload.bytesDownloadedOK = bytesDownloaded;
+                    thatDownload.startedFrom = bytesDownloaded;
+                    UstadMobileUtils.runCallback(successFnW2, [], this);
+                }
+            ], successFn, failFn);
+        }
+    }, failFn);
+};
+
+/**
+ * 
+ * @param {type} url
+ * @param {type} destFileURI
+ * @param {Object} options 
+ * @param {number} [options.maxRetries=20]
+ * @param {progresscallback} [options.onprogress] onprogress handler
+ * @param {fileEntryCallback} successFn success function with the resulting fileentry
+ * @param {errorCallback} failFn failfunction called with error info
+ */
+UstadMobileResumableDownload.prototype.download = function(url, destFileURI, options, successFn, failFn) {
+    this.destURI = destFileURI;
+    this.srcURL = url;
+    
+    this.retryCount = 0;
+    this.maxRetries = UstadMobileUtils.defaultVal(options.maxRetries, 20);
+    if(options.onprogress) {
+        this.onprogress = options.onprogress;
+    }
+    
+    UstadMobileUtils.waterfall([
+        this.checkPreviousAttempt.bind(this),
+        this.getInfo.bind(this),
+        (function(dlObj, successFnW, failFnW) {
+            this.continueDownload(successFnW, failFnW);
+        }).bind(this)
+    ], successFn, failFn);
+};
+
+UstadMobileResumableDownload.prototype._handleProgressUpdate = function(evt) {
+    if(evt.lengthComputable) {
+        //how many bytes we want from this request in total
+        var bytesRemaining = this.fileSize - this.bytesDownloadedOK;
+        var bytesInRequest = (evt.loaded / evt.total) * bytesRemaining;
+        var bytesComplete = this.bytesDownloadedOK + bytesInRequest;
+        var ourProgEvt = {
+            lengthComputable : true,
+            total: this.fileSize,
+            loaded : Math.round(bytesComplete),
+            target: this
+        };
+        
+        if(this.onprogress) {
+            this.onprogress.apply(this, [ourProgEvt]);
+        }
+    }
+};
+
+UstadMobileResumableDownload.prototype.continueDownload = function(successFn, failFn) {
+    var inProgressFileURI = this.destURI + ".inprogress";
+    var partFileURI = this.destURI + ".part";
+    var destFileURI = this.destURI;
+    var destFileName = UstadMobileUtils.getFilename(this.destURI);
+    var srcURL = this.srcURL;
+    
+    var downloadOptions = {
+        frombyte : this.bytesDownloadedOK,
+        keepIncompleteFile : true,
+        onprogress: this._handleProgressUpdate.bind(this)
+    };
+    var downloadedResultFile = null;
+    var thatDownload = this;
+    
+    UstadMobileUtils.waterfall([
+        function(successFnW, failFnW) {
+            thatDownload.tryCount++;
+            UstadMobile.getInstance().systemImpl.downloadUrlToFileURI(srcURL,
+                inProgressFileURI, downloadOptions, successFnW, failFnW);
+        }, 
+        function(downloadedResultFileVal, successFnW, failFnW) {
+            downloadedResultFile = downloadedResultFileVal;
+            UstadMobile.getInstance().systemImpl.fileExists(
+                partFileURI, successFnW, failFnW);
+        }, 
+        function(downloadedPartExists, successFnW, failFnW) {
+            if(downloadedPartExists) {
+                //concatenate and finish - here we need to return a file entry,
+                var thatDestFile = null;
+                UstadMobileUtils.waterfall([
+                    function(successFnW2, failFnW2) {
+                        UstadMobile.getInstance().systemImpl.concatenateFiles(
+                            [partFileURI, inProgressFileURI], destFileURI, {},
+                            successFnW2, failFnW2);
+                    },function(destFileEntry, successFnW2, failFnW2) {
+                        thatDestFile = destFileEntry;
+                        thatDownload.removePartialFiles(successFnW2, failFnW2);
+                    },function(successFnW2, failFnW2) {
+                        UstadMobileUtils.runCallback(successFnW2, [thatDestFile],
+                            this);
+                    }
+                ], successFnW, failFnW);
+                
+            }else {
+                //move and finish
+                UstadMobile.getInstance().systemImpl.renameFile(
+                    downloadedResultFile, destFileName, {},
+                    successFnW, failFnW);
+            }
+        },function(destFile, successFnW, failFnW) {
+            thatDownload.removeDLInfoFile(function() {
+                UstadMobileUtils.runCallback(successFnW, [destFile], this);
+            }, failFnW);
+        }
+    ], successFn, (function(err) {
+        //TODO: logic to see if we should retry...
+        if(this.tryCount < this.maxRetries) {
+            //concatenate the results of the last attempt into the .part file
+            UstadMobileUtils.waterfall([
+                function(successFnW, failFnW) {
+                    UstadMobile.getInstance().systemImpl.concatenateFiles(
+                        [inProgressFileURI], partFileURI, {append : true},
+                        successFnW, failFnW);
+                },
+                function(writeFinishEvt, successFnW, failFnW) {
+                    UstadMobile.getInstance().systemImpl.fileSize(
+                        partFileURI, successFnW, failFnW);
+                },
+                (function(downloadedSize, successFnW, failFnW) {
+                    this.bytesDownloadedOK = downloadedSize;
+                    UstadMobile.getInstance().systemImpl.removeFile(
+                        this.destURI + ".inprogress", successFnW, failFnW);
+                }).bind(this),
+                this.continueDownload.bind(this)
+                ], successFn, failFn);
+                
+        }else {
+            //we have exceeded the maximum number of retries 
+           UstadMobileUtils.runCallback(failFn, [err], this);
+        }
+    }).bind(this));
+};
+
+UstadMobileResumableDownload.prototype.removeDLInfoFile = function(successFn, failFn) {
+    var dlInfoFileURI = this.destURI + ".dlinfo";
+    UstadMobile.getInstance().systemImpl.removeFileIfExists(dlInfoFileURI, function() {
+        UstadMobileUtils.runCallback(successFn, [], this);
+    }, failFn);
+};
+
+UstadMobileResumableDownload.prototype.removePartialFiles = function(successFn, failFn) {
+    var destURI = this.destURI;
+    UstadMobileUtils.asyncMap(
+        UstadMobile.getInstance().systemImpl.removeFileIfExists,
+            [destURI + ".inprogress", destURI + ".part"], 
+            function(mapResult) { 
+                UstadMobileUtils.runCallback(successFn, [], this);
+            }, failFn);
+};
+
+var UstadMobileResumableDownloadList = function() {
+    this.resumableDownloads = [];
+    
+    this.totalSize = 0;
+    
+    this.retryCount = 0;
+    
+    this.fileBytesCompleted = 0;
+    
+    this.currentDownloadIndex = 0;
+    
+    this.onprogress = null;
+};
+
+UstadMobileResumableDownloadList.prototype.downloadList = function(urlList, destFileURIList, options, successFn, failFn) {
+    
+    var prepArguments = [];
+    for(var i = 0; i < urlList.length; i++) {
+        prepArguments[i] = [i, urlList[i], destFileURIList[i]];
+    }
+    
+    if(options.onprogress) {
+        this.onprogress = options.onprogress;
+    }
+    
+    UstadMobileUtils.waterfall([
+        (function(successFnW, failFnW) {
+            UstadMobileUtils.asyncMap((function(index, url, destURI, successFnM, failFnM) {
+                var resumableDownload = new UstadMobileResumableDownload();
+                resumableDownload.srcURL = url;
+                resumableDownload.destURI = destURI;
+                this.resumableDownloads.push(resumableDownload);
+                resumableDownload.getInfo(successFnM, failFnM);
+            }).bind(this), prepArguments, successFnW, failFnW);
+        }).bind(this),
+        (function(infoResults, successFnW, failFnW) {
+            var sizeCounter = 0;
+            var fnList = [];//functions to be called -always the download function
+            var argList = [];//arg list - array of srcURL, destURI
+            for(var i = 0; i < this.resumableDownloads.length; i++) {
+                sizeCounter += this.resumableDownloads[i].fileSize;
+                fnList.push(this.resumableDownloads[i].download.bind(
+                    this.resumableDownloads[i]));
+                argList.push([this.resumableDownloads[i].srcURL,
+                    this.resumableDownloads[i].destURI,
+                    {
+                        onprogress : this._handleProgress.bind(this)
+                    }]);
+            }
+            this.totalSize = sizeCounter;
+            
+            var advMapArgs = {
+                beforerun: (function(index, args, result) {
+                    if(index > 0) {
+                        this.fileBytesCompleted  += 
+                            this.resumableDownloads[index-1].fileSize;
+                    }
+                    this.currentDownloadIndex = index;
+                }).bind(this)
+            };
+            
+            UstadMobileUtils.asyncMapAdvanced(fnList, argList, advMapArgs, 
+                successFnW, failFnW);
+        }).bind(this)
+        
+    ], successFn, failFn);
+};
+
+UstadMobileResumableDownloadList.prototype._handleProgress = function(evt) {
+    var thisDlBytesDone = 0;
+    if(evt.lengthComputable) {
+        thisDlBytesDone = evt.loaded;
+    }
+    var loadedSize = this.fileBytesCompleted + thisDlBytesDone;
+    
+    var progressEvt = {
+        lengthComputable: true,
+        loaded: loadedSize,
+        total: this.totalSize
+    };
+    
+    if(this.onprogress) {
+        this.onprogress(progressEvt);
+    }
+};
 
 // Put this in a central location in case we don't manage to load it
 var messages = [];
@@ -1517,78 +2346,6 @@ function setupClozeWidth() {
     $(".ClozeIdevice input[type=text]").css("width", "");
 }
 
-/*
-$(function() {
-    $(document).on("pagebeforecreate", function(event, ui) { //pageinit gets triggered when app start.
-        console.log("In pagebeforecreate");
-        if(typeof(onLanguageDeviceReady) == "function" ){
-            onLanguageDeviceReady();
-        }else{ // meaning it is in Content..
-            callOnLanguageDeviceReady();
-        }
-    });
-});
-*/
-
-/*
-    On Pagechange, the logic for touch, swipe and scroll events are executed.
-*/
-
-/*
-$(document).on("pagechange", function(event){
-    setupClozeWidth();
-    $('.ui-page-active').swipe( {   //On the active page..
-
-    //Generic swipe handler for all directions
-        //swipe handler to check swipe event.
-        swipe:function(event, direction, distance, duration, fingerCount){
-                console.log("You swiped " + direction + " for " + distance + "px");
-          },
-            
-        //Swipe handler to handle page changes.
-        swipeStatus:function(event, phase, direction, distance, duration) {
-                //event.stopPropagation();
-                //event.preventDefault();
-            if(duration < 1500 && distance > 100 && phase == "end"){
-                if(direction=="left"){       
-                    exeNextPageOpen();
-                    console.log("Registered direction left.");
-                }else if(direction =="right"){
-                    exePreviousPageOpen();
-                }
-            }else if(scrollEnabled == 1 && phase == "move"){
-                if(direction == "up"){
-                    window.scrollBy(0,20);
-                }else if(direction == "down"){
-                    window.scrollBy(0, -20);
-                }               
-            }
-        },
-
-        //Default is 75px, set to 200 in Ustad Mobile to reduce error reproduction.
-         threshold:200,
-      }); 
-
-	//console.log("THE CONTENT_MODELS IS: " + CONTENT_MODELS);
-         if(typeof CONTENT_MODELS !== 'undefined' && CONTENT_MODELS == "test"){
- 	       console.log("Test mode and current page done.");
-       		//exeNextPageOpen();
-        	var nextPageHREF = $(".ui-page-active #exeNextPage").attr("href");
-        	nextPageHREF = $.trim(nextPageHREF);
-        	if (nextPageHREF != null && nextPageHREF !="#" ){
-                	console.log("on pagechange: Next Page exists: " + nextPageHREF);
-                	exeNextPageOpen();
-        	}else{
-			console.log("No more pages to go to.");
-			if(changePageFlag == false ){
-			runcallback(testContentCallback, "checkContentPageLoad success");
-			}
-			changePageFlag = false;
-		}
-    	}
-
-});
-*/
 
 /*
  Localization function - will return original English if not in JSON

@@ -35,6 +35,22 @@ var UstadJS;
 UstadJS = {
     
     /**
+     * Make sure that the given src (which may be an xml doc or string) is returned
+     * as an xml doc.  If it's a string, parse it into XML
+     * 
+     * @param {Object} src String or XMLDocument
+     * @returns {Document} XML document of the given src
+     */
+    ensureXML: function(src) {
+        if(typeof src === "string") {
+            var parser = new DOMParser();
+            src = parser.parseFromString(src, "text/xml");
+        }
+        
+        return src;
+    },
+    
+    /**
      * Get a JSON list of 
      * 
      * @param src {Object} XML string or XMLDocument object.  Will be parsed if String
@@ -43,10 +59,7 @@ UstadJS = {
      * each with full-path and media-type attributes
      */
     getContainerRootfilesFromXML: function(src) {
-        if(typeof src === "string") {
-            var parser = new DOMParser();
-            src = parser.parseFromString(src, "text/xml");
-        }
+        src = UstadJS.ensureXML(src);
         var retVal = [];
         var rootFileNodes = src.getElementsByTagName("rootfile");
         for(var i = 0; i < rootFileNodes.length; i++) {
@@ -100,16 +113,435 @@ UstadJS = {
      * @returns {String} URL made absoulute if it was not before
      */
     makeAbsoluteURL: function(url) {
-        if(url.indexOf("://") !== -1) {
-            return url;
-        } else {
-            var absURL = location.href.substring(0, 
-                location.href.lastIndexOf("/")+1);
-            absURL += url;
-            return absURL;
+        return UstadJS.resolveURL(location.href, url);
+    }
+};
+
+UstadJS.getDirPath = function(completePath) {
+    //in case the last character is a trailing slash - assume this
+    if(completePath.lastIndexOf("/") === completePath.length-1) {
+        return completePath;
+    }
+    
+    return completePath.substring(0, completePath.lastIndexOf("/"));
+};
+
+UstadJS.resolveURL = function(baseURL, linkedURL) {
+    var linkedURLLower = linkedURL.toLowerCase();
+    if(linkedURLLower.match(/^(http|https|ftp):\/\//)) {
+        return linkedURL;//this is absolute
+    }
+    
+    if(linkedURL.substring(0, 2) === "//") {
+        //this means match the protocol only
+        var resolvedURL = baseURL.substring(0, baseURL.indexOf(":")+1) +
+            linkedURL;
+        return resolvedURL;
+    }
+    
+    if(linkedURL.charAt(0) === "/") {
+        var serverStart = baseURL.indexOf("://")+3;
+        var serverFinish = baseURL.indexOf("/", serverStart);
+        return baseURL.substring(0, serverFinish) + linkedURL;
+    }
+    
+    
+    var baseURLPath = UstadJS.getDirPath(baseURL);
+    
+    //get rid of trailing / - will be joined with a /
+    baseURLPath = baseURLPath.lastIndexOf("/") === baseURLPath.length - 1 ? 
+        baseURLPath.substring(0, baseURL.length-1) : baseURLPath;
+    var baseParts = baseURLPath.split("/");
+    var linkParts = linkedURL.split("/");
+    
+    for(var i = 0; i < linkParts.length; i++) {
+        if(linkParts[i] === '.') {
+            continue;
+        }
+        
+        if(linkParts[i] === '..') {
+            baseParts.pop();
+        }else {
+            baseParts.push(linkParts[i]);
+        }
+    }
+    
+    return baseParts.join("/");
+    
+};
+
+var UstadJSOPDSFeed = null;
+
+UstadJSOPDSFeed = function(title, id) {
+    this.entries = [];
+    this.xmlDoc = document.implementation.createDocument(
+            "http://www.w3.org/2005/Atom", "feed");
+        
+    var idEl = this.xmlDoc.createElementNS("http://www.w3.org/2005/Atom", "id");
+    idEl.textContent = id;
+    this.xmlDoc.documentElement.appendChild(idEl);
+    
+    var titleEl = this.xmlDoc.createElementNS("http://www.w3.org/2005/Atom", 
+        "title");
+    titleEl.textContent = title;
+    this.xmlDoc.documentElement.appendChild(titleEl);
+    
+    this.href = null;
+};
+
+/**
+ * From the given source document make an object representing an OPDS feed
+ * 
+ * @param {Object} xmlSrc String or XML Document with the opds feed
+ * @param {String} href URL of the opdsSrc
+ * @returns {UstadJSOPDSFeed}
+ */
+UstadJSOPDSFeed.loadFromXML = function(xmlSrc, href) {
+    xmlSrc = UstadJS.ensureXML(xmlSrc);
+    var opdsFeedObj = new UstadJSOPDSFeed();
+    opdsFeedObj.xmlDoc = xmlSrc;
+    opdsFeedObj.href = href;
+    
+    //set properties up
+    opdsFeedObj.setPropsFromXML(xmlSrc);
+    
+    return opdsFeedObj;
+};
+
+
+UstadJSOPDSFeed.prototype = {
+    
+    setPropsFromXML: function(xmlSrc) {
+        xmlSrc = xmlSrc ? xmlSrc : this.xmlDoc;
+        
+        this.title = xmlSrc.querySelector("feed > title").textContent;
+        this.id = xmlSrc.querySelector("feed > id").textContent;
+        
+        //now go through all entries
+        var entryNodes = xmlSrc.getElementsByTagNameNS(
+                "http://www.w3.org/2005/Atom", "entry");
+        
+        this.entries = [];
+        
+        for(var i = 0; i < entryNodes.length; i++) {
+            var newEntry = new UstadJSOPDSEntry(entryNodes[i], this);
+            this.entries.push(newEntry);
         }
     },
+    
+    /**
+     * Add an opds entry to this feed
+     * 
+     * @param {UstadJSOPDSEntry} opdsEntry the entry to add
+     */
+    addEntry: function(opdsEntry) {
+        this.entries.push(opdsEntry);
+        var entryNode = opdsEntry.xmlNode;
+        if(entryNode.ownerDocument !== this.xmlDoc) {
+            entryNode = this.xmlDoc.importNode(opdsEntry.xmlNode, true);
+        }
+        
+        this.xmlDoc.documentElement.appendChild(entryNode);
+        entryNode.namespaceURI = "http://www.w3.org/2005/Atom";
+        
+    },
+    
+    /**
+     * Get the entries in this feed according to the link type being looked
+     * for e.g. get entries that are navigation catalogs by using:
+     * 
+     * getEntriesByLinkType("application/atom+xml;profile=opds-catalog;kind=acquisition")
+     * 
+     * 
+     * @param {string} linkType type of link to look for (required)
+     * @param {string} linkRel relationship of link to look for e.g. 
+     * http://opds-spec.org/acquisition
+     * @param {boolean=true} linkRelFallback if false match the exact type, otherwise settle for
+     * substring match.  Eg. just http://opds-spec.org/acquisition will match
+     * all other acquisition types
+     * 
+     * @returns {UstadJSOPDSEntry[]}
+     */
+    getEntriesByLinkParams: function(linkType, linkRel, linkRelFallback) {
+        var matchingEntries = [];
+        linkRelFallback = (typeof linkRelFallback === "undefined") ? true :
+                linkRelFallback;
+        for(var i = 0; i < this.entries.length; i++) {
+            var acquireLink = this.entries[i].getAcquisitionLinks(linkRel,
+                linkType, linkRelFallback);
+            if(acquireLink) {
+                matchingEntries.push(this.entries[i]);
+            }
+        }
+        
+        return matchingEntries;
+    },
+    
+    /**
+     * Serialize this opds feed as an XML string
+     * 
+     * @returns {string} XML of this feed as a string
+     */
+    toString: function() {
+        return new XMLSerializer().serializeToString(this.xmlDoc);
+    },
+    
+    /**
+     * Find a UstadJSOPDSEntry object in the feed according to the id
+     * 
+     * @param {string} entryId to look for
+     * 
+     * @return {UstadJSOPDSEntry} object representing the requested feed entry, null if not found
+     */
+    getEntryById: function(entryId) {
+        for(var i = 0; i < this.entries.length; i++) {
+            if(this.entries[i].id === entryId) {
+                return this.entries[i];
+            }
+        }
+        
+        return null;
+    }
+    
 };
+
+
+var UstadJSOPDSEntry = null;
+
+UstadJSOPDSEntry = function(xmlNode, parentFeed) {
+    this.xmlNode = null;
+    this.parentFeed = null;
+    this.title = null;
+    this.id = null;
+    
+    if(parentFeed) {
+        this.parentFeed = parentFeed;
+    }
+    
+    if(xmlNode) {
+        this.loadFromXMLNode(xmlNode);
+    }
+};
+
+/**
+ * OPDS constant for the standard acquisition link
+ * @type String
+ */
+UstadJSOPDSEntry.LINK_ACQUIRE = "http://opds-spec.org/acquisition";
+    
+/**
+ * OPDS constant for open access acquisition link
+ * @type String
+ */
+UstadJSOPDSEntry.LINK_ACQUIRE_OPENACCESS = 
+        "http://opds-spec.org/acquisition/open-access";
+
+/**
+ * Type to be used for a catalog link of an acquisition feed as per OPDS spec
+ * 
+ * @type String
+ */
+UstadJSOPDSEntry.TYPE_ACQUISITIONFEED = 
+        "application/atom+xml;profile=opds-catalog;kind=acquisition";
+
+
+/**
+ * Type to be used for a navigation feed as per OPDS spec
+ * 
+ * @type String
+ */
+UstadJSOPDSEntry.TYPE_NAVIGATIONFEED =
+        "application/atom+xml;profile=opds-catalog;kind=navigation";
+
+/**
+ * The type of link used for an epub file itself
+ * 
+ * @type String
+ */
+UstadJSOPDSEntry.TYPE_EPUBCONTAINER = "application/epub+zip";
+
+UstadJSOPDSEntry.prototype = {
+    
+    
+    /**
+     * Get the aquisition links by 
+     * @param {String} linkRel - the link relation desired - e.g. 
+     *  http://opds-spec.org/acquisition/open-access or 
+     *  http://opds-spec.org/acquisition/
+     *  Can be null to match any
+     *  
+     * @param {String} mimeType the desired content mimetype e.g. application/epub+zip
+     *  Can be null to match any
+     * 
+     * @param {boolean} fallback if the desired acquisition type is not available,
+     *  should we return plain old http://opds-spec.org/acquisition
+     * @returns {String} the href of the selected link, null if nothing found
+     */
+    getAcquisitionLinks: function(linkRel, mimeType, fallback) {
+        var getLinkArgs = fallback ? { linkRelByPrefix : true } : {};
+        var getLinkResult = this.getLinks(linkRel, mimeType, getLinkArgs);
+        if(getLinkResult.length === 0) {
+            return null;
+        }else {
+            return getLinkResult[0].href;
+        }
+        
+    },
+    
+    /**
+     * Get links for this entry according to the relation or mimeType
+     * 
+     * @param {string} linkRel e.g. UstadJSOPDSEntry.LINK_ACQUIRE
+     * 
+     * @param {string} mimeType e.g. UstadJSOPDSEntry.TYPE_ACQUISITIONFEED 
+     * or UstadJSOPDSEntry.TYPE_EPUBCONTAINER
+     * 
+     * @param {Object} options misc options
+     * @param {boolean} [options.linkRelByPrefix=false] get matches if the
+     * given linkRel matches the start of that on the element e.g.
+     * http://opds-spec.org/acquisition would also match a link with rel
+     * http://opds-spec.org/acquisition/open-access
+     * 
+     * @param {boolean} [options.mimeTypeByPrefix=false] get matches if the given
+     * mimeType of the link matches the start of the mimeType argument e.g.
+     * application/epub would match application/epub+zip
+     * 
+     * @returns {Array<Object>} object with href, rel and type properties
+     */
+    getLinks: function(linkRel, mimeType, options) {
+        var result = [];
+        var linkElements = this.xmlNode.getElementsByTagNameNS(
+            "http://www.w3.org/2005/Atom", "link");
+    
+        for(var i = 0; i < linkElements.length; i++) {
+            var matchRel = true;
+            var matchType = true;
+            
+            if(linkRel !== null) {
+                var linkRelCompare = options.linkRelByPrefix ? 
+                    linkElements[i].getAttribute("rel").substring(0, linkRel.length) :
+                    linkElements[i].getAttribute("rel");
+                matchRel = (linkRel === linkRelCompare);
+            }
+            
+            if(mimeType !== null) {
+                var mimeTypeCompare = options.mimeTypeByPrefix ?
+                    linkElements[i].getAttribute("type").substring(mimeType.length) :
+                    linkElements[i].getAttribute("type");
+                matchType = (mimeTypeCompare === mimeType);
+            }
+            
+            if(matchRel && matchType) {
+                result.push({
+                    href : linkElements[i].getAttribute("href"),
+                    type : linkElements[i].getAttribute("type"),
+                    rel : linkElements[i].getAttribute("rel")
+                });
+            }
+        }
+        
+        return result;
+    },
+    
+    
+    loadFromXMLNode: function(xmlNode) {
+        this.xmlNode = xmlNode;
+        this.title = xmlNode.querySelector("title").textContent;
+        this.id = xmlNode.querySelector("id").textContent;
+        
+        
+    },
+    
+    /**
+     * Make entry given compulsary requirements for an atom entry
+     * 
+     * @param {Object} item
+     * @param {string} item.title title of the entry contained
+     * @param {string} item.id id of the entry contained
+     * 
+     */
+    setupEntry: function(item) {
+        var parentDoc = this.parentFeed.xmlDoc;
+        this.xmlNode = parentDoc.createElementNS(
+            "http://www.w3.org/2005/Atom", "entry");
+        var titleEl = parentDoc.createElementNS(
+            "http://www.w3.org/2005/Atom", "title");
+        titleEl.textContent = item.title;
+        this.xmlNode.appendChild(titleEl);
+        
+        var idEl = parentDoc.createElementNS(
+                "http://www.w3.org/2005/Atom", "id");
+        idEl.textContent = item.id;
+        this.xmlNode.appendChild(idEl);
+        
+        this.parentFeed.addEntry(this);
+        
+    },
+    
+    /**
+     * Summary will come from atom:summary link if present and NOT dc:description
+     * etc as per the OPDS spec (section 8.1).  If neither are present then
+     * we will return teh fallbackVal if specified
+     * 
+     * @param {string} [fallbackVal=null] optional fallback value to use in case 
+     * nothing found
+     * 
+     * @returns Content of atom:summary for entry, if absent atom:content, 
+     * otherwise fallbackVal
+     */
+    getSummary: function(fallbackVal) {
+        var summaryEls = this.xmlNode.getElementsByTagNameNS(
+            "http://www.w3.org/2005/Atom", "summary");
+        if(summaryEls.length > 0) {
+            return summaryEls[0].textContent;
+        }
+        
+        var descEls = this.xmlNode.getElementsByTagNameNS(
+            "http://www.w3.org/2005/Atom", "content");
+        if(descEls.length > 0) {
+            return descEls[0].textContent;
+        }
+        
+        fallbackVal = (typeof fallbackVal !== "undefined") ? fallbackVal : null;
+        return fallbackVal;
+    },
+    
+    /**
+     * Add a link to this entry
+     * 
+     * @param {string} rel Relationship e.g. subsection or http://opds-spec.org/acquisition
+     * @param {string} href href to link
+     * @param {string} mimeType Mime type of item being linked to
+     * @returns {undefined}
+     */
+    addLink: function(rel, href, mimeType) {
+        var parentDoc = this.parentFeed.xmlDoc;
+        var linkNode = parentDoc.createElementNS(
+            "http://www.w3.org/2005/Atom", "link");
+        linkNode.setAttribute("rel", rel);
+        linkNode.setAttribute("href", href);
+        linkNode.setAttribute("type", mimeType);
+        
+        this.xmlNode.appendChild(linkNode);
+    }
+    
+    
+};
+
+
+
+/*
+var UstadJSContainer = null;
+
+UstadJSContainer = function() {
+    this.publications = [];
+    this.xmlDoc = null;
+    this.uri = null;
+    
+};
+
+*/
+
 
 var UstadJSOPF = null;
 
@@ -157,10 +589,19 @@ UstadJSOPF.prototype = {
         }
         
         //now find the spine
+        /*
+         * TODO: the spine should actually be references defined with whether or not
+         * they are linear etc.  There may actually be multiple references to the same
+         * item
+         */
         var spine = this.xmlDoc.getElementsByTagName("spine")[0];
         var spineItems = spine.getElementsByTagName("itemref");
         for(var j = 0; j < spineItems.length; j++) {
             var itemID = spineItems[j].getAttribute("idref");
+            if(spineItems[j].hasAttribute("linear")) {
+                this.items[itemID].linear = 
+                    (spineItems[j].getAttribute("linear") !== "no");
+            }
             this.spine.push(this.items[itemID]);
         }
         
@@ -171,6 +612,79 @@ UstadJSOPF.prototype = {
         var idEl = manifestEl.getElementsByTagNameNS("*", "identifier")[0];
         this.title = titleEl.textContent;
         this.identifier = idEl.textContent;
+    },
+    
+    /**
+     * Get the next linear entry index fromm the spine
+     * @param start {number} the first value to look at
+     * @param increment {number} 1 or -1 : the direction to look in case entries found are not linear
+     * 
+     * @return {number} The next linear index or -1 if nothing found
+     */
+    findNextLinearSpineIndex: function(start, increment) {
+        var isLinear = false;
+        var currentPos = start;
+        while(!isLinear && (currentPos >= 0) && (currentPos< this.spine.length)) {
+            if(this.spine[currentPos].linear) {
+                return currentPos;
+            }
+            
+            currentPos += increment;
+        }
+    
+        return -1;
+    },
+    
+    /**
+     * For this OPF generate a catalog entry node that can be included
+     * in an OPDS feed
+     * 
+     * @param {Object} acquisitionOpts options for acquisitionLink containing:
+     *   href : e.g. /somewhere/file.epub
+     *   mime : e.g. application/epub+zip
+     *   rel : e.g. http://opds-spec.org/acquisition/open-access (defaults to
+     *    http://opds-spec.org/acquisition )
+     *   
+     * @param {UstadJSOPDSFeed} parentFeed - document object to use for purpose of creating
+     *   DOM nodes 
+     * 
+     * @returns {undefined}
+     */
+    getOPDSEntry: function(acquisitionOpts, parentFeed) {
+        var doc = parentFeed.xmlDoc;
+        
+        var entryNode = doc.createElementNS("http://www.w3.org/2005/Atom", 
+            "entry");
+        
+        var titleNode = doc.createElementNS("http://www.w3.org/2005/Atom", 
+            "title");
+        titleNode.textContent = this.title;
+        entryNode.appendChild(titleNode);
+        
+        var idNode = doc.createElementNS("http://www.w3.org/2005/Atom", "id");
+        idNode.textContent = this.identifier;
+        entryNode.appendChild(idNode);
+        
+        
+        //find metadata - mandatory in an opf file
+        var metaDataNode = this.xmlDoc.getElementsByTagName("*", "metadata")[0];
+        for(var i = 0; i < metaDataNode.childNodes.length; i++) {
+            var clonedNode = doc.importNode(metaDataNode.childNodes[i], true);
+            entryNode.appendChild(clonedNode);
+        }
+        
+        
+        //TODO: add acquisition links
+        var linkNode = doc.createElementNS("http://www.w3.org/2005/Atom", 
+            "link");
+        linkNode.setAttribute("href", acquisitionOpts.href);
+        linkNode.setAttribute("type", acquisitionOpts.mime);
+        linkNode.setAttribute("rel", acquisitionOpts.rel ?
+            acquisitionOpts.rel : UstadJSOPDSEntry.LINK_ACQUIRE);
+        entryNode.appendChild(linkNode);
+        
+        var opdsEntry = new UstadJSOPDSEntry(entryNode, parentFeed);
+        return opdsEntry;
     },
     
     /**
@@ -196,6 +710,7 @@ UstadJSOPFItem = function(id, mediaType, href) {
     this.id = id;
     this.mediaType = mediaType;
     this.href = href;
+    this.linear = true;
 };
 
 UstadJSOPFItem.prototype = {
@@ -362,6 +877,383 @@ GNU General Public License for more details.
 
  */
 
+var $UstadJSOPDSBrowser = {};
+
+$UstadJSOPDSBrowser.STATUS_UNKNOWN = "unknown";
+$UstadJSOPDSBrowser.NOT_ACQUIRED = "notacquired";
+$UstadJSOPDSBrowser.ACQUISITION_IN_PROGRESS = "inprogress";
+$UstadJSOPDSBrowser.ACQUIRED = "acquired";
+
+(function($){
+    /**
+     *
+     * @class UstadJSOPDSBrowser
+     * @memberOf jQuery.fn
+     */
+    $.widget("umjs.opdsbrowser", {
+        options: {
+            "src" : "",
+            //custom feed loader (e.g. to check cached entries etc)
+            feedloader: null,
+            
+            /**
+             * @type {string}
+             * icon to use when none specified by feed for an acquisition feed
+             */
+            defaulticon_acquisitionfeed: "default-acquire-icon.png",
+            
+            /**
+             * @type {string}
+             * icon to use when none is specified by feed for a navigation feed
+             */
+            defaulticon_navigationfeed: "default-navigation.png",
+            
+            /**
+             * @type {string}
+             * icon to show for entries in an acquisition feed with conatainers to download
+             */
+            defaulticon_containerelement: "default-containerel.png",
+            
+            /**
+             * @type {UstadJSOPDSFeed}
+             */
+            _opdsFeedObj : null,
+            
+            /**
+             * Callback to run when the user selects a navigation feed
+             * 
+             * @type {function}
+             */
+            navigationfeedselected: null,
+            
+            /**
+             * Callback to run when the user selects an acquisition feed
+             * 
+             * @type {function}
+             */
+            acquisitionfeedselected: null,
+            
+            /**
+             * Callback to run when the user selects an acquisition container
+             * (e.g. epub file)
+             * 
+             * @type {function}
+             */
+            containerentryselected : null,
+            
+            /**
+             * A function that should return whether or not the given device id
+             * has been acquired
+             * 
+             * @returns {boolean}
+             */
+            acquisitionstatushandler: function(id) {
+                return $UstadJSOPDSBrowser.NOT_ACQUIRED;
+            },
+            
+            button_text_navigation: {
+                "unknown" : "Checking...",
+                "notacquired" : "Open",
+                "inprogress" : "Open",
+                "acquired" : "Open"
+            },
+            
+            button_text_acquisition: {
+                "unknown" : "Checking...",
+                "notacquired" : "Download",
+                "inprogress" : "Downloading...",
+                "acquired" : "Open"
+            }
+            
+        },
+        
+        _create: function () {
+            if(!this.element.hasClass("umjs_opdsbrowser")) {
+                this.element.addClass("umjs_opdsbrowser");
+            }
+        },
+        
+        /**
+         * Append appropriate CSS classed title to the main element here
+         */
+        _appendTitle: function(titleStr) {
+            var titleEl = $("<div/>", {
+                class : "umjs_opdsbrowser_title"
+            });
+            titleEl.text(titleStr);
+            this.element.append(titleEl);
+        },
+        
+        /**
+         * Sets up a navigation feed view where acquisition feeds are shown
+         * as tiles, other navigation feeds are shown as screen width category
+         * buttons at the bottom.
+         * 
+         * Use with OPDS navigation feeds: e.g. link type
+         * application/atom+xml;profile=opds-catalog;kind=navigation
+         * see: http://opds-spec.org/specs/opds-catalog-1-1-20110627/#Navigation_Feeds
+         * 
+         * @param {UstadJSOPDSFeed} opdsSrc the source feed
+         */
+        setupnavigationfeedview: function(opdsSrc) {
+            this.options._opdsFeedObj = opdsSrc;
+            this.element.empty();
+            
+            this._appendTitle(opdsSrc.title);
+            
+            var feedInfo = [
+                {
+                    "type" : "acquisition",
+                    "linkType" : UstadJSOPDSEntry.TYPE_ACQUISITIONFEED,
+                },
+                {
+                    "type" : "navigation",
+                    "linkType" : UstadJSOPDSEntry.TYPE_NAVIGATIONFEED
+                }
+            ];
+            
+            for(var f = 0; f < feedInfo.length; f++) {
+                var feedType = feedInfo[f].type;
+                var feedElContainer= $("<div/>", {
+                    class : "umjs_opdsbrowser_" + feedType + "feeds"
+                });
+                
+                this[feedType + "FeedContainer"]  = feedElContainer;
+                this.element.append(feedElContainer);
+                
+                var feedList = opdsSrc.getEntriesByLinkParams(
+                    feedInfo[f].linkType,
+                    null);
+                for(var e = 0; e < feedList.length; e++) {
+                    var elEntry = this._makeFeedElement(feedList[e],
+                        feedType);
+                    feedElContainer.append(elEntry);
+                }
+            }
+        },
+        
+        setupacquisitionfeedview: function(opdsSrc) {
+            this.options._opdsFeedObj = opdsSrc;
+            this.element.empty();
+            this._appendTitle(opdsSrc.title);
+            this.element.addClass("umjs_opdsbrowser_acquisitionfeedview");
+            
+            for(var f = 0; f < opdsSrc.entries.length; f++) {
+                var containerEl = this._makeContainerElement(opdsSrc.entries[f]);
+                this.element.append(containerEl);
+            }
+        },
+        
+        /**
+         * Setup this OPDS feed browser from the given feed object.  This can be
+         * called on the same widget with a different feed, e.g. when the user
+         * clicks on a subcategory etc.
+         * 
+         * @param {UstadJSOPDSFeed} opdsSrc Source OPDS element
+         * @returns {undefined}
+         */
+        setupfromfeed: function(opdsSrc) {
+            
+        },
+        
+        /**
+         * 
+         * @param {type} entryId
+         * @param {type} elStatus
+         * @param {type} options
+         * @returns {undefined}
+         */
+        updateentrystatus: function(entryId, elStatus, options) {
+            var entryEl = $("div.umjs_opdsbrowser_feedelement[data-feed-id='" +
+                entryId + "']");
+            var feedType = entryEl.attr("data-feed-type");
+            
+            entryEl.children(".umjs_opdsbrowser_statusarea").replaceWith(
+                this._makeFeedElementStatusArea(entryId, feedType, elStatus, 
+                options));
+        },
+        
+        updateentryprogress: function(entryId, progressEvt) {
+            var progressEl = $("div.umjs_opdsbrowser_feedelement[data-feed-id='" +
+                entryId + "'] progress");
+            progressEl.attr("value", progressEvt.loaded);
+            progressEl.attr("max", progressEvt.total);
+        },
+        
+        _handleContainerElClick: function(evt, data) {
+            var entryId = $(evt.delegateTarget).attr("data-entry-id");
+            var entry = this.options._opdsFeedObj.getEntryById(entryId);
+            
+            this._trigger("containerentryselected", null, {
+                entryId : entryId,
+                entry : entry
+            });
+        },
+        
+        
+        /**
+         * Make a container element for an entry that has containers for
+         * download
+         * 
+         * @param {UstadJSOPDSEntry} entry the entry to make the container
+         * element for
+         */
+        _makeContainerElement: function(entry) {
+            var containerEl = $("<div/>", {
+                "class" : "umjs_opdsbrowser_containerentry_element",
+                "data-entry-id" : entry.id
+            });
+            
+            var titleEl = $("<div/>", {
+                "class" : "umjs_entry_title"
+            });
+            titleEl.text(entry.title);
+            
+            containerEl.append(titleEl);
+            
+            
+            var imgEl = $("<img/>", {
+                src : this.options.defaulticon_containerelement,
+                class : "umjs_opdsbrowser_containerentry_cover"
+            });
+            containerEl.append(imgEl);
+            
+            var summaryContainer = $("<div/>", {
+                "class" : "umjs_opdsbrowser_containerentry_cover_summary"
+            });
+            summaryContainer.text(entry.getSummary(""));
+            containerEl.append(summaryContainer);
+            containerEl.on("click", this._handleContainerElClick.bind(this));
+            
+            return containerEl;
+        },
+        
+        
+        /**
+         * Make the status area for a feed element being shown
+         * 
+         * @param {string} entryId The entry we are making a 
+         * @param {string} feedType "navigation" or "acquisition"
+         * @param {string} elStatus String as per $UstadJSOPDSBrowser constants
+         * @param {Object} options if status is in progress have .progress as num between 0 and 100
+         * @returns {jQuery|$} element for the feed status area
+         */
+        _makeFeedElementStatusArea: function(entryId, feedType, elStatus, options) {
+            var statusClassName = "umjs_opdsbrowser_elstatus_" + elStatus;
+            
+            var elStatusArea = $("<div/>", {
+                "class": "umjs_opdsbrowser_" + feedType + "statusarea" +
+                    " " + statusClassName
+            });
+            
+            elStatusArea.addClass("umjs_opdsbrowser_statusarea");
+            
+            if(elStatus === $UstadJSOPDSBrowser.ACQUISITION_IN_PROGRESS) {
+                var progressBar = $("<progress/>",{
+                    "value" : options.loaded,
+                    "max" : options.total
+                });
+                
+                elStatusArea.append(progressBar);
+            }else {
+                var buttonText = this.options["button_text_" + feedType][elStatus];
+                var buttonEl = $("<button/>");
+                buttonEl.text(buttonText);
+                elStatusArea.append(buttonEl);
+            }
+            
+            return elStatusArea;
+        },
+        
+        /**
+         * Make a div element that will represent an feed object to be clicked on
+         * 
+         * @param {UstadJSOPDSEntry} entry the entry to make an element for
+         * @param {string} feedType acquisition or navigation
+         * 
+         * @returns {$|jQuery}
+         */
+        _makeFeedElement: function(entry, feedType) {
+            var elEntry = $("<div/>", {
+                class : "umjs_opdsbrowser_" + feedType + "feed_element",
+                "data-feed-id" : entry.id,
+                "data-feed-type" : feedType
+            });
+            
+            elEntry.addClass("umjs_opdsbrowser_feedelement");
+           
+            var widgetObj = this;
+            elEntry.on("click", function(evt) {
+                var clickedFeedId = $(this).attr("data-feed-id");
+                var clickedFeedType = $(this).attr("data-feed-type");
+                var evtName = clickedFeedType + "feedselected";
+                widgetObj._trigger(evtName, null, {
+                    feedId : clickedFeedId,
+                    feedType : clickedFeedType,
+                    entry : entry
+                });
+            });
+            
+           
+            //TODO: check the picture here
+            var imgSrc = this.options["defaulticon_" + feedType + "feed"];
+            
+            elEntry.append($("<img/>", {
+                "src": imgSrc,
+                "class": "umjs_opdsbrowser_" + feedType + "feed_img"
+            }));
+            
+            var elTitleEntry = $("<div/>", {
+                "class" : "umjs_opdsbrowser_" + feedType + "title"
+            });
+            elTitleEntry.text(entry.title);
+            elEntry.append(elTitleEntry);
+            
+            var elStatus = this.options.acquisitionstatushandler(entry.id, 
+                feedType);
+            elEntry.append(this._makeFeedElementStatusArea(entry.id, feedType,
+                elStatus));
+            
+            
+            return elEntry;
+        }
+        
+    });
+}(jQuery));    
+
+/*
+
+UstadJS
+
+Copyright 2014 UstadMobile, Inc
+  www.ustadmobile.com
+
+Ustad Mobile is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version with the following additional terms:
+ 
+All names, links, and logos of Ustad Mobile and Toughra Technologies FZ
+LLC must be kept as they are in the original distribution.  If any new
+screens are added you must include the Ustad Mobile logo as it has been
+used in the original distribution.  You may not create any new
+functionality whose purpose is to diminish or remove the Ustad Mobile
+Logo.  You must leave the Ustad Mobile logo as the logo for the
+application to be used with any launcher (e.g. the mobile app launcher).
+ 
+If you want a commercial license to remove the above restriction you must
+contact us and purchase a license without these restrictions.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+Ustad Mobile is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+ */
+
 (function($){
     /**
      * attemptidevice - an awesome jQuery plugin. 
@@ -455,7 +1347,9 @@ GNU General Public License for more details.
             }).done($.proxy(function(data) {
                 this.options.opf = new UstadJSOPF();
                 this.options.opf.loadFromOPF(data);
-                var firstURL = opfBaseURL + this.options.opf.spine[0].href;
+                var firstLinearItem = this.options.opf.findNextLinearSpineIndex(
+                    0, 1);
+                var firstURL = opfBaseURL + this.options.opf.spine[firstLinearItem].href;
                 firstURL = this.appendParamsToURL(firstURL);
                 
                 this.options.num_pages = this.options.opf.spine.length;
@@ -499,13 +1393,20 @@ GNU General Public License for more details.
         },
         
         /**
-         * Navigate along the spine (e.g. back/next)
+         * Navigate along the spine (e.g. back/next) - looks only for linear
+         * elements in the spine as per the epub spec
          * 
          * @param {type} increment
          * @returns {undefined}
          */
         go: function(increment, callback) {
-            var nextIndex = this.options.spine_pos + increment;
+            var nextIndex = this.options.opf.findNextLinearSpineIndex(
+                this.options.spine_pos+increment, increment);
+            if(nextIndex === -1) {
+                UstadJS.runCallback(callback, this, ["fail: no more pages"]);
+                return;
+            }
+            
             var nextURL = this.options.baseurl + 
                     this.options.opf.spine[nextIndex].href;
             nextURL = this.appendParamsToURL(nextURL);

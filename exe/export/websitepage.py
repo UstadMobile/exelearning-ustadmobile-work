@@ -441,12 +441,17 @@ class WebsitePage(Page):
                 #main-wrapper { padding: 0px; }
                 </style>
             """
+        cssIDs = WebsitePage.getUstadMobileCSSIDs()
+        for cssName in WebsitePage.getUstadMobileCSSList():
+            linkId = ""
+            if cssName in cssIDs:
+                linkId = "id=\"%s\"" % cssIDs[cssName] 
+            html += "<link type=\"text/css\" rel=\"stylesheet\" href=\"%s\" %s/>\n" \
+             % (cssName, linkId)
+        
         for scriptName in WebsitePage.getUstadMobileScriptList():
             html += "<script src=\"%s\" type=\"text/javascript\"></script>\n" \
             % scriptName
-        for cssName in WebsitePage.getUstadMobileCSSList():
-            html += "<link type=\"text/css\" rel=\"stylesheet\" href=\"%s\"/>\n" \
-             % cssName
         
         html += """<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>  \n"""
         
@@ -558,7 +563,8 @@ class WebsitePage(Page):
     """
     @classmethod
     def getUstadMobileScriptList(cls):
-        return ["ustadmobile-settings.js", "ustadmobile.js", "jquery.mobile.min.js",
+        return ["ustadmobile-settings.js", "ustadmobile.js", 
+                "ustadmobile-content-stylemgr.js", "jquery.mobile.min.js",
                  "ustadmobile-common.js", "ustadmobile-constants.js",
                  "ustadmobile-booklist.js", "jquery.touchSwipe.min.js",
                  "ustadmobile-contentzone.js", "ustadmobile-localization.js",
@@ -587,4 +593,16 @@ class WebsitePage(Page):
         return ["jquerymobiletheme.min.css", 
                 "jquery.mobile.icons.min.css",
                 "jquery.mobile.structure.css"]
+        
+    """
+    List of special ids for particular css files; these can be used by
+    scripts to dynamically replace css files (e.g. to use the micro JQM
+    theme)
+    """
+    @classmethod
+    def getUstadMobileCSSIDs(cls):
+        return {
+            "jquery.mobile.structure.css" : "jqmStructLink",
+            "jquerymobiletheme.min.css" : "jqmThemeLink"
+        }
     
