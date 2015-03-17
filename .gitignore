@@ -41,3 +41,4 @@ test-settings.json
 
 #microviewer scripts that get copied in
 exe/webui/templates/ustad-microviewer/exe_jquery.js
+exe/webui/templates/ustad-microviewer/ustadjs.js
