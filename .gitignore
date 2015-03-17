@@ -39,3 +39,5 @@ debian/python-intef-exe.substvars
 # files containing credentials
 test-settings.json
 
+#microviewer scripts that get copied in
+exe/webui/templates/ustad-microviewer/exe_jquery.js

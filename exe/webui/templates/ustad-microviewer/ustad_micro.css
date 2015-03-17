@@ -1,0 +1,17 @@
+a.micro_menubar_link, .micro_menubar_link, a.micro_menubar_link:hover {
+    color: white !important;
+    text-shadow: none !important;
+    font: 10pt arial, sans-serif !important;
+}
+
+a.micro_menubar_link_default, .micro_menubar_link_default, a.micro_menubar_link_default:hover {
+    font-weight: bold !important;
+    font-size: 12pt !important;
+}
+
+.micro_menubar_defaultcell {
+    border-left: 1pt solid black;
+    border-right: 1pt solid black;
+}
+
+

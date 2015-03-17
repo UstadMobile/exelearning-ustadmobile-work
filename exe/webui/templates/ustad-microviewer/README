@@ -1,0 +1,12 @@
+Micro 'Emulator'
+
+The contents of this file can be used to see what content will look
+like in a feature phone (eg Java 2 Micro Edition) without requiring
+a browser plugin.  It uses MicroEMU skin device.xml files and images
+on an HTML5 canvas to simulate a feature phone (using the UstadJS lib)
+
+For a course exported using the UstadMobile EPUB export; unzip it and
+copy the files in this directory to the EPUB directory.  Then open
+deviceframe_micro.html to see the course as it would appear on a 
+feature phone.
+
