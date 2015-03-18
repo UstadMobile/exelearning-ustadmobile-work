@@ -49,7 +49,6 @@ from exe.webui.aboutpage           import AboutPage
 from exe.webui.quitpage            import QuitPage
 from exe.webui.iecmwarning         import IECMWarningPage
 from exe.webui.renderable          import File
-from exe.webui.xliffexportpreferencespage import XliffExportPreferencesPage
 from exe.webui.xliffimportpreferencespage import XliffImportPreferencesPage
 from exe.webui.dirtree import DirTreePage
 from exe.webui.webservice.loginpage import LoginPage
@@ -82,9 +81,6 @@ class WebServer:
         self.loginumcloudp = LoginUMCloudPage(self.root) #Added
         self.idevicep      = IDevicePage(self.root)#Added
         self.loginpage     =  LoginPage(self.root)
-        
-        
-        self.xliffexportpreferences = XliffExportPreferencesPage(self.root)
         self.xliffimportpreferences = XliffImportPreferencesPage(self.root)
         self.dirtree     = DirTreePage(self.root)
         self.about       = AboutPage(self.root)

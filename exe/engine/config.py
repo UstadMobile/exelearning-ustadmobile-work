@@ -59,6 +59,10 @@ class Config(object):
     """
     The Config class contains the configuration information for eXe.
     """
+
+    # To build link to git revision
+    baseGitWebURL = 'https://forja.cenatic.es/plugins/scmgit/cgi-bin/gitweb.cgi?p=iteexe/iteexe.git'
+
     # Class attributes
     optionNames = {
         'system': ('webDir', 'jsDir', 'port', 'dataDir',

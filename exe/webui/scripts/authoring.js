@@ -643,12 +643,6 @@ var exe_tinymce = {
 				// first, clear out any old value in the tinyMCE image filename field:
 				win.document.forms[0].elements[field_name].value = "";
 				
-				// PreviewImage is only available for images:
-				if (type == "image") {
-				   win.ImageDialog.showPreviewImage(" ");
-				} else if (type == "media") {
-				   win.window.Media.preview();
-				}    
 				
 				
 				// set the tinyMCE image filename field:
@@ -683,6 +677,7 @@ var exe_tinymce = {
 		
 			
 		}
+
 		// ask user for image or media, depending on type requested:
 		if (type == "image") {
 		   askUserForImage(false, fn);
@@ -861,6 +856,7 @@ function changeMagnifierImageHeight(elementId) {
     
 }
 
+<<<<<<< HEAD
 var scrollBackInterval = null;
 
 /**
@@ -1029,3 +1025,67 @@ function saveHtmlIdevicesToInputFields() {
 }
 
 beforeSubmitHandlers.push(saveHtmlIdevicesToInputFields);
+
+/* Draggable instructions */
+function showMe(e, t, n) {
+	var r = document.getElementById("popupmessage");
+	hideMe();
+	if (!r || r.innerHTML != document.getElementById(e).innerHTML) {
+		r = document.createElement("div");
+		r.id = "popupmessage";
+		r.className = "popupDiv";
+		var i = xpos + t > 740 ? Math.max(0, xpos - t - 15) : xpos;
+		r.style.cssText = "position:absolute; left: " + i + "px; top: " + (ypos - n / 2) + "px; width: " + t + "px;";
+		r.innerHTML = document.getElementById(e).innerHTML;
+		document.body.appendChild(r);
+		new dragElement("popupmessage")
+	}
+}
+function hideMe() {
+	var e = document.getElementById("popupmessage");
+	if (e) {
+		e.parentNode.removeChild(e)
+	}
+}
+function updateCoords(e) {
+	if (e.pageX == null && e.clientX != null) {
+		var t = document.body;
+		e.pageX = e.clientX + (e && e.scrollLeft || t.scrollLeft || 0);
+		e.pageY = e.clientY + (e && e.scrollTop || t.scrollTop || 0)
+	}
+	xpos = e.pageX;
+	ypos = e.pageY
+}
+/* libot_drag.js (updated to remove the code for old browsers and selection problems in Webkit */
+var dO = new Object();
+dO.currID = null;
+dO.z = 0;
+dO.xo = 0;
+dO.yo = 0;
+function trckM(e) {
+	if (dO.currID != null && dO.currID.id == "popupmessage") {
+		var x = e.pageX;
+		var y = e.pageY;
+		dO.currID.style.top = y - dO.yo + 'px';
+		dO.currID.style.left = x - dO.xo + 'px'
+	}
+}
+function drgI(e) {
+	if (dO.currID == null) {
+		var tx = parseInt(this.style.left);
+		var ty = parseInt(this.style.top);
+		dO.currID = this;
+		this.style.zIndex = document.images.length + (dO.z++);
+		dO.xo = (e.pageX) - tx;
+		dO.yo = (e.pageY) - ty;
+		return false
+	}
+}
+function dragElement(id) {
+	this.idRef = document.getElementById(id);
+	this.idRef.onmousedown = drgI;
+	this.idRef.onmouseup = function() {
+		dO.currID = null
+	}
+}
+document.onmousemove = trckM;

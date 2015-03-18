@@ -26,8 +26,6 @@ except ImportError:
     pass
 from distutils.core import setup
 import py2exe
-import pkg_resources
-pkg_resources.require('gitpython>=0.3.1')
 from exe.engine import version
 
 g_files = {'.': ["README",
@@ -66,7 +64,7 @@ dataFiles(["exe/webui/style",
            "exe/webui/schemas",
            "exe/webui/templates",
            "exe/webui/readability-presets"],
-           excludes = ['mimetex.cgi', 'mimetex.64.cgi', 'mimetex-darwin.cgi'])
+           excludes = ['mimetex-darwin.cgi'])
 
 g_oldBase = "exe"
 g_newBase = "."
@@ -79,7 +77,8 @@ dataFiles(["exe/jsui/templates",
 
 opts = {
  "py2exe": {
-   "packages": ["encodings", "nevow", "nevow.flat", "cProfile", "functools", "csv", "libxml2", "robotparser", "chardet", "lxml", "textstatistics"],
+   "packages": ["encodings", "nevow", "nevow.flat", "cProfile", "functools", "csv", "libxml2", "robotparser", "chardet", "lxml", "textstatistics", "feedparser", "BeautifulSoup"],
+   "packages": ["encodings", "nevow", "nevow.flat", "cProfile", "functools", "csv", "libxml2", "robotparser", "chardet", "lxml", "feedparser", "BeautifulSoup"],
    "includes": ["PngImagePlugin", "JpegImagePlugin", "GifImagePlugin",
                 "IcoImagePlugin", "BmpImagePlugin"],
 
@@ -93,10 +92,15 @@ setup(windows=["exe/exe"],
       packages=["exe", "exe.engine", "exe.webui", 
                 "exe.webui.webservice", "exe.export", 
                 "exe.importers", "exe.jsui", "exe.engine.lom"],
-      description="eLearning XHTML editor",
+      description="The EXtremely Easy to use eLearning authoring tool",
       url="http://exelearning.org",
-      author="eXe Project",
-      author_email="exe@exelearning.org",
+      author="INTEF-eXe Project",
+      author_email="admin@exelearning.net",
+      packages=["exe", "exe.engine", "exe.webui", "exe.export", "exe.importers", "exe.jsui", "exe.engine.lom"],
+      description="The EXtremely Easy to use eLearning authoring tool",
+      url="http://exelearning.net",
+      author="INTEF-eXe Project",
+      author_email="admin@exelearning.net",
       license="GPL",
       scripts=["exe/exe"],
       options=opts,

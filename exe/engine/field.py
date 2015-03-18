@@ -2656,7 +2656,8 @@ class FeedbackField(FieldWithResources):
         """
         FieldWithResources.__init__(self, name, instruc)
 
-        self._buttonCaption = x_(u"Click Here")
+        # self._buttonCaption = x_(u"Click Here")
+        self._buttonCaption = "" # Empty button caption (see common.feedbackBlock). "Click Here" does not describe the purpose of the button.
 
         self.feedback      = ""
         # Note: now that FeedbackField extends from FieldWithResources,

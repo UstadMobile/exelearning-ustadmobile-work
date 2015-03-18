@@ -244,26 +244,23 @@ class Block(Renderable):
         html +="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" #Added
 
         if self.idevice.isFirst():
-            #html += common.image(u"movePrev", u"/images/stock-go-up-off.png")
-            html += common.image(u"movePrev", u"/images/draw-arrow-up-off.png")
-            html +="&nbsp;" #Added
+            html += common.image(u"movePrev", u"/images/draw-arrow-up-off.png", alt=None, cssClass=u"submit")
+            html +="&nbsp;"
         else:
             html += common.submitImage(u"movePrev", self.id, 
-                                       #u"/images/stock-go-up.png", 
                                        u"/images/draw-arrow-up.png",
                                        _(u"Move Up"),1)
-            html +="&nbsp;" #Added
+            html +="&nbsp;" 
 
         if self.idevice.isLast():
-            #html += common.image(u"moveNext", u"/images/stock-go-down-off.png")
-            html += common.image(u"moveNext", u"/images/draw-arrow-down-off.png")
-            html +="&nbsp;" #Added
+            html += common.image(u"moveNext", u"/images/draw-arrow-down-off.png", alt=None, 
+                                 cssClass=u"submit")
+            html +="&nbsp;" 
         else:
             html += common.submitImage(u"moveNext", self.id, 
-                                       #u"/images/stock-go-down.png", 
                                        u"/images/draw-arrow-down.png",
                                        _(u"Move Down"),1)
-            html +="&nbsp;" #Added
+            html +="&nbsp;" 
             
         html += "<br></br>" #There is no space, line between the finish icons in page and Move To option.    
         options  = [(_(u"---Move To---"), "")]

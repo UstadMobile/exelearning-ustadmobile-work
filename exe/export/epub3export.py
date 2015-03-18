@@ -33,20 +33,23 @@ from exe.engine.path               import Path, TempDirPath
 from exe.engine.version            import release
 from exe.export.pages              import Page, uniquifyNames
 from exe                      	   import globals as G
-from exe.engine.beautifulsoup      import BeautifulSoup
+from BeautifulSoup                 import BeautifulSoup
 from htmlentitydefs                import name2codepoint
 from exe.export.websitepage        import WebsitePage
 
 log = logging.getLogger(__name__)
 
-name2codepoint.pop('amp')
-name2codepoint.pop('lt')
-name2codepoint.pop('gt')
-name2codepoint.pop('quot')
+entitymap = name2codepoint.copy()
+entitymap.pop('amp')
+entitymap.pop('lt')
+entitymap.pop('gt')
+entitymap.pop('quot')
+
 
 def htmlentitydecode(s):
-    return re.sub('&(%s);' % '|'.join(name2codepoint),
-            lambda m: unichr(name2codepoint[m.group(1)]), s)
+    return re.sub('&(%s);' % '|'.join(entitymap),
+                  lambda m: unichr(entitymap[m.group(1)]), s)
+
 
 # ===========================================================================
 class PublicationEpub3(object):

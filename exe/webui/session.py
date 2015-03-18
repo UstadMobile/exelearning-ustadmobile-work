@@ -45,6 +45,14 @@ def setLocaleFromRequest(request):
     G.application.config.locale = locale
     return locale
 
+    def renderHTTP(self, ctx):
+        request = inevow.IRequest(ctx)
+        if self.real_prepath_len is not None:
+            path = request.postpath = request.prepath[self.real_prepath_len:]
+            del request.prepath[self.real_prepath_len:]
+        result = defer.maybeDeferred(self.renderLocalized, request).addCallback(
+            self._handle_NOT_DONE_YET, request)
+        return result
 
 class eXeResourceAdapter(appserver.OldResourceAdapter):
     def renderLocalized(self, request):
@@ -59,6 +67,9 @@ class eXeResourceAdapter(appserver.OldResourceAdapter):
         result = defer.maybeDeferred(self.renderLocalized, request).addCallback(
             self._handle_NOT_DONE_YET, request)
         return result
+
+compy.registerAdapter(eXeResourceAdapter, resource.IResource, inevow.IResource)
+
 
 compy.registerAdapter(eXeResourceAdapter, resource.IResource, inevow.IResource)
 

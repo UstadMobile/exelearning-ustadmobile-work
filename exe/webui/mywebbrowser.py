@@ -288,11 +288,11 @@ class UnixBrowser(BaseBrowser):
 class Mozilla(UnixBrowser):
     """Launcher class for Mozilla/Netscape browsers."""
 
-    raise_opts = ["-noraise", "-raise"]
-    remote_args = ['-remote', 'openURL(%s%action)']
-    remote_action = ""
-    remote_action_newwin = ",new-window"
-    remote_action_newtab = ",new-tab"
+    raise_opts = []
+    remote_args = ['%action', '%s']
+    remote_action = "-new-tab"
+    remote_action_newwin = "-new-window"
+    remote_action_newtab = "-new-tab"
     background = True
 
 Netscape = Mozilla
@@ -650,7 +650,7 @@ if sys.platform == 'darwin':
 
     def _isinstalled(browser):
         script = '''
-               exists application "%s"
+               get version of application "%s"
                ''' % browser
         f = __builtin__.open(os.devnull, 'w')
         rc = subprocess.call("osascript -e '%s'" % script, shell=True, stdout=f, stderr=f)
