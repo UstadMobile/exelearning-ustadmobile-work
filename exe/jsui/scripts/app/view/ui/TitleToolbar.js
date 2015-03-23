@@ -1,6 +1,6 @@
 // ===========================================================================
 // eXe
-// Copyright 2012, Pedro Peña Pérez, Open Phoenix IT
+// Copyright 2014 Ustad Mobile, Varuna Singh
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,47 +17,29 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //===========================================================================
 
-Ext.define('eXe.view.ui.eXeViewport', {
-    extend: 'Ext.container.Viewport',
-    requires: [
-        'eXe.view.ui.eXeToolbar',
-        'eXe.view.ui.MainTabPanel',
-        'eXe.view.ui.LeftPanel',
-        'eXe.view.ui.TitleToolbar'
-    ],
-
-    layout: {
-        type: 'border'
-    },
+Ext.define('eXe.view.ui.TitleToolbar', {
+    extend: 'Ext.toolbar.Toolbar',
+    alias: 'widget.titletoolbar',
 
     initComponent: function() {
         var me = this;
-
+        var projectTitle =  _('Untitled Project');
+        
         Ext.applyIf(me, {
+        	
             items: [
 				{
-					xtype: 'titletoolbar',
-					region: 'north'
-				},
-                {
-                    xtype: 'exetoolbar',
-                    region: 'north'
-                },
-                {
-                    xtype: 'maintabpanel',
-                    region: 'center'
-                },
-                {
-                    xtype: 'leftpanel',
-                    region: 'west',
-                    split: true,
-                    width: 250
-                }
-            ],
-            itemId: 'eXeViewport',
-            autoScroll: true
+				    xtype: 'button',
+				    text: projectTitle,
+				    //accesskey: 'o',
+				    //tooltip: 'Ctrl+O',
+				    itemId: 'title_button',
+				    id: 'title_button',
+				    height: 30
+				}
+            ]
         });
 
         me.callParent(arguments);
     }
-});
+});	

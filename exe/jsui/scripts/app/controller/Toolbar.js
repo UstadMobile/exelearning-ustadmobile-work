@@ -168,6 +168,16 @@ Ext.define('eXe.controller.Toolbar', {
             '#help_about': {
                 click: this.aboutPage
             }
+            ,
+            //Begin UstadMobile Branch Extras
+            
+            '#title_button' : {
+         	   click : this.setPackageTitle,
+         	   beforerender : this.updatePackageTitle
+         	},
+            
+            //End UstadMobile Branch Extras
+            
         });
         
         this.keymap_config = [
@@ -1045,4 +1055,46 @@ Translation software.')
     askDirty: function(nextStep) {
     	this.checkDirty(nextStep, 'eXe.app.getController("Toolbar").askSave("'+nextStep+'")');
     }
+	
+	//Begin UstadMobile Extra methods
+	,
+	
+	setPackageTitle: function(button) {
+        Ext.Msg.show({
+            prompt: true,
+            title: _('Project Title'),
+            msg: _('Enter the new name:'),
+            buttons: Ext.Msg.OKCANCEL,
+            multiline: false,
+            value: button.text,
+            scope: this,
+            fn: function(button, text) {
+                if (button == "ok") {
+                    if (text) {
+                        nevow_clientToServerEvent('setPackageTitle', this,'', text);
+                        Ext.getCmp("title_button").setText(text);
+                    }
+                }
+            }
+        });
+    },
+    
+    updatePackageTitle: function() {
+        Ext.Ajax.request({
+            url: location.pathname + '/properties?pp_title=',
+            scope: this,
+            success: function(response) {
+                var respData = Ext.JSON.decode(response.responseText);
+                var packageTitle = respData['data']['pp_title'];
+                if(packageTitle == "") {
+                    packageTitle = _("Untitled Project");
+                }
+                
+                Ext.getCmp("title_button").setText(packageTitle);
+            }
+        });
+    },
+	
+	//End UstadMobile Extra Methods
+	
 });
