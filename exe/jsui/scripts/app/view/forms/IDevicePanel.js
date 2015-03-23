@@ -26,7 +26,7 @@
 var idevicep = Ext.define('eXe.view.forms.IDevicePanel', {
     extend: 'Ext.tab.Panel',
     id: 'idevicepanel',
-    alias: 'widget.idevicep',
+    alias: 'widget.idevicepanel',
     
     constructor: function () {
           this.callParent(arguments);
@@ -35,7 +35,6 @@ var idevicep = Ext.define('eXe.view.forms.IDevicePanel', {
     initComponent: function() {
         var me = this;
         Ext.applyIf(me, {
-            autoScroll: true,
             trackResetOnLoad: true,
             url: 'idevicep',        
             items: []

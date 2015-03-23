@@ -417,6 +417,12 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 itemId: 'tools_refresh',
                                 accesskey: 'r',
                                 text: _('Refresh Display')
+                            },
+                            {
+                            	xtype: 'accesskey_menuitem',
+                            	itemId : 'tools_insert_idevice',
+                            	accesskey : 't',
+                            	text: _('Insert Idevice')
                             }
 							
                         ]

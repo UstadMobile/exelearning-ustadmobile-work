@@ -447,7 +447,8 @@ function execute_submitLink(action, object, changed, currentNode)
  * Show the Insert Idevice Window
  */
 function authoringInsertIdevice() {
-	top.window.eXe.app.getController("eXe.controller.Toolbar").toolsIDevicePanel();
+	top.window.setTimeout(
+		"eXe.app.getController('Toolbar').toolsIDevicePanel();", 100);
 }
 
 function submitLink(action, object, changed, currentNode) 

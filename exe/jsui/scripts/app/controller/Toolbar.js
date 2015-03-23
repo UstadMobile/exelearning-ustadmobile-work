@@ -182,6 +182,10 @@ Ext.define('eXe.controller.Toolbar', {
          	'#idevicepanel' : {
          	   beforerender: this.updateIdeviceTabs
          	},
+         	'#tools_insert_idevice' : {
+         		click: this.toolsIDevicePanel
+         	}
+         	
             
             //End UstadMobile Branch Extras
             
@@ -1112,23 +1116,19 @@ Translation software.')
     /**
      * Show the Insert Idevice Window
      */
-    toolsIDevicePanel: function() {
-    	var idevicePanelWindow = Ext.getCmp("idevicepwin");
+    toolsIDevicePanel: function(srcComp) {
+    	var idevicePanelWindow = new Ext.Window ({
+		    height: "95%", 
+		    width: 550, 
+		    modal: true,
+		    id: 'idevicepwin',
+		    title: _("Add Widget"),
+		    layout: 'fit',
+		    items: [{
+		    	xtype: 'idevicepanel'
+		    }]
+        });
     	
-    	if(!idevicePanelWindow) {
-    		idevicePanelWindow = new Ext.Window ({
-    		    height: "95%", 
-    		    width: 550, 
-    		    modal: true,
-    		    closeAction: "hide",
-    		    id: 'idevicepwin',
-    		    title: _("Add Widget"),
-    		    layout: 'fit',
-    		    items: [{
-    		    	xtype: 'idevicep'
-    		    }]
-            });
-    	}
     	
     	idevicePanelWindow.show();        
 	},
