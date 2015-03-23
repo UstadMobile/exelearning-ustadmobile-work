@@ -19,7 +19,11 @@
 
 Ext.define('eXe.controller.Toolbar', {
     extend: 'Ext.app.Controller',
-    requires: ['eXe.view.forms.PreferencesPanel', 'eXe.view.forms.StyleManagerPanel'],
+    requires: [
+       'eXe.view.forms.PreferencesPanel', 
+       'eXe.view.forms.StyleManagerPanel',
+       'eXe.view.forms.IDevicePanel'
+    ],
 	refs: [{
         ref: 'recentMenu',
         selector: '#file_recent_menu'
@@ -174,6 +178,9 @@ Ext.define('eXe.controller.Toolbar', {
             '#title_button' : {
          	   click : this.setPackageTitle,
          	   beforerender : this.updatePackageTitle
+         	},
+         	'#idevicepanel' : {
+         	   beforerender: this.updateIdeviceTabs
          	},
             
             //End UstadMobile Branch Extras
@@ -1059,6 +1066,10 @@ Translation software.')
 	//Begin UstadMobile Extra methods
 	,
 	
+	/**
+	 * Ask the user to give a title in a popup window, if htey click
+	 * OK send to the server and update the button text
+	 */
 	setPackageTitle: function(button) {
         Ext.Msg.show({
             prompt: true,
@@ -1079,6 +1090,9 @@ Translation software.')
         });
     },
     
+    /**
+     * Get the package title and set the text on the button
+     */
     updatePackageTitle: function() {
         Ext.Ajax.request({
             url: location.pathname + '/properties?pp_title=',
@@ -1094,7 +1108,111 @@ Translation software.')
             }
         });
     },
+    
+    /**
+     * Show the Insert Idevice Window
+     */
+    toolsIDevicePanel: function() {
+    	var idevicePanelWindow = Ext.getCmp("idevicepwin");
+    	
+    	if(!idevicePanelWindow) {
+    		idevicePanelWindow = new Ext.Window ({
+    		    height: "95%", 
+    		    width: 550, 
+    		    modal: true,
+    		    closeAction: "hide",
+    		    id: 'idevicepwin',
+    		    title: _("Add Widget"),
+    		    layout: 'fit',
+    		    items: [{
+    		    	xtype: 'idevicep'
+    		    }]
+            });
+    	}
+    	
+    	idevicePanelWindow.show();        
+	},
+	
+	/**
+     * Update tabs in the idevice selector panel - go through, check 
+     * category of each idevice, make a tab for each, then populate
+     * with buttons
+     */
+    updateIdeviceTabs: function() {
+       var ideviceButtonIdPrefix = "idevice_";
+       
+       var ideviceTabPanel = Ext.getCmp("idevicepanel");
+       Ext.Ajax.request({
+           url: location.pathname + '/idevicePane',
+           scope: this,
+           success: function(response) {
+               //dictionary of categoryname - array
+               var deviceItemsByCategory = {};
+               var responseXmlDoc = response.responseXML.documentElement;
+               var ideviceObjs = responseXmlDoc.getElementsByTagName("idevice");
+               for(var i = 0; i < ideviceObjs.length; i++) {
+                   var idevice = ideviceObjs[i];
+                   var visible = idevice.getElementsByTagName(
+                       "visible")[0].childNodes[0].nodeValue;
+                   if(visible == "false") {
+                       continue;
+                   }
+                   
+                   var label = idevice.getElementsByTagName(
+                       "label")[0].childNodes[0].nodeValue;
+                   var category = idevice.getElementsByTagName(
+                       "category")[0].childNodes[0].nodeValue;
+                   
+                   var ideviceId  = idevice.getElementsByTagName(
+                       "id")[0].childNodes[0].nodeValue;
+                   var ideviceCompId = ideviceButtonIdPrefix + ideviceId;
+                   var titleIconHTML = idevice.getElementsByTagName(
+                       "titlewithicon")[0].childNodes[0].nodeValue;
+                   var short_desc = idevice.getElementsByTagName(
+                       "shortdesc")[0].childNodes[0].nodeValue;
+                   if(!deviceItemsByCategory[category]) {
+                       deviceItemsByCategory[category] = [];
+                   }
+                   
+                   deviceItemsByCategory[category].push({
+                       xtype : 'button',
+                       text : titleIconHTML,
+                       align : 'left',
+                       itemId : ideviceCompId,
+                       width: "100%",
+                       margin: 5,
+                       tooltip: short_desc,
+                       handler: function(button) {
+                           var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+                           if (authoring && authoring.submitLink) {
+                               var outlineTreePanel = eXe.app.getController("Outline").getOutlineTreePanel();
+                               selected = outlineTreePanel.getSelectionModel().getSelection();
+                               var ideviceId = button.itemId.substring(ideviceButtonIdPrefix.length);
+                               authoring.submitLink("AddIdevice", ideviceId, 1, selected !== 0? selected[0].data.id : '0');
+                           }
+                           Ext.getCmp('idevicepwin').close();
+                       }
+                   });
+               }
+               
+               for(categoryName in deviceItemsByCategory) {
+                   ideviceTabPanel.add({
+                       title : categoryName,
+                       xtype : "panel",
+                       layout : {
+                           type : "vbox",
+                           align : "sretch"
+                       },
+                       items: deviceItemsByCategory[categoryName]
+                   });
+               }
+               ideviceTabPanel.setActiveTab(0);
+           }
+       });
+   },
 	
 	//End UstadMobile Extra Methods
 	
 });
+
+

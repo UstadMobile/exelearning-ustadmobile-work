@@ -444,10 +444,10 @@ function execute_submitLink(action, object, changed, currentNode)
 }
 
 /**
- * Trigger AJAX to make the main window show the insert idevice options
+ * Show the Insert Idevice Window
  */
 function authoringInsertIdevice() {
-	top.showIdeviceToolbar();
+	top.window.eXe.app.getController("eXe.controller.Toolbar").toolsIDevicePanel();
 }
 
 function submitLink(action, object, changed, currentNode) 
