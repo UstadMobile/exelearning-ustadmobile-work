@@ -31,14 +31,16 @@ Ext.define('eXe.view.ui.MainTabPanel', {
 
     initComponent: function() {
         var me = this;
-
+        var iframeSrc = eXe.app.config.authoringIFrameSrc 
+    		+ "?clientHandleId=" + nevow_clientHandleId;
+        
         Ext.applyIf(me, {
             itemId: 'main_tab',
             items: [
                 {
                     xtype: 'uxiframe',
                     itemId: 'authoring',
-                    src: eXe.app.config.authoringIFrameSrc,
+                    src: iframeSrc,
                     id: 'authoringIFrame1',
                     title: _('Authoring')
                 },
