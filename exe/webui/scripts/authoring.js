@@ -856,7 +856,6 @@ function changeMagnifierImageHeight(elementId) {
     
 }
 
-<<<<<<< HEAD
 var scrollBackInterval = null;
 
 /**
