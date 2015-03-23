@@ -22,7 +22,8 @@ Ext.define('eXe.controller.Toolbar', {
     requires: [
        'eXe.view.forms.PreferencesPanel', 
        'eXe.view.forms.StyleManagerPanel',
-       'eXe.view.forms.IDevicePanel'
+       'eXe.view.forms.IDevicePanel',
+       'eXe.view.forms.ReadabilityBoundariesPanel'
     ],
 	refs: [{
         ref: 'recentMenu',
@@ -184,7 +185,19 @@ Ext.define('eXe.controller.Toolbar', {
          	},
          	'#tools_insert_idevice' : {
          		click: this.toolsIDevicePanel
-         	}
+         	},
+         	'#tools_readability_boundaries' : {
+                click: this.readabilityBoundariesClick
+            },
+            '#readabilityBoundariesTargetsToJSON' : {
+            	click: this.saveReadabilityBoundariesTargets
+            },
+            '#readabilityboundarypanel' : {
+                beforerender: this.readabilityBoundariesLoadInfo
+            },
+            '#toolbar_readability' : {
+            	click: this.readabilityBoundariesClick
+            },
          	
             
             //End UstadMobile Branch Extras
@@ -1210,6 +1223,219 @@ Translation software.')
            }
        });
    },
+   
+    /**
+     *
+     */
+    readabilityBoundariesClick: function() {
+      var readabilityWindow = new Ext.Window( {
+          height: 500,
+          width: 550,
+          modal: true,
+          id: 'readabilityBoundariesWin',
+          title: _("Readability Boundaries"),
+          layout: 'fit',
+          items: [ {
+              xtype: 'readabilityboundarypanel'
+          }]
+      });
+      
+      readabilityWindow.show();
+         
+  },
+  
+  /**
+   * Readability boundaries panel - load information
+   */
+  readabilityBoundariesLoadInfo: function() {
+	  var boundaryInfoPanel = Ext.getCmp(
+	  	"readability_boundaries_indicator_panel");
+	  boundaryInfoPanel.removeAll();
+
+	  var dMargin = 5;
+
+	  var statsUrl = document.location.href + "/readability_stats";
+
+	  //add headings
+	  boundaryInfoPanel.add({
+		  xtype: "label",
+		  text: " "
+	  });
+	  boundaryInfoPanel.add({
+		  xtype: "label",
+		  text: _("Average"),
+		  style : {
+			  "font-weight": "bold",
+			  "text-align" : "center",
+			  "display" : "inline-block",
+			  "width" : "100%"
+		  },
+		  margin: dMargin,
+		  colspan: 2
+	  });
+	  boundaryInfoPanel.add({
+		  xtype: "label",
+		  text: _("Maximum"),
+		  style : {
+			  "font-weight": "bold",
+			  "text-align" : "center",
+			  "display" : "inline-block",
+			  "width" : "100%"
+		  },
+		  margin: dMargin,
+		  colspan: 2
+	  });
+
+	  boundaryInfoPanel.add({
+		  xtype: "label",
+		  text: _("Indicator"),
+		  style : {
+			  "font-weight": "bold",
+			  "text-align" : "left",
+			  "display" : "inline-block",
+			  "width" : "100%"
+		  },
+		  margin: dMargin
+	  });
+
+	  for(var i = 0; i < 2; i++) {
+		  boundaryInfoPanel.add({
+			  xtype: "label",
+			  text: _("Target"),
+			  margin: dMargin
+		  });
+
+		  boundaryInfoPanel.add({
+			  xtype: "label",
+			  text: _("Actual"),
+			  margin: dMargin
+		  });
+	  }
+
+	  Ext.Ajax.request({
+		  url: statsUrl,
+		  scope: this,
+		  success: function(response) {
+			  var respObj = Ext.JSON.decode(response.responseText);
+			  boundaryInfoPanel.readabilityBoundaryStats = respObj;
+			  //loop over the response
+			  for (var indicator in respObj) {
+				  if(respObj.hasOwnProperty(indicator)) {
+					  if(!indicator.substring(0, 6) == "range_") {
+						  continue;
+					  }
+
+					  var indicatorValObj = respObj[indicator];
+					  var indicatorName = indicator;
+					  if(indicatorValObj['label']) {
+						  indicatorName = _(indicatorValObj['label']);
+					  }
+
+					  var indicatorId = indicator;
+
+					  boundaryInfoPanel.add({
+						  xtype: "label",
+						  text: indicatorName,
+						  margin: dMargin
+					  });
+
+					  var addBlankCellsFn = function(container, count) {
+						  for(var i = 0; i < count; i++) {
+							  container.add({
+								  xtype: "label",
+								  text: " ",
+							  });
+						  }
+					  };
+
+					  if(indicatorValObj['average']) {
+						  //the target for this indicator
+						  boundaryInfoPanel.add({
+							  xtype: "textfield",
+							  text: " ",
+							  id: "readability_boundary_target_" 
+								  + indicatorId + "_average",
+								  width: 50,
+								  margin: dMargin,
+								  enableKeyEvents: true,
+								  listeners: {
+									  keyup: function(f,e) {
+										  console.log("update average");
+										  eXeReadabilityHelper.updateTargetHilightByTextfield(f);
+									  }
+								  }
+						  })
+						  //try formatting
+						  var valueFormatted =
+							  indicatorValObj['average'];
+
+						  try {
+							  valueFormatted = indicatorValObj['average'].toFixed(2);
+						  }catch(err) {
+							  //do nothing - not formattable
+						  }
+
+						  boundaryInfoPanel.add({
+							  xtype: "label",
+							  text: valueFormatted,
+							  id: "readability_boundary_value_"
+								  + indicatorId + "_average",
+								  margin: dMargin
+						  });
+					  }else {
+						  addBlankCellsFn(boundaryInfoPanel, 2);
+					  }
+
+
+					  if(indicatorValObj['max']) {
+						  //the target max value for this indicator
+						  //try formatting
+						  var valueFormatted =
+							  indicatorValObj['max'];
+
+						  try {
+							  valueFormatted = indicatorValObj['max'].toFixed(2);
+						  }catch(err) {
+							  //do nothing - not formattable
+						  }
+
+						  boundaryInfoPanel.add({
+							  xtype: "textfield",
+							  text : " ",
+							  id: "readability_boundary_target_" 
+								  + indicatorId + "_max",
+								  width: 50,
+								  margin: dMargin,
+								  enableKeyEvents: true,
+								  listeners: {
+									  keyup: function(f,e) {
+										  eXeReadabilityHelper.updateTargetHilightByTextfield(f);
+									  }
+								  }
+						  });
+
+						  boundaryInfoPanel.add({
+							  xtype: "label",
+							  id: "readability_boundary_value_"
+								  + indicatorId + "_max",
+								  text: valueFormatted,
+								  margin: dMargin
+						  });
+					  }else {
+						  addBlankCellsFn(boundaryInfoPanel, 2);
+					  }
+				  }
+			  }
+
+			  //set the word list
+			  var wordListArr = respObj["info_distinct_words_in_text"];
+			  wordListArr.sort();
+			  var wordList = eXeReadabilityHelper.wordArrToNewLinesStr(
+					  wordListArr);
+			  Ext.getCmp("wordlist_filtered_textarea").setValue(wordList);
+		  }
+	  });
+    }
 	
 	//End UstadMobile Extra Methods
 	

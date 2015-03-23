@@ -387,6 +387,13 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                             },
                             {
                                 xtype: 'accesskey_menuitem',
+                                itemId: 'tools_readability_boundaries',
+                                accesskey: 'b',
+                                text: _('Readability'),
+                                icon: '/images/readability.png'
+                            },
+                            {
+                                xtype: 'accesskey_menuitem',
                                 itemId: 'tools_stylemanager',
                                 accesskey: 's',
                                 text: _('Style Manager')
