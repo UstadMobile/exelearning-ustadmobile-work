@@ -98,6 +98,14 @@ for(var i = 0; i < fieldsToOverride.length; i++) {
 	});
 }
 
+//Begin UstadMobile Extra Globals
+
+/** Reference to outline (ExtJS) */
+var outline = null;
+
+//End UstadMobile Extra Globals
+
+
 Ext.require("eXe.view.ui.eXeViewport");
 
 Ext.onReady(function() {
@@ -226,6 +234,21 @@ Ext.onReady(function() {
 	    },
 
 	    appFolder: "jsui/app"
+    	,
+    	
+    	//Begin UstadMobile Branch Methods + Extras
+    	
+    	outlineSelectNode: function(currentNodeId) {
+        	outline = eXe.app.getController("Outline"); 
+        	if (outline) {
+        		outline.select(currentNodeId);
+    		}
+        },
+        
+        
+        
+        
+        //End UstadMobile branch methods and extras
 
 	});
 });
