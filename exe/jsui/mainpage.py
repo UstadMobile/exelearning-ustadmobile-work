@@ -19,6 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # ===========================================================================
 from exe.webui.webservice.exebackendservice import EXEBackEndService
+from resumablejsclient.resumablejsclient import ResumableClient
 
 """
 This is the main Javascript page.
@@ -642,115 +643,38 @@ class MainPage(RenderableLivePage):
             #client.alert(_(u'Package saved to: %s') % filename, filter_func=otherSessionPackageClients)
             #Basically don't alert the customer of anything while auto saving -VS
 
-
-
-
-    def handleUMUploadFileName (self, client, onDone, onDoneParam, filepath, username, password, url):   #Added
+    def handleUMUploadFileName (self, client, onDone, onDoneParam, filepath, username, password, url):
         """
-        Testing file upload in Python..
-        """
-        credentials = {'username': username, 'password': password} #Can be used in params=credentials in the request.
-
-        #Login for TINCAN Login
-        cred = username + ":" + password
-        encode = base64.b64encode(cred)
-        encoded = "Basic " + encode
-        headers = {'X-Experience-API-Version': '1.0.1', 'Authorization': encoded}
-        #End of logic
+        Handle uploading to a ResumableJS Server
         
-        
-        files={'exeuploadelp': (filepath, open(filepath, 'rb'))}
-        
-        fields = [('username', username), ('password', password)]
-        files2 = [('exeuploadelp', filepath, open(filepath, 'rb'))]
-        
+        Args:
+            client : eXeCleint active
+            filepath : Path to the elp file to upload
+            username : username to authenticate as to server
+            password : password to use for authentication
         
         """
-        Example:
-          import MultipartPostHandler, urllib2, cookielib
+        request_extra_params = { 'forceNew': "true", 'noAutoassign': "true" }
+        http_auth = (username, password)
+        #client.sendScript('Ext.MessageBox.progress("Uploading your block", "Your block is being uploaded...")')
+        resumable = ResumableClient(filepath, url, 1048576, 10, 
+            request_extra_params= request_extra_params, http_auth = http_auth);
+        response = resumable.start_upload()
+        status_code = response.status_code
         
-          cookies = cookielib.CookieJar()
-          opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies),
-                                        MultipartPostHandler.MultipartPostHandler)
-          params = { "username" : "bob", "password" : "riviera",
-                     "file" : open("filename", "rb") }
-          opener.open("http://wwww.bobsite.com/upload/", params)
+        if status_code == 200:
+            coursename = response.headers['coursename']
 
-        """
-        
-        cookies = cookielib.CookieJar()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies), 
-                                      MultipartPostHandler.MultipartPostHandler)
-        params = { 'username': username, 'password': password, 'exeuploadelp': open(filepath, 'rb')}
-        
-        
-        
-        try:
-            response = opener.open(url, params)
-
-            if (response.code == 403):
-                client.alert("Error: Wrong username and password combination. Try again")
-                
-                #return "Error: Wrong username and password combination. Try again"
-            elif (response.code == 200):
-                courseid = response.info().getheader('courseid')
-                coursename = response.info().getheader('coursename')
-                
-                #Trigger something on the client..
-                client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
-                client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
-                
-                client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
-            elif (response.code == 500):
-                error = response.info().getheader('error')
-                if (error == "Grunt test failed"):
-                    client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
-                elif (error == "Exe export failed"):
-                    client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
-                elif (error == "Exe export failed to start"):
-                    client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
-                elif (error == "Request is not POST"):
-                    client.alert("eXe error: eXe failed to connect with the server by POST request")
-                else:
-                    client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
-                #Trigger something on the client..
-                #I think nothing needs to be triggered.
-            else:
-                client.alert("Something went wrong. could not identify.")
-                #Trigger something on the client..
+            #Close windows on client
+            client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
+            client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
+            client.alert(_("Your course: '%s' has uploaded.") % coursename)
             
-            
-        except urllib2.HTTPError, response:
-            pass
-        
-        if (response.code == 403):
-            client.alert("Error: Wrong username and password combination. Try again")
-            
-            #return "Error: Wrong username and password combination. Try again"
-        elif (response.code == 200):
-            courseid = response.info().getheader('courseid')
-            coursename = response.info().getheader('coursename')
-            client.alert("Your course: " + coursename + " has uploaded. Course id: " + courseid )
-            #Trigger something on the client..
-            #client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
-            #client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
-        elif (response.code == 500):
-            error = response.info().getheader('error')
-            if (error == "Grunt test failed"):
-                client.alert("Server Error: Your course did not pass server tests. Your project uploaded but cannot be set as active")
-            elif (error == "Exe export failed"):
-                client.alert("Server Error: Your course failed to finish exporting on the server. Your project uploaded but cannot be set as active.")
-            elif (error == "Exe export failed to start"):
-                client.alert("Server Error: Your course failed to export on the server. Please get in touch.")
-            elif (error == "Request is not POST"):
-                client.alert("eXe error: eXe failed to connect with the server by POST request")
-            else:
-                client.alert("Error: Cannot connect to the server. Make sure the server is active and you have network access.")
-            #Trigger something on the client..
-            #I think nothing needs to be triggered.
-        else:
-            client.alert("Something went wrong. could not identify.")
-            #Trigger something on the client..
+        elif (status_code == 500):
+            server_err_msg =  response.headers['error'] if  response.headers['error'] else ""
+            client.alert(_("Server Error: %s") % server_err_msg)
+        elif (status_code == 403):
+            client.alert(_("Invalid username/password - please try again"))
      
 
     def b4save(self, client, inputFilename, ext, msg):
