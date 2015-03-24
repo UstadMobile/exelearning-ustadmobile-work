@@ -198,7 +198,9 @@ Ext.define('eXe.controller.Toolbar', {
             '#toolbar_readability' : {
             	click: this.readabilityBoundariesClick
             },
-         	
+            '#tools_preview_smartphone': {
+                click: { fn: this.processBrowseEvent, url: location.href + '/previewmobile/deviceframe.html' }
+            },
             
             //End UstadMobile Branch Extras
             
