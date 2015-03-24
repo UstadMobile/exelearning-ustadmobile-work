@@ -19,6 +19,7 @@
 
 Ext.define('eXe.controller.filepicker.File', {
     extend: 'Ext.app.Controller',
+    referenceHolder: true,
 	stores: ['filepicker.File'],
 	views: ['filepicker.FileList', 'filepicker.DirectoryTree', 'filepicker.FilePicker'],
 	requires: [
@@ -74,9 +75,6 @@ Ext.define('eXe.controller.filepicker.File', {
 			},
             '#file_place_field': {
                 specialkey: { fn: this.onSpecialKey, scope: this }
-            },
-            '#filepicker_upload_file_field' : {
-            	change: { fn : this.onUploadFileFromComputer }
             }
 		});
 
@@ -110,9 +108,13 @@ Ext.define('eXe.controller.filepicker.File', {
 		var fileStore = this.getFilepickerFileStore();
 		fileStore.load({
 			callback: function() {
-                if (clear === true)
+				/**
+				 * ExtJS-Upgrade
+				 */
+				if (clear === true)
 				    this.getPlaceField().clearValue();
 				this.getPlaceField().focus();
+                
 			},
 			params: {
 				sendWhat: this.sendWhat,
@@ -342,36 +344,6 @@ Ext.define('eXe.controller.filepicker.File', {
             }
 		}
 	},
-	
-	/**
-	 * Handle the file upload button once a user has selected
-	 * a file that he/she wishes to upload.  Send to DirTreePage
-	 * 
-	 * @method
-	 */
-	onUploadFileFromComputer: function() {
-		var form = Ext.getCmp("fileuploadform").getForm();
-		var fileName = Ext.getCmp("filepicker_upload_file_field"
-				).getValue();
-		fileName = fileName.split(/(\\|\/)/g).pop();
-		Ext.getCmp("upload_file_name").setValue(fileName);
-		Ext.getCmp("upload_current_dir").setValue(this.currentDir);
-		Ext.Msg.wait(_('Uploading Image...'));
-		form.submit({
-			url: "/dirtree",
-			success: function(fp, o) {
-				console.log("uploaded file OK");
-				Ext.Msg.hide();
-				eXe.app.getStore('filepicker.DirectoryTree').load({ 
-	                callback: function() {
-	                    eXe.app.fireEvent( "dirchange",
-                    		Ext.getCmp("upload_current_dir").getValue());
-	                }
-	            })
-			}
-		});
-	},
-	
 	onCreateDir: function() {
         var store = this.getFilepickerFileStore(),
             record = store.findRecord("name", ".", 0, false, true, true);
@@ -411,17 +383,18 @@ Ext.define('eXe.controller.filepicker.File', {
 		});
 	},
 	onFilePickerShow: function() {
-		var fp = this.getFilePicker(),
-			combo = this.getFiletypeCombo(),
-            place = this.getPlaceField();
-
+		var fp = this.getFilePicker();
+		var combo = this.getFiletypeCombo();
+        var place = this.getPlaceField();
+        
         fp.status = eXe.view.filepicker.FilePicker.returnCancel;
 		var prevalue=fp.prefilename;
 		if (prevalue==undefined){
-		prevalue="";
+			prevalue="";
 		}
-        place.setValue(prevalue);
-        place.focus();
+		place.setValue(prevalue);
+    	place.focus();
+        
         if (combo)
 		  combo.setValue(fp.filetypes.getAt(0).get('regex'));
 		this.currentDir = Ext.state.Manager.get('filepicker-currentDir', '/');
@@ -429,7 +402,7 @@ Ext.define('eXe.controller.filepicker.File', {
 	},
 	onFilterChange: function(field, newValue, oldValue, eOpts) {
 		var store = this.getFilepickerFileStore();
-		
+		store.clearFilter();
 		store.filterBy( function(record, id) {
 			if (record.get("type") == "directory")
 				return true;

@@ -1,4 +1,3 @@
-
 var nevow_clientHandleId;       /* This variable must be defined in your HTML.
                                  */
 

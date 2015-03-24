@@ -26,22 +26,8 @@ Ext.define('eXe.controller.Idevice', {
         this.control({
             '#idevice_panel': {
                 itemclick:	this.onIdeviceClick
-            },
-            //toolbar_idevice_panel
-            '#toolbar_idevice_panel': {	//Added
-                itemclick:	this.onToolbarIdeviceClick
             }
         });
-    },
-    
-    onToolbarIdeviceClick: function(view, record, item, index, e, eOpts) {	//Added
-        var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
-        if (authoring && authoring.submitLink && !view.panel.editing) {
-            var outlineTreePanel = eXe.app.getController("Outline").getOutlineTreePanel(),
-                selected = outlineTreePanel.getSelectionModel().getSelection();
-            authoring.submitLink("AddIdevice", record.data.id, 1, selected !== 0? selected[0].data.id : '0');
-        }
-        Ext.getCmp('idevicepwin').close();
     },
     
     onIdeviceClick: function(view, record, item, index, e, eOpts) {

@@ -30,8 +30,6 @@ Ext.define('eXe.view.ui.OutlineToolbar1', {
                     xtype: 'button',
                     text: _('Add Page'),
                     itemId: 'outline_add_node',
-                    //icon: '/images/plusbutton.png',
-                    icon: '/images/stock-new.png',
                     tooltip: 'Ctrl+Insert',
                     disabled: true
                 },
@@ -39,7 +37,6 @@ Ext.define('eXe.view.ui.OutlineToolbar1', {
                     xtype: 'button',
                     text: _('Delete'),
                     itemId: 'outline_del_node',
-                    icon: '/images/stock-cancel.png',
                     tooltip: 'Ctrl+Supr',
                     disabled: true
                 },
@@ -47,7 +44,6 @@ Ext.define('eXe.view.ui.OutlineToolbar1', {
                     xtype: 'button',
                     text: _('Rename'),
                     itemId: 'outline_ren_node',
-                    icon: '/images/edit.gif',
                     tooltip: 'Ctrl+R',
                     disabled: true
                 }

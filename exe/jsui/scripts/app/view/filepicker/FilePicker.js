@@ -41,6 +41,14 @@ Ext.define('eXe.view.filepicker.FilePicker', {
 	file: {},
 
     initComponent: function() {
+    	var fakeStore = Ext.create('Ext.data.Store', {
+    	    fields: ['abbr', 'name'],
+    	    data : [
+    	        {"typename":"ELP", "extension":"elp", "regex" : "\*.elp"},
+    	        {"typename":"All", "extension":"*", "regex" : "\*.\*"},
+    	    ]
+    	});
+    	
         var me = this,
             ft = Ext.create("Ext.data.Store",{ fields: ['typename', 'extension', 'regex'] }),
             top_buttons = eXe.app.config.locationButtons.concat([
@@ -53,22 +61,23 @@ Ext.define('eXe.view.filepicker.FilePicker', {
 	    	],
             fieldlabel = _('Name'),
             filter =
-	    		{
-	                xtype: 'combo',
-	                itemId: 'file_type_combo',
-	                queryMode: 'local',
-	                store: ft,
-	                displayField: 'typename',
-                    fieldLabel: _('Type'),
-                    labelAlign: 'right',
-	            	valueField: 'regex',
-                    dock: 'bottom',
-                    ui: 'footer',
-	            	forceSelection: true,
-                    allowBlank: false,
-                    padding: '0px 0px 10px 0px'
-	           }
-            ;
+    		{
+                xtype: 'combo',
+                itemId: 'file_type_combo',
+                queryMode: 'local',
+                store: ft,
+                displayField: 'typename',
+                fieldLabel: _('Type'),
+                labelAlign: 'right',
+            	valueField: 'regex',
+                dock: 'bottom',
+            	forceSelection: true,
+                allowBlank: false,
+                style: {
+                	padding: '0px 0px 10px 0px'
+                }
+           }
+        ;
 
         me.files = [];
 
@@ -77,7 +86,7 @@ Ext.define('eXe.view.filepicker.FilePicker', {
         		buttons[2] = { xtype: 'button', text: _('Save'), itemId: 'filepicker_save' };
                 top_buttons[eXe.app.config.locationButtons.length + 1] = { xtype: 'button', text: _('Create Directory'), itemId: 'filepicker_createdir' };
 		        top_buttons.unshift({
-		            xtype: 'text',
+		            xtype: 'label',
 		            text: _('Save in:'),
 		            padding: '2px 15px 0px 0px'
 		        });
@@ -88,54 +97,9 @@ Ext.define('eXe.view.filepicker.FilePicker', {
                 buttons[2] = { xtype: 'button', text: _('Select Folder'), itemId: 'filepicker_open' };
                 top_buttons[eXe.app.config.locationButtons.length + 1] = { xtype: 'button', text: _('Create Directory'), itemId: 'filepicker_createdir' };
         		break;
-        	case eXe.view.filepicker.FilePicker.modeOpen:
-        		if(eXe.app.config.appMode == APPMODE_WEBAPP) {
-        			top_buttons[eXe.app.config.locationButtons.length + 1] =
-        			{
-    					xtype: "form",
-    					id: "fileuploadform",
-    					itemId: "fileuploadform",
-    					layout: {
-    						type: "hbox"
-    					},
-    					margin: 0,
-    					items: [{
-		        			        xtype: 'filefield',
-		        			        name: 'upload_file',
-		        			        itemId: "filepicker_upload_file_field",
-		        			        id: "filepicker_upload_file_field",
-		        			        fieldLabel: 'File',
-		        			        labelWidth: 50,
-		        			        msgTarget: 'side',
-		        			        buttonOnly: true,
-		        			        hideLabel: true,
-		        			        anchor: '100%',
-		        			        buttonText: _('Upload File From Computer'),
-		        			    },
-		        			    {
-		        			    	xtype: "hidden",
-		        			    	name: "uploadfileaction",
-		        			    	value : "upload_simple"
-		        			    },
-		        			    {
-		        			    	xtype: "hidden",
-		        			    	name: "upload_file_name",
-		        			    	itemId: "upload_file_name",
-		        			    	id: "upload_file_name",
-		        			    	value: ""
-		        			    },
-		        			    {
-		        			    	xtype: "hidden",
-		        			    	name: "upload_current_dir",
-		        			    	itemId: "upload_current_dir",
-		        			    	id: "upload_current_dir"
-		        			    }
-    					        ]
-        			};	
-        		}
         }
         
-        Ext.applyIf(me, {
+        Ext.apply(me, {
         	width: 800,
             height: eXe.app.getMaxHeight(600),
             layout:'border',
@@ -169,7 +133,6 @@ Ext.define('eXe.view.filepicker.FilePicker', {
 	                fieldLabel: fieldlabel,
                     labelAlign: 'right',
 	                dock: 'bottom',
-                    ui: 'footer',
 	        		itemId: 'file_place_field',
                     padding: '5px 0px 5px 0px',
                     listeners: {
@@ -186,8 +149,8 @@ Ext.define('eXe.view.filepicker.FilePicker', {
                     }
                 }
 			],
-            fbar: [
-			],
+            /*fbar: [
+			],*/
 			items: [
 				{
 					xtype: "dirtree",

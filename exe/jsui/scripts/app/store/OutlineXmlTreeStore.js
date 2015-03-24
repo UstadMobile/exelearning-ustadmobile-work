@@ -34,7 +34,7 @@ Ext.define('eXe.store.OutlineXmlTreeStore', {
                 url: 'outlinePane', //Modified on beforeload
                 reader: {
                     type: 'xml',
-                    root: 'nodes',
+                    rootProperty: 'nodes',
                     record: 'node'
                 }
             }
@@ -47,11 +47,9 @@ Ext.define('eXe.store.OutlineXmlTreeStore', {
     	},
     	
     	load: function() {
-			//nevow_clientToServerEvent('setTreeSelection', this, '');
-    		console.log("setTreeSelection event to server");
-    		nevow_clientToServerEvent('setTreeSelection', this, '');
-    		
-    		//sometimes the setTreeSelection isn't quite ready...
+			nevow_clientToServerEvent('setTreeSelection', this, '');
+			
+			//sometimes the setTreeSelection isn't quite ready...
     		setTimeout(function() {
     			if(!outline) {
     				console.log("seems like no outline set - select 0");

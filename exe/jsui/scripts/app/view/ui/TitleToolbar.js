@@ -17,66 +17,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //===========================================================================
 
-/*
-Ext.define('eXe.view.ui.button', {
-    extend: 'Ext.button.Button',
-    alias: 'widget.accesskey_button',
-
-    accesskey: null,
-
-    beforeRender: function() {
-        var me = this, pat, rep, key;
-
-        if (me.accesskey) {
-            pat = new RegExp(me.accesskey,'i');
-            key = pat.exec(me.text);
-            if (key) {
-                rep = "<u>" + key + "</u>";
-                me.text = me.text.replace(pat, rep);
-            }
-        }
-
-        me.callParent();
-    }
-});
-
-Ext.define('eXe.view.ui.menuitem', {
-    extend: 'Ext.menu.Item',
-    alias: 'widget.accesskey_menuitem',
-
-    accesskey: null,
-
-    beforeRender: function() {
-        var me = this, pat, rep, key, keymap;
-
-        if (me.accesskey) {
-            pat = new RegExp(me.accesskey,'i');
-            key = pat.exec(me.text);
-            if (key) {
-	            rep = "<u>" + key + "</u>";
-	            me.text = me.text.replace(pat, rep);
-            }
-	        keymap = new Ext.util.KeyMap({
-	            target: me.up().el,
-	            binding: {
-	                key: me.accesskey,
-	                fn: function() {
-                        if (me.menu) {
-                            me.activate();
-                            me.expandMenu(0);
-                            me.up().on({'beforeshow': function () { me.deactivate(); } });
-                        }
-                        else
-                            me.onClick(Ext.EventObject);
-                    },
-	                defaultEventAction: 'stopEvent'
-	            }
-	        });
-        }
-        me.callParent();
-    }
-});
-*/
 Ext.define('eXe.view.ui.TitleToolbar', {
     extend: 'Ext.toolbar.Toolbar',
     alias: 'widget.titletoolbar',
@@ -102,4 +42,4 @@ Ext.define('eXe.view.ui.TitleToolbar', {
 
         me.callParent(arguments);
     }
-});
+});	

@@ -50,13 +50,15 @@ Ext.define('eXe.controller.filepicker.Directory', {
 
         if (clear === true)
             this.getPlaceField().setValue("");
-        this.getPlaceField().focus();
+    	this.getPlaceField().focus();
+        
         if (selection[0] == "/")
 	        path = sep + '/' + selection.replace(/\//g, sep);
 	    else {
         	path = sep + '/' + sep + selection.replace(/\\/g, sep);
 			path = path.replace(/_RRR_$/, '');	    	
 	    }
+        
         dirtree.expandPath(path, "realtext", sep, function() {
             if (selection == "/")
                 dirtree.getSelectionModel().select(dirtree.getRootNode());
@@ -64,6 +66,7 @@ Ext.define('eXe.controller.filepicker.Directory', {
                 dirtree.selectPath(path, "realtext", sep);
             }
         }, this);
+        
 	},
 	
 	onDirSelect: function( selModel, selection ) {

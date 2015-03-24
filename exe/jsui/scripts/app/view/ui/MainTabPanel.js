@@ -32,8 +32,8 @@ Ext.define('eXe.view.ui.MainTabPanel', {
     initComponent: function() {
         var me = this;
         var iframeSrc = eXe.app.config.authoringIFrameSrc 
-        	+ "?clientHandleId=" + nevow_clientHandleId; 
-
+    		+ "?clientHandleId=" + nevow_clientHandleId;
+        
         Ext.applyIf(me, {
             itemId: 'main_tab',
             items: [
@@ -42,28 +42,23 @@ Ext.define('eXe.view.ui.MainTabPanel', {
                     itemId: 'authoring',
                     src: iframeSrc,
                     id: 'authoringIFrame1',
-                    //title: _('Authoring')
-                    icon: '/images/stock-edit.png', //added
-                    title: _('Edit')
+                    title: _('Authoring')
                 },
                 {
                     xtype: 'tabpanel',
                     title: _('Properties'),
-                	icon: '/images/stock-properties.png', //Added
                     itemId: 'properties_tab',
                     activeTab: 0,
                     items: [
                         {
                             xtype: 'package',
                             itemId: 'package_properties',
-                            icon: '/images/package-green.png', //Added
                             title: _('Package')
                         },
                         {
                             xtype: 'tabpanel',
                             title: _('Metadata'),
                             itemId: 'metadata_tab',
-                            icon: '/images/stock-dnd.png', //Added
                             items: [
 	                            {
 		                            xtype: 'dublincoredata',
@@ -87,7 +82,6 @@ Ext.define('eXe.view.ui.MainTabPanel', {
                         {
                             xtype: 'export',
                             itemId: 'export_properties',
-                            icon: '/images/stock-export.png', //Added
                             title: _('Export')
                         }
                     ]

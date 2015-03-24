@@ -444,10 +444,11 @@ function execute_submitLink(action, object, changed, currentNode)
 }
 
 /**
- * Trigger AJAX to make the main window show the insert idevice options
+ * Show the Insert Idevice Window
  */
 function authoringInsertIdevice() {
-	top.showIdeviceToolbar();
+	top.window.setTimeout(
+		"eXe.app.getController('Toolbar').toolsIDevicePanel();", 100);
 }
 
 function submitLink(action, object, changed, currentNode) 
@@ -856,7 +857,6 @@ function changeMagnifierImageHeight(elementId) {
     
 }
 
-<<<<<<< HEAD
 var scrollBackInterval = null;
 
 /**
