@@ -218,11 +218,13 @@ Ext.onReady(function() {
 			  }, 250);
 	        
 	        if (!eXe.app.config.showIdevicesGrouped) {
-	        	var panel = Ext.ComponentQuery.query('#idevice_panel')[0],
-	        		button = panel.down('button');
+	        	var panel = Ext.ComponentQuery.query('#idevice_panel')[0];
+	        	if(panel) {
+	        		var button = panel.down('button');
 	        	
-	        	panel.view.features[0].disable();
-	        	button.setText(_('Group iDevices'));
+	        		panel.view.features[0].disable();
+	        		button.setText(_('Group iDevices'));
+	        	}
 	        }
 
 	        eXe.app.afterShowLoadErrors = function() {

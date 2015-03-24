@@ -184,8 +184,7 @@ Ext.define('eXe.view.ui.LeftPanel', {
         
         Ext.applyIf(me, {
             items: [
-                leftOutlinePanel,
-                leftIdevicePanel
+                leftOutlinePanel
             ]
         });
 

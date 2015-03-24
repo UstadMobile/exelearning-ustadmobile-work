@@ -720,7 +720,7 @@ Translation software.')
     },
     
 	exportPackage: function(exportType, exportDir) {
-	    if (exportType == 'webSite' || exportType == 'singlePage' || exportType == 'printSinglePage' || exportType == 'ipod' || exportType == 'mxml' ) {
+	    if (exportType == 'webSite' || exportType == 'singlePage' || exportType == 'printSinglePage' || exportType == 'ipod') {
 	        if (exportDir == '') {
                 var fp = Ext.create("eXe.view.filepicker.FilePicker", {
 		            type: eXe.view.filepicker.FilePicker.modeGetFolder,
@@ -772,7 +772,7 @@ Translation software.')
 	            ]
 	        );
             fp.show();
-        } else if(exportType == "epub3"){
+        } else if(exportType == "epub3" || exportType == 'mxml'){
                 var fp = Ext.create("eXe.view.filepicker.FilePicker", {
                     type: eXe.view.filepicker.FilePicker.modeSave,
                     title: _("Export EPUB3 package as"),
