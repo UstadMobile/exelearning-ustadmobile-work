@@ -181,10 +181,80 @@ Ext.define('eXe.view.ui.LeftPanel', {
             ]
         };
         
+        var leftSummaryPanel = {
+    		xtype: "panel",
+    		region: "south",
+    		layout: {
+    			type: "vbox",
+    			align: "stretch"
+    		},
+    		
+    		flex: 1,
+    		header: {
+    			xtype: "header",
+    			title: _("Properties")
+    		},
+    		defaults: {
+    			padding: "2"
+    		},
+    		items: [
+		        {
+		        	xtype: "label",
+		        	text: _("Cover Icon:")
+		        },
+		        {
+		        	xtype: "panel",
+		        	height: 100,
+		        	layout : "center",
+		        	padding: "1 1 1 15",
+		        	style: {
+		        		cursor: "pointer"
+		        	},
+		        	items: [ {
+		        		xtype: "image",
+			        	height: 100,
+			        	border: 1,
+			        	itemId: "leftpanel_properties_coverimg",
+			        	src: "/images/default-cover.png",
+			        	listeners: {
+			        		click: {
+			        			element: 'el',
+			        			fn : function() {
+			        				eXe.app.getController("Toolbar").selectCoverImage();
+			        			}
+			        		},
+			        		beforerender: {
+			        			fn: function(img) {
+			        				eXe.app.getController("Toolbar").updateLeftPanelProperties();
+			        			}
+			        		}
+			        	}
+		        	}]
+		        },
+		        {
+		        	xtype: "textfield",
+		        	fieldLabel: _("Author"),
+		        	labelAlign: "top",
+		        	itemId: "leftpanel_properties_author",
+		        	emptyText: "e.g. Your Name, Organization",
+		        	text: ""
+		        },
+		        {
+                    xtype: 'combobox',
+                    inputId: 'leftpanel_license',
+                    itemId: "leftpanel_license",
+                    store: eXe.view.forms.PackagePanel.eXeLicenses,
+                    emptyText: _('Select a license...'),
+                    tooltip: _('Select a license.')
+                },
+	        ]
+        };
+        
         
         Ext.applyIf(me, {
             items: [
-                leftOutlinePanel
+                leftOutlinePanel,
+                leftSummaryPanel
             ]
         });
 

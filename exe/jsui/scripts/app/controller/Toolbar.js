@@ -32,6 +32,18 @@ Ext.define('eXe.controller.Toolbar', {
     },{
     	ref: 'stylesMenu',
     	selector: '#styles_menu'
+    },
+    {
+        ref: 'coverImg',
+        selector: '#leftpanel_properties_coverimg'
+    },
+    {
+    	ref: 'leftPanelAuthorField',
+    	selector : '#leftpanel_properties_author'
+    },
+    {
+    	ref: 'leftPanelLicenseCombo',
+    	selector: '#leftpanel_license'
     }
     ],    
     init: function() {
@@ -210,7 +222,13 @@ Ext.define('eXe.controller.Toolbar', {
             },
             '#titletoolbar_preview_featurephone' : {
             	click: this.previewFrameFeaturephone
-            }
+            },
+            '#leftpanel_properties_author': {
+            	change: this.updatePropertiesOnPackage
+            },
+            '#leftpanel_license': {
+            	change: this.updatePropertiesOnPackage
+            },
             
             //End UstadMobile Branch Extras
             
@@ -1483,7 +1501,77 @@ Translation software.')
     previewFrameWebsite: function() {
     	this.showPreviewWindow(location.href + "/preview/",
     			_("Website Preview"), "80%", "99%");
-    }
+    },
+    
+    selectCoverImage: function(evt) {
+    	var fp = Ext.create("eXe.view.filepicker.FilePicker", {
+            type: eXe.view.filepicker.FilePicker.modeOpen,
+            title: _("Select an image"),
+            modal: true,
+            scope: this,
+            callback: function(fp) {
+                if (fp.status == eXe.view.filepicker.FilePicker.returnOk) {
+                	var coverImgPath = fp.file.path;
+                	Ext.Ajax.request({
+                        url: location.pathname + '/properties',
+                        method: "POST",
+                        params: {
+                        	"pp_coverImg" : coverImgPath
+                        },
+                        scope: this,
+                        success: function(response) {
+                            var json = Ext.JSON.decode(response.responseText);
+                            var coverImg = this.getCoverImg();
+                            coverImg.setSrc(location.pathname + '/resources/' + json.data.pp_coverImg);
+                        }
+                    });
+                }
+            }
+    	});
+    	
+    	fp.appendFilters([
+              { "typename": _("Image Files"), "extension": "*.png", "regex": /.*\.(jpg|jpeg|png|gif)$/i },
+              { "typename": _("All Files"), "extension": "*.*", "regex": /.*$/ }
+        ]);
+        fp.show();  
+    },
+    
+    updatePropertiesOnPackage: function() {
+    	var author = this.getLeftPanelAuthorField().getValue();
+    	var license = this.getLeftPanelLicenseCombo().getValue();
+    	
+    	Ext.Ajax.request({
+            url: location.pathname + '/properties',
+            method: "POST",
+            params: {
+            	"pp_author" : author,
+            	"pp_license" : license,
+            	"no_autosave" : ""
+            },
+            success: function() {
+            	console.log("updated project properties");
+        	}
+        });
+    },
+    
+    updateLeftPanelProperties: function() {
+    	var coverImg = this.getCoverImg();
+    	Ext.Ajax.request({
+            url: location.pathname + '/properties?pp_coverImg=&pp_author=&pp_license=',
+            scope: this,
+            success: function(response) {
+                var json = Ext.JSON.decode(response.responseText);
+                var coverImgSrc = json.data.pp_coverImg;
+                if(coverImgSrc) {
+                	coverImg.setSrc(location.pathname + "/resources/" + 
+                    		coverImgSrc);
+                }
+                
+                this.getLeftPanelAuthorField().setValue(json.data.pp_author);
+                this.getLeftPanelLicenseCombo().setValue(json.data.pp_license);
+            }
+        });
+    }, 
     
 	
 	//End UstadMobile Extra Methods

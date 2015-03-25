@@ -252,7 +252,7 @@ class PropertiesPage(Renderable, Resource):
     booleanFieldNames = ('pp_scolinks', 'pp_backgroundImgTile', 'pp_scowsinglepage', 'pp_scowwebsite', 'pp_exportSource',
                          'pp_intendedEndUserRoleGroup', 'pp_intendedEndUserRoleTutor', 'pp_compatibleWithVersion9')
 
-    imgFieldNames = ('pp_backgroundImg')
+    imgFieldNames = ('pp_backgroundImg', 'pp_coverImg')
 
     def __init__(self, parent):
         """
@@ -333,9 +333,13 @@ class PropertiesPage(Renderable, Resource):
         data = {}
         try:
             clear = False
+            no_autosave = False 
             if 'clear' in request.args:
                 clear = True
                 request.args.pop('clear')
+            if "no_autosave" in request.args:
+                no_autosave = True
+                request.args.pop("no_autosave")
             if 'lom_general_title_string1' in request.args:
                 if clear:
                     self.package.setLomDefaults()
@@ -375,7 +379,7 @@ class PropertiesPage(Renderable, Resource):
         except Exception as e:
             log.exception(e)
             return json.dumps({'success': False, 'errorMessage': _("Failed to save properties")})
-        if self.package.filename == u'':
+        if self.package.filename == u'' or no_autosave is True:
             self.package.isChanged = True
         else:
             self.package.save()

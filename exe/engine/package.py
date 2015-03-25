@@ -325,6 +325,7 @@ class Package(Persistable):
     _author            = ''
     _description       = ''
     _backgroundImg     = ''
+    _coverImg          = ''
     #styledefault=u"INTEF"
     # This is like a constant
     defaultLevelNames  = [x_(u"Topic"), x_(u"Section"), x_(u"Unit")]
@@ -343,6 +344,7 @@ class Package(Persistable):
         self.name           = name
         self._title         = u''
         self._backgroundImg = u''
+        self._coverImg      = u''
         self.backgroundImgTile = False
 
         # Empty if never saved/loaded
@@ -627,6 +629,21 @@ class Package(Persistable):
                     description = [lomsubs.descriptionSub([lomsubs.LangStringSub(lang_str, value_str)])]
                     metadata.get_general().set_description(description)
         self._description = toUnicode(value)
+
+    def get_coverImg(self):
+        if self._coverImg:
+            return "file://" + self._coverImg.path
+        else:  
+            return ""
+    
+    def set_coverImg(self, value):
+        if self._coverImg:
+            self._coverImg.delete()
+        
+        if value:
+            imgFile = Path(value)
+            self._coverImg = Resource(self, Path(imgFile))
+    
 
     def get_backgroundImg(self):
         """Get the background image for this package"""
@@ -995,6 +1012,8 @@ class Package(Persistable):
     docType       = property(lambda self:self._docType, set_docType)
 
     backgroundImg = property(get_backgroundImg, set_backgroundImg)
+    
+    coverImg = property(get_coverImg, set_coverImg)
 
     level1 = property(get_level1, set_level1)
     level2 = property(get_level2, set_level2)

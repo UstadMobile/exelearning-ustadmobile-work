@@ -68,6 +68,12 @@ Ext.define('eXe.controller.Outline', {
             '#outline_down_node': {
                 click: { fn: this.processNodeEvent, action: 'DownNode' }
             }
+            
+            //Begin UstadMobile Branch Additional
+        	,
+        	
+    	    
+        	//End UstadMobile Branch additional
         });
         
         var keymap = new Ext.util.KeyMap(Ext.getBody(), [
