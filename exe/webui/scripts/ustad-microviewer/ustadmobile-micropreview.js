@@ -26,6 +26,12 @@ var $UstadMicro = {
             },
             scale: 0.773972603
         });
+        
+        var jqmThemeSrc = encodeURIComponent(UstadJS.resolveURL(location.href,
+        		"jquerymobiletheme.min.micro.css"));
+        var jqmStructSrc = encodeURIComponent(UstadJS.resolveURL(location.href,
+        		"jquery.mobile.structure.micro.css"));
+        
         $("#ujs_microemu").microemu("loadmicroemuskin", 
             "microdevice/device.xml", {}, function() {
                 var paintableScreenDiv = $("#ujs_microemu").microemu("paintablearea");
@@ -40,7 +46,8 @@ var $UstadMicro = {
                 $(opubFrameChild).opubframe("option", "height", 
                     $(paintableScreenDiv).css("height"));
                 $(opubFrameChild).opubframe("option", "page_query_params",
-                    "jqmThemeLink=jquerymobiletheme.min.micro.css&jqmStructLink=jquery.mobile.structure.micro.css");
+                    "jqmThemeLink=" + jqmThemeSrc + "&jqmStructLink=" +
+                    jqmStructSrc);
                 $("#ustad_epub_frame iframe").attr("scrolling","no");
                 $(opubFrameChild).css("margin", "0px");
                 $(opubFrameChild).children("iframe").attr("scrolling","no");

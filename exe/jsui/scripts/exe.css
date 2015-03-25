@@ -44,3 +44,8 @@ fieldset.collapsed-with-data > legend > div, fieldset.collapsed-with-data > lege
   font-weight: bold;
 }
 
+/* Start additional UstadMobile branch items */
+.exe_menuitem_large * {
+	font-size: 32pt;
+}
+/* End additional UstadMobile branch items */

@@ -23,7 +23,8 @@ Ext.define('eXe.controller.Toolbar', {
        'eXe.view.forms.PreferencesPanel', 
        'eXe.view.forms.StyleManagerPanel',
        'eXe.view.forms.IDevicePanel',
-       'eXe.view.forms.ReadabilityBoundariesPanel'
+       'eXe.view.forms.ReadabilityBoundariesPanel',
+       'eXe.view.forms.PreviewIframePanel'
     ],
 	refs: [{
         ref: 'recentMenu',
@@ -201,6 +202,15 @@ Ext.define('eXe.controller.Toolbar', {
             '#tools_preview_smartphone': {
                 click: { fn: this.processBrowseEvent, url: location.href + '/previewmobile/deviceframe.html' }
             },
+            '#titletoolbar_preview_smartphone' : {
+            	click: this.previewFrameSmartphone
+            },
+            '#titletoolbar_preview_website' : {
+            	click: this.previewFrameWebsite
+            },
+            '#titletoolbar_preview_featurephone' : {
+            	click: this.previewFrameFeaturephone
+            }
             
             //End UstadMobile Branch Extras
             
@@ -1437,7 +1447,44 @@ Translation software.')
 			  Ext.getCmp("wordlist_filtered_textarea").setValue(wordList);
 		  }
 	  });
+    },
+    
+    showPreviewWindow: function(previewURL, windowTitle, windowWidth, windowHeight) {
+    	var previewWindowPanel = new Ext.Window ({
+		    height: windowHeight, 
+		    width: windowWidth, 
+		    modal: true,
+		    id: 'previewWindow',
+		    title: windowTitle,
+		    layout: 'fit',
+		    items: [{
+		    	xtype: 'previewiframepanel',
+		    	'previewURL': previewURL,
+		    }]
+        });
+    	
+    	
+    	previewWindowPanel.show();
+    },
+    
+    previewFrameSmartphone: function() {
+    	this.showPreviewWindow(
+			location.href + '/previewmobile/deviceframe.html',
+			_("Smartphone Preview"), 600, "99%");
+    },
+    
+    previewFrameFeaturephone: function() {
+    	var featurePhoneURL = '/scripts/ustad-microviewer/deviceframe_micro.html?opfsrc=' +
+    		encodeURIComponent(location.href+"/previewmobile/package.opf");
+    	this.showPreviewWindow(featurePhoneURL, _("Feature Phone Preview"), 
+    			400, "99%");
+    },
+    
+    previewFrameWebsite: function() {
+    	this.showPreviewWindow(location.href + "/preview/",
+    			_("Website Preview"), "80%", "99%");
     }
+    
 	
 	//End UstadMobile Extra Methods
 	

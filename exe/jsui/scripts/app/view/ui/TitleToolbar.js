@@ -26,17 +26,83 @@ Ext.define('eXe.view.ui.TitleToolbar', {
         var projectTitle =  _('Untitled Project');
         
         Ext.applyIf(me, {
-        	
             items: [
 				{
 				    xtype: 'button',
 				    text: projectTitle,
-				    //accesskey: 'o',
-				    //tooltip: 'Ctrl+O',
 				    itemId: 'title_button',
 				    id: 'title_button',
-				    height: 30
-				}
+				    scale: "large"
+				},
+				{
+					xtype: 'tbfill',
+				},
+		         {
+		        	xtype: 'button',
+		    		text : _('Preview'),
+		    		icon: '/images/preview-icon.png',
+		    		scale: 'large',
+		    		menu: {
+                        xtype: 'menu',
+                        items: [
+                            {
+                            	xtype: 'buttongroup',
+                            	columns: 1,
+                            	defaults: {
+                            		xtype: 'button',
+                            		scale: 'large',
+                            		width: 200
+                            	},
+                            	items: [
+									{
+									    itemId: 'titletoolbar_preview_smartphone',
+									    icon: '/images/smartphone.png',
+									    text: _('Smartphone'),
+									},
+									{
+									    itemId: 'titletoolbar_preview_featurephone',
+									    icon: '/images/featurephone.png',
+									    text: _('Feature Phone'),
+									},
+									{
+										itemId: 'titletoolbar_preview_print',
+									    text: _('Print'),
+									},
+									{
+									    itemId: 'titletoolbar_preview_website',
+									    text: _('Website')
+									},
+                    	        ]
+                            }
+                        ]
+		    		}
+		         },
+		         {
+		        	 xtype: 'button',
+		        	 text: _('Publish'),
+		        	 scale: 'large',
+		        	 icon: '/images/icon-publish.png',
+	        		 menu: {
+                         xtype: 'menu',
+                         items: [
+                            {
+                            	xtype: 'buttongroup',
+                            	columns: 1,
+                            	defaults: {
+                            		xtype: 'button',
+                            		scale: 'large',
+                            		width: 200
+                            	},
+                            	items: [
+                        	        {
+                        	        	itemId : "titletoolbar_publish_cloud",
+                        	        	text : _("To Library")
+                        	        }
+                    	        ]
+                            }
+                         ]
+	        		 }		
+		         }				
             ]
         });
 
