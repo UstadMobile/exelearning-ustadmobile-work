@@ -24,6 +24,7 @@ Ext.define('eXe.controller.Toolbar', {
        'eXe.view.forms.StyleManagerPanel',
        'eXe.view.forms.IDevicePanel',
        'eXe.view.forms.ReadabilityBoundariesPanel',
+       'eXe.view.forms.ReadabilityLinguistPanel',
        'eXe.view.forms.PreviewIframePanel'
     ],
 	refs: [{
@@ -229,6 +230,9 @@ Ext.define('eXe.controller.Toolbar', {
             '#leftpanel_license': {
             	change: this.updatePropertiesOnPackage
             },
+            '#tools_readability_linguist': { 
+            	click: this.readabilityLinguistClick
+            }
             
             //End UstadMobile Branch Extras
             
@@ -1254,6 +1258,25 @@ Translation software.')
        });
    },
    
+    /**
+     * Open Readability linguist panel
+     */
+    readabilityLinguistClick: function() {
+    	var linguistPanel = new Ext.Window( {
+    		height: "80%",
+    		width: 800,
+    		modal: true,
+    		id: "readabilityLinguistWin",
+    		title: _("Readability"),
+    		layout: "fit",
+    		items: [ {
+    			xtype: "readabilitylinguistpanel"
+    		}]
+    		        
+    	});
+    	linguistPanel.show();
+    },
+    
     /**
      *
      */

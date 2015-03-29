@@ -131,7 +131,8 @@ Ext.onReady(function() {
 	    	'Outline',
 	    	'Toolbar',
 	    	'filepicker.Directory',
-	    	'filepicker.File'
+	    	'filepicker.File',
+	    	'Readability'
 	    ],
 	    
 	    getMaxHeight: function(height) {
