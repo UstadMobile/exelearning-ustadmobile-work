@@ -168,6 +168,7 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
 								icon: '/images/wizard-new.png',
 							    itemId: 'wizard_create_new',
 							    region: 'south',
+							    scale: 'large'
 							},
 							
 							{ 
@@ -176,6 +177,7 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
 								icon: '/images/wizard-open.png',
 								itemId: 'file_open',
 								region: 'south',
+								scale: 'large'
 							},
 							
 							

@@ -60,7 +60,7 @@ Ext.define('eXe.controller.Wizard', {
             msg: _('Enter the new name:'),
             buttons: Ext.Msg.OKCANCEL,
             multiline: false,
-            value: button.text,
+            //value: button.text,
             scope: this,
             fn: function(button, text) {
                 if (button == "ok") {
@@ -149,6 +149,58 @@ Ext.define('eXe.controller.Wizard', {
     	
     	var templatespanel = Ext.getCmp('showtemplatespanel');
     	templatespanel.removeAll();
+    	//Sticky
+    	templatespanel.add(
+				
+				{
+                	xtype: 'panel',
+                	id: 'pk'+ 'blank_sticky',
+                	bodyPadding: '10',
+                	layout: {
+				    	type: 'vbox',
+				    	align: 'center',
+				    	pack: 'center'
+				    },
+                	items: [
+                	        {
+                	        	xtype: 'image',
+                        	    src: '/images/blank-template.png',
+                        	    width:150,
+                        	    height:200,
+                        	    
+                        	    listeners: {
+                                	afterrender: function(c){
+                                    	Ext.create('Ext.tip.ToolTip', {
+                                    		target: c.getEl(),
+                                    		html: "Creates a new blank project",
+                                    	});
+                                    	
+                                    },
+                        	        render: function(c) {
+                        	            c.getEl().on('click', function(e) {
+                        	            	eXe.app.getController('Wizard').setPackageTitleAndCreateNew();
+                        	            }, c);
+                        	        }
+                        	    },
+                        	    border: 2,
+                        	    style: {
+                        	        borderColor: 'gray',
+                        	        borderStyle: 'solid',
+                        	        margin: '10px'
+                        	    }
+                	        },
+                	        {
+                	        	xtype: 'box', 
+                	        	autoEl: {
+                	        		cn: "Blank project"
+            	        				}
+                	        }
+        	        ]
+                	
+            	    
+                }
+				
+				);
     	Ext.Ajax.request({
     		url: '/dirtree?sendWhat=both&dir=' + eXe.app.config.locationButtons[1]['location'] + '/eXeLearning/Templates/',
     		scope: this,
@@ -185,7 +237,11 @@ Ext.define('eXe.controller.Wizard', {
     			                                    },
     	                                	        render: function(c) {
     	                                	            c.getEl().on('click', function(e) {
-    	                                	                console.log('User clicked');
+    	                                	            	
+    	                                	                console.log('User clicked: ' + e);
+    	                                	                //Ask for a name
+    	                                	                //Copy template file to Documents >> Library >> Name
+    	                                	                //Open Name
     	                                	            }, c);
     	                                	        }
     	                                	    },
@@ -197,10 +253,10 @@ Ext.define('eXe.controller.Wizard', {
     	                                	    }
                                 	        },
                                 	        {
-                                	        	xtype: 'box', autoEl: {cn: elpt['title'] ? elpt['title'] : elpt['name'].slice(0, -5)}
-                                	        	//xtype: 'label',
-                                	        	//margin: '5px',
-                                	        	//html: 
+                                	        	xtype: 'box', 
+                                	        	autoEl: {
+                                	        		cn: elpt['title'] ? elpt['title'] : elpt['name'].slice(0, -5).charAt(0).toUpperCase() + elpt['name'].slice(0, -5).slice(1).replace('_', ' ') 
+                            	        				}
                                 	        }
                         	        ]
                                 	
