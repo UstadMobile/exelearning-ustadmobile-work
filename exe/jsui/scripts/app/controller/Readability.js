@@ -29,6 +29,10 @@ Ext.define('eXe.controller.Readability', {
     	{
     		selector: "#linguist_panel_langcombo",
     		ref: "linguistLangCombo"
+    	},
+    	{
+    		selector: "#linguist_panel_uuid_textfield",
+    		ref: 'linguistPresetUUID'
     	}
     ],
     
@@ -48,6 +52,10 @@ Ext.define('eXe.controller.Readability', {
     	   
     	   '#linguist_panel_langcombo': {
     		   beforerender: this.setLangComboFromPackage
+    	   },
+    	   
+    	   '#readability_linguist_new' : {
+    		   click: this.savePreset
     	   }
        });
     },
@@ -105,6 +113,52 @@ Ext.define('eXe.controller.Readability', {
     	}
     },
     
+    makePresetJSON: function() {
+    	var presetObj = {
+			//"leveled" or "decodable"
+			type : "",
+			
+			//friendly display name for the user
+			name: "",
+			
+			//unique id by which to save and retrieve
+			uuid: this.getLinguistPresetUUID().getValue(),
+			
+			levelLimits : {},
+			
+    	};
+    	//go through the level panel
+    	
+    	var levelComps = this.getLinguistLevelPanel().query(
+			"readabilitylinguistlimit");
+    	for(var i = 0; i < levelComps.length; i++) {
+    		if(levelComps[i].isLimitEnabled()) {
+    			var limitParamName = levelComps[i].limitParamId;
+    			presetObj.levelLimits[limitParamName] = 
+    				levelComps[i].getLimits();
+    		}
+    	}
+    	
+    	return presetObj;
+    },
+    
+    savePreset: function(onDone) {
+    	var presetVals = this.makePresetJSON();
+    	Ext.Ajax.request({
+    		url: "/readabilitypresets",
+	    	method: "POST",
+	    	scope: this,
+	        params: {
+	        	"action" : "savepreset",
+	        	"presetval" : JSON.stringify(presetVals)
+	        },
+	        
+	        success: function(response) {
+	        	var jsonResp = JSON.parse(response.responseText);
+	        	this.getLinguistPresetUUID().setValue(jsonResp.uuid);
+	    	}
+    	});
+    },
     
     showTypePanelDecodable: function() {
     	this.getLinguistLevelPanel().setHidden(true);

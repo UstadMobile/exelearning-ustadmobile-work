@@ -8,6 +8,7 @@ from textstatistics.textstatistics import TextStatistics
 from exe import globals as G
 import copy
 import os
+import json
 
 class ReadabilityUtil(object):
     '''
@@ -163,6 +164,33 @@ class ReadabilityUtil(object):
               
         return text
     
+    def list_readability_preset_ids(self, extension_type, from_dir = None):
+        """Return an array of all presets in the directory
+        """
+        extension = "." + extension_type
+        elen = len(extension)
+        result_list = []
+        
+        if from_dir is None:
+            from_dir = G.application.config.readabilityPresetsDir
+        
+        for file_name in os.listdir(from_dir):
+            if file_name[-elen:] == extension:
+                try:
+                    fh = open(from_dir / file_name, "r")
+                    json_obj = json.load(fh, "utf-8")
+                    fh.close()
+                    result_list.append({
+                            "uuid" : json_obj['uuid'],
+                            "name": json_obj['name']})
+                except:
+                    #do nothing - junk file?
+                    import traceback
+                    traceback.print_last()
+        
+        return result_list 
+                
+                
     def list_readability_presets(self, extension_type):
         '''
         Will list the readability presets in the directory

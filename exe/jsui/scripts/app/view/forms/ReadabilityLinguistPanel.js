@@ -29,6 +29,7 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
                 	items: [{
                 		xtype: "textfield",
             			labelAlign: "top",
+            			itemId: "linguist_panel_name_textfield",
             			fieldStyle: {
         	    			"font-size" : "large"
         	    		}
@@ -41,6 +42,12 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
                 			itemId: "readability_linguist_new",
                 			text: "New Guide"
                 		}]
+                	},
+                	{
+                		xtype: "textfield",
+                		itemId: "linguist_panel_uuid_textfield",
+                		hidden : true,
+                		value : ""
                 	},
                 	{
                 		xtype: "tbfill"
@@ -252,6 +259,11 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
     
     fontSize: "large",
     
+    /**
+     * The parameter name e.g. word_length
+     */
+    limitParamId: "",
+    
     constructor: function () {
     	this.callParent(arguments);
 	},
@@ -270,12 +282,14 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
 	    		xtype: "checkbox",
 	    		boxLabel: me.limitLabel,
 	    		boxLabelCls: "readabilitylimit_checkbox_label x-form-cb-label",
+	    		itemId: "limit_enabled_checkbox",
 	    		flex: 1
 	    	},
 	    	{
 	    		xtype: "textfield",
 	    		length: 5,
 	    		width: 50,
+	    		itemId: "limit_min_textfield",
 	    		fieldStyle: {
 	    			"font-size" : me.fontSize
 	    		}
@@ -292,6 +306,7 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
 	    		xtype: "textfield",
 	    		length: 5,
 	    		width: 50,
+	    		itemId: "limit_max_textfield",
 	    		fieldStyle: {
 	    			"font-size" : me.fontSize
 	    		}
@@ -313,6 +328,31 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
 	    });
 	    
 	    this.callParent(arguments);
-	}
+	},
+	
+	/**
+	 * Get the limits that the user has set for this parameter
+	 */
+	getLimits: function() {
+		var minValInt = -1;
+		var maxValInt = -1;
+		var minVal = this.query("#limit_min_textfield")[0].getValue();
+		var maxVal = this.query("#limit_max_textfield")[0].getValue();
+		
+		try {
+			minValInt = parseInt(minVal);
+		}catch(e) {}
+		
+		try {
+			maxValInt = parseInt(maxVal);
+		}catch(e2) {}
+		
+		return [minValInt, maxValInt];
+		
+	},
+	
+	isLimitEnabled: function() {
+		return this.query("#limit_enabled_checkbox")[0].getValue();
+	},
 	
 });

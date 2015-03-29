@@ -13,6 +13,7 @@ from exe.engine.path import Path
 import os.path
 from exe import globals as G
 import re
+import uuid
 
 class ReadabilityPresetsPage(RenderableResource):
     '''
@@ -27,7 +28,37 @@ class ReadabilityPresetsPage(RenderableResource):
         Constructor
         '''
         RenderableResource.__init__(self, parent)
+    
+    def render_POST(self, request):
+        action = None
+        result = {}
+        if 'action' in request.args:
+            action = request.args['action'][0]
         
+        if action == "savepreset":
+            json_str = request.args['presetval'][0]
+            json_obj = json.loads(json_str, "utf-8")
+            preset_uuid = json_obj['uuid']
+            if len(preset_uuid) == 0:
+                json_obj['uuid'] = str(uuid.uuid4())
+                json_str = json.dumps(json_obj)
+            
+            dest_filename = json_obj['uuid'] + ".erp2"
+            dest_filepath = os.path.join(
+                         G.application.config.readabilityPresetsDir,
+                         dest_filename)
+            out_file = open(dest_filepath, "wb")
+            out_file.write(json_str)
+            out_file.flush()
+            out_file.close()
+            
+            result = {
+                        "success" : True,
+                        "uuid" : json_obj['uuid']
+                      }
+        
+        return json.dumps(result)
+    
     def render_GET(self, request):
         action = None
         
@@ -39,6 +70,8 @@ class ReadabilityPresetsPage(RenderableResource):
         
         if action == "list_params_by_lang":
             result = self.list_params_by_lang(request)
+        elif action == "list_presets":
+            result = ReadabilityUtil().list_readability_preset_ids("erp2")
         else:
             extension_req = request.args['type'][0]
             extension_clean = re.sub("[^a-z0-9]+", "", extension_req)
