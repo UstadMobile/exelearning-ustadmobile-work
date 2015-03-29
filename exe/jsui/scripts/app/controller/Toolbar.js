@@ -23,7 +23,7 @@ Ext.define('eXe.controller.Toolbar', {
        'eXe.view.forms.PreferencesPanel', 
        'eXe.view.forms.StyleManagerPanel',
        'eXe.view.forms.IDevicePanel',
-       'eXe.view.forms.ReadabilityBoundariesPanel'
+       'eXe.view.forms.ReadabilityBoundariesPanel',
     ],
 	refs: [{
         ref: 'recentMenu',
@@ -143,6 +143,7 @@ Ext.define('eXe.controller.Toolbar', {
             '#tools_preferences': {
                 click: this.toolsPreferences
             },
+            
             '#tools_resourcesreport': {
             	click: { fn: this.processExportEvent, exportType: "csvReport" }
             },
@@ -172,8 +173,8 @@ Ext.define('eXe.controller.Toolbar', {
             },
             '#help_about': {
                 click: this.aboutPage
-            }
-            ,
+            },
+            
             //Begin UstadMobile Branch Extras
             
             '#title_button' : {
@@ -360,7 +361,7 @@ Ext.define('eXe.controller.Toolbar', {
     toolsRefresh: function() {
         eXe.app.reload();
     },
-
+    
     toolsPreferences: function() {
         var preferences = new Ext.Window ({
 	          height: 360, 
@@ -1438,7 +1439,7 @@ Translation software.')
 		  }
 	  });
     }
-	
+
 	//End UstadMobile Extra Methods
 	
 });

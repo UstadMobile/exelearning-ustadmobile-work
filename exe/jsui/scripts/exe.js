@@ -131,7 +131,8 @@ Ext.onReady(function() {
 	    	'Outline',
 	    	'Toolbar',
 	    	'filepicker.Directory',
-	    	'filepicker.File'
+	    	'filepicker.File',
+	    	'Wizard'
 	    ],
 	    
 	    getMaxHeight: function(height) {
@@ -230,6 +231,9 @@ Ext.onReady(function() {
 	        eXe.app.afterShowLoadErrors = function() {
 	        	if (eXe.app.config.showPreferences)
 	        		eXe.app.getController('Toolbar').toolsPreferences();
+	        	if (eXe.app.config.showWizard){
+	        		eXe.app.getController('Toolbar').toolsWizard();
+	        	}
 	        };
 
 	        eXe.app.showLoadError();

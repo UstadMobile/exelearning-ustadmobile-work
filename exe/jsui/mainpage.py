@@ -35,10 +35,7 @@ import tempfile
 
 import urllib
 import urllib2
-import cookielib
-from multipartposthandler import MultipartPostHandler
 import base64
-import time
 from exe.export.wtkpreviewthread import WTKPreviewThread
 
 
@@ -455,6 +452,7 @@ class MainPage(RenderableLivePage):
                   'locationButtons': self.location_buttons.buttons,
                   'lang': G.application.config.locale.split('_')[0],
                   'showPreferences': G.application.config.showPreferencesOnStart == '1' and not G.application.preferencesShowed,
+                  'showWizard': G.application.config.showWizardOnStart == '1' and not G.application.wizardShowed,
                   'loadErrors': G.application.loadErrors,
                   'showIdevicesGrouped': G.application.config.showIdevicesGrouped == '1',
                   'pathSep': os.path.sep,
@@ -495,6 +493,7 @@ class MainPage(RenderableLivePage):
         """
         config = self.get_config_dict(ctx)
         G.application.preferencesShowed = True
+        G.application.wizardShowed = True #It should be showed by now.
         G.application.loadErrors = []
         return tags.script(type="text/javascript")["var config = %s" % json.dumps(config)]
 

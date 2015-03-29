@@ -76,7 +76,6 @@ class Config(object):
                  'showPreferencesOnStart','defaultStyle', 
                  'showIdevicesGrouped','docType', 'editorMode',
                  'tinyMCEVersion'),
-        #Added showWizardOnStart
     }
 
     idevicesCategories = {
@@ -190,8 +189,8 @@ class Config(object):
         # available values = "enable_all", "disable_autotop", or "disable_all"
         self.internalAnchors = "enable_all"
         self.lastDir = None
-        self.showPreferencesOnStart = "1" #Commented for testing
-        self.showWizardOnStart = "1"    #Added
+        self.showPreferencesOnStart = "1" 
+        self.showWizardOnStart = "1"
         self.showIdevicesGrouped = "1"
         self.tinyMCEVersion = "4"
         
@@ -513,8 +512,8 @@ class Config(object):
                 self.lastDir = self.configParser.user.lastDir
             if self.configParser.user.has_option('showPreferencesOnStart'):
                 self.showPreferencesOnStart = self.configParser.user.showPreferencesOnStart 
-            if self.configParser.user.has_option('showWizardOnStart'):              #Added
-                self.showWizardOnStart = self.configParser.user.showWizardOnStart   #Added
+            if self.configParser.user.has_option('showWizardOnStart'):
+                self.showWizardOnStart = self.configParser.user.showWizardOnStart
             if self.configParser.user.has_option("tinyMCEVersion"):
                 self.tinyMCEVersion = self.configParser.user.tinyMCEVersion 
             if self.configParser.user.has_option('showIdevicesGrouped'):
