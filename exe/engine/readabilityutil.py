@@ -6,7 +6,7 @@ Created on Sep 29, 2014
 
 from textstatistics.textstatistics import TextStatistics
 from exe import globals as G
-
+import copy
 import os
 
 class ReadabilityUtil(object):
@@ -16,6 +16,71 @@ class ReadabilityUtil(object):
     
     text_idevices = {"FreeTextIdevice" : ["content"]
                      }
+    
+    """
+    Readability parameters available in all languages - array of
+    dictionaries in order they will be presented to users.  Each has an
+    id field corresponding with how info is communicated to the client
+    and a unit.
+    """
+    base_params = [{
+                        "id": "word_count",
+                        "unit" : "words"
+                    },
+                   {
+                        "id" : "words_per_page_max",
+                        "unit" : "words"
+                    },
+                    {
+                        "id" : "word_length_max",
+                        "unit" : "letters"
+                    },
+                    {
+                        "id" : "sentence_length_max",
+                        "unit" : "words"
+                    },
+                    {
+                        "id" : "word_length_average",
+                        "unit" : "letters" 
+                    },
+                    {
+                        "id" : "sentence_length_average",
+                        "unit" : "words"
+                    },
+                    {
+                        "id" : "distinct_words",
+                        "unit" : "words"
+                    }
+                    
+                   ]
+    """
+    Extra parameters that may be available for readability in different
+    languages
+    """
+    extra_params_by_lang = { 
+                            "en" : [
+                                {
+                                    "id" : "syllables_per_word_max",
+                                    "unit" : "syllables"
+                                },
+                                {
+                                    "id" : "syllables_per_word_average",
+                                    "unit" : "syllables"
+                                 }
+                            ]    
+                            }
+    
+    @classmethod
+    def get_params_by_lang(cls, lang):
+        """
+        Get what text params are available by language
+        """
+        param_result = copy.copy(ReadabilityUtil.base_params)
+        if lang in ReadabilityUtil.extra_params_by_lang:
+            for extra_param in ReadabilityUtil.extra_params_by_lang[lang]:
+                param_result.append(extra_param) 
+        
+        return param_result
     
 
     def __init__(self, params = None):

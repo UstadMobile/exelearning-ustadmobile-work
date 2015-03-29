@@ -48,7 +48,9 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
                 	{
                 		xtype: "combo",
                 		fieldLabel: "Language",
+                		itemId: "linguist_panel_langcombo",
                 		labelAlign: "left",
+                		store: langsStore,
                 		fieldStyle: {
         	    			"font-size" : "large"
         	    		}
@@ -93,6 +95,8 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
 							xtype: "panel",
 							itemId: "readability_linguist_levelpanel",
 							flex: 1,
+							title: _("Limits"),
+							scrollable: "vertical",
 							items: [
 						        {
 						        	xtype: "readabilitylinguistlimit",
