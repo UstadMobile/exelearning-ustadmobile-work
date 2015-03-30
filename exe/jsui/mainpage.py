@@ -75,6 +75,8 @@ from exe.engine.lom import lomsubs
 from exe.engine.lom.lomclassification import Classification
 import zipfile
 import copy
+import re
+import uuid
 
 log = logging.getLogger(__name__)
 
@@ -288,6 +290,7 @@ class MainPage(RenderableLivePage):
         setUpHandler(self.handlePackageFileName, 'getPackageFileName')
         setUpHandler(self.handleSavePackage,     'savePackage')
         setUpHandler(self.handleLoadPackage,     'loadPackage')
+        setUpHandler(self.handleLoadTemplatePackage, 'loadTemplatePackage')
         setUpHandler(self.recentMenu.handleLoadRecent, 'loadRecent')
         setUpHandler(self.handleLoadTutorial,    'loadTutorial')
         setUpHandler(self.recentMenu.handleClearRecent, 'clearRecent')
@@ -785,6 +788,26 @@ class MainPage(RenderableLivePage):
         self.webServer.root.bindNewPackage(package, self.session)
         client.sendScript((u'eXe.app.gotoUrl("/%s")' % \
                           package.name).encode('utf8'), filter_func=filter_func)
+    
+    def handleLoadTemplatePackage(self, client, filename, new_title, filter_func = None):
+        """Load a package as a template - give it a new UUID and title
+            Load the new package.
+        """ 
+        filename = self.adjust_path_for_user(filename)
+        
+        package = self._loadPackage(client, filename, newLoad=True)
+        package.title = new_title
+        package.name =  re.sub('[^A-Za-z0-9 ]+', '', new_title.replace(' ','_'))
+        package.uuid = str(uuid.uuid4())
+        library_path = self.location_buttons.buttons[1]['location']
+        save_path = library_path.joinpath("eXeLearning", "Library", str(package.name) + ".elp")
+        package.save(filename = str(save_path))
+        
+        self.session.packageStore.addPackage(package)
+        self.webServer.root.bindNewPackage(package, self.session)
+        client.sendScript((u'eXe.app.gotoUrl("/%s")' % \
+                          package.name).encode('utf8'), filter_func=filter_func)
+        
 
     def handleLoadTutorial(self, client):
         """

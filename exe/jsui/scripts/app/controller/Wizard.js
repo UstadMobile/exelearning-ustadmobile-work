@@ -49,6 +49,31 @@ Ext.define('eXe.controller.Wizard', {
 	},
 	
 	/**
+	 * Create New Set Package Title and return the name.
+	 * Ask the user to give a title in a popup window, if they click
+	 * OK send to the server
+	 */
+    setPackageTitleAndSend: function(template_path, button) {
+        Ext.Msg.show({
+            prompt: true,
+            title: _('Project Title'),
+            msg: _('Enter the new name:'),
+            buttons: Ext.Msg.OKCANCEL,
+            multiline: false,
+            //value: button.text,
+            scope: this,
+            fn: function(button, text) {
+                if (button == "ok") {
+                    if (text) {
+                    	Ext.Msg.wait(new Ext.Template(_('Loading template: {text}')).apply({text: text}));
+    		    		nevow_clientToServerEvent('loadTemplatePackage', this, '', template_path, text);
+                    }
+                }
+            }
+        });
+    },
+	
+	/**
 	 * Create New Set Package Title and Create New project.
 	 * Ask the user to give a title in a popup window, if they click
 	 * OK send to the server and update the button text and create new project file
@@ -77,32 +102,29 @@ Ext.define('eXe.controller.Wizard', {
     updateLibrary: function() {
     	var librarypanel = Ext.getCmp('showfileopenlibrarypanel');
     	librarypanel.removeAll();
+    	var dirParam = encodeURIComponent(eXe.app.config.locationButtons[1]['location'] + '/eXeLearning/Library/');
     	Ext.Ajax.request({
-    		url: '/dirtree?sendWhat=both&dir=' + eXe.app.config.locationButtons[1]['location'] + '/eXeLearning/Library/',
+    		url: '/dirtree?sendWhat=both&dir=' + dirParam,
     		scope: this,
     		success: function(response) {
     			var rm = Ext.JSON.decode(response.responseText),
     					menu, text, item, pre
     			for (var elp of rm['items']) {
     				if (elp['is_readable'] == true && elp['is_writable'] == true && elp['name'].match(/.elp$/) ){
-	    				librarypanel.add({
-	    					xtype: 'button',
-	    					text: elp['name'],
-	    					width: 150,
-                            height: 200,
-	    					icon: '/images/package-green.png',
-	    					id: 'pk'+elp['size']+elp['name'].slice(0, -4).replace(' ','_'),
-	    					handler: function(selectedOption){
-		    					Ext.Msg.wait(_('Loading package...'));
-								nevow_clientToServerEvent('loadPackage', this, '', elp['realname'])
-		    				},
-    					},	
-	    				{	//For intendation purposes.
-            	        	xtype: 'component',
-            	        	flex: 1
-            	        });
+    					
+    					librarypanel.add({
+    						xtype: 'wizardcoursepanel',
+    						elptDescription: elp.description ? elp.description.replace(/(^\s+|\s+$)/g, '') : '',
+    						elptFilepath: elp.realname.replace(/(^\s+|\s+$)/g, ''),
+    						elptName: elp.name.replace(/(^\s+|\s+$)/g, ''),
+    						elptTitle: elp.title,
+    						elptCoverImage: elp.coverimage ? elp.coverimage.replace(/(^\s+|\s+$)/g, '') : '/images/exe_course.png',
+    						mode: "Course",
+						}	
+						);    				
     				}
     			}
+    			
     		}
     	});
     },
@@ -123,12 +145,14 @@ Ext.define('eXe.controller.Wizard', {
     			    if(rm[i].title == "") {
     				    textButton = rm[i].num + ". " + rm[i].path;
 				    }else {
-				        textButton = "<b>" + rm[i].title
-				        + "</b><br/>" + rm[i].path;
+				    	textButton = "<b>" + rm[i].title + "</b><br/>"
+				    			+ "<i>" + rm[i].path.replace(/\\/g,'/').replace(/\/[^\/]*$/, '').replace(eXe.app.config.locationButtons[1]['location'],"Documents").replace(eXe.app.config.locationButtons[0]['location'],"Home").replace(eXe.app.config.locationButtons[2]['location'],"Desktop") + "</i>"
 			        }
     				recpanel.add({
             			xtype: 'button',
+            			scale: 'medium',
         	        	text: _(textButton),
+        	        	textAlign: 'left',
         	        	icon: '/images/package-green.png',
         	        	id: "openrecent" + rm[i].num,
         	        	textButton: textButton,
@@ -149,126 +173,42 @@ Ext.define('eXe.controller.Wizard', {
     	
     	var templatespanel = Ext.getCmp('showtemplatespanel');
     	templatespanel.removeAll();
+    	
     	//Sticky
-    	templatespanel.add(
-				
-				{
-                	xtype: 'panel',
-                	id: 'pk'+ 'blank_sticky',
-                	bodyPadding: '10',
-                	layout: {
-				    	type: 'vbox',
-				    	align: 'center',
-				    	pack: 'center'
-				    },
-                	items: [
-                	        {
-                	        	xtype: 'image',
-                        	    src: '/images/blank-template.png',
-                        	    width:150,
-                        	    height:200,
-                        	    
-                        	    listeners: {
-                                	afterrender: function(c){
-                                    	Ext.create('Ext.tip.ToolTip', {
-                                    		target: c.getEl(),
-                                    		html: "Creates a new blank project",
-                                    	});
-                                    	
-                                    },
-                        	        render: function(c) {
-                        	            c.getEl().on('click', function(e) {
-                        	            	eXe.app.getController('Wizard').setPackageTitleAndCreateNew();
-                        	            }, c);
-                        	        }
-                        	    },
-                        	    border: 2,
-                        	    style: {
-                        	        borderColor: 'gray',
-                        	        borderStyle: 'solid',
-                        	        margin: '10px'
-                        	    }
-                	        },
-                	        {
-                	        	xtype: 'box', 
-                	        	autoEl: {
-                	        		cn: "Blank project"
-            	        				}
-                	        }
-        	        ]
-                	
-            	    
-                }
-				
-				);
+    	templatespanel.add({
+    		xtype: 'wizardcoursepanel',
+    		elptName: 'blank_template.elpt',
+    		elptFilepath: '/home/varuna/Documents/eXeLearning/Templates/blank_template.elpt',
+    		elptCoverImage: '/images/blank-template.png',
+    		elptDescription: _('Creates a new blank project'),
+    		elptTitle: 'Blank Project',
+    		mode: "Template"
+    		
+    		
+    	});
+      	
+    	var dirParam = encodeURIComponent(eXe.app.config.locationButtons[1]['location'] + '/eXeLearning/Templates/');
     	Ext.Ajax.request({
-    		url: '/dirtree?sendWhat=both&dir=' + eXe.app.config.locationButtons[1]['location'] + '/eXeLearning/Templates/',
+    		url: '/dirtree?sendWhat=both&dir=' + dirParam,
     		scope: this,
     		success: function(response) {
     			var rm = Ext.JSON.decode(response.responseText),
     					menu, text, item, pre
 				for (var elpt of rm['items']) {
     				if (elpt['is_readable'] == true && elpt['name'].match(/.elpt$/) ){
-    					templatespanel.add(
-	    						
-	    						{
-                                	xtype: 'panel',
-                                	id: 'pk'+elpt['size']+elpt['name'].slice(0, -5).replace(' ','_'),
-                                	bodyPadding: '10',
-                                	layout: {
-    							    	type: 'vbox',
-    							    	align: 'center',
-    							    	pack: 'center'
-    							    },
-                                	items: [
-                                	        {
-                                	        	xtype: 'image',
-    	                                	    src: elpt['coverimage'] ? elpt['coverimage'] : '/images/stock-template.png',
-    	                                	    width:150,
-    	                                	    height:200,
-    	                                	    
-    	                                	    listeners: {
-    		                                    	afterrender: function(c){
-    			                                    	Ext.create('Ext.tip.ToolTip', {
-    			                                    		target: c.getEl(),
-    			                                    		html: elpt['description'] ? elpt['description'] : elpt['name'].slice(0, -5),
-    			                                    	});
-    			                                    	
-    			                                    },
-    	                                	        render: function(c) {
-    	                                	            c.getEl().on('click', function(e) {
-    	                                	            	
-    	                                	                console.log('User clicked: ' + e);
-    	                                	                //Ask for a name
-    	                                	                //Copy template file to Documents >> Library >> Name
-    	                                	                //Open Name
-    	                                	            }, c);
-    	                                	        }
-    	                                	    },
-    	                                	    border: 2,
-    	                                	    style: {
-    	                                	        borderColor: 'gray',
-    	                                	        borderStyle: 'solid',
-    	                                	        margin: '10px'
-    	                                	    }
-                                	        },
-                                	        {
-                                	        	xtype: 'box', 
-                                	        	autoEl: {
-                                	        		cn: elpt['title'] ? elpt['title'] : elpt['name'].slice(0, -5).charAt(0).toUpperCase() + elpt['name'].slice(0, -5).slice(1).replace('_', ' ') 
-                            	        				}
-                                	        }
-                        	        ]
-                                	
-                            	    
-                                }
-	    						
-	    						);
+    					templatespanel.add({
+	    						xtype: 'wizardcoursepanel',
+	    						elptDescription: elpt.description ? elpt.description.replace(/(^\s+|\s+$)/g, '') : '',
+	    						elptFilepath: elpt.realname.replace(/(^\s+|\s+$)/g, ''),
+	    						elptName: elpt.name.replace(/(^\s+|\s+$)/g, ''),
+	    						elptTitle: elpt.title,
+	    						elptCoverImage: elpt.coverimage ? elpt.coverimage.replace(/(^\s+|\s+$)/g, '') : '',
+	    						mode: "Template"
+    						}
+    					);
     				}
     			}
-    			
-    			
-    		}
+       		}
     	});
     },
     toolsWizard: function() {

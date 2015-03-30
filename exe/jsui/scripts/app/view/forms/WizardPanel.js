@@ -47,106 +47,16 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
 							    	type: 'hbox'
 							    },
 	                            id: 'showtemplatespanel',
-	                            itemId: 'wizard_show_templates',
-	                            items: [
-	                                    {
-	                                    	xtype: 'panel',
-	                                    	id: 'blahpanel',
-	                                    	bodyPadding: '10',
-	                                    	layout: {
-	        							    	type: 'vbox'
-	        							    },
-	                                    	items: [
-	                                    	        {
-	                                    	        	xtype: 'image',
-	        	                                	    src: '/images/smartphone.png',
-	        	                                	    width:150,
-	        	                                	    height:200,
-	        	                                	    
-	        	                                	    listeners: {
-	        		                                    	afterrender: function(c){
-	        			                                    	Ext.create('Ext.tip.ToolTip', {
-	        			                                    		target: c.getEl(),
-	        			                                    		html: 'This is the description',
-	        			                                    	});
-	        			                                    	
-	        			                                    },
-	        	                                	        render: function(c) {
-	        	                                	            c.getEl().on('click', function(e) {
-	        	                                	                console.log('User clicked image');
-	        	                                	            }, c);
-	        	                                	        }
-	        	                                	    },
-	        	                                	    border: 2,
-	        	                                	    style: {
-	        	                                	        borderColor: 'gray',
-	        	                                	        borderStyle: 'solid',
-	        	                                	        margin: '10px'
-	        	                                	    }
-	                                    	        },
-	                                    	        {
-	                                    	        	xtype: 'label',
-	                                    	        	margin: '10px',
-	                                    	        	html: "<b>This is the title</b>"
-	                                    	        }
-                                	        ]
-	                                    	
-	                                	    
-	                                    },
-	                                    {
-	                                    	xtype: 'panel',
-	                                    	id: 'blahpanel2',
-	                                    	bodyPadding: '10',
-	                                    	layout: {
-	        							    	type: 'vbox',
-	        							    },
-	                                    	items: [
-	                                    	        {
-	                                    	        	xtype: 'image',
-	        	                                	    src: '/images/smartphone.png',
-	        	                                	    width:150,
-	        	                                	    height:200,
-	        	                                	    text: 'Blahhhh',
-	        	                                	    html: '<b>Blahh</b>',
-	        	                                	    
-	        	                                	    listeners: {
-	        		                                    	afterrender: function(c){
-	        			                                    	Ext.create('Ext.tip.ToolTip', {
-	        			                                    		target: c.getEl(),
-	        			                                    		html: 'This is the description',
-	        			                                    	});
-	        			                                    	
-	        			                                    },
-	        	                                	        render: function(c) {
-	        	                                	            c.getEl().on('click', function(e) {
-	        	                                	                console.log('User clicked image');
-	        	                                	            }, c);
-	        	                                	        }
-	        	                                	    },
-	        	                                	    border: 2,
-	        	                                	    style: {
-	        	                                	        borderColor: 'gray',
-	        	                                	        borderStyle: 'solid',
-	        	                                	        margin: '10px'
-	        	                                	    },
-	        	                                	    html: "<b>BLAHHH_</b>"
-	                                    	        },
-	                                    	        {
-	                                    	        	xtype: 'label',
-	                                    	        	html: "<b>This is the title</b>"
-	                                    	        }
-	                                    	        
-                                	        ]
-	                                    	
-	                                	    
-	                                    },
-                                    ]
+	                            itemId: 'wizard_show_templates'
                             },
                             {
                                 title: 'Local Library',
-                                bodyPadding: 10,
-                                xtype: 'buttongroup',
+                                bodyPadding: '10',
+                                xtype: 'panel',
 								autoScroll:true,
+								layout: {
+							    	type: 'hbox'
+							    },
 								id: 'showfileopenlibrarypanel',
 								margin: 4,
 								itemId: 'wizard_show_library',
@@ -214,3 +124,74 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
         me.callParent(arguments);       
     },	 //end of init Component
 });	 //end of Ext.define the panel form.
+
+//View: Wizard Course Panel
+var wizardCoursePanel = Ext.define("eXe.view.forms.WizardCoursePanel", {
+	extend : "Ext.panel.Panel",
+	alias : "widget.wizardcoursepanel",
+	layout: {
+		type: "vbox",
+		align : "center",
+		pack: "center"
+	},
+	elptFilepath: "",
+	mode: "",
+	constructor: function(){
+		this.callParent(arguments);
+	},
+	
+	initComponent: function(){
+		var me = this;
+		Ext.applyIf(me, {
+			bodyPadding: 10,
+		});
+		Ext.apply(me,{
+			items: [
+		        {
+		        	xtype: "image",
+		        	src: me.elptCoverImage ? me.elptCoverImage : '/images/stock-template.png',
+		        	width: 150,
+		        	height: 200,
+		        	listeners:{
+		        		afterrender: function(c){
+			        		Ext.create('Ext.tip.ToolTip',{
+			        			target: c.getEl(),
+			        			html: me.elptDescription ? me.elptDescription : me.elptTitle ? me.elptTitle : me.elptName.slice(0, -5).charAt(0).toUpperCase() + me.elptName.slice(0, -5).slice(1).replace(/_/g, ' ')
+			        		});
+				        },
+				        render: function(d){
+				        	d.getEl().on('click', function(e){
+				        		console.log(me.elptFilepath);
+				        		if (me.mode == "Template"){
+				        			console.log("Opening Template");
+				        			eXe.app.getController('Wizard').setPackageTitleAndSend(me.elptFilepath);
+				        		}else if (me.mode == "Course"){
+				        			console.log("Opening Package");
+				        			Ext.Msg.wait(_('Loading package...'));
+									nevow_clientToServerEvent('loadPackage', this, '', me.elptFilepath)
+				        		}
+				        		//eXe.app.getController('Wizard').setPackageTitleAndCreateNew();
+				        	}, d);
+				        }
+		        	},
+		        	border: 2, 
+		        	style: {
+		        		borderColor: 'gray',
+		        		borderStyle: 'solid',
+		        		margin: '10px'
+		        	}
+		        },
+		        
+		        {
+		        	xtype: 'box',
+		        	autoEl: {
+		        		cn: me.elptTitle ? me.elptTitle : me.elptName.slice(0, -5).charAt(0).toUpperCase() + me.elptName.slice(0, -5).slice(1).replace(/_/g, ' ')
+			        }
+		        }
+			        ]
+		});
+		this.callParent(arguments);
+		
+	},
+	
+});
