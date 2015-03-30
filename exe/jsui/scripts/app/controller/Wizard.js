@@ -41,13 +41,24 @@ Ext.define('eXe.controller.Wizard', {
             '#tools_wizard': {
             	click:this.toolsWizard
             },
+            '#wizard_show_library > wizardcoursepanel' : {
+            	click: {
+            		fn: function(coursePanel) {
+		            	Ext.Msg.wait(_('Loading package...'));
+						nevow_clientToServerEvent('loadPackage', this, '', coursePanel.elptFilepath)
+            		}
+            	}
+            },
+            '#wizard_show_templates > wizardcoursepanel' : {
+            	click: {
+            		fn: function(coursePanel) {
+            			eXe.app.getController('Wizard').setPackageTitleAndSend(coursePanel.elptFilepath);
+            		}
+            	}
+            }
         });
 	},
 
-	clickItemId: function() {
-		//do stuff - reference the main toolbar as eXe.app.getController("Toolbar").
-	},
-	
 	/**
 	 * Create New Set Package Title and return the name.
 	 * Ask the user to give a title in a popup window, if they click
@@ -60,7 +71,6 @@ Ext.define('eXe.controller.Wizard', {
             msg: _('Enter the new name:'),
             buttons: Ext.Msg.OKCANCEL,
             multiline: false,
-            //value: button.text,
             scope: this,
             fn: function(button, text) {
                 if (button == "ok") {
@@ -85,7 +95,6 @@ Ext.define('eXe.controller.Wizard', {
             msg: _('Enter the new name:'),
             buttons: Ext.Msg.OKCANCEL,
             multiline: false,
-            //value: button.text,
             scope: this,
             fn: function(button, text) {
                 if (button == "ok") {
@@ -109,9 +118,10 @@ Ext.define('eXe.controller.Wizard', {
     		success: function(response) {
     			var rm = Ext.JSON.decode(response.responseText),
     					menu, text, item, pre
-    			for (var elp of rm['items']) {
-    				if (elp['is_readable'] == true && elp['is_writable'] == true && elp['name'].match(/.elp$/) ){
     					
+				for (var i = 0; i < rm['items'].length; i++){
+					var elp = rm['items'][i];
+    				if (elp['is_readable'] == true && elp['is_writable'] == true && elp['name'].match(/.elp$/) ){
     					librarypanel.add({
     						xtype: 'wizardcoursepanel',
     						elptDescription: elp.description ? elp.description.replace(/(^\s+|\s+$)/g, '') : '',
@@ -119,7 +129,6 @@ Ext.define('eXe.controller.Wizard', {
     						elptName: elp.name.replace(/(^\s+|\s+$)/g, ''),
     						elptTitle: elp.title,
     						elptCoverImage: elp.coverimage ? elp.coverimage.replace(/(^\s+|\s+$)/g, '') : '/images/exe_course.png',
-    						mode: "Course",
 						}	
 						);    				
     				}
@@ -140,8 +149,8 @@ Ext.define('eXe.controller.Wizard', {
     		success: function(response) {
     			var rm = Ext.JSON.decode(response.responseText),
     					menu, text, item, pre
-    			
-    			for (i in rm) {				
+    				
+				for (var i = 0; i < rm.length; i++){
     			    if(rm[i].title == "") {
     				    textButton = rm[i].num + ". " + rm[i].path;
 				    }else {
@@ -175,18 +184,58 @@ Ext.define('eXe.controller.Wizard', {
     	templatespanel.removeAll();
     	
     	//Sticky
-    	templatespanel.add({
-    		xtype: 'wizardcoursepanel',
-    		elptName: 'blank_template.elpt',
-    		elptFilepath: '/home/varuna/Documents/eXeLearning/Templates/blank_template.elpt',
-    		elptCoverImage: '/images/blank-template.png',
-    		elptDescription: _('Creates a new blank project'),
-    		elptTitle: 'Blank Project',
-    		mode: "Template"
-    		
-    		
-    	});
-      	
+    	templatespanel.add(
+    			{
+                	xtype: 'panel',
+                	id: 'pk'+ 'blank_sticky',
+                	bodyPadding: '10',
+                	layout: {
+				    	type: 'vbox',
+				    	align: 'center',
+				    	pack: 'center'
+				    },
+                	items: [
+		    			{
+				        	xtype: "image",
+				        	src: '/images/blank-template.png',
+				        	width: 150,
+				        	height: 200,
+				        	
+				        	listeners:{
+				        		afterrender: function(c){
+					        		Ext.create('Ext.tip.ToolTip',{
+					        			target: c.getEl(),
+					        			html: _("Creates a new blank project")
+					        		});
+						        },
+						        render: {
+						        	fn: function(comp) {
+						        		comp.getEl().on('click', function() {
+						        			eXe.app.getController('Wizard').setPackageTitleAndCreateNew();
+						        		});
+						        	}
+						        }
+				        	},
+				        	border: 2, 
+				        	style: {
+				        		borderColor: 'gray',
+				        		borderStyle: 'solid',
+				        		margin: '10px',
+				        		cursor: "pointer"
+				        	}
+				        },
+				        
+				        {
+				        	xtype: 'box',
+				        	autoEl: {
+				        		cn: _("Blank Project")
+					        }
+				        }
+			        ]
+    			}
+    			
+    			);
+    	
     	var dirParam = encodeURIComponent(eXe.app.config.locationButtons[1]['location'] + '/eXeLearning/Templates/');
     	Ext.Ajax.request({
     		url: '/dirtree?sendWhat=both&dir=' + dirParam,
@@ -194,7 +243,8 @@ Ext.define('eXe.controller.Wizard', {
     		success: function(response) {
     			var rm = Ext.JSON.decode(response.responseText),
     					menu, text, item, pre
-				for (var elpt of rm['items']) {
+				for (var i = 0; i < rm['items'].length; i++){
+					var elpt = rm['items'][i];
     				if (elpt['is_readable'] == true && elpt['name'].match(/.elpt$/) ){
     					templatespanel.add({
 	    						xtype: 'wizardcoursepanel',
@@ -203,7 +253,6 @@ Ext.define('eXe.controller.Wizard', {
 	    						elptName: elpt.name.replace(/(^\s+|\s+$)/g, ''),
 	    						elptTitle: elpt.title,
 	    						elptCoverImage: elpt.coverimage ? elpt.coverimage.replace(/(^\s+|\s+$)/g, '') : '',
-	    						mode: "Template"
     						}
     					);
     				}
@@ -221,7 +270,6 @@ Ext.define('eXe.controller.Wizard', {
 	          title: _("Wizard"),
 	          layout: 'fit',
 	          items: [{
-	        	  //xtype is from WizardPanel.js's alias
 	              xtype: 'wizardpanel'
 	          }]
 	        }),

@@ -89,9 +89,6 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
 								region: 'south',
 								scale: 'large'
 							},
-							
-							
-							
 							{
 							    xtype:  'label',
 							    html:   '<h3><i>Your recent projects:</i></h3>',
@@ -135,7 +132,6 @@ var wizardCoursePanel = Ext.define("eXe.view.forms.WizardCoursePanel", {
 		pack: "center"
 	},
 	elptFilepath: "",
-	mode: "",
 	constructor: function(){
 		this.callParent(arguments);
 	},
@@ -144,6 +140,7 @@ var wizardCoursePanel = Ext.define("eXe.view.forms.WizardCoursePanel", {
 		var me = this;
 		Ext.applyIf(me, {
 			bodyPadding: 10,
+			
 		});
 		Ext.apply(me,{
 			items: [
@@ -152,6 +149,7 @@ var wizardCoursePanel = Ext.define("eXe.view.forms.WizardCoursePanel", {
 		        	src: me.elptCoverImage ? me.elptCoverImage : '/images/stock-template.png',
 		        	width: 150,
 		        	height: 200,
+		        	
 		        	listeners:{
 		        		afterrender: function(c){
 			        		Ext.create('Ext.tip.ToolTip',{
@@ -159,26 +157,21 @@ var wizardCoursePanel = Ext.define("eXe.view.forms.WizardCoursePanel", {
 			        			html: me.elptDescription ? me.elptDescription : me.elptTitle ? me.elptTitle : me.elptName.slice(0, -5).charAt(0).toUpperCase() + me.elptName.slice(0, -5).slice(1).replace(/_/g, ' ')
 			        		});
 				        },
-				        render: function(d){
-				        	d.getEl().on('click', function(e){
-				        		console.log(me.elptFilepath);
-				        		if (me.mode == "Template"){
-				        			console.log("Opening Template");
-				        			eXe.app.getController('Wizard').setPackageTitleAndSend(me.elptFilepath);
-				        		}else if (me.mode == "Course"){
-				        			console.log("Opening Package");
-				        			Ext.Msg.wait(_('Loading package...'));
-									nevow_clientToServerEvent('loadPackage', this, '', me.elptFilepath)
-				        		}
-				        		//eXe.app.getController('Wizard').setPackageTitleAndCreateNew();
-				        	}, d);
+				        render: {
+				        	scope: me,
+				        	fn: function(comp) {
+				        		comp.getEl().on('click', function() {
+				        			me.fireEvent("click", me);
+				        		});
+				        	}
 				        }
 		        	},
 		        	border: 2, 
 		        	style: {
 		        		borderColor: 'gray',
 		        		borderStyle: 'solid',
-		        		margin: '10px'
+		        		margin: '10px',
+		        		cursor: "pointer"
 		        	}
 		        },
 		        
@@ -188,7 +181,7 @@ var wizardCoursePanel = Ext.define("eXe.view.forms.WizardCoursePanel", {
 		        		cn: me.elptTitle ? me.elptTitle : me.elptName.slice(0, -5).charAt(0).toUpperCase() + me.elptName.slice(0, -5).slice(1).replace(/_/g, ' ')
 			        }
 		        }
-			        ]
+	        ]
 		});
 		this.callParent(arguments);
 		
