@@ -406,6 +406,12 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                             },
                             {
                                 xtype: 'accesskey_menuitem',
+                                itemId: 'tools_wizard',
+                                accesskey: 'w',
+                                text: _('Wizard')
+                            },
+                            {
+                                xtype: 'accesskey_menuitem',
                                 itemId: 'tools_resourcesreport',
                                 accesskey: 'r',
                                 text: _('Resources Report')
@@ -422,6 +428,12 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 icon: '/images/smartphone.png',
                                 accesskey: 'm',
                                 text: _('Preview Smartphone')
+                            },
+                            {
+                            	xtype: 'accesskey_menuitem',
+                                itemId: 'tools_publish',
+                                accesskey: 'u',
+                                text: _('Publish')
                             },
                             {
                                 xtype: 'menuseparator'

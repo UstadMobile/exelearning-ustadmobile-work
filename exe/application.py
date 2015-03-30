@@ -84,7 +84,7 @@ class Application:
         self.resourceDir=None
         self.afterUpgradeHandlers = []
         self.preferencesShowed = True #Default is False
-        self.wizardShowed = False #Added
+        self.wizardShowed = False #has to be False to auto start
         self.loadErrors = []
         assert globals.application is None, "You tried to instantiate two Application objects"
         globals.application = self

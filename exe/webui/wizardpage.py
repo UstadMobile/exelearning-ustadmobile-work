@@ -4,6 +4,7 @@
 # Copyright 2004-2006, University of Auckland
 # Copyright 2006-2007 eXe Project, New Zealand Tertiary Education Commission
 # Copyright 2013, Pedro Peña Pérez, Open Phoenix IT
+# Copyright 2015, Varuna Singh, Ustad Mobile
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

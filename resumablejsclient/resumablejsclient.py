@@ -1,9 +1,6 @@
 
-import sys
-import cookielib
 import requests
 import urllib2
-from io import BytesIO
 from mimetypes import MimeTypes
 import urllib
 import os
@@ -20,9 +17,7 @@ class ResumableClient(object):
             request_extra_params: Dictionary of HTTP paramaters to add to each request (default: empty dictionary)
             http_auth: HTTP Basic auth parameters as a tuple of (username, password) (default: None)
 
-        """
-        file_in = open(file_path, "rb")
-        
+        """        
         self.file_path = file_path
         self.url = url
         self.chunk_size = int(chunk_size)
@@ -111,18 +106,20 @@ class ResumableClient(object):
                         
                         if status_code == 200:
                             bytes_sent = bytes_sent + bytes_read
+                            """
                             percentage = float(self.chunk_number*100/self.total_chunks)
                             percentage_float = float (float(self.chunk_number) / float(self.total_chunks))
                             #Progress %age call.
+                            """
                             break
                         else:
                             retries = retries + 1
                             self.retry = self.retry + 1
-                    except Exception, e:
+                    except Exception:
                         retries = retries + 1
                         self.retry = self.retry + 1
 
-                    except urllib2.HTTPError, e:                    
+                    except urllib2.HTTPError:                    
                         retries = retries + 1
                         self.retry = self.retry + 1
                         time.sleep(1)

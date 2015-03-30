@@ -26,6 +26,7 @@ import logging
 from exe.webui.renderable     import RenderableResource
 from exe.jsui.mainpage import MainPage
 from twisted.web import error
+import re
 
 log = logging.getLogger(__name__)
 
@@ -99,9 +100,24 @@ class PackageRedirectPage(RenderableResource):
         Create a new package and redirect the webrowser to the URL for it
         """
         log.debug("render_GET" + repr(request.args))
+        
+        
         # Create new package
         session = request.getSession()
         package = session.packageStore.createPackage()
+        if 'name' in request.args:
+            #regex to remove special characters
+            package.name =  re.sub('[^A-Za-z0-9 ]+', '', request.args['name'][0].replace(' ','_'))
+            
+            package.title = request.args['name'][0]
+            
+            #replace with local library path
+            path_to_save = "/home/varuna/%s.elp" % package.name
+            #path_to_save = eXe.app.config.locationButtons[1]['location'] + '/' + package.name
+            package.save(filename = path_to_save)
+            
+            #To Do: Save the package into Local Library. 
+        
         self.bindNewPackage(package, session)
         log.info("Created a new package name="+ package.name)
         # Tell the web browser to show it
