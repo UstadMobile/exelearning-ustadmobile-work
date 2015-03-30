@@ -32,11 +32,6 @@ Ext.define('eXe.controller.Publish', {
         });
 	},
 
-	clickItemId: function() {
-		//do stuff - reference the main toolbar as eXe.app.getController("Toolbar").
-	},
-	
-	
     toolsPublish: function() {
     	var publish = new Ext.Window ({
 	          height: '80%', 

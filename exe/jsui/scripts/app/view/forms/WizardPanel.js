@@ -41,11 +41,19 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
                             {
                                 title: 'Templates',
                                 bodyPadding: '10',
-                                xtype:'panel',
-	                            autoScroll: true,
-	                            layout: {
-							    	type: 'hbox'
-							    },
+                                autoScroll: true,
+                                xtype: 'panel',
+                                layout: {
+                            		type: 'table',
+                            		columns: 3
+                            	},
+                            	listeners: {
+	                                    boxready: function(panel) {
+	                        			panel.layout.columns = Math.floor(panel.getWidth()/205);
+	                        			console.log(panel.layout.columns);
+
+                            		}
+                            	},
 	                            id: 'showtemplatespanel',
 	                            itemId: 'wizard_show_templates'
                             },
@@ -54,9 +62,17 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
                                 bodyPadding: '10',
                                 xtype: 'panel',
 								autoScroll:true,
+
 								layout: {
-							    	type: 'hbox'
-							    },
+	                            	type: 'table',
+	                            	columns: 3
+	                            },
+	                            listeners: {
+	                                    boxready: function(panel) {
+	                        			panel.layout.columns = Math.floor(panel.getWidth()/205);
+	                        			console.log(panel.layout.columns);
+		                    		}
+		                    	},
 								id: 'showfileopenlibrarypanel',
 								margin: 4,
 								itemId: 'wizard_show_library',
@@ -115,22 +131,16 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
 						
         			},
                 	
-	                
             ]
-        }); //End of ExtApplyIf       
+        });       
         me.callParent(arguments);       
-    },	 //end of init Component
-});	 //end of Ext.define the panel form.
+    },	
+});	
 
 //View: Wizard Course Panel
 var wizardCoursePanel = Ext.define("eXe.view.forms.WizardCoursePanel", {
 	extend : "Ext.panel.Panel",
 	alias : "widget.wizardcoursepanel",
-	layout: {
-		type: "vbox",
-		align : "center",
-		pack: "center"
-	},
 	elptFilepath: "",
 	constructor: function(){
 		this.callParent(arguments);
@@ -154,7 +164,9 @@ var wizardCoursePanel = Ext.define("eXe.view.forms.WizardCoursePanel", {
 		        		afterrender: function(c){
 			        		Ext.create('Ext.tip.ToolTip',{
 			        			target: c.getEl(),
-			        			html: me.elptDescription ? me.elptDescription : me.elptTitle ? me.elptTitle : me.elptName.slice(0, -5).charAt(0).toUpperCase() + me.elptName.slice(0, -5).slice(1).replace(/_/g, ' ')
+			        			html: me.elptDescription ? me.elptDescription : me.elptTitle ?
+			        					me.elptTitle : me.elptName.slice(0, -5).charAt(0).toUpperCase() + 
+			        						me.elptName.slice(0, -5).slice(1).replace(/_/g, ' ')
 			        		});
 				        },
 				        render: {
@@ -167,18 +179,26 @@ var wizardCoursePanel = Ext.define("eXe.view.forms.WizardCoursePanel", {
 				        }
 		        	},
 		        	border: 2, 
+		        	fieldStyle: 'text-align: right;',
 		        	style: {
 		        		borderColor: 'gray',
 		        		borderStyle: 'solid',
 		        		margin: '10px',
-		        		cursor: "pointer"
+		        		cursor: "pointer",
+		        		"text-align": 'center'
 		        	}
 		        },
 		        
 		        {
 		        	xtype: 'box',
+		        	style: {
+		        		"text-align": 'center'
+			        },
+			        //Sets the title to be the Title given, or else converts 
+			        //name from text_input to: "Text input" to make it look pretty.
 		        	autoEl: {
-		        		cn: me.elptTitle ? me.elptTitle : me.elptName.slice(0, -5).charAt(0).toUpperCase() + me.elptName.slice(0, -5).slice(1).replace(/_/g, ' ')
+		        		cn: me.elptTitle ? me.elptTitle : me.elptName.slice(0, -5).charAt(0).toUpperCase() 
+		        				+ me.elptName.slice(0, -5).slice(1).replace(/_/g, ' ')
 			        }
 		        }
 	        ]

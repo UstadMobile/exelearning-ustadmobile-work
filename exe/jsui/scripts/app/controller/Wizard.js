@@ -189,11 +189,12 @@ Ext.define('eXe.controller.Wizard', {
                 	xtype: 'panel',
                 	id: 'pk'+ 'blank_sticky',
                 	bodyPadding: '10',
-                	layout: {
+                	/*layout: {
 				    	type: 'vbox',
 				    	align: 'center',
 				    	pack: 'center'
-				    },
+				    },*/
+                	
                 	items: [
 		    			{
 				        	xtype: "image",
