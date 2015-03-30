@@ -59,6 +59,12 @@ class ReadabilityPresetsPage(RenderableResource):
         
         return json.dumps(result)
     
+    def _check_is_clean_filename(self, filename):
+        """Check a filename is only letters, numbers and dots - no slashes etc"""
+        filename_clean = re.sub("[^a-z0-9A-Z\\-\\.]+", "", filename)
+        if filename_clean != filename:
+            raise ValueError("Invalid chars in filename")
+    
     def render_GET(self, request):
         action = None
         
@@ -72,6 +78,13 @@ class ReadabilityPresetsPage(RenderableResource):
             result = self.list_params_by_lang(request)
         elif action == "list_presets":
             result = ReadabilityUtil().list_readability_preset_ids("erp2")
+        elif action == "get_preset_by_id":
+            preset_id = request.args['presetid'][0]
+            result = ReadabilityUtil().get_readability_preset_by_id(preset_id)
+        elif action == "delete_preset_by_id":
+            preset_id = request.args['presetid'][0]
+            self._check_is_clean_filename(preset_id)
+            result = ReadabilityUtil().delete_readability_preset_by_id(preset_id)
         else:
             extension_req = request.args['type'][0]
             extension_clean = re.sub("[^a-z0-9]+", "", extension_req)

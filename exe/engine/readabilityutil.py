@@ -164,6 +164,26 @@ class ReadabilityUtil(object):
               
         return text
     
+    def _get_default_preset_dir(self):
+        return G.application.config.readabilityPresetsDir
+    
+    def get_readability_preset_by_id(self, preset_id, extension = ".erp2", from_dir = None):
+        if from_dir is None:
+            from_dir = self._get_default_preset_dir()
+        
+        preset_filename = preset_id + extension
+        preset_fh = open(from_dir/preset_filename)
+        preset_obj = json.load(preset_fh, "utf-8")
+        return preset_obj
+    
+    def delete_readability_preset_by_id(self, preset_id, extension = ".erp2", from_dir = None):
+        if from_dir is None:
+            from_dir = self._get_default_preset_dir()
+        
+        preset_filename = preset_id + extension
+        os.remove(from_dir/preset_filename)
+        return {"success" : True}
+    
     def list_readability_preset_ids(self, extension_type, from_dir = None):
         """Return an array of all presets in the directory
         """

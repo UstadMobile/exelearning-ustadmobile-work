@@ -28,8 +28,11 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
                 	region: "north",
                 	items: [{
                 		xtype: "textfield",
-            			labelAlign: "top",
             			itemId: "linguist_panel_name_textfield",
+            			emptyText: _("e.g. MyLevel 1"),
+            			minWidth: 250,
+            			labelWidth: 60,
+            			fieldLabel: _("Name"),
             			fieldStyle: {
         	    			"font-size" : "large"
         	    		}
@@ -37,11 +40,15 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
                 	{
                 		xtype: "button",
                 		scale : "medium",
-                		menu: [{
-                			xtype: "menuitem",
-                			itemId: "readability_linguist_new",
-                			text: "New Guide"
-                		}]
+                		menu: {
+                			xtype: "menu",
+                			itemId: "readability_linguist_presetmenu",
+                			items : [{
+                    			xtype: "menuitem",
+                    			itemId: "readability_linguist_new",
+                    			text: "New Guide"
+                    		}]
+                		} 
                 	},
                 	{
                 		xtype: "textfield",
@@ -283,7 +290,13 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
 	    		boxLabel: me.limitLabel,
 	    		boxLabelCls: "readabilitylimit_checkbox_label x-form-cb-label",
 	    		itemId: "limit_enabled_checkbox",
-	    		flex: 1
+	    		flex: 1,
+	    		listeners: {
+	    			change: {
+	    				scope: me,
+	    				fn: this._fireChanged
+	    			}
+	    		}
 	    	},
 	    	{
 	    		xtype: "textfield",
@@ -292,6 +305,12 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
 	    		itemId: "limit_min_textfield",
 	    		fieldStyle: {
 	    			"font-size" : me.fontSize
+	    		},
+	    		listeners: {
+	    			change: {
+	    				scope: me,
+	    				fn: this._fireChanged
+	    			}
 	    		}
 	    	},
 	    	{
@@ -309,6 +328,12 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
 	    		itemId: "limit_max_textfield",
 	    		fieldStyle: {
 	    			"font-size" : me.fontSize
+	    		},
+	    		listeners: {
+	    			change: {
+	    				scope: me,
+	    				fn: this._fireChanged
+	    			}
 	    		}
 	    	},
 	    	{
@@ -330,6 +355,10 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
 	    this.callParent(arguments);
 	},
 	
+	_fireChanged: function(comp) {
+		this.fireEvent('change', this);
+	},
+	
 	/**
 	 * Get the limits that the user has set for this parameter
 	 */
@@ -349,6 +378,15 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
 		
 		return [minValInt, maxValInt];
 		
+	},
+	
+	setLimits: function(limits) {
+		var minValStr = (limits[0] === -1 || limits[0] === null) ? "" : ""+limits[0];
+		var maxValStr = (limits[1] === -1 || limits[1] === null) ? "" : ""+limits[1];
+		
+		this.query("#limit_enabled_checkbox")[0].setValue(true);
+		this.query("#limit_min_textfield")[0].setValue(minValStr);
+		this.query("#limit_max_textfield")[0].setValue(maxValStr);
 	},
 	
 	isLimitEnabled: function() {
