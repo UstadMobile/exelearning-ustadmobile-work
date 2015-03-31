@@ -22,6 +22,8 @@ Ext.define('eXe.controller.Readability', {
     
     presetHasChanged: false,
     
+    currentReadabilityPreset: null,
+    
     refs: [{
 	    	selector: '#readability_linguist_levelpanel',
 	    	ref: 'linguistLevelPanel'
@@ -45,6 +47,14 @@ Ext.define('eXe.controller.Readability', {
     	{
     		selector: "#readability_linguist_presetmenu",
     		ref: "presetMenu"
+    	},
+    	{
+    		selector: '#writer_panel_levelmenu',
+    		ref: "writerPanelLevelMenu"
+    	},
+    	{
+    		selector: '#writer_panel_level_button',
+    		ref: 'writerPanelLevelButton'
     	}
     ],
     
@@ -86,7 +96,16 @@ Ext.define('eXe.controller.Readability', {
     	   },
     	   'readabilitylinguistpanel' : {
     		   beforedestroy: this.handleBeforeDestroy
-    	   }
+    	   },
+    	   '#writer_panel_level_setup' : {
+    		   click: this.showLinguistPanel
+    	   },
+     	   '#writer_panel_levelmenu > menuitem' : {
+     	   		click: this.setCourseLevel
+     	   },
+     	   '#writer_panel_level_button' : {
+     		   beforerender: this.writerPanelShowCoursePreset
+     	   }
        });
     },
     
@@ -352,37 +371,15 @@ Ext.define('eXe.controller.Readability', {
     	}
     },
     
-    /**
-     * Update the preset drop down menu with list of those available from the 
-     * server
-     */
-    updatePresetMenu: function() {
+    _addPresetsToMenu: function(targetMenu, successFn, failFn) {
     	Ext.Ajax.request({
     		url: '/readabilitypresets?action=list_presets',
     		scope: this,
     		success: function(response) {
 				var presetList = Ext.JSON.decode(response.responseText);
-				var presetMenu = this.getPresetMenu();
-				presetMenu.removeAll();
-				
-				presetMenu.add([
-	                {
-	                	xtype: "menuitem",
-	                	text: _("New Preset"),
-	                	itemId: "readability_linguist_preset_new"
-	                },
-	                {
-	                	xtype: "menuitem",
-	                	text: _("Delete preset"),
-	                	itemId: "readability_linguist_preset_delete"
-	                },
-	                {
-	                	xtype: "menuseparator"
-	                }
-                ]);
 				
 				for(var i = 0; i < presetList.length; i++) {
-					presetMenu.add([
+					targetMenu.add([
 		                {
 		                	xtype: "menuitem",
 		                	text: presetList[i].name,
@@ -390,8 +387,41 @@ Ext.define('eXe.controller.Readability', {
 		                }
 	                ]);
 				}
+				this._runOptionalCallback(successFn, this, [targetMenu]);
     		}
     	});
+    },
+    
+    /**
+     * Update the preset drop down menu with list of those available from the 
+     * server
+     */
+    updatePresetMenu: function() {
+    	var presetMenu = this.getPresetMenu();
+		presetMenu.removeAll();
+		
+		presetMenu.add([
+            {
+            	xtype: "menuitem",
+            	text: _("New Preset"),
+            	itemId: "readability_linguist_preset_new"
+            },
+            {
+            	xtype: "menuitem",
+            	text: _("Delete preset"),
+            	itemId: "readability_linguist_preset_delete"
+            },
+            {
+            	xtype: "menuseparator"
+            }
+        ]);
+		this._addPresetsToMenu(presetMenu);
+    },
+    
+    updateWriterPanelLevelMenu: function(successFn, failFn) {
+    	var writerPanelLevelMenu = this.getWriterPanelLevelMenu();
+    	writerPanelLevelMenu.removeAll();
+    	this._addPresetsToMenu(writerPanelLevelMenu, successFn, failFn);
     },
     
     clickPresetMenu: function(item) {
@@ -434,9 +464,76 @@ Ext.define('eXe.controller.Readability', {
     },
     
     
+    showLinguistPanel: function() {
+    	eXe.app.getController("Toolbar").readabilityLinguistClick();
+    },
     
+    getCourseReadabilityPreset: function(options, successFn, failFn) {
+    	var ourScope = options.scope ? options.scope : this;
+    	
+		Ext.Ajax.request({
+            url: location.pathname + '/properties?pp_readability_preset=',
+            scope: ourScope,
+            success: function(response) {
+            	var jsonResponse = Ext.JSON.decode(response.responseText);
+            	var presetValueStr = jsonResponse.data.pp_readability_preset;
+            	//when there is no preset value is blank
+            	presetValueStr = presetValueStr === "" ? "{}" : presetValueStr;
+            	var presetValues = JSON.parse(presetValueStr);
+            	if(successFn) {
+            		successFn.apply(ourScope,[presetValues]);
+            	}
+        	}
+        });
+    },
+    
+    writerPanelShowCoursePreset: function() {
+    	//load the preset for this course
+    	this.getCourseReadabilityPreset({},function(readabilityPreset){
+    		this.currentReadabilityPreset = readabilityPreset;
+    		//update the menu
+    		this.updateWriterPanelLevelMenu(function(menu) {
+    			if(this.currentReadabilityPreset.uuid) {
+    				var panelLevelButton = this.getWriterPanelLevelButton();
+        			panelLevelButton.setText(this.currentReadabilityPreset.name);
+    			}
+    		});
+    	});
+    },
 
-	
+    setCourseLevel: function(clickedItem) {
+    	var presetName = clickedItem.text;
+    	var presetUUID = clickedItem.presetUUID;
+    	
+    	this.getWriterPanelLevelButton().setText(presetName);
+    	
+    	//Load the preset from the server
+    	var loadURL = '/readabilitypresets?action=get_preset_by_id&presetid='
+    		+ presetUUID;
+    	
+    	Ext.Ajax.request({
+    		url: loadURL,
+    		scope: this,
+    		success: function(response) {
+    			var presetValues = Ext.JSON.decode(response.responseText);
+    			var presetValuesStr = ""+response.responseText;
+    			this.currentReadabilityPreset = presetValues;
+    			
+    			//now set them on the package
+    			Ext.Ajax.request({
+    	            url: location.pathname + '/properties',
+    	            method: "POST",
+    	            params: {
+    	            	"pp_readability_preset" : presetValuesStr,
+    	            },
+    	            
+    	            success: function() {
+    	            	console.log("updated project properties");
+    	        	}
+    	        });
+    		}
+    	});
+    },
 
 });
 

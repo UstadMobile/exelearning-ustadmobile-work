@@ -23,7 +23,8 @@ Ext.define('eXe.view.ui.eXeViewport', {
         'eXe.view.ui.eXeToolbar',
         'eXe.view.ui.MainTabPanel',
         'eXe.view.ui.LeftPanel',
-        'eXe.view.ui.TitleToolbar'
+        'eXe.view.ui.TitleToolbar',
+        'eXe.view.forms.ReadabilityWriterPanel'
     ],
 
     layout: {
@@ -52,6 +53,12 @@ Ext.define('eXe.view.ui.eXeViewport', {
                     region: 'west',
                     split: true,
                     width: 250
+                },
+                {
+                	xtype: 'readabilitywriterpanel',
+                	region: 'east',
+                	split: true,
+                	width: 250
                 }
             ],
             itemId: 'eXeViewport',

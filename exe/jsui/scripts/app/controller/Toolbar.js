@@ -234,6 +234,8 @@ Ext.define('eXe.controller.Toolbar', {
             	click: this.readabilityLinguistClick
             }
             
+            
+            
             //End UstadMobile Branch Extras
             
         });
