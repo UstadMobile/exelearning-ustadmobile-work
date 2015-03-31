@@ -31,17 +31,21 @@ class ReadabilityUtil(object):
                         "id": "word_count",
                         "unit" : "words"
                     },
-                   {
-                        "id" : "words_per_page_max",
+                    {
+                        "id" : "words_per_page",
                         "unit" : "words"
                     },
                     {
-                        "id" : "word_length_max",
+                        "id" : "word_length",
                         "unit" : "letters"
                     },
                     {
-                        "id" : "sentence_length_max",
+                        "id" : "sentence_length",
                         "unit" : "words"
+                    },
+                    {
+                        "id" : "sentences_per_page",
+                        "unit" : "sentences"
                     },
                     {
                         "id" : "word_length_average",
@@ -50,6 +54,14 @@ class ReadabilityUtil(object):
                     {
                         "id" : "sentence_length_average",
                         "unit" : "words"
+                    },
+                    {
+                         "id" : "sentences_per_page_average",
+                         "unit" : "sentences"
+                     },
+                    { 
+                        "id": "words_per_page_average",
+                        "unit": "words"
                     },
                     {
                         "id" : "distinct_words",
@@ -62,7 +74,7 @@ class ReadabilityUtil(object):
     languages
     """
     extra_params_by_lang = { 
-                            "en" : [
+                            "noway" : [
                                 {
                                     "id" : "syllables_per_word_max",
                                     "unit" : "syllables"
@@ -123,7 +135,8 @@ class ReadabilityUtil(object):
                 for field_name in txt_fields:
                     dev_content = getattr(idevice, field_name).content
                     idevice_text += strip_html_to_plaintext(dev_content)
-                this_page_contents.append({ idevice.id : idevice_text})
+                this_page_contents.append({ "id" : idevice.id,
+                                           "text" : idevice_text})
         
         dest_arr.append({
                          'pageid' : node.id,

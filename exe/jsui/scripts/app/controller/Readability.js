@@ -9,13 +9,14 @@ Ext.define('eXe.controller.Readability', {
     indicatorIDToLabel: {
     	"word_count" : _("Total word count"),
     	"word_length_average" : _("Word length: Average"),
-    	"word_length_max" : _("Word length"),
+    	"word_length" : _("Word length"),
     	"distinct_words" : _("Unique words in Text"),
-    	"sentence_length_max" : _("Sentence length"),
+    	"sentence_length" : _("Sentence length"),
     	"sentence_length_average" : _("Sentence length: Average"),
-    	"words_per_page_max" : _("Words per Page"),
-    	"syllables_per_word_max" : _("Syllables per word"),
-    	"syllables_per_word_average" : _("Syllables per word: Average")
+    	"words_per_page" : _("Words per Page"),
+    	"syllables_per_word" : _("Syllables per word"),
+    	"syllables_per_word_average" : _("Syllables per word: Average"),
+    	"sentences_per_page" : _("Sentences Per Page")
     },
     
     currentlyAvailableLevelParams: [],
@@ -23,6 +24,8 @@ Ext.define('eXe.controller.Readability', {
     presetHasChanged: false,
     
     currentReadabilityPreset: null,
+    
+    packageReadabilityInfo: {},
     
     refs: [{
 	    	selector: '#readability_linguist_levelpanel',
@@ -537,6 +540,7 @@ Ext.define('eXe.controller.Readability', {
     		for(var limitId in preset.levelLimits) {
         		limitSubPanel.add({
         			xtype: "readabilitywriterlimit",
+        			itemId: "writer_limit_" + limitId,
         			limits: preset.levelLimits[limitId],
     				limitLabel: this._getParameterLabel(limitId)
         		});
@@ -589,8 +593,139 @@ Ext.define('eXe.controller.Readability', {
     	
     	this.updateCourseLevelFromUUID(presetUUID, {}, function() {
     		this.showWriterLimitsForPreset();
+    		this.updateWriterStats();
     	});
     },
+    
+    updateWriterStats: function(onDone) {
+    	var loadURL = location.pathname + '/package_text';
+    	
+    	Ext.Ajax.request({
+    		url: loadURL,
+    		scope: this,
+    		success: function(response) {
+    			var textInfo = Ext.JSON.decode(response.responseText);
+    			var pkgInfo = this.makeReadabilityInfoForPackage(textInfo);
+    			this.updateWriterPanelDisplay(pkgInfo);
+    		}
+    	});
+    },
+    
+    makeReadabilityInfoForPackage: function(pkgText) {
+    	var allText = "";
+    	var result = {};
+    	result.pages = [];
+    	
+    	//A list of limitParamIds for which we need to check the min and max on each page
+    	var rangeTrackerList = ["word_count", "sentence_count", 
+    	                        "word_length", "sentence_length"];
+    	
+    	var rangeTrackerResults = {};
+    	
+    	var wordsPerPage = [null, null];
+    	
+    	var sentencesPerPage = [null, null];
+    	
+    	//loop through all pages
+    	for(var p = 0; p < pkgText.length; p++) {
+    		var thisPg = pkgText[p];
+    		var pgText = "";
+    		//loop through idevices on this page
+    		for(var i = 0; i < thisPg.idevices.length; i++) {
+    			pgText += thisPg.idevices[i].text + ".";
+    		}
+    		var pgHelper = new ReadabilityHelper(pgText);
+    		var pgResults = pgHelper.getReadabilityStats();
+    		
+    		pgResults.words_per_page = pgResults.word_count;
+    		pgResults.sentences_per_page = pgResults.sentence_count;
+    		
+    		
+    		pgResults.id = thisPg.pageid;
+    		result.pages.push(pgResults);
+    		
+    		for(var r = 0; r < rangeTrackerList.length; r++) {
+    			var trackerName = rangeTrackerList[r];
+    			if(pgResults[trackerName]) {
+    				if(!rangeTrackerResults[trackerName]) {
+    					rangeTrackerResults[trackerName] = [null, null];
+    				}
+    				
+    				var pgResultMin = null, pgResultMax = null;
+    				if(pgResults[trackerName] instanceof Array) {
+    					//there is a range in the result from the page e.g. word length
+    					pgResultMin = pgResults[trackerName][0];
+    					pgResultMax = pgResults[trackerName][1];
+    				}else {
+    					//its a single result e.g. total word count
+    					pgResultMin = pgResults[trackerName];
+    					pgResultMax = pgResults[trackerName];
+    				}
+    				
+    				if(rangeTrackerResults[trackerName][0] === null || 
+						pgResultMin < rangeTrackerResults[trackerName][0]) {
+    					rangeTrackerResults[trackerName][0] = pgResultMin;
+    				}
+    				
+    				if(rangeTrackerResults[trackerName][1] === null || 
+						pgResultMax > rangeTrackerResults[trackerName][1]) {
+    					rangeTrackerResults[trackerName][1] = pgResultMax;
+    				}
+    			}
+    		}
+    		
+    		allText += pgText;
+    	}
+    	
+    	var allTextHelper = new ReadabilityHelper(allText);
+    	result.wholeCourse = allTextHelper.getReadabilityStats();
+    	result.wholeCourse.words_per_page = rangeTrackerResults['word_count'];
+    	result.wholeCourse.sentences_per_page =  rangeTrackerResults['sentence_count'];
+    	result.wholeCourse.sentence_length = rangeTrackerResults['sentence_length'];
+    	result.wholeCourse.words_per_page_average = 
+    		allTextHelper._roundNum(result.wholeCourse.words_per_page / pkgText.length,2);
+    	
+    	return result;
+    },
+    
+    updateWriterPanelDisplay: function(readabilityStats) {
+    	var presetLimits = this.currentReadabilityPreset;
+    	var writerLimitPanel = this.getWriterPanelLimitSubPanel();
+    	
+    	//find out what page is selected
+    	var outlineTreePanel = eXe.app.getController("Outline").getOutlineTreePanel();
+	    var selectedPg = outlineTreePanel.getSelectionModel().getSelection();
+	    var selectedNodeid = '0';
+	    
+	    if (selectedPg != 0) {
+	    	selectedNodeid = selectedPg[0].data.id;
+    	}
+	    
+	    var selectedPgStats = null;
+	    for(var i = 0; i < readabilityStats.pages.length; i++) {
+	    	if(readabilityStats.pages[i].id == selectedNodeid) {
+	    		selectedPgStats = readabilityStats.pages[i];
+	    	}
+	    }
+	    
+    	for(limitParamId in presetLimits.levelLimits) {
+    		if(presetLimits.levelLimits.hasOwnProperty(limitParamId)) {
+    			var writerLimitId = "#writer_limit_" + limitParamId;
+    			var paramWriterLimitPanel = writerLimitPanel.query(writerLimitId)[0];
+    			var thisParamWholeCourse = readabilityStats.wholeCourse[limitParamId];
+    			if(thisParamWholeCourse) {
+    				paramWriterLimitPanel.setActualValWholeCourse(thisParamWholeCourse);
+    			}
+    			
+    			var thisParamSelectedPg = selectedPgStats[limitParamId];
+    			if(selectedPgStats && selectedPgStats[limitParamId]) {
+    				paramWriterLimitPanel.setActualValPage(selectedPgStats[limitParamId]);
+    			}
+    		}
+    	}
+    },
+    
+    
 
 });
 

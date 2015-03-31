@@ -173,7 +173,7 @@ class AuthoringPage(RenderableResource):
         #        (_("Insert Here"), "addidevice", "authoring", 1)
         
         html += "<input value='%s' class='insert_button' type='button' onclick=\"authoringInsertIdevice();\"/>" % \
-                _("Add Widget")
+                _("Add Content")
         html += "</div>"
         
         for block in self.blocks:
