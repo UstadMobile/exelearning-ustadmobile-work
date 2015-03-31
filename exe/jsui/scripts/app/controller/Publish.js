@@ -26,15 +26,24 @@ Ext.define('eXe.controller.Publish', {
     
     init: function() {
         this.control({
-            '#tools_publish': {
+            '#publish_umcloud': {
             	click:this.toolsPublish
             },
+            '#publish_login_and_upload': {
+            	click:this.checkFileUpload
+            },
+            '#publish_epub': {
+            	click:this.epubExport
+            },
+            '#publish_pdf_print': {
+            	click:this.pdfPrint
+            }
         });
 	},
 
     toolsPublish: function() {
     	var publish = new Ext.Window ({
-	          height: '80%', 
+	          height: '70%', 
 	          width: '540px', 
 	          modal: true,
 	          autoScroll: true,
@@ -49,6 +58,53 @@ Ext.define('eXe.controller.Publish', {
 	        }),
           formpanel = publish.down('form');
 	      publish.show();        
-    }
+    },
+    
+    /*
+     * Checks if file is saved and loaded.
+     */
+    checkFileUpload: function() { 
+		var authoring = Ext.ComponentQuery.query('#authoring')[0].getWin();
+		//getPackageFileName gets the file name of the project and calls the last param.
+		nevow_clientToServerEvent('getPackageFileName', this, '', 'eXe.app.getController("Publish").startUpload', '');
+    },
+    
+    /*
+     * Checks if iDevices closed, saved and file updated. Then starts Upload.
+     */
+    startUpload: function(filename, onDone) {
+		var userName = Ext.getCmp('umcloudusernameinput').getValue();
+  		var pswd = Ext.getCmp('umcloudpasswordinput').getValue();
+  		var url = Ext.getCmp('umcloudserverurlinput').getValue();
+  		var forceNew = Ext.getCmp('forceNew').getValue();
+  		var noAutoassign = Ext.getCmp('noAutoassign').getValue();
+  		
+  		 if (filename) {
+  			 //submits any open iDevices.
+  			eXe.app.getController("Toolbar").saveWorkInProgress();	
+            Ext.Msg.wait(new Ext.Template(_('Saving package to: {filename}')
+            								).apply({filename: filename}));
+ 	        if (onDone) {	//saves the package
+ 	            nevow_clientToServerEvent('savePackage', this, '', '', onDone);
+ 	        } else {
+ 	            nevow_clientToServerEvent('savePackage', this, '');
+ 	        }
+ 	    } else { //save as
+ 	    	eXe.app.getController("Toolbar").fileSaveAs(onDone)
+ 	    }
+
+  		//nevow_clientToServerEvent('EVENT', this, 'client', 'onDONE', 'onDoneParam', filename);
+   		Ext.Msg.wait(_('Uploading package:') + filename + _(" to server.."));
+  		var umupload_retmsg = nevow_clientToServerEvent(
+  		 	'startUMUpload', this, '', '', '', filename, 
+  		 		userName, pswd, url, forceNew, noAutoassign);
+	},
 	
+	epubExport: function() {
+		console.log("wazup?");
+	},
+	
+	pdfPrint: function() { 
+		console.log("How you doin?");
+	}
 });

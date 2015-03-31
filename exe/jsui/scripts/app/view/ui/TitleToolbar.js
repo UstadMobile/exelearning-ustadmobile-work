@@ -27,6 +27,14 @@ Ext.define('eXe.view.ui.TitleToolbar', {
         
         Ext.applyIf(me, {
             items: [
+                {
+                	xtype: 'button',
+                	itemId: 'tools_wizard',
+                	icon: '/images/eXe_icon.ico',
+                	text: '',
+                	tooltip: _('Click me to open the wizard'),
+                	scale: 'large'
+                },
 				{
 				    xtype: 'button',
 				    text: projectTitle,
@@ -66,10 +74,12 @@ Ext.define('eXe.view.ui.TitleToolbar', {
 									},
 									{
 										itemId: 'titletoolbar_preview_print',
+										icon: '/images/stock-print.png',
 									    text: _('Print'),
 									},
 									{
 									    itemId: 'titletoolbar_preview_website',
+									    icon: '/images/globe-icon.png',
 									    text: _('Website')
 									},
                     	        ]
@@ -91,13 +101,24 @@ Ext.define('eXe.view.ui.TitleToolbar', {
                             	defaults: {
                             		xtype: 'button',
                             		scale: 'large',
-                            		width: 200
+                            		width: 250
                             	},
                             	items: [
                         	        {
-                        	        	itemId : "titletoolbar_publish_cloud",
-                        	        	text : _("To Library")
-                        	        }
+                        	        	itemId : "publish_umcloud",
+                        	        	icon: '/images/weather-clouds-2.png',
+                        	        	text : _("Ustad Mobile Cloud")
+                        	        },
+                        	        {
+                        	        	itemId : "file_export_mxml",
+                        	        	icon: '/images/stock-export.png',
+                        	        	text : _("Export to EPUB")
+                        	        },
+                        	        {
+                        	        	itemId : "file_print",
+                        	        	icon: '/images/stock-print.png',
+                        	        	text : _("PDF/Print")
+                        	        },
                     	        ]
                             }
                          ]

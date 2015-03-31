@@ -149,7 +149,18 @@ Ext.define('eXe.controller.Wizard', {
     		success: function(response) {
     			var rm = Ext.JSON.decode(response.responseText),
     					menu, text, item, pre
-    				
+    			if (rm == ""){
+    				recpanel.add({
+    					xtype: 'label',
+    					html: "" +_("You haven't opened any projects recently. " +
+    							"To browse for a project click Open File " +
+    								"or start one by clicking any of the templates") + "",
+						style: {
+    						//blue
+    						background: '#3892D3;'
+    					}
+    				});
+    			}
 				for (var i = 0; i < rm.length; i++){
     			    if(rm[i].title == "") {
     				    textButton = rm[i].num + ". " + rm[i].path;
@@ -228,6 +239,9 @@ Ext.define('eXe.controller.Wizard', {
 				        
 				        {
 				        	xtype: 'box',
+				        	style: {
+				        		"text-align": 'center'
+					        },
 				        	autoEl: {
 				        		cn: _("Blank Project")
 					        }
@@ -261,21 +275,29 @@ Ext.define('eXe.controller.Wizard', {
        		}
     	});
     },
-    toolsWizard: function() {
+   
+    toolsWizard: function(onStart) {
+    	
     	var wizard = new Ext.Window ({
 	          height: '80%', 
 	          width: '80%', 
 	          modal: true,
 	          autoScroll: true,
 	          id: 'wizardwin', //WIZard WINdow
-	          title: _("Wizard"),
+	          title: _("Start"),
 	          layout: 'fit',
 	          items: [{
 	              xtype: 'wizardpanel'
 	          }]
 	        }),
           formpanel = wizard.down('form');
-	      wizard.show();        
+    	if (onStart==true){
+    		wizard.closable = false;
+    		wizard.show();
+    	}else{
+    		wizard.closable = true;
+    		wizard.show();
+    	}
     }
 	
 });

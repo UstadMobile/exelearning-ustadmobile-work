@@ -126,15 +126,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 text: _('New'),
                                 accesskey: 'n',
                                 tooltip: 'Ctrl+Alt+N',
-                                itemId: 'file_new'
-                            },
-                            
-                            {
-                                xtype: 'accesskey_menuitem',
-                                text: _('New Window'),
-                                accesskey: 'w',
-                                tooltip: 'Ctrl+Alt+W',
-                                itemId: 'file_new_window'
+                                itemId: 'tools_wizard'
                             },
                             {
                                 xtype: 'accesskey_menuitem',
@@ -407,6 +399,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                             {
                                 xtype: 'accesskey_menuitem',
                                 itemId: 'tools_wizard',
+                                icon: '/images/tools-wizard-2.png',
                                 accesskey: 'w',
                                 text: _('Wizard')
                             },
@@ -419,6 +412,7 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                             {
                                 xtype: 'accesskey_menuitem',
                                 itemId: 'tools_preview',
+                                icon: '/images/stock-find.png',
                                 accesskey: 'v',
                                 text: _('Preview')
                             },
@@ -431,7 +425,8 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                             },
                             {
                             	xtype: 'accesskey_menuitem',
-                                itemId: 'tools_publish',
+                                itemId: 'publish_umcloud',
+                                icon: '/images/weather-clouds-2.png',
                                 accesskey: 'u',
                                 text: _('Publish')
                             },

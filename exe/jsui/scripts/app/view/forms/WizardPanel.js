@@ -90,20 +90,19 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
                                 
 							{ 
 								xtype: 'button',
-								text: _('Create New'),
-								icon: '/images/wizard-new.png',
-							    itemId: 'wizard_create_new',
-							    region: 'south',
-							    scale: 'large'
-							},
-							
-							{ 
-								xtype: 'button',
 								text: _('Open File'),
 								icon: '/images/wizard-open.png',
 								itemId: 'file_open',
 								region: 'south',
 								scale: 'large'
+							},
+							{ 
+								xtype: 'button',
+								text: _('Create New'),
+								icon: '/images/wizard-new.png',
+							    itemId: 'wizard_create_new',
+							    region: 'south',
+							    scale: 'large'
 							},
 							{
 							    xtype:  'label',

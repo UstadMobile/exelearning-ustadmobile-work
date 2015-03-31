@@ -27,6 +27,8 @@ from exe.webui.renderable     import RenderableResource
 from exe.jsui.mainpage import MainPage
 from twisted.web import error
 import re
+from exe.engine.locationbuttons  import LocationButtons
+import os
 
 log = logging.getLogger(__name__)
 
@@ -112,11 +114,12 @@ class PackageRedirectPage(RenderableResource):
             package.title = request.args['name'][0]
             
             #replace with local library path
-            path_to_save = "/home/varuna/%s.elp" % package.name
-            #path_to_save = eXe.app.config.locationButtons[1]['location'] + '/' + package.name
+            location_buttons = LocationButtons().buttons
+            library_path = os.path.join(location_buttons[1]['location'], 'eXeLearning', 'Library')
+            
+            path_to_save = os.path.join(library_path, "%s.elp" % package.name)            
             package.save(filename = path_to_save)
             
-            #To Do: Save the package into Local Library. 
         
         self.bindNewPackage(package, session)
         log.info("Created a new package name="+ package.name)

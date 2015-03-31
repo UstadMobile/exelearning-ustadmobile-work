@@ -233,7 +233,7 @@ Ext.onReady(function() {
 	        	if (eXe.app.config.showPreferences)
 	        		eXe.app.getController('Toolbar').toolsPreferences();
 	        	if (eXe.app.config.showWizard){
-	        		eXe.app.getController('Wizard').toolsWizard();
+	        		eXe.app.getController('Wizard').toolsWizard(onStart= true);
 	        	}
 	        };
 

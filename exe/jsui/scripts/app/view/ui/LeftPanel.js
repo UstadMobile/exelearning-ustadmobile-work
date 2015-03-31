@@ -225,7 +225,11 @@ Ext.define('eXe.view.ui.LeftPanel', {
 			        		},
 			        		beforerender: {
 			        			fn: function(img) {
-			        				eXe.app.getController("Toolbar").updateLeftPanelProperties();
+			        				var toolbarController = eXe.app.getController("Toolbar");
+			        				toolbarController.ignoreLeftPanelUpdates = true;
+			        				toolbarController.updateLeftPanelProperties(function() {
+			        					toolbarController.ignoreLeftPanelUpdates = false;
+			        				});
 			        			}
 			        		}
 			        	}

@@ -45,7 +45,13 @@ Ext.define('eXe.controller.Toolbar', {
     	ref: 'leftPanelLicenseCombo',
     	selector: '#leftpanel_license'
     }
-    ],    
+    ], 
+    
+    /** Set to true to enable updating the left properties without this
+     * going to the server and triggering a change (e.g. on load new)
+     */
+    ignoreLeftPanelUpdates: false,
+    
     init: function() {
         this.control({
             '#file': {
@@ -1541,6 +1547,13 @@ Translation software.')
     	var author = this.getLeftPanelAuthorField().getValue();
     	var license = this.getLeftPanelLicenseCombo().getValue();
     	
+    	/**
+    	 * dont trigger events - this was caused by initial value settings
+    	 */
+    	if(this.ignoreLeftPanelUpdates) {
+    		return;
+    	}
+    	
     	Ext.Ajax.request({
             url: location.pathname + '/properties',
             method: "POST",
@@ -1555,7 +1568,7 @@ Translation software.')
         });
     },
     
-    updateLeftPanelProperties: function() {
+    updateLeftPanelProperties: function(onDone) {
     	var coverImg = this.getCoverImg();
     	Ext.Ajax.request({
             url: location.pathname + '/properties?pp_coverImg=&pp_author=&pp_license=',
@@ -1570,6 +1583,9 @@ Translation software.')
                 
                 this.getLeftPanelAuthorField().setValue(json.data.pp_author);
                 this.getLeftPanelLicenseCombo().setValue(json.data.pp_license);
+                if(typeof onDone === "function") {
+                	onDone.apply(this, []);
+                }
             }
         });
     }, 

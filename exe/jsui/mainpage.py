@@ -328,7 +328,7 @@ class MainPage(RenderableLivePage):
         setUpHandler(self.setPackageTitle,        'setPackageTitle')
 
         #umcloud functions
-        setUpHandler(self.handleUMUploadFileName, 'startUMUploadFileName')  
+        setUpHandler(self.handleUMUpload, 'startUMUpload')  
         setUpHandler(self.handleCheckUMCloudLogin, 'checkUMCloudLogin')  
         setUpHandler(self.handleAutoSavePackage,     'autoSavePackage') 
         
@@ -645,7 +645,7 @@ class MainPage(RenderableLivePage):
             #client.alert(_(u'Package saved to: %s') % filename, filter_func=otherSessionPackageClients)
             #Basically don't alert the customer of anything while auto saving -VS
 
-    def handleUMUploadFileName (self, client, onDone, onDoneParam, filepath, username, password, url):
+    def handleUMUpload (self, client, onDone, onDoneParam, filepath, username, password, url, forceNew, noAutoassign):
         """
         Handle uploading to a ResumableJS Server
         
@@ -654,9 +654,12 @@ class MainPage(RenderableLivePage):
             filepath : Path to the elp file to upload
             username : username to authenticate as to server
             password : password to use for authentication
+            url: Url to resumable upload server endpoint
+            forceNew: if set, forces new library adition and not an update (new uid)
+            noAutoassign: Doesn't set the publisher to be part of this package as a course
         
         """
-        request_extra_params = { 'forceNew': "true", 'noAutoassign': "true" }
+        request_extra_params = { 'forceNew': forceNew, 'noAutoassign': noAutoassign }
         http_auth = (username, password)
         #client.sendScript('Ext.MessageBox.progress("Uploading your block", "Your block is being uploaded...")')
         resumable = ResumableClient(filepath, url, 1048576, 10, 
@@ -666,11 +669,11 @@ class MainPage(RenderableLivePage):
         
         if status_code == 200:
             coursename = response.headers['coursename']
+            courseid = response.headers['courseid']
 
             #Close windows on client
-            client.sendScript("Ext.getCmp('loginumcloudpwin').close()")
-            client.sendScript("Ext.getCmp('exportustadmobilepwin').close()")
-            client.alert(_("Your course: '%s' has uploaded.") % coursename)
+            client.sendScript("Ext.getCmp('publishwin').close()")
+            client.alert(_("Your course: '%s' has uploaded. ID: %s") % (coursename, courseid))
             
         elif (status_code == 500):
             server_err_msg =  response.headers['error'] if  response.headers['error'] else ""
