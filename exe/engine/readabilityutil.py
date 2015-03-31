@@ -9,6 +9,8 @@ from exe import globals as G
 import copy
 import os
 import json
+import uuid
+
 
 class ReadabilityUtil(object):
     '''
@@ -83,6 +85,22 @@ class ReadabilityUtil(object):
         
         return param_result
     
+    def check_system_has_preset(self, preset_obj):
+        """Check that the noted preset is present on the system
+        vs. one found in a package
+        """
+        system_preset_obj = None
+        try:
+            system_preset_obj = self.get_readability_preset_by_id(preset_obj['uuid'])
+        except:
+            pass
+        
+        try:
+            if system_preset_obj != preset_obj:
+            #copy it in
+                self.save_readability_preset(preset_obj)
+        except:
+            print "Error checking system has preset"
 
     def __init__(self, params = None):
         '''
@@ -174,6 +192,27 @@ class ReadabilityUtil(object):
         preset_filename = preset_id + extension
         preset_fh = open(from_dir/preset_filename)
         preset_obj = json.load(preset_fh, "utf-8")
+        return preset_obj
+    
+    def save_readability_preset(self, preset_obj, extension=".erp2", from_dir = None):
+        """Save the given readability preset
+        if it is missing a UUID (eg newly created) then give it a UUID
+        """
+        if from_dir is None:
+            from_dir = self._get_default_preset_dir()
+        
+        preset_uuid = preset_obj['uuid']
+        if len(preset_uuid) == 0:
+            preset_obj['uuid'] = str(uuid.uuid4())
+        
+        json_str = json.dumps(preset_obj, "utf-8")
+        
+        dest_filename = preset_obj['uuid'] + extension
+        out_file = open(from_dir/dest_filename, "wb")
+        out_file.write(json_str)
+        out_file.flush()
+        out_file.close()
+        
         return preset_obj
     
     def delete_readability_preset_by_id(self, preset_id, extension = ".erp2", from_dir = None):

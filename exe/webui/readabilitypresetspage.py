@@ -38,19 +38,7 @@ class ReadabilityPresetsPage(RenderableResource):
         if action == "savepreset":
             json_str = request.args['presetval'][0]
             json_obj = json.loads(json_str, "utf-8")
-            preset_uuid = json_obj['uuid']
-            if len(preset_uuid) == 0:
-                json_obj['uuid'] = str(uuid.uuid4())
-                json_str = json.dumps(json_obj)
-            
-            dest_filename = json_obj['uuid'] + ".erp2"
-            dest_filepath = os.path.join(
-                         G.application.config.readabilityPresetsDir,
-                         dest_filename)
-            out_file = open(dest_filepath, "wb")
-            out_file.write(json_str)
-            out_file.flush()
-            out_file.close()
+            json_obj = ReadabilityUtil().save_readability_preset(json_obj)
             
             result = {
                         "success" : True,

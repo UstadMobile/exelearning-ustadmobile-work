@@ -1469,6 +1469,17 @@ class Package(Persistable):
         if not nstyle.isdir():
             newPackage.style=G.application.config.defaultStyle       
         newPackage.lang = newPackage._lang
+        
+        if newPackage.readability_preset != "":
+            readability_preset_obj = None
+            try:
+                import json
+                readability_preset_obj = json.loads(
+                                    newPackage.readability_preset, "utf-8")
+                from exe.engine.readabilityutil import ReadabilityUtil
+                ReadabilityUtil().check_system_has_preset(readability_preset_obj)
+            except:
+                pass
         return newPackage
     
     def get_internal_links(self):
