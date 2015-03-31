@@ -133,7 +133,8 @@ Ext.onReady(function() {
 	    	'filepicker.Directory',
 	    	'filepicker.File',
 	    	'Wizard',
-	    	'Publish'
+	    	'Publish',
+	    	'Readability'
 	    ],
 	    
 	    getMaxHeight: function(height) {

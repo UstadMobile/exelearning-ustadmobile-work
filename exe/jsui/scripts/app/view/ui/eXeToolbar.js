@@ -385,6 +385,13 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 icon: '/images/readability.png'
                             },
                             {
+                            	xtype: 'accesskey_menuitem',
+                            	itemId: 'tools_readability_linguist',
+                            	accesskey : 'l',
+                            	text: _("Linguist"),
+                            	icon: '/images/readability.png'
+                            },
+                            {
                                 xtype: 'accesskey_menuitem',
                                 itemId: 'tools_stylemanager',
                                 accesskey: 's',

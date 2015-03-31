@@ -315,7 +315,7 @@ class Package(Persistable):
     i.e. the "package".
     """
     #persistenceVersion = 12
-    persistenceVersion = 15 #used to be 12 before. +1-ed for course test mode.
+    persistenceVersion = 16 
     nonpersistant      = ['resourceDir', 'filename', 'previewDir', 'previewMobileDir', 'export_download_dir']
     # Name is used in filenames and urls (saving and navigating)
     _name              = '' 
@@ -421,6 +421,8 @@ class Package(Persistable):
         
         #tincan options
         self.xapi_prefix = "http://www.ustadmobile.com/um-tincan/activities"
+        
+        self.readability_preset = ""
         
         
     def setLomDefaults(self):
@@ -1467,6 +1469,17 @@ class Package(Persistable):
         if not nstyle.isdir():
             newPackage.style=G.application.config.defaultStyle       
         newPackage.lang = newPackage._lang
+        
+        if newPackage.readability_preset != "":
+            readability_preset_obj = None
+            try:
+                import json
+                readability_preset_obj = json.loads(
+                                    newPackage.readability_preset, "utf-8")
+                from exe.engine.readabilityutil import ReadabilityUtil
+                ReadabilityUtil().check_system_has_preset(readability_preset_obj)
+            except:
+                pass
         return newPackage
     
     def get_internal_links(self):
@@ -2078,7 +2091,9 @@ class Package(Persistable):
     
     def upgradeToVersion15(self):
         self.xapi_prefix = "http://www.ustadmobile.com/um-tincan/activities"
-        
+    
+    def upgradeToVersion16(self):
+        self.readability_preset = ""
             
     def downgradeToVersion9(self):
         for attr in ['lomEs', 'lom', 'scowsinglepage', 'scowwebsite',

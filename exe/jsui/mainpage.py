@@ -208,6 +208,12 @@ class MainPage(RenderableLivePage):
                                                         self.package)
         return json.dumps(stat)
 
+    def child_package_text(self, ctx):
+        """Generate a JSON of the text in this package by page/idevice"""
+        from exe.engine.readabilityutil import ReadabilityUtil
+        package_text_info = ReadabilityUtil().get_package_text_json(self.package) 
+        return json.dumps(package_text_info, "utf-8")
+
 
     def child_taxon(self, ctx):
         """

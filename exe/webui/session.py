@@ -130,6 +130,7 @@ class eXeSite(appserver.NevowSite):
         s = eXeSession(self, uid)
         session = self.sessions[uid] = s
         
-        s.startCheckingExpiration()
+        #dont let sessions ofr eXe expire
+        #s.startCheckingExpiration()
         return session
 

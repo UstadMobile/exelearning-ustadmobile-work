@@ -1,0 +1,1 @@
+{"levelLimits": {"distinct_words": [null, 15], "word_count": [0, 40], "word_length": [null, 5], "words_per_page": [0, 5], "sentence_length": [null, 5], "word_length_average": [null, 4]}, "type": "", "name": "Level2", "uuid": "242d9690-6ea2-4c1e-9edf-1fd04c4e2bb4"}

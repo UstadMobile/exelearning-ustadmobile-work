@@ -48,4 +48,9 @@ fieldset.collapsed-with-data > legend > div, fieldset.collapsed-with-data > lege
 .exe_menuitem_large * {
 	font-size: 32pt;
 }
+
+.readabilitylimit_checkbox_label {
+	font-size: large;
+}
+
 /* End additional UstadMobile branch items */
