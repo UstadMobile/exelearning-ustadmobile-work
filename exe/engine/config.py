@@ -421,6 +421,21 @@ class Config(object):
         # new installation) create it
         if not self.configDir.exists():
             self.configDir.mkdir()
+            
+        try:
+            from exe.engine.locationbuttons  import LocationButtons
+            location_buttons = LocationButtons().buttons
+            library_path = Path(location_buttons[1]['location']/'eXeLearning'/'Library')
+            if not library_path.exists():
+                library_path.makedirs()
+            
+            template_path = Path(location_buttons[1]['location']/'eXeLearning'/'Templates')
+            if not template_path.exists():
+                template_path.makedirs()    
+                self.copyElpTemplates(str(template_path))
+            
+        except:
+            print "Error creating library dir"
         
         if not G.application.standalone: 
             #FM: Copy styles         
@@ -657,6 +672,10 @@ class Config(object):
             if os.path.exists(dstdir) and not os.listdir(dstdir): 
                 shutil.rmtree(dstdir)                 
             shutil.copytree(bkdir,dstdir )
+    
+    def copyElpTemplates(self, dest):
+        self.copySystemToUserDir(self.webDir/'elp-templates', 
+                                 dest)
     
     def copyReadabilityPresets(self):
         self.copySystemToUserDir(self.webDir/'readability-presets', 

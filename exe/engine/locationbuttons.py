@@ -27,7 +27,7 @@ from exe                         import globals as G
 
 class LocationButtons(object):
     def __init__(self):
-        if G.application.config.appMode == Config.MODE_WEBAPP:
+        if G.application.config and G.application.config.appMode == Config.MODE_WEBAPP:
             self.names_map = {}
         elif sys.platform[:3] == "win":
             self.names_map = {0: x_('Desktop'),
@@ -52,7 +52,14 @@ class LocationButtons(object):
         for key, value in self.names_map.items():
             #key is HOME DOCUMENTS DESKTOP
             try:
-                button = {'xtype': 'button', 'text': _(value),
+                button_text = value
+                try:
+                    button_text = _(value)
+                except:
+                    #in bootup - care not
+                    pass
+                
+                button = {'xtype': 'button', 'text': button_text,
                           'icon': '/images/stock-open.png', #Added
                           #Ideally it should be:
                           #'icon': ,
