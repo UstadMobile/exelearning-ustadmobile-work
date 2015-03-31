@@ -8,15 +8,17 @@ Ext.define('eXe.controller.Readability', {
     
     indicatorIDToLabel: {
     	"word_count" : _("Total word count"),
-    	"word_length_average" : _("Word length: Average"),
+    	"word_length_average" : _("Word length: Book Average"),
     	"word_length" : _("Word length"),
     	"distinct_words" : _("Unique words in Text"),
     	"sentence_length" : _("Sentence length"),
-    	"sentence_length_average" : _("Sentence length: Average"),
+    	"sentence_length_average" : _("Sentence length: Book Average"),
     	"words_per_page" : _("Words per Page"),
     	"syllables_per_word" : _("Syllables per word"),
-    	"syllables_per_word_average" : _("Syllables per word: Average"),
-    	"sentences_per_page" : _("Sentences Per Page")
+    	"syllables_per_word_average" : _("Syllables per word: Book Average"),
+    	"sentences_per_page" : _("Sentences Per Page"),
+    	"sentences_per_page_average": _("Sentences Per Page: Book Average"),
+    	"words_per_page_average" : _("Words Per Page: Book Average")
     },
     
     currentlyAvailableLevelParams: [],
@@ -112,6 +114,9 @@ Ext.define('eXe.controller.Readability', {
      	   },
      	   '#writer_panel_level_button' : {
      		   beforerender: this.writerPanelShowCoursePreset
+     	   },
+     	   '#writer_panel_check_button' : {
+     		   click: this.updateWriterStats
      	   }
        });
     },

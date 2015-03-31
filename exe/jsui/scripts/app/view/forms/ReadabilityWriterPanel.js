@@ -59,6 +59,13 @@ var readabilityWriterPanel = Ext.define('eXe.view.forms.ReadabilityWriterPanel',
                 	xtype: "panel",
                 	itemId: "writer_panel_limit_subpanel",
                 	items : [] 
+                },
+                {
+                	xtype: "button",
+                	itemId: "writer_panel_check_button",
+                	scale: "medium",
+                	text: _("Check It"),
+                	padding: 4
                 }
             ]
 		});
@@ -115,7 +122,8 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityWriter
     	        	text: me._formatLimitParamString(me.limitLabel,
     	        			me.limits),
         			style : {
-        				"font-size" : me.labelFontSize
+        				"font-size" : "medium",
+        				"font-weight" : "bold"
         			}
     	        },
     	        {
