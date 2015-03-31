@@ -63,7 +63,8 @@ dataFiles(["exe/webui/style",
            "exe/webui/scripts",
            "exe/webui/schemas",
            "exe/webui/templates",
-           "exe/webui/readability-presets"],
+           "exe/webui/readability-presets",
+           "exe/webui/elp-templates"],
            excludes = ['mimetex-darwin.cgi'])
 
 g_oldBase = "exe"
