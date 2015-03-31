@@ -5,6 +5,7 @@ Created on Sep 29, 2014
 '''
 
 from textstatistics.textstatistics import TextStatistics
+from exe.webui.common import strip_html_to_plaintext
 from exe import globals as G
 import copy
 import os
@@ -108,6 +109,31 @@ class ReadabilityUtil(object):
         '''
         pass
     
+    
+    def get_package_text_json(self, package):
+        return self.node_to_textinfo(package.root, [])
+    
+    def node_to_textinfo(self, node, dest_arr):
+        this_page_contents = []
+        for idevice in node.idevices:
+            class_name =idevice.__class__.__name__ 
+            idevice_text = ""
+            if class_name in ReadabilityUtil.text_idevices:
+                txt_fields = ReadabilityUtil.text_idevices[class_name]
+                for field_name in txt_fields:
+                    dev_content = getattr(idevice, field_name).content
+                    idevice_text += strip_html_to_plaintext(dev_content)
+                this_page_contents.append({ idevice.id : idevice_text})
+        
+        dest_arr.append({
+                         'pageid' : node.id,
+                         'idevices' : this_page_contents
+                         })        
+        
+        for child in node.children:
+            self.node_to_textinfo(child, dest_arr) 
+        
+        return dest_arr
     
     def get_package_readability_info(self, package):
         text = self.node_to_text(package.root)
