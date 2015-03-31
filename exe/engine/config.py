@@ -424,12 +424,11 @@ class Config(object):
             
         try:
             from exe.engine.locationbuttons  import LocationButtons
-            location_buttons = LocationButtons().buttons
-            library_path = Path(location_buttons[1]['location']/'eXeLearning'/'Library')
+            library_path = Path(LocationButtons().get_user_doc_path()/'eXeLearning'/'Library')
             if not library_path.exists():
                 library_path.makedirs()
             
-            template_path = Path(location_buttons[1]['location']/'eXeLearning'/'Templates')
+            template_path = Path(LocationButtons().get_user_doc_path()/'eXeLearning'/'Templates')
             if not template_path.exists():
                 template_path.makedirs()    
                 self.copyElpTemplates(str(template_path))

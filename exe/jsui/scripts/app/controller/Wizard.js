@@ -111,7 +111,7 @@ Ext.define('eXe.controller.Wizard', {
     updateLibrary: function() {
     	var librarypanel = Ext.getCmp('showfileopenlibrarypanel');
     	librarypanel.removeAll();
-    	var dirParam = encodeURIComponent(eXe.app.config.locationButtons[1]['location'] + '/eXeLearning/Library/');
+    	var dirParam = encodeURIComponent(eXe.app.config.userDocFolder + '/eXeLearning/Library/');
     	Ext.Ajax.request({
     		url: '/dirtree?sendWhat=both&dir=' + dirParam,
     		scope: this,
@@ -166,7 +166,7 @@ Ext.define('eXe.controller.Wizard', {
     				    textButton = rm[i].num + ". " + rm[i].path;
 				    }else {
 				    	textButton = "<b>" + rm[i].title + "</b><br/>"
-				    			+ "<i>" + rm[i].path.replace(/\\/g,'/').replace(/\/[^\/]*$/, '').replace(eXe.app.config.locationButtons[1]['location'],"Documents").replace(eXe.app.config.locationButtons[0]['location'],"Home").replace(eXe.app.config.locationButtons[2]['location'],"Desktop") + "</i>"
+				    			+ "<i>" + rm[i].path.replace(/\\/g,'/').replace(/\/[^\/]*$/, '').replace(eXe.app.config.userDocFolder,"Documents").replace(eXe.app.config.locationButtons[0]['location'],"Home").replace(eXe.app.config.locationButtons[2]['location'],"Desktop") + "</i>"
 			        }
     				recpanel.add({
             			xtype: 'button',
@@ -251,7 +251,7 @@ Ext.define('eXe.controller.Wizard', {
     			
     			);
     	
-    	var dirParam = encodeURIComponent(eXe.app.config.locationButtons[1]['location'] + '/eXeLearning/Templates/');
+    	var dirParam = encodeURIComponent(eXe.app.config.userDocFolder + '/eXeLearning/Templates/');
     	Ext.Ajax.request({
     		url: '/dirtree?sendWhat=both&dir=' + dirParam,
     		scope: this,

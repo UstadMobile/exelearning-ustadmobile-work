@@ -453,6 +453,7 @@ class MainPage(RenderableLivePage):
         
         config = {'lastDir': myLastDir,
                   'locationButtons': self.location_buttons.buttons,
+                  'userDocFolder' : self.location_buttons.get_user_doc_path(),
                   'lang': G.application.config.locale.split('_')[0],
                   'showPreferences': G.application.config.showPreferencesOnStart == '1' and not G.application.preferencesShowed,
                   'showWizard': G.application.config.showWizardOnStart == '1' and not G.application.wizardShowed,
@@ -661,6 +662,9 @@ class MainPage(RenderableLivePage):
         """
         request_extra_params = { 'forceNew': forceNew, 'noAutoassign': noAutoassign }
         http_auth = (username, password)
+        if not url.endswith('/'):
+            url = url + "/"
+            
         #client.sendScript('Ext.MessageBox.progress("Uploading your block", "Your block is being uploaded...")')
         resumable = ResumableClient(filepath, url, 1048576, 10, 
             request_extra_params= request_extra_params, http_auth = http_auth);

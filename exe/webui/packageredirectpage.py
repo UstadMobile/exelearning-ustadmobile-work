@@ -114,8 +114,7 @@ class PackageRedirectPage(RenderableResource):
             package.title = request.args['name'][0]
             
             #replace with local library path
-            location_buttons = LocationButtons().buttons
-            library_path = os.path.join(location_buttons[1]['location'], 'eXeLearning', 'Library')
+            library_path = os.path.join(LocationButtons().get_user_doc_path(), 'eXeLearning', 'Library')
             
             path_to_save = os.path.join(library_path, "%s.elp" % package.name)            
             package.save(filename = path_to_save)

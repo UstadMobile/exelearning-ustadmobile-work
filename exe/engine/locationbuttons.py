@@ -31,7 +31,7 @@ class LocationButtons(object):
             self.names_map = {}
         elif sys.platform[:3] == "win":
             self.names_map = {0: x_('Desktop'),
-                         5: x_('My Documents'),
+                         5: x_('Documents'),
                          40: x_('Home Folder')}
         elif sys.platform[:6] == "darwin":
             self.names_map = {'kDesktopFolderType': x_('Desktop'),
@@ -46,18 +46,33 @@ class LocationButtons(object):
                          'DOCUMENTS': '/images/stock-panel-drawer.png',
                          'HOME': '/images/stock-open.png'}
         self.compute()
-
+        
+        
+        
+    def get_user_doc_path(self):
+        for button in self.buttons:
+            if button['text'] == self._get_button_text('Documents'):
+                return button['location']
+        
+        #default to the middle button
+        return self.buttons[0]['location']
+            
+    def _get_button_text(self, value):
+        button_text = value
+        try:
+            button_text = _(value)
+        except:
+            #in bootup - care not
+            pass
+        
+        return button_text
+        
     def compute(self):
         self.buttons = []
         for key, value in self.names_map.items():
             #key is HOME DOCUMENTS DESKTOP
             try:
-                button_text = value
-                try:
-                    button_text = _(value)
-                except:
-                    #in bootup - care not
-                    pass
+                button_text = self._get_button_text(value)
                 
                 button = {'xtype': 'button', 'text': button_text,
                           'icon': '/images/stock-open.png', #Added
