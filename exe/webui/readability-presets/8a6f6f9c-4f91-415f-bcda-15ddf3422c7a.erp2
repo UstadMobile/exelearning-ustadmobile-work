@@ -1,1 +1,1 @@
-{"levelLimits": {"words_per_page_max": [null, 11], "word_count": [null, 50]}, "type": "", "name": "A decent level", "uuid": "8a6f6f9c-4f91-415f-bcda-15ddf3422c7a"}
+{"levelLimits": {"sentence_length_max": [1, 10], "distinct_words": [null, 20], "word_count": [null, 50], "words_per_page_max": [null, 11], "word_length_max": [1, 10], "word_length_average": [1, 10]}, "type": "", "name": "A decent level", "uuid": "8a6f6f9c-4f91-415f-bcda-15ddf3422c7a"}

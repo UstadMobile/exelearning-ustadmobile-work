@@ -55,6 +55,10 @@ Ext.define('eXe.controller.Readability', {
     	{
     		selector: '#writer_panel_level_button',
     		ref: 'writerPanelLevelButton'
+    	},
+    	{
+    		selector: "#writer_panel_limit_subpanel",
+			ref: 'writerPanelLimitSubPanel'
     	}
     ],
     
@@ -259,9 +263,7 @@ Ext.define('eXe.controller.Readability', {
     	
     	
     	for(var i = 0; i < availableParameters.length; i++) {
-    		var labelStr = this.indicatorIDToLabel[availableParameters[i].id] ?
-    				this.indicatorIDToLabel[availableParameters[i].id] :
-    					availableParameters[i].id;
+    		var labelStr = this._getParameterLabel(availableParameters[i].id);
     		levelPanel.add([{
     			xtype: 'readabilitylinguistlimit',
     			limitParamId: availableParameters[i].id,
@@ -288,6 +290,11 @@ Ext.define('eXe.controller.Readability', {
     		}
     	}
     	
+    },
+    
+    _getParameterLabel: function(paramId) {
+    	return this.indicatorIDToLabel[paramId] ?
+				this.indicatorIDToLabel[paramId] : paramId;
     },
     
     makePresetJSON: function() {
@@ -361,7 +368,23 @@ Ext.define('eXe.controller.Readability', {
     
     handleBeforeDestroy: function() {
     	if(this.presetHasChanged) {
-    		this.savePreset({ noformupdate : true});
+    		this.savePreset({ noformupdate : true}, function() {
+    			//update display for the writer
+    			if(this.currentReadabilityPreset.uuid !== "") {
+    				this.updateCourseLevelFromUUID(
+		    			this.currentReadabilityPreset.uuid,{}, 
+	    	    		function(readabilityPreset) {
+    	    	    		this.showWriterLimitsForPreset();
+    	    	    	});
+    			}
+    		});
+    	}else {
+    		this.updateCourseLevelFromUUID(
+    			this.currentReadabilityPreset.uuid,{}, 
+	    		function(readabilityPreset) {
+    	    		this.showWriterLimitsForPreset();
+    	    	}
+			);
     	}
     },
     
@@ -496,17 +519,39 @@ Ext.define('eXe.controller.Readability', {
     			if(this.currentReadabilityPreset.uuid) {
     				var panelLevelButton = this.getWriterPanelLevelButton();
         			panelLevelButton.setText(this.currentReadabilityPreset.name);
+        			this.showWriterLimitsForPreset();
     			}
     		});
     	});
     },
+    
+    /**
+     * Show in the writer panel the limits that are in a particular preset
+     */
+    showWriterLimitsForPreset: function(preset) {
+    	var preset = preset ? preset : this.currentReadabilityPreset;
+    	var limitSubPanel = this.getWriterPanelLimitSubPanel();
+    	limitSubPanel.removeAll();
+    	
+    	if(preset.type !== "decodable") {
+    		for(var limitId in preset.levelLimits) {
+        		limitSubPanel.add({
+        			xtype: "readabilitywriterlimit",
+        			limits: preset.levelLimits[limitId],
+    				limitLabel: this._getParameterLabel(limitId)
+        		});
+        	}
+    	}else {
+    		//do decodable panel
+    	}
+    	
+    },
 
-    setCourseLevel: function(clickedItem) {
-    	var presetName = clickedItem.text;
-    	var presetUUID = clickedItem.presetUUID;
-    	
-    	this.getWriterPanelLevelButton().setText(presetName);
-    	
+    /**
+     * Get info about this UUID from server; update our currentReadabilityPreset
+     * 
+     */
+    updateCourseLevelFromUUID: function(presetUUID, options, successFn, failFn) {
     	//Load the preset from the server
     	var loadURL = '/readabilitypresets?action=get_preset_by_id&presetid='
     		+ presetUUID;
@@ -523,15 +568,27 @@ Ext.define('eXe.controller.Readability', {
     			Ext.Ajax.request({
     	            url: location.pathname + '/properties',
     	            method: "POST",
+    	            scope: this,
     	            params: {
     	            	"pp_readability_preset" : presetValuesStr,
     	            },
     	            
-    	            success: function() {
-    	            	console.log("updated project properties");
-    	        	}
+    	            success: function(response) {
+    	            	this._runOptionalCallback(successFn, this, [presetValues]);
+    	            }
     	        });
     		}
+    	});
+    },
+    
+    setCourseLevel: function(clickedItem) {
+    	var presetName = clickedItem.text;
+    	var presetUUID = clickedItem.presetUUID;
+    	
+    	this.getWriterPanelLevelButton().setText(presetName);
+    	
+    	this.updateCourseLevelFromUUID(presetUUID, {}, function() {
+    		this.showWriterLimitsForPreset();
     	});
     },
 

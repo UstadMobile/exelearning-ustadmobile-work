@@ -17,9 +17,7 @@ import uuid
 
 class ReadabilityPresetsPage(RenderableResource):
     '''
-    This page delivers AJAX for the ReadabilityBoundariesPanel to list
-    the installed readability presets for levelled and decodeable 
-    readers
+    This page delivers AJAX about readability presets
     '''
     name = 'readabilitypresets'
 
