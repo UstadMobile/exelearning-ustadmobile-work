@@ -96,13 +96,7 @@ any Learning Management System.
       author_email="admin@exelearning.net",
       license="GPL",
       scripts=["exe/exe", "exe/exe_do"],
-<<<<<<< HEAD
       packages=["exe", "exe.webui", "exe.webui.webservice", "exe.jsui",
                       "exe.engine", "exe.export", "exe.importers", "exe.engine.lom"],
-=======
-      packages=["exe", "exe.webui", "exe.jsui",
-                "exe.engine", "exe.export",
-                "exe.importers", "exe.engine.lom"],
->>>>>>> 7dc793ee7eb7d4f9e664ace91a6506430306ebcb
       data_files=g_files.items()
       )
