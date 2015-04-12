@@ -1,5 +1,5 @@
 translations = {
- "": "Project-Id-Version: eXeLearning 2.1\nReport-Msgid-Bugs-To: EMAIL@ADDRESS\nPOT-Creation-Date: 2015-04-12 16:24+0400\nPO-Revision-Date: 2015-04-02 18:24+0400\nLast-Translator: FULL NAME <EMAIL@ADDRESS>\nLanguage-Team: ar <LL@li.org>\nLanguage: ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n>=3 && n<=10 ? 3 : n>=11 && n<=99 ? 4 : 5)\nMIME-Version: 1.0\nContent-Type: text\/plain; charset=utf-8\nContent-Transfer-Encoding: 8bit\nGenerated-By: Babel 1.3\n", 
+ "": "Project-Id-Version: eXeLearning 2.1\nReport-Msgid-Bugs-To: EMAIL@ADDRESS\nPOT-Creation-Date: 2015-04-12 17:05+0400\nPO-Revision-Date: 2015-04-02 18:24+0400\nLast-Translator: FULL NAME <EMAIL@ADDRESS>\nLanguage-Team: ar <LL@li.org>\nLanguage: ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n>=3 && n<=10 ? 3 : n>=11 && n<=99 ? 4 : 5)\nMIME-Version: 1.0\nContent-Type: text\/plain; charset=utf-8\nContent-Transfer-Encoding: 8bit\nGenerated-By: Babel 1.3\n", 
  "DropDown Activity": "\u0625\u0633\u0642\u0627\u0637 \u0627\u0644\u0646\u0634\u0627\u0637", 
  "Author": "\u0627\u0644\u0645\u0624\u0644\u0641", 
  "Desktop": "\u0633\u0637\u062d \u0627\u0644\u0645\u0643\u062a\u0628", 
@@ -8,6 +8,7 @@ translations = {
  "Wiki Article": "\u0645\u0642\u0627\u0644 \u0648\u064a\u0643\u0649", 
  "Title": "\u0639\u0646\u0648\u0627\u0646", 
  "Save in:": "\u062d\u0641\u0638 \u0641\u064a", 
+ "isrtl": "true", 
  "Non-Interactive Activities": "\u063a\u064a\u0631 \u0627\u0644\u0646\u0634\u0627\u0637 \u0627\u0644\u062a\u0641\u0627\u0639\u0644\u064a", 
  "Ok": "\u0645\u0648\u0627\u0641\u0642\u0629", 
  "Comment:": "\u062a\u0639\u0644\u064a\u0642", 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: Juan Rafael Fernández <jrfern@gmail.com>\n"
-"POT-Creation-Date: 2015-04-12 16:24+0400\n"
+"POT-Creation-Date: 2015-04-12 17:05+0400\n"
 "PO-Revision-Date: 2014-10-22 23:33+0100\n"
 "Last-Translator: Dionisio Martínez Soler <dmsoler@edu.xunta.es>\n"
 "Language-Team: Dionisio Martínez Soler <dmsoler@edu.xunta.es>\n"
@@ -805,7 +805,7 @@ msgstr ""
 #: exe/webui/common.py:489 exe/webui/common.py:499
 #: exe/webui/editorelement.py:148 exe/webui/editorpane.py:255
 #: exe/webui/element.py:2414 exe/webui/element.py:2592
-#: exe/webui/element.py:2767 exe/webui/element.py:3077
+#: exe/webui/element.py:2767 exe/webui/element.py:3078
 #: exe/webui/listablock.py:472 exe/webui/questionelement.py:113
 #: exe/webui/truefalseelement.py:264
 msgid "Feedback"
@@ -1313,8 +1313,8 @@ msgstr ""
 #: exe/engine/field.py:3811 exe/engine/multichoiceidevice.py:132
 #: exe/engine/multiselectidevice.py:83
 #: exe/engine/seleccionmultiplefpdidevice.py:84 exe/webui/element.py:2389
-#: exe/webui/element.py:2393 exe/webui/element.py:3054
-#: exe/webui/element.py:3058 exe/webui/testquestionelement.py:151
+#: exe/webui/element.py:2393 exe/webui/element.py:3055
+#: exe/webui/element.py:3059 exe/webui/testquestionelement.py:151
 #: exe/webui/truefalseelement.py:200 exe/webui/truefalseelement.py:206
 msgid "Question"
 msgstr "Pergunta"
@@ -1600,7 +1600,7 @@ msgstr ""
 #: exe/engine/field.py:3627 exe/engine/field.py:3693
 #: exe/engine/quiztestidevice.py:48 exe/engine/quiztestidevice.py:98
 #: exe/webui/element.py:2172 exe/webui/element.py:2704
-#: exe/webui/testoptionelement.py:106 exe/webui/testoptionelement.py:168
+#: exe/webui/testoptionelement.py:107 exe/webui/testoptionelement.py:169
 msgid "Option"
 msgstr "Opção"
 
@@ -3650,8 +3650,9 @@ msgstr "Efeito para a imagem que indica resposta errada"
 msgid "Text for Check Button"
 msgstr "Texto do botão de verificação"
 
-#: exe/engine/sortidevice.py:68 exe/webui/listablock.py:276
-#: exe/webui/listablock.py:278
+#: exe/engine/sortidevice.py:68
+#: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:67
+#: exe/webui/listablock.py:276 exe/webui/listablock.py:278
 msgid "Check"
 msgstr "Marcar"
 
@@ -4124,7 +4125,15 @@ msgstr ""
 msgid "Export format not implemented"
 msgstr "Formato de exportação não implementado"
 
-#: exe/export/epub3export.py:639 exe/export/imsexport.py:569
+#: exe/export/epub3export.py:374 exe/jsui/idevicepane.py:200
+#: exe/webui/authoringpage.py:146 exe/webui/element.py:2330
+#: exe/webui/element.py:2897 exe/webui/testoptionelement.py:106
+#: exe/webui/testoptionelement.py:113
+#, fuzzy
+msgid "isrtl"
+msgstr "Lista"
+
+#: exe/export/epub3export.py:643 exe/export/imsexport.py:569
 #: exe/export/scormexport.py:669 exe/export/websiteexport.py:161
 #: exe/export/xmlexport.py:204
 #, python-format
@@ -4970,6 +4979,7 @@ msgid "Add Widget"
 msgstr "Adicionar imagens"
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:1279
+#: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:11
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:384
 #, fuzzy
 msgid "Readability"
@@ -5296,6 +5306,7 @@ msgstr "A referência a um recurso de que se deriva o presente recurso."
 #: exe/jsui/scripts/app/view/forms/LomSections.js:123
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:480
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:170
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:64
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
 msgid "Language"
@@ -6217,6 +6228,7 @@ msgid "Delete"
 msgstr "Eliminar"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:108
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:231
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:188
 msgid "Import"
 msgstr "Importar"
@@ -6265,6 +6277,11 @@ msgstr "Abrir Ficheiro"
 msgid "e.g. MyLevel 1"
 msgstr ""
 
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:49
+#, fuzzy
+msgid "New Guide"
+msgstr "Nova linha"
+
 #: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:92
 msgid "Leveled Reader"
 msgstr ""
@@ -6304,6 +6321,11 @@ msgstr ""
 msgid "Suggested Words"
 msgstr "Sugestões"
 
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:225
+#, fuzzy
+msgid "Share"
+msgstr "partilhe"
+
 #: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:241
 #: exe/webui/xliffimportpreferencespage.py:90
 msgid "OK"
@@ -6318,10 +6340,15 @@ msgstr ""
 msgid "Level:"
 msgstr "Nível 3"
 
-#: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:67
+#: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:35
 #, fuzzy
-msgid "Check It"
-msgstr "Marcar"
+msgid "Selected Level"
+msgstr "Escolha a licença"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:54
+#, fuzzy
+msgid "Setup"
+msgstr "Reiniciar"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:148
 #, fuzzy
@@ -8416,7 +8443,7 @@ msgstr "Selecionar um ficheiro"
 msgid "Label:"
 msgstr "Título:"
 
-#: exe/webui/authoringpage.py:176
+#: exe/webui/authoringpage.py:181
 #, fuzzy
 msgid "Add Content"
 msgstr "Conteúdo"
@@ -8920,7 +8947,7 @@ msgid "Show Answers"
 msgstr "Apresentar Respostas"
 
 #: exe/webui/element.py:1493 exe/webui/element.py:1745
-#: exe/webui/element.py:2398 exe/webui/element.py:3070
+#: exe/webui/element.py:2398 exe/webui/element.py:3071
 #: exe/webui/listablock.py:318 exe/webui/testquestionelement.py:158
 msgid "Answers"
 msgstr "Respostas"
@@ -8964,7 +8991,7 @@ msgid "Option %s"
 msgstr "Opções"
 
 #: exe/webui/element.py:2114 exe/webui/element.py:2550
-#: exe/webui/testoptionelement.py:139
+#: exe/webui/testoptionelement.py:140
 msgid "Delete option"
 msgstr "Eliminar opção"
 
@@ -8978,12 +9005,12 @@ msgstr "Eliminar pergunta"
 msgid "Add another Option"
 msgstr "Adicionar outra opção"
 
-#: exe/webui/element.py:2434 exe/webui/element.py:3089
+#: exe/webui/element.py:2434 exe/webui/element.py:3090
 msgid "Solution"
 msgstr "Solução"
 
 #: exe/webui/element.py:2742 exe/webui/element.py:2764
-#: exe/webui/testoptionelement.py:111
+#: exe/webui/testoptionelement.py:112
 msgid "Correct Option"
 msgstr "Opção correta"
 
