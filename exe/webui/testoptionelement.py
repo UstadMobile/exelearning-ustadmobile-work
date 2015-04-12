@@ -50,7 +50,7 @@ class TestoptionElement(object):
         self.idevice    = idevice
         self.checked    = False
 
-        # to compensate for the strange unpickling timing when objects are 
+        # to compensate for tefhe strange unpickling timing when objects are 
         # loaded from an elp, ensure that proper idevices are set:
         # (only applies to the image-embeddable ones, not FlashElement)
         if option.answerTextArea.idevice is None: 
@@ -103,14 +103,15 @@ class TestoptionElement(object):
         """
         Returns an XHTML string for editing this option element
         """
-        html  = u"<tr><td align=\"left\"><b>%s</b>" % _("Option")
+        align_side = "left" if c_("isrtl") != "true"  else "right"
+        html  = u"<tr><td align=\"" + align_side + "\"><b>%s</b>" % _("Option")
         html += common.elementInstruc(self.question.optionInstruc)
 
         header = ""
         if self.index == 0: 
             header = _("Correct Option")
-
-        html += u"</td><td align=\"right\"><b>%s</b>\n" % header
+        align_other_side = "right" if c_("isrtl") != "true"  else "left"
+        html += u"</td><td align=\"" + align_other_side + "\"><b>%s</b>\n" % header
         html += u"</td><td>\n"
         if self.index == 0: 
              html += common.elementInstruc(self.question.correctAnswerInstruc)

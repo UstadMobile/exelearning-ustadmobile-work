@@ -2095,7 +2095,7 @@ class SelectOptionElement(Element):
         html  = u"<tr>"
         html += "<td>&nbsp;</td>"
         option_title = _("Option %s") % str(self.index+1)
-        html += u"<td align=\"left\">"
+        html += u"<td >"
         html += u"<b id='ans%s-editor-label'>%s</b>" % \
             (self.id, option_title)
         html += common.elementInstruc(self.field.question.optionInstruc)
@@ -2327,8 +2327,8 @@ class SelectquestionElement(Element):
         html += u"</tbody>"
         html += u"</table>\n"
 
-
-        html += u"<div style='margin-left: 70px;'>"
+        margin_side = "left" if c_("isrtl") != "true"  else "right" 
+        html += u"<div style='margin-%s: 70px;'>" % margin_side
         value = _(u"Add another Option")    
         html += common.submitButton("addOption"+self.id, value, extra_classes='add_item_button')
         html += u"</div>"
@@ -2537,7 +2537,7 @@ class QuizOptionElement(Element):
         html += u"</td>"
         
         option_str = _("Option %s") % str(self.index + 1)
-        html += u"<td align=\"left\"><b>%s</b>" % option_str
+        html += u"<td ><b>%s</b>" % option_str
         html += common.elementInstruc(self.field.idevice.answerInstruc)
 
         html += u"</td>"
@@ -2589,7 +2589,7 @@ class QuizOptionElement(Element):
         html += "</tr>\n"
         #end row with answer text and selector for iscorrect
 
-        html += "<tr><td>&nbsp;</td><td align=\"left\"><b>%s</b>" % _("Feedback")
+        html += "<tr><td>&nbsp;</td><td><b>%s</b>" % _("Feedback")
         html += common.elementInstruc(self.field.idevice.feedbackInstruc)
         html += "</td><td></td></tr>"
         
@@ -2894,7 +2894,8 @@ class QuizQuestionElement(Element):
         html += "</table>\n"
 
         value = _("Add another option")    
-        html += u"<div style='margin-left: 75px;'>"
+        margin_side = "left" if c_("isrtl") != "true"  else "right"
+        html += u"<div style='margin-%s: 75px;'>" % margin_side
         html += common.submitButton("addOption"+unicode(self.id), value,
                                     extra_classes= "add_item_button")
         html += u"</div>"

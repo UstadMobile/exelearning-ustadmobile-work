@@ -369,7 +369,11 @@ class Epub3Page(Page):
             html += WebsitePage.make_tincan_js_elements()
         
         html += u"</head>" + lb
-        html += u'<body class="exe-epub3"><script type="text/javascript">document.body.className+=" js"</script>' + lb
+        #Checks if RTL is enabled in package (c_("string")) checks against pacakage language
+        dirattr = ''
+        if ( c_("isrtl") == "true" ):
+            dirattr='dir="rtl"' 
+        html += u'<body ' + dirattr + ' class="exe-epub3"><script type="text/javascript">document.body.className+=" js"</script>' + lb
         html += u"<div id=\"outer\">" + lb
         html += u"<" + sectionTag + " id=\"main\">" + lb
         if ustadmobile_mode is True:

@@ -197,14 +197,15 @@ class IdevicePane(Renderable, Resource):
         xml += u"   <visible>" + str(visible).lower() + "</visible>\n"
         
         #To merge icon and title for idevice panel (new) -07042014 ^VS
+        align_side = "left" if c_("isrtl") != "true"  else "right"
         title_with_icon = """<![CDATA[
-            <div style='white-space: normal; text-align: left; padding-top: 4px; height: 28px;'>
+            <div style='white-space: normal; text-align: """ + align_side + """; padding-top: 4px; height: 28px;'>
                 <img src='/images/ideviceicons/icon_%(classname)s.png' align='left' style='margin-right: 4px; width: 24px; height: 24px;'/>
                 <b style='font-size: 10pt'>%(title)s</b>
             </div>
             ]]>
         """ % {"classname" : str(prototype.__class__.__name__).lower() , \
-               "title" : prototype.title, "short_desc" : short_desc }
+               "title" : _(prototype.title), "short_desc" : _(short_desc) }
         xml += u"   <titlewithicon>" + title_with_icon + "</titlewithicon>\n"
         xml += u"  </idevice>\n"
         return xml

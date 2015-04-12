@@ -46,7 +46,7 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
                 			items : [{
                     			xtype: "menuitem",
                     			itemId: "readability_linguist_new",
-                    			text: "New Guide"
+                    			text: _("New Guide")
                     		}]
                 		} 
                 	},
@@ -61,7 +61,7 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
                 	},
                 	{
                 		xtype: "combo",
-                		fieldLabel: "Language",
+                		fieldLabel: _("Language"),
                 		itemId: "linguist_panel_langcombo",
                 		labelAlign: "left",
                 		store: langsStore,
@@ -222,13 +222,13 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
                 	region: "south",
                 	items: [{
                 		xtype: "button",
-                		text: "Share",
+                		text: _("Share"),
                 		scale: "medium",
                 		itemId: "readability_linguist_share"
                 	},
                 	{
                 		xtype: "button",
-                		text: "Import",
+                		text: _("Import"),
                 		scale: "medium",
                 		itemId: "readability_linguist_import"
                 	},
@@ -338,7 +338,7 @@ var readabilityLinguistLimitPanel = Ext.define("eXe.view.forms.ReadabilityLingui
 	    	},
 	    	{
 	    		xtype: "label",
-	    		text: me.unitLabel,
+	    		text: _(me.unitLabel),
 	    		padding: "0 6 0 6",
 	    		style: {
 	    			"font-size" : me.fontSize

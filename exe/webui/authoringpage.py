@@ -141,7 +141,12 @@ class AuthoringPage(RenderableResource):
         self.blocks = []
         self.__addBlocks(topNode)
         html  = self.__renderHeader()
-        html += u'<body onload="onLoadHandler();" class="exe-authoring-page js">\n'
+        
+        #Checks if RTL is enabled in language
+        if (c_("isrtl") == "true"):
+            html += u'<body onload="onLoadHandler();" dir="rtl" class="exe-authoring-page js">\n'
+        else:
+            html += u'<body onload="onLoadHandler();" class="exe-authoring-page js">\n'
         html += u"""<div id='externalToolbarHolder' 
         style='z-index: 1000; position: fixed; top: 0px; width: 100%; left:0px; border-bottom: 2px solid gray; height: 0px'>"""
         

@@ -8,7 +8,7 @@ var readabilityWriterPanel = Ext.define('eXe.view.forms.ReadabilityWriterPanel',
     
     collapsible: true,
     
-    title: "Readability",
+    title: _("Readability"),
     
     layout: { 
     	type: "vbox",
@@ -32,7 +32,7 @@ var readabilityWriterPanel = Ext.define('eXe.view.forms.ReadabilityWriterPanel',
             	        	xtype: "button",
                         	itemId: "writer_panel_level_button",
                         	scale: "medium",
-                        	text: "Selected Level",
+                        	text: _("Selected Level"),
                         	menu: {
                         		xtype: "menu",
                         		itemId : "writer_panel_levelmenu",
@@ -51,7 +51,7 @@ var readabilityWriterPanel = Ext.define('eXe.view.forms.ReadabilityWriterPanel',
                         		type: "vbox",
                         		align: "stretch"
                         	},
-                        	text: "Setup"
+                        	text: _("Setup")	
             	        },
         	        ]
                 },
@@ -64,7 +64,7 @@ var readabilityWriterPanel = Ext.define('eXe.view.forms.ReadabilityWriterPanel',
                 	xtype: "button",
                 	itemId: "writer_panel_check_button",
                 	scale: "medium",
-                	text: _("Check It"),
+                	text: _("Check"),
                 	padding: 4
                 }
             ]
