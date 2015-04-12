@@ -1,15 +1,15 @@
-# Arabic translations for eXe Learning.
-# Copyright (C) 2013 ORGANIZATION
-# This file is distributed under the same license as the eXe Learning
+# Arabic translations for eXeLearning.
+# Copyright (C) 2015 ORGANIZATION
+# This file is distributed under the same license as the eXeLearning
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-04-12 16:15+0400\n"
-"PO-Revision-Date: 2013-03-31 20:48+0200\n"
+"POT-Creation-Date: 2015-04-12 16:24+0400\n"
+"PO-Revision-Date: 2015-04-02 18:24+0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ar <LL@li.org>\n"
 "Language: ar\n"
@@ -220,7 +220,7 @@ msgstr ""
 
 #: exe/engine/casestudyidevice.py:197
 msgid "Case Study"
-msgstr ""
+msgstr "دراسة حالة"
 
 #: exe/engine/casestudyidevice.py:199
 #: exe/engine/ejercicioresueltofpdidevice.py:200
@@ -370,7 +370,7 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
 msgid "Title"
-msgstr ""
+msgstr "عنوان"
 
 #: exe/engine/clickinorderidevice.py:62
 msgid "Game Instructions"
@@ -531,7 +531,7 @@ msgstr ""
 
 #: exe/engine/clickinorderidevice.py:155
 msgid "Width (px)"
-msgstr ""
+msgstr "(px) عرض"
 
 #: exe/engine/clickinorderidevice.py:155
 msgid "Width of clickable area"
@@ -667,7 +667,7 @@ msgstr ""
 #: exe/webui/listablock.py:472 exe/webui/questionelement.py:113
 #: exe/webui/truefalseelement.py:264
 msgid "Feedback"
-msgstr ""
+msgstr "تعليق/نصيحة"
 
 #: exe/engine/clozefpdidevice.py:133 exe/engine/clozeidevice.py:140
 #: exe/engine/clozelangfpdidevice.py:133 exe/engine/listaidevice.py:147
@@ -698,7 +698,7 @@ msgstr ""
 
 #: exe/engine/clozeidevice.py:49
 msgid "Fill in the Blank"
-msgstr ""
+msgstr "أكمل"
 
 #: exe/engine/clozeidevice.py:118
 msgid "Simple fill in the blank exercise - blank spaces shown as textboxes"
@@ -746,12 +746,12 @@ msgstr ""
 
 #: exe/engine/config.py:82 exe/engine/config.py:114
 msgid "Non-Interactive Activities"
-msgstr ""
+msgstr "غير النشاط التفاعلي"
 
 #: exe/engine/config.py:83 exe/engine/config.py:87 exe/engine/config.py:109
 #: exe/engine/config.py:118 exe/engine/config.py:127
 msgid "Text/Media"
-msgstr ""
+msgstr "نص/وسائط"
 
 #: exe/engine/config.py:84 exe/engine/config.py:89 exe/engine/config.py:111
 #: exe/engine/config.py:112 exe/engine/config.py:113 exe/engine/config.py:115
@@ -759,17 +759,17 @@ msgstr ""
 #: exe/engine/config.py:122 exe/engine/config.py:123 exe/engine/config.py:124
 #: exe/engine/config.py:126 exe/engine/config.py:128
 msgid "Interactive Activities"
-msgstr ""
+msgstr "النشاط التفاعلي"
 
 #: exe/engine/config.py:85 exe/engine/config.py:116
 msgid "Non-Textual Information"
-msgstr ""
+msgstr "غير التبادلي النشاط"
 
 #: exe/engine/config.py:86 exe/engine/config.py:117 exe/engine/config.py:125
 #: exe/engine/locationbuttons.py:34 exe/engine/locationbuttons.py:38
 #: exe/engine/locationbuttons.py:42
 msgid "Documents"
-msgstr ""
+msgstr "وثائقى"
 
 #: exe/engine/config.py:88 exe/engine/config.py:110
 msgid "Textual Information"
@@ -786,7 +786,7 @@ msgstr ""
 
 #: exe/engine/config.py:107 exe/engine/config.py:108
 msgid "Image Widgets"
-msgstr ""
+msgstr "النشاط صورة"
 
 #: exe/engine/debesconocerfpdidevice.py:29
 msgid "FPD - You Should Know"
@@ -819,11 +819,11 @@ msgstr ""
 
 #: exe/engine/dragndropidevice.py:17
 msgid "Drag And Drop"
-msgstr ""
+msgstr "سحب وإفلات"
 
 #: exe/engine/dragndropidevice.py:18
 msgid "Ustad Mobile."
-msgstr ""
+msgstr "الأستاذ موبايل"
 
 #: exe/engine/dragndropidevice.py:19
 msgid "Drag/Drop items to correct locations."
@@ -1163,26 +1163,26 @@ msgstr ""
 #: exe/engine/extendedfieldengine.py:317
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 msgid "Browse"
-msgstr ""
+msgstr "يستعرض"
 
 #: exe/engine/extendedfieldengine.py:319
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
 msgid "Replace"
-msgstr ""
+msgstr "استبدال"
 
 #: exe/engine/extendedfieldengine.py:321 exe/webui/appletblock.py:157
 #: exe/webui/appletblock.py:167
 msgid "Upload"
-msgstr ""
+msgstr "تحميل"
 
 #: exe/engine/extendedfieldengine.py:331
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:118
 msgid "File"
-msgstr ""
+msgstr "ملف"
 
 #: exe/engine/extendedfieldengine.py:336 exe/webui/appletblock.py:184
 msgid "Delete File"
-msgstr ""
+msgstr "حذف ملف"
 
 #: exe/engine/extendedfieldengine.py:339
 msgid "No File Uploaded Currently"
@@ -1194,7 +1194,7 @@ msgstr ""
 
 #: exe/engine/externalurlidevice.py:38
 msgid "External Web Site"
-msgstr ""
+msgstr "روابط خارجية"
 
 #: exe/engine/externalurlidevice.py:40
 msgid ""
@@ -1315,11 +1315,11 @@ msgstr ""
 #: exe/webui/element.py:2172 exe/webui/element.py:2704
 #: exe/webui/testoptionelement.py:106 exe/webui/testoptionelement.py:168
 msgid "Option"
-msgstr ""
+msgstr "إختيار"
 
 #: exe/engine/field.py:3637 exe/engine/field.py:3702
 msgid "Score"
-msgstr ""
+msgstr "درجة"
 
 #: exe/engine/field.py:3638 exe/engine/field.py:3703
 msgid "Score for this answer"
@@ -1397,7 +1397,7 @@ msgstr ""
 
 #: exe/engine/fileattachidevice.py:37
 msgid "File Attachments"
-msgstr ""
+msgstr "مرفق ملف"
 
 #: exe/engine/fileattachidevice.py:38 exe/engine/memorymatchidevice.py:45
 #: exe/engine/sortidevice.py:46
@@ -1416,8 +1416,9 @@ msgstr ""
 
 #: exe/engine/fileattachidevice.py:45 exe/engine/fileattachidevice.py:66
 #: exe/engine/memorymatchidevice.py:60 exe/engine/memorymatchidevice.py:76
+#, fuzzy
 msgid "Yes"
-msgstr ""
+msgstr "نمط"
 
 #: exe/engine/fileattachidevice.py:45 exe/engine/fileattachidevice.py:66
 #: exe/engine/memorymatchidevice.py:60 exe/engine/memorymatchidevice.py:76
@@ -1529,7 +1530,7 @@ msgstr ""
 
 #: exe/engine/freetextfpdidevice.py:46 exe/engine/freetextidevice.py:46
 msgid "Free Text"
-msgstr ""
+msgstr "كتابة حرة"
 
 #: exe/engine/freetextfpdidevice.py:47 exe/engine/freetextidevice.py:47
 msgid ""
@@ -1545,7 +1546,7 @@ msgstr ""
 
 #: exe/engine/freetextidevice.py:38
 msgid "Free Text/Media"
-msgstr ""
+msgstr "وسائط متعددة/ كتابة حرة"
 
 #: exe/engine/freetextidevice.py:44
 msgid ""
@@ -1567,7 +1568,7 @@ msgstr ""
 
 #: exe/engine/galleryidevice.py:458
 msgid "Image Gallery"
-msgstr ""
+msgstr "ألبوم الصور"
 
 #: exe/engine/galleryidevice.py:459
 msgid "eXe Project"
@@ -1933,7 +1934,7 @@ msgstr ""
 
 #: exe/engine/imagemagnifieridevice.py:41
 msgid "Image Magnifier"
-msgstr ""
+msgstr "مكبر الصور"
 
 #: exe/engine/imagemagnifieridevice.py:43
 msgid ""
@@ -2022,7 +2023,7 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:54
 msgid "Image Map"
-msgstr ""
+msgstr "مخطط صورة"
 
 #: exe/engine/imagemapidevice.py:26
 msgid "Mike Dawson, Ustad Mobile"
@@ -2109,7 +2110,7 @@ msgstr ""
 
 #: exe/engine/listaidevice.py:66 exe/webui/listablock.py:393
 msgid "DropDown Activity"
-msgstr ""
+msgstr "إسقاط النشاط"
 
 #: exe/engine/listaidevice.py:67
 msgid "INTEF"
@@ -2205,12 +2206,12 @@ msgstr ""
 #: exe/engine/locationbuttons.py:33 exe/engine/locationbuttons.py:37
 #: exe/engine/locationbuttons.py:41
 msgid "Desktop"
-msgstr ""
+msgstr "سطح المكتب"
 
 #: exe/engine/locationbuttons.py:35 exe/engine/locationbuttons.py:39
 #: exe/engine/locationbuttons.py:43
 msgid "Home Folder"
-msgstr ""
+msgstr "مجلد رئيسي"
 
 #: exe/engine/mathidevice.py:41 exe/engine/mathidevice.py:54
 msgid "Maths"
@@ -2434,7 +2435,7 @@ msgstr ""
 
 #: exe/engine/multichoiceidevice.py:60 exe/webui/multichoiceblock.py:110
 msgid "Multi-choice"
-msgstr ""
+msgstr "إختر الإجابة الصحيحة"
 
 #: exe/engine/multichoiceidevice.py:88
 msgid "Multiple choice question with one right answer per question"
@@ -2503,7 +2504,7 @@ msgstr ""
 
 #: exe/engine/multiselectidevice.py:45
 msgid "Multi-select"
-msgstr ""
+msgstr "إختر الإجابات الصحيحة"
 
 #: exe/engine/multiselectidevice.py:84
 msgid ""
@@ -2520,7 +2521,7 @@ msgstr ""
 
 #: exe/engine/notaidevice.py:44
 msgid "Note"
-msgstr ""
+msgstr "ملاحظة"
 
 #: exe/engine/notaidevice.py:45
 msgid "exelearning.net"
@@ -2534,7 +2535,7 @@ msgstr ""
 
 #: exe/engine/notaidevice.py:54
 msgid "Comment:"
-msgstr ""
+msgstr "تعليق"
 
 #: exe/engine/orientacionesalumnadofpdidevice.py:30
 msgid "FPD - Guidelines Students"
@@ -2586,7 +2587,7 @@ msgstr ""
 
 #: exe/engine/package.py:353
 msgid "Home"
-msgstr ""
+msgstr "بداية"
 
 #: exe/engine/package.py:535
 msgid "Metadata creation date"
@@ -2606,7 +2607,7 @@ msgstr ""
 #: exe/engine/package.py:1775 exe/jsui/scripts/app/controller/Toolbar.js:1164
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:26
 msgid "Untitled Project"
-msgstr ""
+msgstr "مشروع بدون عنوان"
 
 #: exe/engine/package.py:1848 exe/jsui/scripts/app/controller/Toolbar.js:429
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:378
@@ -2755,7 +2756,7 @@ msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:131
 msgid "Width (pixels)"
-msgstr ""
+msgstr "(pixel) عرض"
 
 #: exe/engine/placetheobjectsidevice.py:131
 msgid "Width of object"
@@ -2763,7 +2764,7 @@ msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:134
 msgid "Height (pixels)"
-msgstr ""
+msgstr "(pixels) طول"
 
 #: exe/engine/placetheobjectsidevice.py:134
 msgid "Height of object"
@@ -2793,7 +2794,7 @@ msgstr ""
 
 #: exe/engine/quiztestidevice.py:244
 msgid "SCORM Quiz"
-msgstr ""
+msgstr "إختبار سكورم"
 
 #: exe/engine/quiztestidevice.py:246
 msgid ""
@@ -2816,7 +2817,7 @@ msgstr ""
 
 #: exe/engine/readabilityutil.py:179
 msgid "Word Count"
-msgstr ""
+msgstr "عدد الكلمات"
 
 #: exe/engine/readabilityutil.py:184
 msgid "Words Per Sentence"
@@ -2828,7 +2829,7 @@ msgstr ""
 
 #: exe/engine/readabilityutil.py:194
 msgid "Total number of unique words"
-msgstr ""
+msgstr "عدد الكلمات الغير متكررة:عدد الكلمات"
 
 #: exe/engine/recomendacionfpdidevice.py:30
 msgid "FPD - A Piece of Advice"
@@ -2900,7 +2901,7 @@ msgstr ""
 
 #: exe/engine/reflectionidevice.py:46
 msgid "Reflection"
-msgstr ""
+msgstr "تفكير"
 
 #: exe/engine/reflectionidevice.py:57
 msgid ""
@@ -2964,7 +2965,7 @@ msgstr ""
 
 #: exe/engine/sortidevice.py:45
 msgid "Sort Items"
-msgstr ""
+msgstr "فرز العناصر"
 
 #: exe/engine/sortidevice.py:47
 msgid "Sortable list of items."
@@ -3067,7 +3068,7 @@ msgstr ""
 
 #: exe/engine/sortidevice.py:71
 msgid "height"
-msgstr ""
+msgstr "طول"
 
 #: exe/engine/sortidevice.py:72
 msgid "Style (CSS) for sortable items"
@@ -3122,7 +3123,7 @@ msgstr ""
 
 #: exe/engine/textinputidevice.py:37
 msgid "Text Input"
-msgstr ""
+msgstr "مدخل كلمات"
 
 #: exe/engine/textinputidevice.py:38
 msgid "UstadMobile Inc."
@@ -3147,7 +3148,7 @@ msgstr ""
 
 #: exe/engine/truefalseidevice.py:144
 msgid "True-False Question"
-msgstr ""
+msgstr "صح-خطأ"
 
 #: exe/engine/truefalseidevice.py:146
 #: exe/engine/verdaderofalsofpdidevice.py:147
@@ -3215,7 +3216,7 @@ msgstr ""
 
 #: exe/engine/wikipediaidevice.py:53
 msgid "Wiki Article"
-msgstr ""
+msgstr "مقال ويكى"
 
 #: exe/engine/wikipediaidevice.py:55
 msgid ""
@@ -3565,7 +3566,7 @@ msgstr ""
 
 #: exe/idevices/exampleidevice.py:44
 msgid "Example"
-msgstr ""
+msgstr "مثال"
 
 #: exe/importers/cmdlineimporter.py:44
 msgid "Import format not implemented"
@@ -3868,7 +3869,7 @@ msgstr ""
 #: exe/webui/stylemanagerpage.py:143 exe/webui/stylemanagerpage.py:148
 #: exe/webui/stylemanagerpage.py:187 exe/webui/stylemanagerpage.py:205
 msgid "Error"
-msgstr ""
+msgstr "خطأ"
 
 #: exe/jsui/scripts/app/controller/MainTab.js:261
 msgid "The form contains invalid fields. Please check back."
@@ -3880,7 +3881,7 @@ msgstr ""
 #: exe/jsui/scripts/app/controller/Readability.js:216
 #: exe/jsui/scripts/app/controller/Toolbar.js:438
 msgid "Confirm"
-msgstr ""
+msgstr "يؤكّد"
 
 #: exe/jsui/scripts/app/controller/MainTab.js:274
 msgid "Are you sure you want clear all form fields?"
@@ -3917,13 +3918,13 @@ msgstr ""
 #: exe/jsui/scripts/app/controller/Wizard.js:71
 #: exe/jsui/scripts/app/controller/Wizard.js:95
 msgid "Enter the new name:"
-msgstr ""
+msgstr "إدخال اسم جديد"
 
 #: exe/jsui/scripts/app/controller/Publish.js:51
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:92
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:438
 msgid "Publish"
-msgstr ""
+msgstr "إنشر"
 
 #: exe/jsui/scripts/app/controller/Publish.js:85
 #: exe/jsui/scripts/app/controller/Toolbar.js:1058
@@ -3948,15 +3949,15 @@ msgstr ""
 
 #: exe/jsui/scripts/app/controller/Readability.js:12
 msgid "Word length"
-msgstr ""
+msgstr "طول الكلمة"
 
 #: exe/jsui/scripts/app/controller/Readability.js:13
 msgid "Unique words in Text"
-msgstr ""
+msgstr "عدد الكلمات الغير متكررة فى النص"
 
 #: exe/jsui/scripts/app/controller/Readability.js:14
 msgid "Sentence length"
-msgstr ""
+msgstr "طول الجملة"
 
 #: exe/jsui/scripts/app/controller/Readability.js:15
 msgid "Sentence length: Book Average"
@@ -4021,7 +4022,7 @@ msgstr ""
 #: exe/jsui/scripts/app/controller/Toolbar.js:465
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:398
 msgid "Style Manager"
-msgstr ""
+msgstr "إدارة النمط"
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:488
 msgid "Select package to insert"
@@ -4134,11 +4135,11 @@ msgstr ""
 #: exe/webui/editorpane.py:273 exe/webui/xliffimportpreferencespage.py:94
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:724
 msgid "Ok"
-msgstr ""
+msgstr "موافقة"
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:747
 msgid "XLIFF Export Preferences"
@@ -4206,7 +4207,7 @@ msgstr ""
 #: exe/jsui/scripts/app/controller/Toolbar.js:984
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:93
 msgid "Open File"
-msgstr ""
+msgstr "فتح ملف"
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:989
 msgid "Loading package: {filename}"
@@ -4235,16 +4236,16 @@ msgstr ""
 #: exe/jsui/scripts/app/controller/Wizard.js:70
 #: exe/jsui/scripts/app/controller/Wizard.js:94
 msgid "Project Title"
-msgstr ""
+msgstr "عنوان المشروع"
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:1181
 msgid "Add Widget"
-msgstr ""
+msgstr "محتوى إضافة"
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:1279
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:384
 msgid "Readability"
-msgstr ""
+msgstr "قابلية القراءة"
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:1298
 msgid "Readability Boundaries"
@@ -4280,7 +4281,7 @@ msgstr ""
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:1523
 msgid "Smartphone Preview"
-msgstr ""
+msgstr "معاينة هاتف ذكى"
 
 #: exe/jsui/scripts/app/controller/Toolbar.js:1529
 msgid "Feature Phone Preview"
@@ -4360,7 +4361,7 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 #: exe/jsui/scripts/app/view/filepicker/FileList.js:95
 #: exe/jsui/scripts/app/view/filepicker/FilePicker.js:70
@@ -4371,16 +4372,16 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 msgid "Type"
-msgstr ""
+msgstr "نوع"
 
 #: exe/jsui/scripts/app/view/filepicker/FileList.js:100
 msgid "Modified"
-msgstr ""
+msgstr "تاريخ التعديل"
 
 #: exe/jsui/scripts/app/view/filepicker/FilePicker.js:60
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:133
 msgid "Open"
-msgstr ""
+msgstr "فتح"
 
 #: exe/jsui/scripts/app/view/filepicker/FilePicker.js:86
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:183
@@ -4393,7 +4394,7 @@ msgstr ""
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:162 exe/webui/editorpage.py:260
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 msgid "Save"
-msgstr ""
+msgstr "حفظ"
 
 #: exe/jsui/scripts/app/view/filepicker/FilePicker.js:87
 #: exe/jsui/scripts/app/view/filepicker/FilePicker.js:98
@@ -4402,7 +4403,7 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/filepicker/FilePicker.js:90
 msgid "Save in:"
-msgstr ""
+msgstr "حفظ في"
 
 #: exe/jsui/scripts/app/view/filepicker/FilePicker.js:96
 msgid "Folder"
@@ -4815,13 +4816,13 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/LomSections.js:88
 #: exe/jsui/scripts/app/view/forms/LomSections.js:154
 msgid "Organization"
-msgstr ""
+msgstr "مؤسسة"
 
 #: exe/jsui/scripts/app/view/forms/LomSections.js:66
 #: exe/jsui/scripts/app/view/forms/LomSections.js:89
 #: exe/jsui/scripts/app/view/forms/LomSections.js:155
 msgid "Email"
-msgstr ""
+msgstr "البريد الإلكتروني"
 
 #: exe/jsui/scripts/app/view/forms/LomSections.js:80
 msgid "Metadata Schema"
@@ -5110,7 +5111,7 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
 msgid "Author"
-msgstr ""
+msgstr "المؤلف"
 
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:233
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:236
@@ -5122,13 +5123,13 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:19
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
 msgid "License"
-msgstr ""
+msgstr "رخصة"
 
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:247
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:250
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:252
 msgid "Select a license."
-msgstr ""
+msgstr ":رخصة"
 
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:268
 msgid "Usage"
@@ -5406,7 +5407,7 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:74
 msgid "Level"
-msgstr ""
+msgstr "مستوى"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:76
 msgid "Select a level."
@@ -5421,7 +5422,7 @@ msgstr ""
 #: exe/webui/editorpage.py:251 exe/webui/editorpage.py:254
 #: exe/webui/galleryblock.py:303
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:108
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:188
@@ -5459,7 +5460,7 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:375
 #: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:454
 msgid "eXe Readability Boundaries"
-msgstr ""
+msgstr "eXe قابلية القراءة"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:443
 msgid "Open file"
@@ -5508,7 +5509,7 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:241
 #: exe/webui/xliffimportpreferencespage.py:90
 msgid "OK"
-msgstr ""
+msgstr "موافقة"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:318
 msgid "to"
@@ -5516,7 +5517,7 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:26
 msgid "Level:"
-msgstr ""
+msgstr "مستوى"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:67
 msgid "Check It"
@@ -5524,11 +5525,11 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:148
 msgid "This page: "
-msgstr ""
+msgstr "هذه الصفحة"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:168
 msgid "Book: "
-msgstr ""
+msgstr "طيّة كتاب"
 
 #: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:66
 msgid "Export style: "
@@ -5584,7 +5585,7 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:435
 msgid "Return to style manager"
-msgstr ""
+msgstr "عودة إلى إدارة النمط"
 
 #: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:442
 msgid "Return"
@@ -5592,11 +5593,11 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:101
 msgid "Create New"
-msgstr ""
+msgstr "إنشاء جديد"
 
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:50
 msgid "Outline"
-msgstr ""
+msgstr "مخطط تفصيلي"
 
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:83
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:86
@@ -5631,19 +5632,19 @@ msgstr ""
 #: exe/jsui/scripts/app/view/ui/MainTabPanel.js:49
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 msgid "Properties"
-msgstr ""
+msgstr "خصائص"
 
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:203
 msgid "Cover Icon:"
-msgstr ""
+msgstr "رمز الغلاف"
 
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:251
 msgid "Select a license..."
-msgstr ""
+msgstr "تحديد نوع الترخيص"
 
 #: exe/jsui/scripts/app/view/ui/MainTabPanel.js:45
 msgid "Authoring"
-msgstr ""
+msgstr "التأليف"
 
 #: exe/jsui/scripts/app/view/ui/MainTabPanel.js:56
 msgid "Package"
@@ -5666,11 +5667,11 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/ui/OutlineToolbar1.js:31
 msgid "Add Page"
-msgstr ""
+msgstr "أضف إلى الصفحة"
 
 #: exe/jsui/scripts/app/view/ui/OutlineToolbar1.js:45
 msgid "Rename"
-msgstr ""
+msgstr "إعادة تسمية"
 
 #: exe/jsui/scripts/app/view/ui/OutlineToolbar2.js:33
 msgid "Promote node up in hierarchy"
@@ -5702,37 +5703,37 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
 msgid "Preview"
-msgstr ""
+msgstr "معاينة"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:68
 msgid "Smartphone"
-msgstr ""
+msgstr "هاتف ذكى"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:73
 msgid "Feature Phone"
-msgstr ""
+msgstr "جوال"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:78
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:178
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 msgid "Print"
-msgstr ""
+msgstr "إطبع"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:83
 msgid "Website"
-msgstr ""
+msgstr "موقع"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:110
 msgid "Ustad Mobile Cloud"
-msgstr ""
+msgstr "مكتبة الأستاذ موبايل"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:115
 msgid "Export to EPUB"
-msgstr ""
+msgstr "تصدير EPUB"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:120
 msgid "PDF/Print"
-msgstr ""
+msgstr "PDF/إطبع"
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:126
 msgid "New"
@@ -5792,11 +5793,11 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:295
 msgid "Single Page"
-msgstr ""
+msgstr "صفحة واحدة"
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:310
 msgid "Ustad Mobile"
-msgstr ""
+msgstr "الأستاذ موبايل"
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:316
 msgid "XLIFF"
@@ -5816,7 +5817,7 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:368
 msgid "Tools"
-msgstr ""
+msgstr "أداة"
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:391
 msgid "Linguist"
@@ -5824,7 +5825,7 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:411
 msgid "Wizard"
-msgstr ""
+msgstr "معالج"
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:417
 msgid "Resources Report"
@@ -5845,13 +5846,13 @@ msgstr ""
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:461
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
 msgid "Styles"
-msgstr ""
+msgstr "نمط"
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:471
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
 msgid "Help"
-msgstr ""
+msgstr "مساعدة"
 
 #: exe/jsui/scripts/app/view/ui/eXeToolbar.js:481
 msgid "eXe Tutorial"
@@ -7145,7 +7146,7 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:686
 msgid "video"
-msgstr ""
+msgstr "فيديو"
 
 #: exe/jsui/scripts/lomvocab.js:690
 msgid "animation"
@@ -7153,7 +7154,7 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:694
 msgid "music"
-msgstr ""
+msgstr "صوت"
 
 #: exe/jsui/scripts/lomvocab.js:698
 msgid "sound effect"
@@ -7337,7 +7338,7 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1212
 msgid "home"
-msgstr ""
+msgstr "بداية"
 
 #: exe/jsui/scripts/lomvocab.js:1224 exe/jsui/scripts/lomvocab.js:1570
 msgid "family"
@@ -7586,7 +7587,7 @@ msgstr ""
 
 #: exe/webui/authoringpage.py:176
 msgid "Add Content"
-msgstr ""
+msgstr "محتوى إضافة"
 
 #: exe/webui/block.py:184
 msgid "IDevice broken"
@@ -7735,11 +7736,11 @@ msgstr ""
 #: exe/webui/common.py:218 exe/webui/element.py:2200
 #: exe/webui/stylemanagerpage.py:184 exe/webui/stylemanagerpage.py:202
 msgid "Correct"
-msgstr ""
+msgstr "صواب"
 
 #: exe/webui/common.py:219 exe/webui/element.py:2203
 msgid "Incorrect"
-msgstr ""
+msgstr "خطأ"
 
 #: exe/webui/common.py:220
 msgid "Menu"
@@ -9345,7 +9346,7 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:8
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:17
 msgid "Source/Author"
-msgstr ""
+msgstr "المؤلف"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:9
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:18
@@ -9644,7 +9645,7 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:9
 msgid "Font size:"
-msgstr ""
+msgstr "حجم الخط"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:10
 msgid "Preview Math Image"
@@ -9919,7 +9920,7 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
 msgid "Font Size"
-msgstr ""
+msgstr "حجم الخط"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
@@ -10239,7 +10240,7 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 msgid "HTML5 audio (mp3, ogg, wav)"
-msgstr ""
+msgstr "(mp3, ogg, wav) صوت HTML5"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 msgid "Flash (swf, flv, mp3)"
@@ -10397,7 +10398,7 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 msgid "Font"
-msgstr ""
+msgstr "خط"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 msgid "Positioning"
@@ -10683,11 +10684,11 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
 msgid "Templates"
-msgstr ""
+msgstr "قوالب"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
 msgid "Template"
-msgstr ""
+msgstr "قوالب"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
 msgid "Select a Template"
@@ -11118,12 +11119,12 @@ msgstr ""
 #: exe/webui/truefalseelement.py:116 exe/webui/truefalseelement.py:217
 #: exe/webui/truefalseelement.py:266
 msgid "True"
-msgstr ""
+msgstr "صح"
 
 #: exe/webui/truefalseelement.py:118 exe/webui/truefalseelement.py:221
 #: exe/webui/truefalseelement.py:268
 msgid "False"
-msgstr ""
+msgstr "خطأ"
 
 #: exe/webui/wikipediablock.py:114
 msgid "English Wikipedia Article"

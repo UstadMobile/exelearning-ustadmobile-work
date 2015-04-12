@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-12 16:15+0400\n"
+"POT-Creation-Date: 2015-04-12 16:24+0400\n"
 "PO-Revision-Date: 2014-10-19 19:36+0200\n"
 "Last-Translator: AlexL <loginov.alex.valer@gmail.com>\n"
 "Language-Team: EXE Team <exe@exelearning.net>\n"
@@ -6519,7 +6519,7 @@ msgid "Ustad Mobile Cloud"
 msgstr "Мобильный Ustad"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:115
-#, fuzzy, python-format
+#, fuzzy
 msgid "Export to EPUB"
 msgstr "Экспорт в %s"
 

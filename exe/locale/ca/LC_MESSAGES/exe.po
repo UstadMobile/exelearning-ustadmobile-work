@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: <translations@exelearning.net>\n"
-"POT-Creation-Date: 2015-04-12 16:15+0400\n"
+"POT-Creation-Date: 2015-04-12 16:24+0400\n"
 "PO-Revision-Date: 2014-06-29 14:15+0200\n"
 "Last-Translator: Carles Ferrando Garcia <carles.ferrando@gmail.com>\n"
 "Language-Team: Catalan <info@softcatala.org>\n"
@@ -6496,7 +6496,7 @@ msgid "Ustad Mobile Cloud"
 msgstr "Ustad mòbil"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:115
-#, fuzzy, python-format
+#, fuzzy
 msgid "Export to EPUB"
 msgstr "Exportat a %s"
 

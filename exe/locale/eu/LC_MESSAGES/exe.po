@@ -5,6 +5,7 @@
 # eXe Project <exe@exelearning.org>
 # Asmoz fundazioa, 2009
 #
+#
 # http://www.asmoz.org/index.php?option=com_content&view=article&id=131&Itemid=101&lang=es
 # Malen <mjareno@asmoz.org>
 # ULHI, 2012-2015 Joxemi Andonegi <jm.andonegi@gmail.com>
@@ -13,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: <translations@exelearning.net>\n"
-"POT-Creation-Date: 2015-04-12 16:15+0400\n"
+"POT-Creation-Date: 2015-04-12 16:24+0400\n"
 "PO-Revision-Date: 2015-02-26 22:34+0100\n"
 "Last-Translator: Joxemi Andonegi <jm.andonegi@gmail.com>\n"
 "Language-Team: eXe <exelearning.euskaraz@gmail.com>\n"
@@ -6442,7 +6443,7 @@ msgid "Ustad Mobile Cloud"
 msgstr "Ustad Mobile"
 
 #: exe/jsui/scripts/app/view/ui/TitleToolbar.js:115
-#, fuzzy, python-format
+#, fuzzy
 msgid "Export to EPUB"
 msgstr "%s-era esportatua"
 
