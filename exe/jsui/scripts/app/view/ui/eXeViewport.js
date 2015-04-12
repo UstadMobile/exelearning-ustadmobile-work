@@ -27,6 +27,8 @@ Ext.define('eXe.view.ui.eXeViewport', {
         'eXe.view.forms.ReadabilityWriterPanel'
     ],
 
+    rtl: _("isrtl") === "true",
+
     layout: {
         type: 'border'
     },
