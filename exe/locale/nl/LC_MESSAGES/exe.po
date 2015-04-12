@@ -6,9 +6,9 @@
 # Karel Werschkull <k.werschkull@summacollege.nl> 2013-2014.
 msgid ""
 msgstr ""
-"Project-Id-Version: eXeLearning 2.0.2\n"
+"Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-26 13:24+0100\n"
+"POT-Creation-Date: 2015-04-12 16:15+0400\n"
 "PO-Revision-Date: 2014-10-21 15:46+0100\n"
 "Last-Translator: k.werschkull <k.werschkull@hccnet.nl>\n"
 "Language-Team: Dutch <exe@exelearning.org>\n"
@@ -19,14 +19,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: exe/application.py:166
+#: exe/application.py:169
 #, python-format
 msgid "An error has occurred when loading your config. A backup is saved at %s"
 msgstr ""
 "Er is een fout opgetreden tijdens het laden  van het config bestand. Een "
 "backup is opgeslagen op %s"
 
-#: exe/application.py:184
+#: exe/application.py:187
 #, python-format
 msgid ""
 "An error has occurred when loading your Idevice Store. A backup is saved "
@@ -35,7 +35,7 @@ msgstr ""
 "Er is een fout opgetreden tijdens het laden van de Idevice Store. een "
 "backup is opgeslagen op %s"
 
-#: exe/application.py:223
+#: exe/application.py:230
 #, fuzzy, python-format
 msgid ""
 "eXeLearning, the EXtremely Easy to use eLearning authoring tool\n"
@@ -71,10 +71,10 @@ msgstr "Java Applet"
 #: exe/engine/eleccionmultiplefpdidevice.py:62
 #: exe/engine/externalurlidevice.py:39 exe/engine/flashmovieidevice.py:40
 #: exe/engine/flashwithtextidevice.py:44 exe/engine/freetextfpdidevice.py:40
-#: exe/engine/freetextidevice.py:39 exe/engine/idevicestore.py:556
-#: exe/engine/idevicestore.py:614 exe/engine/idevicestore.py:642
-#: exe/engine/idevicestore.py:665 exe/engine/idevicestore.py:721
-#: exe/engine/idevicestore.py:749 exe/engine/imagemagnifieridevice.py:42
+#: exe/engine/freetextidevice.py:39 exe/engine/idevicestore.py:575
+#: exe/engine/idevicestore.py:633 exe/engine/idevicestore.py:661
+#: exe/engine/idevicestore.py:684 exe/engine/idevicestore.py:740
+#: exe/engine/idevicestore.py:768 exe/engine/imagemagnifieridevice.py:42
 #: exe/engine/imagewithtextidevice.py:44 exe/engine/mathidevice.py:42
 #: exe/engine/multichoiceidevice.py:61 exe/engine/multiselectidevice.py:46
 #: exe/engine/quiztestidevice.py:245 exe/engine/reflectionfpdidevice.py:48
@@ -87,7 +87,11 @@ msgstr "Java Applet"
 msgid "University of Auckland"
 msgstr "Universiteit van Auckland"
 
-#: exe/engine/appletidevice.py:79
+#: exe/engine/appletidevice.py:77
+msgid "Include a Java Applet with this project"
+msgstr ""
+
+#: exe/engine/appletidevice.py:80
 msgid ""
 "Add all the files provided for the applet\n"
 "except the .txt file one at a time using the add files and upload "
@@ -99,7 +103,7 @@ msgstr ""
 "en Uploaden.\n"
 "Zodra ze geladen zijn, worden de bestanden onder het codeveld getoond."
 
-#: exe/engine/appletidevice.py:82
+#: exe/engine/appletidevice.py:83
 msgid ""
 "\"Find the .txt file (in the applet file) \n"
 "and open it. Copy the contents of this file <ctrl A, ctrl C> into the "
@@ -110,7 +114,7 @@ msgstr ""
 "en open het. Kopieer de inhoud met <ctrl A, ctrl C> naar het codeveld \n"
 "van de applet."
 
-#: exe/engine/appletidevice.py:85
+#: exe/engine/appletidevice.py:86
 msgid ""
 " <p>If the applet you're adding was generated \n"
 "by one of the programs in this drop down, please select it, \n"
@@ -126,21 +130,21 @@ msgstr ""
 " toe \n"
 "dat gemaakt is met Geogebra.</p>"
 
-#: exe/engine/appletidevice.py:190
+#: exe/engine/appletidevice.py:191
 #, python-format
 msgid "file %s has no parentNode"
 msgstr "bestand %s zonder doelbestemming"
 
-#: exe/engine/appletidevice.py:192 exe/engine/attachmentidevice.py:107
+#: exe/engine/appletidevice.py:193 exe/engine/attachmentidevice.py:107
 #, python-format
 msgid "iDevice %s has no package"
 msgstr "iDevice %s heeft geen inhoud"
 
-#: exe/engine/appletidevice.py:443
+#: exe/engine/appletidevice.py:444
 msgid "Sorry, this URL is unreachable"
 msgstr "Sorry, dit is een onjuiste link"
 
-#: exe/engine/appletidevice.py:528
+#: exe/engine/appletidevice.py:529
 msgid ""
 "Click on the AddFiles button to select the .ggb file and then click on "
 "the Upload button."
@@ -148,7 +152,7 @@ msgstr ""
 "Klik op de knop \"Bestanden toevoegen\" om het .ggb bestand te kiezen. "
 "Klik daarna op de Upload knop."
 
-#: exe/engine/appletidevice.py:538
+#: exe/engine/appletidevice.py:539
 msgid ""
 "Click on the AddFiles button to select the .jclic.zip file and then click"
 " on the Upload button.<p>The activity will be visible when the HTML file "
@@ -158,7 +162,7 @@ msgstr ""
 "kiezen. Klik daarna op de Upload knop. <p>Een voortgangsindicator is "
 "zichtbaar als het HTML bestand wordt aangemaakt door eXe."
 
-#: exe/engine/appletidevice.py:548
+#: exe/engine/appletidevice.py:549
 msgid ""
 "Click on the AddFiles button to select the .sb or .scratch file and then "
 "click on the Upload button."
@@ -166,7 +170,7 @@ msgstr ""
 "Klik op de knop \"Bestanden toevoegen\" om het .sb of .scratch bestand te"
 " kiezen. Klik daarna op de Upload knop."
 
-#: exe/engine/appletidevice.py:559
+#: exe/engine/appletidevice.py:560
 msgid ""
 "Please enter: scene number,URL (no spaces) that include it, eg: "
 "3,http://example.com; click on the Upload button afterwards."
@@ -174,7 +178,7 @@ msgstr ""
 "Voer svp in: Nummer van de scene, bijbehorende URL (geen spaties), bv: "
 "3,//voorbeeld.com; Klik daarna oop de Upload knop. "
 
-#: exe/engine/appletidevice.py:561
+#: exe/engine/appletidevice.py:562
 msgid ""
 "Click on the AddFiles button to select the .html or .htm file and then "
 "click on the Upload button to get its content."
@@ -182,7 +186,7 @@ msgstr ""
 "Klik op de knop \"Bestanden toevoegen\" om het .html of .htm bestand te "
 "kiezen. Klik daarna op de Upload knop om de inhoud te tonen."
 
-#: exe/engine/appletidevice.py:572
+#: exe/engine/appletidevice.py:573
 msgid ""
 " <p>If the applet you're adding was generated \n"
 "by one of the programs in this drop down, please select it, \n"
@@ -192,8 +196,8 @@ msgstr ""
 "programma's in deze selectielijst, selecteer het dan. Voeg vervolgens het"
 " data/applet -bestand toe dat is aangemaakt door je programma.  "
 
-#: exe/engine/attachmentidevice.py:44 exe/engine/extendedfieldengine.py:330
-#: exe/engine/extendedfieldengine.py:332 exe/webui/editorelement.py:328
+#: exe/engine/attachmentidevice.py:44 exe/engine/extendedfieldengine.py:369
+#: exe/engine/extendedfieldengine.py:371 exe/webui/editorelement.py:328
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 msgid "Attachment"
 msgstr "Bijlage"
@@ -255,9 +259,10 @@ msgstr ""
 msgid "Attachment %s has no parentNode"
 msgstr "Bijlage %s zonder koppeling"
 
-#: exe/engine/casestudyidevice.py:63
+#: exe/engine/casestudyidevice.py:63 exe/engine/dragndropidevice.py:104
+#: exe/engine/dragndropidevice.py:106
 #: exe/engine/ejercicioresueltofpdidevice.py:64
-#: exe/engine/imagewithtextidevice.py:62
+#: exe/engine/imagemapidevice.py:42 exe/engine/imagewithtextidevice.py:62
 msgid "Image"
 msgstr "Afbeelding"
 
@@ -314,7 +319,11 @@ msgstr ""
 "van de zaak en hoe wordt hun inbreng dan gecommuniceerd naar de "
 "anderen</li></ul>"
 
-#: exe/engine/casestudyidevice.py:216
+#: exe/engine/casestudyidevice.py:215
+msgid "Template for providing a case study text, activity and feedback"
+msgstr ""
+
+#: exe/engine/casestudyidevice.py:217
 #: exe/engine/ejercicioresueltofpdidevice.py:218
 msgid ""
 "Create the case story. A good case is one \n"
@@ -329,13 +338,13 @@ msgstr ""
 "betrokken zijn. Er moet ook ruimte zijn voor beslissingen of acties die\n"
 "waardoor iemand de situatie kan controleren."
 
-#: exe/engine/casestudyidevice.py:220 exe/engine/casestudyidevice.py:406
+#: exe/engine/casestudyidevice.py:221 exe/engine/casestudyidevice.py:407
 #: exe/engine/ejercicioresueltofpdidevice.py:222
 #: exe/engine/ejercicioresueltofpdidevice.py:409
 msgid "Story:"
 msgstr "Verhaal:"
 
-#: exe/engine/casestudyidevice.py:225
+#: exe/engine/casestudyidevice.py:226
 #: exe/engine/ejercicioresueltofpdidevice.py:227
 msgid ""
 "Describe the activity tasks relevant \n"
@@ -350,7 +359,7 @@ msgstr ""
 "die de leerling kunnen helpen om tot een oplossing van het probleem te "
 "komen."
 
-#: exe/engine/casestudyidevice.py:229
+#: exe/engine/casestudyidevice.py:230
 #: exe/engine/ejercicioresueltofpdidevice.py:231
 msgid ""
 "Provide relevant feedback on the \n"
@@ -425,10 +434,18 @@ msgstr "PAIWASTOON Networking Services Ltd."
 msgid "Click in Order according to the hint on the map."
 msgstr "Klik in de volgorde n.a.v. de aanwijzing op de kaart."
 
-#: exe/engine/clickinorderidevice.py:55 exe/engine/hangmanidevice.py:57
-#: exe/engine/hangmanidevice.py:176 exe/engine/memorymatchidevice.py:54
-#: exe/engine/memorymatchidevice.py:113 exe/engine/placetheobjectsidevice.py:57
-#: exe/engine/sortidevice.py:52 exe/engine/sortidevice.py:134
+#: exe/engine/clickinorderidevice.py:54
+msgid ""
+"Student sees a hint and has to click on a location on a map or diagram "
+"accordingly."
+msgstr ""
+
+#: exe/engine/clickinorderidevice.py:56 exe/engine/dragndropidevice.py:38
+#: exe/engine/hangmanidevice.py:61 exe/engine/hangmanidevice.py:195
+#: exe/engine/imagemapidevice.py:34 exe/engine/memorymatchidevice.py:55
+#: exe/engine/memorymatchidevice.py:114 exe/engine/placetheobjectsidevice.py:58
+#: exe/engine/sortidevice.py:53 exe/engine/sortidevice.py:148
+#: exe/engine/textinputidevice.py:44
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:44
 #: exe/jsui/scripts/app/view/forms/LomSections.js:48
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:157
@@ -442,202 +459,202 @@ msgstr "Klik in de volgorde n.a.v. de aanwijzing op de kaart."
 msgid "Title"
 msgstr "Titel"
 
-#: exe/engine/clickinorderidevice.py:61
+#: exe/engine/clickinorderidevice.py:62
 msgid "Game Instructions"
 msgstr "Spel aanwijzingen"
 
-#: exe/engine/clickinorderidevice.py:61
+#: exe/engine/clickinorderidevice.py:62
 msgid "Instructions to show in leading paragraph"
 msgstr "Instructies die getoond moeten worden in voorgaande alinea"
 
-#: exe/engine/clickinorderidevice.py:62
+#: exe/engine/clickinorderidevice.py:63
 msgid "Game Won Feedback Overlay"
 msgstr "Medeling \"Spel gewonnen\""
 
-#: exe/engine/clickinorderidevice.py:62
+#: exe/engine/clickinorderidevice.py:63
 msgid "Shown over when the game is won"
 msgstr "Wordt getoond nadat het spel gewonnen is"
 
-#: exe/engine/clickinorderidevice.py:63
+#: exe/engine/clickinorderidevice.py:64
 msgid "Correct Answer Feedback Overlay"
 msgstr "Medeling voor feedback \"Juist antwoord\""
 
-#: exe/engine/clickinorderidevice.py:63
+#: exe/engine/clickinorderidevice.py:64
 msgid "Shown over game when correct answer given"
 msgstr "Wordt getoond nadat een juist antwoord is gegeven"
 
-#: exe/engine/clickinorderidevice.py:64
+#: exe/engine/clickinorderidevice.py:65
 msgid "Wrong Answer Feedback Overlay"
 msgstr "Mededeling voor feedback \"Onjuist antwoord\""
 
-#: exe/engine/clickinorderidevice.py:64
+#: exe/engine/clickinorderidevice.py:65
 msgid "Shown over game when wrong answer is given"
 msgstr "Wordt getoond nadat een onjuist antwoord is gegeven"
 
-#: exe/engine/clickinorderidevice.py:65
+#: exe/engine/clickinorderidevice.py:66
 msgid "Main Area To Show"
 msgstr "Te tonen Centrale gebied"
 
-#: exe/engine/clickinorderidevice.py:65
+#: exe/engine/clickinorderidevice.py:66
 msgid "The Main Game Area on which to locate items"
 msgstr "Het hoofdspeelveld waarop items moeten worden gelocaliseerd"
 
-#: exe/engine/clickinorderidevice.py:66
+#: exe/engine/clickinorderidevice.py:67
 msgid "Area shown before the game starts"
 msgstr "Veld dat getoond wordt voordat het spel begint"
 
-#: exe/engine/clickinorderidevice.py:66
+#: exe/engine/clickinorderidevice.py:67
 msgid "User will click on this to start the game"
 msgstr "De gebruiker moet hierop klikken om het spel te beginnen"
 
-#: exe/engine/clickinorderidevice.py:78
+#: exe/engine/clickinorderidevice.py:79
 msgid "Game Width"
 msgstr "Breedte van het speelveld"
 
-#: exe/engine/clickinorderidevice.py:78
+#: exe/engine/clickinorderidevice.py:79
 msgid "Width of game area (in pixels)"
 msgstr "Breedte van het speelveld (pixels)"
 
-#: exe/engine/clickinorderidevice.py:79
+#: exe/engine/clickinorderidevice.py:80
 msgid "Game Height"
 msgstr "Hoogte van het speelveld"
 
-#: exe/engine/clickinorderidevice.py:79
+#: exe/engine/clickinorderidevice.py:80
 msgid "Height of game area (in pixels)"
 msgstr "Hoogte van het speelveld (Pixels)"
 
-#: exe/engine/clickinorderidevice.py:80
+#: exe/engine/clickinorderidevice.py:81
 msgid "Style of Element Counter"
 msgstr "Stijl van de onderdelen-teller"
 
-#: exe/engine/clickinorderidevice.py:80
+#: exe/engine/clickinorderidevice.py:81
 msgid "Use CSS to style element that counts number items found"
 msgstr ""
 "Gebruik CSS om het element dat het aantal gevonden items telt vorm te "
 "geven"
 
-#: exe/engine/clickinorderidevice.py:81
+#: exe/engine/clickinorderidevice.py:82
 msgid "Hint Width"
 msgstr "Hintbreedte"
 
-#: exe/engine/clickinorderidevice.py:81
+#: exe/engine/clickinorderidevice.py:82
 msgid "Width (px) of hint area"
 msgstr "Breedte (px) van het hint-gebied"
 
-#: exe/engine/clickinorderidevice.py:82
+#: exe/engine/clickinorderidevice.py:83
 msgid "Hint Height"
 msgstr "Hinthoogte"
 
-#: exe/engine/clickinorderidevice.py:82
+#: exe/engine/clickinorderidevice.py:83
 msgid "Height (px) of hint area"
 msgstr "Hoogte (px) van het hint-veld"
 
-#: exe/engine/clickinorderidevice.py:83
+#: exe/engine/clickinorderidevice.py:84
 msgid "Hint Area Style"
 msgstr "Hint-stijl"
 
-#: exe/engine/clickinorderidevice.py:83
+#: exe/engine/clickinorderidevice.py:84
 msgid "Style of Hint Area"
 msgstr "Stijl van het hint-veld"
 
-#: exe/engine/clickinorderidevice.py:84
+#: exe/engine/clickinorderidevice.py:85
 msgid "Style of timer Element"
 msgstr "Klok-stijl"
 
-#: exe/engine/clickinorderidevice.py:84
+#: exe/engine/clickinorderidevice.py:85
 msgid "Style of timer (CSS)"
 msgstr "Stijl van de timer (CSS)"
 
-#: exe/engine/clickinorderidevice.py:98 exe/engine/clickinorderidevice.py:100
+#: exe/engine/clickinorderidevice.py:99 exe/engine/clickinorderidevice.py:101
 msgid "Dont Shuffle"
 msgstr "Geen willekeurige volgorde"
 
-#: exe/engine/clickinorderidevice.py:98 exe/engine/clickinorderidevice.py:101
+#: exe/engine/clickinorderidevice.py:99 exe/engine/clickinorderidevice.py:102
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 msgid "Shuffle"
 msgstr "Willekeurige volgorde"
 
-#: exe/engine/clickinorderidevice.py:103 exe/engine/clickinorderidevice.py:104
+#: exe/engine/clickinorderidevice.py:104 exe/engine/clickinorderidevice.py:105
 msgid "No Timer"
 msgstr "Verberg klok"
 
-#: exe/engine/clickinorderidevice.py:103 exe/engine/clickinorderidevice.py:105
+#: exe/engine/clickinorderidevice.py:104 exe/engine/clickinorderidevice.py:106
 msgid "Stopwatch Mode"
 msgstr "Stopwatch modus"
 
-#: exe/engine/clickinorderidevice.py:107
+#: exe/engine/clickinorderidevice.py:108
 msgid "Shuffle Questions"
 msgstr "Zet vragen in willekeurige volgorde"
 
-#: exe/engine/clickinorderidevice.py:107
+#: exe/engine/clickinorderidevice.py:108
 msgid "Randomize question order or not"
 msgstr "Vragen al of niet in willekeurige volgorde"
 
-#: exe/engine/clickinorderidevice.py:108
+#: exe/engine/clickinorderidevice.py:109
 msgid "Use a Timer"
 msgstr "Gebruik klok"
 
-#: exe/engine/clickinorderidevice.py:108 exe/engine/memorymatchidevice.py:73
+#: exe/engine/clickinorderidevice.py:109 exe/engine/memorymatchidevice.py:74
 msgid "Use Timer?"
 msgstr "Klok gebruiken?"
 
-#: exe/engine/clickinorderidevice.py:115
+#: exe/engine/clickinorderidevice.py:116
 msgid "Clickable Area"
 msgstr "\"Clickable\" gebied"
 
-#: exe/engine/clickinorderidevice.py:152
+#: exe/engine/clickinorderidevice.py:153
 msgid "Top (Y) Coord"
 msgstr "Top (Y) coordinaat"
 
-#: exe/engine/clickinorderidevice.py:152
+#: exe/engine/clickinorderidevice.py:153
 msgid "Top CSS top property"
 msgstr "Top CSS top kenmerk"
 
-#: exe/engine/clickinorderidevice.py:153
+#: exe/engine/clickinorderidevice.py:154
 msgid "Left (X) Coord"
 msgstr "Left (X)  coordinaat"
 
-#: exe/engine/clickinorderidevice.py:153
+#: exe/engine/clickinorderidevice.py:154
 msgid "Left CSS left property"
 msgstr "Left CSS left kenmerk"
 
-#: exe/engine/clickinorderidevice.py:154
+#: exe/engine/clickinorderidevice.py:155
 msgid "Width (px)"
 msgstr "Breedte (pixels)"
 
-#: exe/engine/clickinorderidevice.py:154
+#: exe/engine/clickinorderidevice.py:155
 msgid "Width of clickable area"
 msgstr "Breddte van het \"clickable\" gebied "
 
-#: exe/engine/clickinorderidevice.py:155
+#: exe/engine/clickinorderidevice.py:156
 msgid "Height (px)"
 msgstr "Hoogte (Pixels)"
 
-#: exe/engine/clickinorderidevice.py:155
+#: exe/engine/clickinorderidevice.py:156
 msgid "Height of clickable area"
 msgstr "Hoogte van het \"clickable\" gebied"
 
-#: exe/engine/clickinorderidevice.py:156
+#: exe/engine/clickinorderidevice.py:157
 msgid "Delay (ms) to hide revealed contents"
 msgstr "Vertraging (ms) om de getoonde inhoud te verbergen"
 
-#: exe/engine/clickinorderidevice.py:156
+#: exe/engine/clickinorderidevice.py:157
 msgid "After delay ms hide the content prev revealed"
 msgstr "Verberg na vetraging (ms) de zojuist getoonde inhoud"
 
-#: exe/engine/clickinorderidevice.py:166
+#: exe/engine/clickinorderidevice.py:167
 msgid "Hint to Show for this item"
 msgstr "Hint die getoond moet worden voor dit item"
 
-#: exe/engine/clickinorderidevice.py:166
+#: exe/engine/clickinorderidevice.py:167
 msgid "The hint that will appear under the map for this item"
 msgstr "Voer de tekst in die moet verschijnen onder map voor dit onderdeel"
 
-#: exe/engine/clickinorderidevice.py:167
+#: exe/engine/clickinorderidevice.py:168
 msgid "Item Revealed"
 msgstr "Item wordt getoond"
 
-#: exe/engine/clickinorderidevice.py:167
+#: exe/engine/clickinorderidevice.py:168
 msgid "The Item that will be revealed in place"
 msgstr "Het vervangende item dat getoond zal worden"
 
@@ -709,18 +726,20 @@ msgstr ""
 "voor- of achtervoegsels. Om verrassingen te vermijden is het altijd goed "
 "om een collega de toets/oefening te laten uitproberen!  </p>"
 
-#: exe/engine/clozefpdidevice.py:120 exe/engine/clozeidevice.py:119
-#: exe/engine/clozelangfpdidevice.py:120 exe/engine/fileattachidevice.py:49
-#: exe/engine/hangmanidevice.py:60 exe/engine/listaidevice.py:129
-#: exe/engine/memorymatchidevice.py:55 exe/engine/placetheobjectsidevice.py:52
-#: exe/engine/sortidevice.py:53 exe/engine/truefalseidevice.py:164
-#: exe/engine/truefalseidevice.py:391
+#: exe/engine/clozefpdidevice.py:120 exe/engine/clozeidevice.py:120
+#: exe/engine/clozelangfpdidevice.py:120 exe/engine/dragndropidevice.py:41
+#: exe/engine/fileattachidevice.py:49 exe/engine/hangmanidevice.py:65
+#: exe/engine/imagemapidevice.py:37 exe/engine/listaidevice.py:130
+#: exe/engine/memorymatchidevice.py:56 exe/engine/placetheobjectsidevice.py:53
+#: exe/engine/sortidevice.py:54 exe/engine/textinputidevice.py:45
+#: exe/engine/textinputidevice.py:46 exe/engine/truefalseidevice.py:165
+#: exe/engine/truefalseidevice.py:392
 #: exe/engine/verdaderofalsofpdidevice.py:166
-#: exe/engine/verdaderofalsofpdidevice.py:394 exe/webui/common.py:538
+#: exe/engine/verdaderofalsofpdidevice.py:394 exe/webui/common.py:588
 msgid "Instructions"
 msgstr "Aanwijzingen"
 
-#: exe/engine/clozefpdidevice.py:121 exe/engine/clozeidevice.py:120
+#: exe/engine/clozefpdidevice.py:121 exe/engine/clozeidevice.py:121
 #: exe/engine/clozelangfpdidevice.py:121
 msgid ""
 "Provide instruction on how the cloze activity should be \n"
@@ -730,14 +749,14 @@ msgstr ""
 "Leg uit hoe de invuloefening opgelost moet worden.\n"
 "Als u dit veld niet verandert, wordt een standaardtekst getoond.\n"
 
-#: exe/engine/clozefpdidevice.py:126 exe/engine/clozeidevice.py:126
-#: exe/webui/element.py:1420 exe/webui/listablock.py:259
+#: exe/engine/clozefpdidevice.py:126 exe/engine/clozeidevice.py:127
+#: exe/webui/element.py:1428 exe/webui/listablock.py:264
 msgid "Cloze"
 msgstr "Invullen"
 
 #: exe/engine/clozefpdidevice.py:127 exe/engine/clozefpdidevice.py:308
-#: exe/engine/clozeidevice.py:127 exe/engine/clozeidevice.py:315
-#: exe/engine/clozelangfpdidevice.py:127 exe/engine/clozelangfpdidevice.py:313
+#: exe/engine/clozeidevice.py:324 exe/engine/clozelangfpdidevice.py:127
+#: exe/engine/clozelangfpdidevice.py:313
 msgid ""
 "<p>Enter the text for the cloze activity in to the cloze field \n"
 "by either pasting text from another source or by typing text directly "
@@ -756,26 +775,26 @@ msgstr ""
 " <i>Toon/verberg woord</i> aan te klikken.</p>"
 
 #: exe/engine/clozefpdidevice.py:132 exe/engine/clozefpdidevice.py:282
-#: exe/engine/clozeidevice.py:132 exe/engine/clozeidevice.py:282
+#: exe/engine/clozeidevice.py:139 exe/engine/clozeidevice.py:291
 #: exe/engine/clozelangfpdidevice.py:132 exe/engine/clozelangfpdidevice.py:287
-#: exe/engine/field.py:3614 exe/engine/field.py:3662
-#: exe/engine/genericidevice.py:294 exe/engine/idevicestore.py:605
-#: exe/engine/idevicestore.py:714 exe/engine/listaidevice.py:140
-#: exe/engine/listaidevice.py:295 exe/engine/truefalseidevice.py:50
+#: exe/engine/field.py:3632 exe/engine/field.py:3696
+#: exe/engine/genericidevice.py:302 exe/engine/idevicestore.py:624
+#: exe/engine/idevicestore.py:733 exe/engine/listaidevice.py:146
+#: exe/engine/listaidevice.py:304 exe/engine/truefalseidevice.py:50
 #: exe/engine/truefalseidevice.py:125 exe/engine/verdaderofalsofpdidevice.py:51
-#: exe/engine/verdaderofalsofpdidevice.py:126 exe/webui/clozeblock.py:182
+#: exe/engine/verdaderofalsofpdidevice.py:126 exe/webui/clozeblock.py:186
 #: exe/webui/clozefpdblock.py:209 exe/webui/clozelangfpdblock.py:221
-#: exe/webui/common.py:445 exe/webui/common.py:455
+#: exe/webui/common.py:489 exe/webui/common.py:499
 #: exe/webui/editorelement.py:148 exe/webui/editorpane.py:255
-#: exe/webui/element.py:2375 exe/webui/element.py:2510
-#: exe/webui/element.py:2625 exe/webui/element.py:2826
-#: exe/webui/listablock.py:462 exe/webui/questionelement.py:113
-#: exe/webui/truefalseelement.py:260
+#: exe/webui/element.py:2414 exe/webui/element.py:2592
+#: exe/webui/element.py:2767 exe/webui/element.py:3077
+#: exe/webui/listablock.py:472 exe/webui/questionelement.py:113
+#: exe/webui/truefalseelement.py:264
 msgid "Feedback"
 msgstr "Feedback"
 
-#: exe/engine/clozefpdidevice.py:133 exe/engine/clozeidevice.py:133
-#: exe/engine/clozelangfpdidevice.py:133 exe/engine/listaidevice.py:141
+#: exe/engine/clozefpdidevice.py:133 exe/engine/clozeidevice.py:140
+#: exe/engine/clozelangfpdidevice.py:133 exe/engine/listaidevice.py:147
 msgid ""
 "Enter any feedback you wish to provide the learner with-in the feedback "
 "field. This field can be left blank."
@@ -783,34 +802,73 @@ msgstr ""
 "Vul de gewenste feedback in in het feedbackveld. Het veld mag ook leeg "
 "blijven."
 
-#: exe/engine/clozefpdidevice.py:278 exe/engine/clozeidevice.py:277
-#: exe/engine/clozelangfpdidevice.py:282 exe/engine/listaidevice.py:290
+#: exe/engine/clozefpdidevice.py:278 exe/engine/clozeidevice.py:286
+#: exe/engine/clozelangfpdidevice.py:282 exe/engine/listaidevice.py:299
 msgid "Instructions For Learners"
 msgstr "Aanwijzingen voor studenten"
 
-#: exe/engine/clozefpdidevice.py:279 exe/engine/clozeidevice.py:278
-#: exe/engine/clozelangfpdidevice.py:283 exe/engine/listaidevice.py:291
+#: exe/engine/clozefpdidevice.py:279 exe/engine/clozeidevice.py:287
+#: exe/engine/clozelangfpdidevice.py:283 exe/engine/listaidevice.py:300
 msgid "Put instructions for learners here"
 msgstr "Geef aanwijzingen voor de studenten"
 
-#: exe/engine/clozefpdidevice.py:280 exe/engine/clozeidevice.py:279
+#: exe/engine/clozefpdidevice.py:280 exe/engine/clozeidevice.py:288
 #: exe/engine/clozelangfpdidevice.py:284
 msgid "Read the paragraph below and fill in the missing words"
 msgstr "Lees de alinea hieronder en vul de ontbrekende woorden in"
 
-#: exe/engine/clozefpdidevice.py:291 exe/engine/clozeidevice.py:291
+#: exe/engine/clozefpdidevice.py:291 exe/engine/clozeidevice.py:300
 #: exe/engine/clozelangfpdidevice.py:296
 msgid "Allow auto completion when user filling the gaps."
 msgstr "Zet automatisch aanvullen aan bij invullen van invulwoorden."
 
 #: exe/engine/clozeidevice.py:49
-msgid "Cloze Activity"
-msgstr "Invuloefening"
+msgid "Fill in the Blank"
+msgstr ""
 
-#: exe/engine/clozeidevice.py:123 exe/engine/truefalseidevice.py:394
+#: exe/engine/clozeidevice.py:118
+msgid "Simple fill in the blank exercise - blank spaces shown as textboxes"
+msgstr ""
+
+#: exe/engine/clozeidevice.py:124 exe/engine/truefalseidevice.py:395
 #: exe/engine/verdaderofalsofpdidevice.py:397
 msgid "Read the paragraph below and fill in the missing words."
 msgstr "Lees de alinea hieronder en vul de ontbrekende woorden in."
+
+#: exe/engine/clozeidevice.py:128
+#, fuzzy
+msgid ""
+"<p>Enter the text for the cloze activity in to the cloze field \n"
+"by either pasting text from another source or by typing text directly "
+"into the \n"
+"field.</p><p> To select words to hide, double click on the word to select"
+" it and \n"
+"click on the Hide/Show Word button below.</p>"
+msgstr ""
+"<P> Typ de tekst voor de Selectielijst activiteit in het Selectielijst "
+"veld door direct typen of d.m.v. \"plakken \". </p><p> Om woorden te "
+"kiezen: klik dubbel op een woord om het te selecteren en klik vervolgens "
+"op de 'Toon/verberg' knop hieronder. <p>"
+
+#: exe/engine/clozeidevice.py:132
+msgid ""
+"Type the whole text for learners here, \n"
+"            then hilight the parts you want to make blank and \n"
+"            click Hide/Show Word button below.  Underlined words \n"
+"            get turned into blank boxes to fill in.\n"
+"            More than one possible answer can be defined enclosing them "
+"with pipes (|). I.e.: |dog|cat|bird|\n"
+"            "
+msgstr ""
+
+#: exe/engine/clozeidevice.py:142
+#, fuzzy
+msgid ""
+"Type any feedback you want to provide \n"
+"              the learner.  This will be shown regardless of score"
+msgstr ""
+"Voeg de feedback toe die u wilt\n"
+"tonen aan de studenten."
 
 #: exe/engine/clozelangfpdidevice.py:50
 msgid "FPD - Cloze Activity (Modified)"
@@ -820,41 +878,51 @@ msgstr "FPD - Invuloefening (Aangepast)"
 msgid "Clozelang"
 msgstr "Invuloefening"
 
-#: exe/engine/config.py:66 exe/engine/config.py:67 exe/engine/config.py:71
-#: exe/engine/config.py:98
+#: exe/engine/config.py:82 exe/engine/config.py:114
 msgid "Non-Interactive Activities"
 msgstr "Niet-interactieve activiteiten"
 
-#: exe/engine/config.py:68 exe/engine/config.py:73 exe/engine/config.py:95
-#: exe/engine/config.py:96 exe/engine/config.py:97 exe/engine/config.py:99
-#: exe/engine/config.py:105
+#: exe/engine/config.py:83 exe/engine/config.py:87 exe/engine/config.py:109
+#: exe/engine/config.py:118 exe/engine/config.py:127
+#, fuzzy
+msgid "Text/Media"
+msgstr "multi-platform media"
+
+#: exe/engine/config.py:84 exe/engine/config.py:89 exe/engine/config.py:111
+#: exe/engine/config.py:112 exe/engine/config.py:113 exe/engine/config.py:115
+#: exe/engine/config.py:119 exe/engine/config.py:120 exe/engine/config.py:121
+#: exe/engine/config.py:122 exe/engine/config.py:123 exe/engine/config.py:124
+#: exe/engine/config.py:126 exe/engine/config.py:128
 msgid "Interactive Activities"
 msgstr "Interactieve activiteiten"
 
-#: exe/engine/config.py:69 exe/engine/config.py:70 exe/engine/config.py:91
-#: exe/engine/config.py:92 exe/engine/config.py:100 exe/engine/config.py:101
-#: exe/engine/config.py:107
+#: exe/engine/config.py:85 exe/engine/config.py:116
 msgid "Non-Textual Information"
 msgstr "Niet-textuele informatie"
 
-#: exe/engine/config.py:72 exe/engine/config.py:93 exe/engine/config.py:94
-#: exe/engine/config.py:102
+#: exe/engine/config.py:86 exe/engine/config.py:117 exe/engine/config.py:125
+#: exe/engine/locationbuttons.py:34 exe/engine/locationbuttons.py:38
+#: exe/engine/locationbuttons.py:42
+msgid "Documents"
+msgstr "Documenten"
+
+#: exe/engine/config.py:88 exe/engine/config.py:110
 msgid "Textual Information"
 msgstr "Textuele inormatie"
 
-#: exe/engine/config.py:74 exe/engine/config.py:75 exe/engine/config.py:76
-#: exe/engine/config.py:77 exe/engine/config.py:78 exe/engine/config.py:79
-#: exe/engine/config.py:80 exe/engine/config.py:81 exe/engine/config.py:82
-#: exe/engine/config.py:83 exe/engine/config.py:84 exe/engine/config.py:85
-#: exe/engine/config.py:86 exe/engine/config.py:87 exe/engine/config.py:88
-#: exe/engine/config.py:89 exe/engine/config.py:90
+#: exe/engine/config.py:90 exe/engine/config.py:91 exe/engine/config.py:92
+#: exe/engine/config.py:93 exe/engine/config.py:94 exe/engine/config.py:95
+#: exe/engine/config.py:96 exe/engine/config.py:97 exe/engine/config.py:98
+#: exe/engine/config.py:99 exe/engine/config.py:100 exe/engine/config.py:101
+#: exe/engine/config.py:102 exe/engine/config.py:103 exe/engine/config.py:104
+#: exe/engine/config.py:105 exe/engine/config.py:106
 msgid "FPD"
 msgstr "FDP"
 
-#: exe/engine/config.py:103 exe/engine/config.py:104 exe/engine/config.py:106
-#: exe/engine/config.py:108
-msgid "Experimental"
-msgstr "Eexperimenteel"
+#: exe/engine/config.py:107 exe/engine/config.py:108
+#, fuzzy
+msgid "Image Widgets"
+msgstr "Afbeeldingsbestanden"
 
 #: exe/engine/debesconocerfpdidevice.py:29
 msgid "FPD - You Should Know"
@@ -888,6 +956,192 @@ msgstr ""
 #: exe/engine/destacadofpdidevice.py:36 exe/engine/destacadofpdidevice.py:134
 msgid "Highlighted Text:"
 msgstr "Gemarkeerd - Tekst"
+
+#: exe/engine/dragndropidevice.py:17
+msgid "Drag And Drop"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:18
+#, fuzzy
+msgid "Ustad Mobile."
+msgstr "Ustad Mobile"
+
+#: exe/engine/dragndropidevice.py:19
+msgid "Drag/Drop items to correct locations."
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:28
+msgid ""
+"Enter the default \n"
+"                            feedback that will appear when an area is \n"
+"                             dragged into the correct drop target\n"
+"                              area (e.g. feedback is set to by question"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:33
+msgid ""
+"Enter the default \n"
+"                            feedback that will appear when an area is \n"
+"                             dragged outside the correct drop target\n"
+"                              area (e.g. feedback is set to by question"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:39 exe/engine/hangmanidevice.py:62
+#: exe/engine/imagemapidevice.py:35 exe/webui/multichoiceblock.py:113
+msgid "Type your title here"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:40 exe/engine/imagemapidevice.py:36
+#: exe/engine/memorymatchidevice.py:56
+msgid "Instructions to show"
+msgstr "Aanwijzingen die getoond moeten worden"
+
+#: exe/engine/dragndropidevice.py:42
+msgid ""
+"Enter instructions for students here.  You can add images, media, etc. "
+"too."
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:43
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
+msgid "Background"
+msgstr "Achtergrond"
+
+#: exe/engine/dragndropidevice.py:46
+#, fuzzy
+msgid "Default Correct Answer Feedback"
+msgstr "Medeling voor feedback \"Juist antwoord\""
+
+#: exe/engine/dragndropidevice.py:50
+#, fuzzy
+msgid "Default Wrong Answer Feedback"
+msgstr "Mededeling voor feedback \"Onjuist antwoord\""
+
+#: exe/engine/dragndropidevice.py:53 exe/engine/dragndropidevice.py:54
+msgid "Auto Resize"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:55
+msgid "Resize to fit screen width"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:56 exe/engine/dragndropidevice.py:137
+#, fuzzy
+msgid "Fixed"
+msgstr "gemengd"
+
+#: exe/engine/dragndropidevice.py:95
+msgid "Drag N Drop Field"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:102
+#, fuzzy
+msgid "Content Type"
+msgstr "leverancier van leermateriaal"
+
+#: exe/engine/dragndropidevice.py:103
+#, fuzzy
+msgid "Rich Text"
+msgstr "letterlijke tekst"
+
+#: exe/engine/dragndropidevice.py:105
+#, fuzzy
+msgid "Plaintext"
+msgstr "uitleggen"
+
+#: exe/engine/dragndropidevice.py:106
+#, fuzzy
+msgid "Image for element"
+msgstr "Basiselement"
+
+#: exe/engine/dragndropidevice.py:107 exe/engine/dragndropidevice.py:109
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
+msgid "Content"
+msgstr "Inhoud"
+
+#: exe/engine/dragndropidevice.py:108
+msgid "Enter text, images, or media to appear inside this area"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:110
+#, fuzzy
+msgid "Enter text to appear inside this area"
+msgstr "Voer de tekst in die dit iDevice moet weergeven"
+
+#: exe/engine/dragndropidevice.py:111
+#, fuzzy
+msgid "Feedback Type"
+msgstr "Feedback"
+
+#: exe/engine/dragndropidevice.py:112
+#, fuzzy
+msgid "No Feedback"
+msgstr "Toon feedback"
+
+#: exe/engine/dragndropidevice.py:113
+msgid "Use Question Default Feedback"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:114
+msgid "Use Feedback specific to this area"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:115
+#, fuzzy
+msgid "Correct Answer Feedback"
+msgstr "Medeling voor feedback \"Juist antwoord\""
+
+#: exe/engine/dragndropidevice.py:116
+#, fuzzy
+msgid "Feedback on correct answer"
+msgstr "Feedback die getoond wordt bij onjuiste combinatie"
+
+#: exe/engine/dragndropidevice.py:121
+#, fuzzy
+msgid "Wrong Answer Feedback"
+msgstr "Mededeling voor feedback \"Onjuist antwoord\""
+
+#: exe/engine/dragndropidevice.py:122
+#, fuzzy
+msgid "Feedback on wrong answer"
+msgstr "Effect tijdens het tonen van de verkeerde overlay"
+
+#: exe/engine/dragndropidevice.py:129 exe/engine/dragndropidevice.py:130
+msgid "Correct Drop Target"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:132
+msgid "Select the correct area that the student should drag this area to..."
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:133 exe/engine/extendedfieldengine.py:371
+#: exe/webui/editorelement.py:225 exe/webui/flashmovieblock.py:83
+#: exe/webui/flashwithtextblock.py:83 exe/webui/imagemagnifierblock.py:109
+#: exe/webui/imagewithtextblock.py:83 exe/webui/multimediablock.py:87
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
+msgid "None"
+msgstr "Geen"
+
+#: exe/engine/dragndropidevice.py:134 exe/engine/dragndropidevice.py:135
+msgid "Behaviour"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:136
+msgid "User can drag"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:139 exe/engine/dragndropidevice.py:140
+msgid "When dropped outside correct target"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:141
+msgid "Snap back"
+msgstr ""
+
+#: exe/engine/dragndropidevice.py:142
+msgid "Stay"
+msgstr ""
 
 #: exe/engine/ejercicioresueltofpdidevice.py:198
 msgid "FPD - Translation"
@@ -965,7 +1219,7 @@ msgstr ""
 "</ul>\n"
 
 #: exe/engine/eleccionmultiplefpdidevice.py:101
-#: exe/engine/multichoiceidevice.py:99
+#: exe/engine/multichoiceidevice.py:100
 msgid ""
 "Enter a hint here. If you\n"
 "do not want to provide a hint, leave this field blank."
@@ -974,7 +1228,7 @@ msgstr ""
 "het veld leeg om geen hint te geven."
 
 #: exe/engine/eleccionmultiplefpdidevice.py:103
-#: exe/engine/multichoiceidevice.py:101 exe/engine/quiztestidevice.py:120
+#: exe/engine/multichoiceidevice.py:102 exe/engine/quiztestidevice.py:120
 #: exe/engine/quiztestidevice.py:194
 msgid ""
 "Enter the question stem. \n"
@@ -987,7 +1241,7 @@ msgstr ""
 "want deze zijn vaak misleidend."
 
 #: exe/engine/eleccionmultiplefpdidevice.py:106
-#: exe/engine/multichoiceidevice.py:104
+#: exe/engine/multichoiceidevice.py:105
 msgid ""
 "Select the correct option by clicking \n"
 "on the radio button."
@@ -996,7 +1250,7 @@ msgstr ""
 "door het keuzerondje aan te klikken."
 
 #: exe/engine/eleccionmultiplefpdidevice.py:108
-#: exe/engine/multichoiceidevice.py:106
+#: exe/engine/multichoiceidevice.py:107
 msgid ""
 "Enter the available choices here. \n"
 "You can add options by clicking the \"Add Another Option\" button. Delete"
@@ -1011,7 +1265,7 @@ msgstr ""
 "\"x\" naast een alternatief."
 
 #: exe/engine/eleccionmultiplefpdidevice.py:111
-#: exe/engine/multichoiceidevice.py:109
+#: exe/engine/multichoiceidevice.py:110
 msgid ""
 "Type in the feedback that you want the \n"
 "student to see when selecting the particular option. If you don't "
@@ -1028,18 +1282,18 @@ msgstr ""
 "\"Juist antwoord\" bij het antwoord dat als zodanig is aangeduid; of \n"
 "\"Fout antwoord\" bij de andere alternatieven."
 
-#: exe/engine/eleccionmultiplefpdidevice.py:133 exe/engine/field.py:3685
-#: exe/engine/field.py:3750 exe/engine/multichoiceidevice.py:131
-#: exe/engine/multiselectidevice.py:82
-#: exe/engine/seleccionmultiplefpdidevice.py:84 exe/webui/element.py:2350
-#: exe/webui/element.py:2354 exe/webui/element.py:2803
-#: exe/webui/element.py:2807 exe/webui/testquestionelement.py:151
+#: exe/engine/eleccionmultiplefpdidevice.py:133 exe/engine/field.py:3738
+#: exe/engine/field.py:3811 exe/engine/multichoiceidevice.py:132
+#: exe/engine/multiselectidevice.py:83
+#: exe/engine/seleccionmultiplefpdidevice.py:84 exe/webui/element.py:2389
+#: exe/webui/element.py:2393 exe/webui/element.py:3054
+#: exe/webui/element.py:3058 exe/webui/testquestionelement.py:151
 #: exe/webui/truefalseelement.py:200 exe/webui/truefalseelement.py:206
 msgid "Question"
 msgstr "Vraag:"
 
 #: exe/engine/eleccionmultiplefpdidevice.py:287
-#: exe/engine/multichoiceidevice.py:285
+#: exe/engine/multichoiceidevice.py:301
 msgid ""
 "Enter a hint here. If you do not want to provide a hint, leave this field"
 " blank."
@@ -1102,47 +1356,39 @@ msgstr "Schaal"
 msgid "Transfer"
 msgstr "Omzetting"
 
-#: exe/engine/extendedfieldengine.py:45 exe/webui/hangmanblock.py:329
+#: exe/engine/extendedfieldengine.py:47 exe/webui/hangmanblock.py:373
 msgid "Show Advanced Options"
 msgstr "Toon geavanceerde opties"
 
-#: exe/engine/extendedfieldengine.py:278
+#: exe/engine/extendedfieldengine.py:317
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 msgid "Browse"
 msgstr "Bladeren"
 
-#: exe/engine/extendedfieldengine.py:280
+#: exe/engine/extendedfieldengine.py:319
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
 msgid "Replace"
 msgstr "Vervangen"
 
-#: exe/engine/extendedfieldengine.py:282 exe/webui/appletblock.py:157
+#: exe/engine/extendedfieldengine.py:321 exe/webui/appletblock.py:157
 #: exe/webui/appletblock.py:167
 msgid "Upload"
 msgstr "Uploaden"
 
-#: exe/engine/extendedfieldengine.py:292
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:90
+#: exe/engine/extendedfieldengine.py:331
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:118
 msgid "File"
 msgstr "Bestand"
 
-#: exe/engine/extendedfieldengine.py:297 exe/webui/appletblock.py:184
+#: exe/engine/extendedfieldengine.py:336 exe/webui/appletblock.py:184
 msgid "Delete File"
 msgstr "Bestand verwijderen"
 
-#: exe/engine/extendedfieldengine.py:300
+#: exe/engine/extendedfieldengine.py:339
 msgid "No File Uploaded Currently"
 msgstr "Momenteel geen gestand geupload"
 
-#: exe/engine/extendedfieldengine.py:332 exe/webui/editorelement.py:225
-#: exe/webui/flashmovieblock.py:83 exe/webui/flashwithtextblock.py:83
-#: exe/webui/imagemagnifierblock.py:109 exe/webui/imagewithtextblock.py:83
-#: exe/webui/multimediablock.py:87
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-msgid "None"
-msgstr "Geen"
-
-#: exe/engine/extendedfieldengine.py:564
+#: exe/engine/extendedfieldengine.py:629
 msgid "is not a valid number - please try again<br/>"
 msgstr "is geen geldig getal - probeer aub opnieuw <br/>"
 
@@ -1165,7 +1411,11 @@ msgstr ""
 "Dit iDevice kan enkel gebruikt worden wanneer uw leerpakket\n"
 "online bekeken wordt."
 
-#: exe/engine/externalurlidevice.py:49 exe/engine/externalurlidevice.py:116
+#: exe/engine/externalurlidevice.py:46
+msgid "Frame an external website inside your content (uses iframe)"
+msgstr ""
+
+#: exe/engine/externalurlidevice.py:50 exe/engine/externalurlidevice.py:117
 msgid ""
 "Enter the URL you wish to display\n"
 "and select the size of the area to display it in."
@@ -1173,7 +1423,7 @@ msgstr ""
 "Geef de URL die u wil tonen\n"
 "en de grootte van het gebied waarin hij getoond wordt."
 
-#: exe/engine/field.py:2838 exe/engine/field.py:2885
+#: exe/engine/field.py:2855 exe/engine/field.py:2902
 #: exe/engine/multimediaidevice.py:71
 msgid ""
 "Provide a caption for the \n"
@@ -1182,7 +1432,7 @@ msgstr ""
 "Geef een titel aan het\n"
 "MP3-bestand. Deze zal in de titelbalk van de speler verschijnen."
 
-#: exe/engine/field.py:3021
+#: exe/engine/field.py:3038
 msgid ""
 "<p>If left unchecked a small number of spelling and capitalization errors"
 " will be accepted. If checked only an exact match in spelling and "
@@ -1212,7 +1462,7 @@ msgstr ""
 "\"Olifant\". Zet u nu \"Hoofdlettergevoelig\" uit, dan wordt ook "
 "\"olifant\" aanvaard.</p>"
 
-#: exe/engine/field.py:3042 exe/engine/field.py:3276
+#: exe/engine/field.py:3059 exe/engine/field.py:3293
 msgid ""
 "<p>If this option is checked, submitted answers with different "
 "capitalization will be marked as incorrect.</p>"
@@ -1220,7 +1470,7 @@ msgstr ""
 "<p>Vink deze optie aan om bij het verbeteren ook op hoofd- en kleine "
 "letters te letten.</p>"
 
-#: exe/engine/field.py:3047 exe/engine/field.py:3281
+#: exe/engine/field.py:3064 exe/engine/field.py:3298
 msgid ""
 "<p>If this option is set, each word will be marked as the \n"
 "learner types it rather than all the words being marked the end of the \n"
@@ -1231,8 +1481,8 @@ msgstr ""
 "oefening.\n"
 "</p>"
 
-#: exe/engine/field.py:3085 exe/engine/field.py:3323
-#: exe/engine/listaidevice.py:398
+#: exe/engine/field.py:3102 exe/engine/field.py:3340
+#: exe/engine/listaidevice.py:408
 msgid ""
 "Allow auto completion when \n"
 "                                       user filling the gaps."
@@ -1240,7 +1490,7 @@ msgstr ""
 "Zet automatisch aanvullen aan \n"
 "bij invullen van de invulwoorden."
 
-#: exe/engine/field.py:3255
+#: exe/engine/field.py:3272
 msgid ""
 "<p>If left unchecked a small number of spelling and capitalization errors"
 " will be accepted. If checked only an exact match in spelling and "
@@ -1270,11 +1520,11 @@ msgstr ""
 "\"Olifant\". Zet u nu \"Hoofdlettergevoelig\" uit, dan wordt ook "
 "\"olifant\" aanvaard.</p>"
 
-#: exe/engine/field.py:3286
+#: exe/engine/field.py:3303
 msgid "<p>If this option is set, the score will be shown.</p>"
 msgstr "<p>Als deze optie is geselecteerd zal de score worden getoond.</p> "
 
-#: exe/engine/field.py:3365 exe/engine/field.py:3409
+#: exe/engine/field.py:3382 exe/engine/field.py:3426
 msgid ""
 "Only select .swf (Flash Objects) for \n"
 "this iDevice."
@@ -1282,7 +1532,7 @@ msgstr ""
 "Kies uitsluitend .swf (Flash-objecten) voor\n"
 "dit iDevice."
 
-#: exe/engine/field.py:3429 exe/engine/field.py:3493
+#: exe/engine/field.py:3446 exe/engine/field.py:3510
 msgid ""
 "Only select .flv (Flash Video Files) for \n"
 "this iDevice."
@@ -1290,11 +1540,11 @@ msgstr ""
 "Kies uitsluitend .flv (Flash-videobestanden)\n"
 "voor dit iDevice."
 
-#: exe/engine/field.py:3505
+#: exe/engine/field.py:3522
 msgid "Type a discussion topic here."
 msgstr "Geef een discussie-onderwerp."
 
-#: exe/engine/field.py:3534
+#: exe/engine/field.py:3551
 msgid ""
 "<p>Select symbols from the text editor below or enter LATEX manually to "
 "create mathematical formula. To preview your LATEX as it will display use"
@@ -1304,7 +1554,7 @@ msgstr ""
 "wiskundige formules toe. Klik op de &lt;Preview&gt-knop om uw LATEX te "
 "bekijken."
 
-#: exe/engine/field.py:3542
+#: exe/engine/field.py:3559
 msgid ""
 "Click on Preview button to convert \n"
 "                                  the latex into an image."
@@ -1312,28 +1562,52 @@ msgstr ""
 "Klik op de Preview-knop om de LATEX\n"
 "naar een afbeelding om te zetten."
 
-#: exe/engine/field.py:3610 exe/engine/field.py:3659
+#: exe/engine/field.py:3627 exe/engine/field.py:3693
 #: exe/engine/quiztestidevice.py:48 exe/engine/quiztestidevice.py:98
-#: exe/webui/element.py:2087 exe/webui/element.py:2142
-#: exe/webui/element.py:2474 exe/webui/element.py:2566
+#: exe/webui/element.py:2172 exe/webui/element.py:2704
 #: exe/webui/testoptionelement.py:106 exe/webui/testoptionelement.py:168
 msgid "Option"
 msgstr "Alternatief"
 
-#: exe/engine/field.py:3688 exe/engine/field.py:3754
+#: exe/engine/field.py:3637 exe/engine/field.py:3702
+#, fuzzy
+msgid "Score"
+msgstr "Bekijk de score"
+
+#: exe/engine/field.py:3638 exe/engine/field.py:3703
+msgid "Score for this answer"
+msgstr ""
+
+#: exe/engine/field.py:3643 exe/engine/field.py:3644 exe/engine/field.py:3709
+#: exe/engine/field.py:3710
+msgid "Branching Type"
+msgstr ""
+
+#: exe/engine/field.py:3647 exe/engine/field.py:3648 exe/engine/field.py:3713
+#: exe/engine/field.py:3714
+#, fuzzy
+msgid "Branch To"
+msgstr "Frans"
+
+#: exe/engine/field.py:3736
+#, fuzzy
+msgid "Enter the question here."
+msgstr "Voer hier de tekst van het label in"
+
+#: exe/engine/field.py:3744 exe/engine/field.py:3815
 #: exe/engine/truefalseidevice.py:53 exe/engine/truefalseidevice.py:128
 #: exe/engine/verdaderofalsofpdidevice.py:54
 #: exe/engine/verdaderofalsofpdidevice.py:129 exe/webui/common.py:194
 msgid "Hint"
 msgstr "Hint"
 
-#: exe/engine/field.py:3776 exe/engine/field.py:3813 exe/webui/element.py:2279
+#: exe/engine/field.py:3837 exe/engine/field.py:3875 exe/webui/element.py:2316
 #: exe/webui/testquestionelement.py:110
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 msgid "Options"
 msgstr "Alternatieven"
 
-#: exe/engine/field.py:3836
+#: exe/engine/field.py:3898
 msgid ""
 "Enter the question stem. \n"
 "The question should be clear and unambiguous. Avoid negative premises as "
@@ -1345,15 +1619,15 @@ msgstr ""
 "beweringen\n"
 "want deze zijn vaak misleidend."
 
-#: exe/engine/field.py:3839 exe/engine/field.py:3920
+#: exe/engine/field.py:3901 exe/engine/field.py:3984
 #: exe/engine/quiztestidevice.py:129 exe/engine/quiztestidevice.py:221
 #: exe/engine/truefalseidevice.py:46 exe/engine/truefalseidevice.py:122
 #: exe/engine/verdaderofalsofpdidevice.py:47
-#: exe/engine/verdaderofalsofpdidevice.py:123 exe/webui/element.py:2254
+#: exe/engine/verdaderofalsofpdidevice.py:123 exe/webui/element.py:2286
 msgid "Question:"
 msgstr "Vraag:"
 
-#: exe/engine/field.py:3844
+#: exe/engine/field.py:3907
 msgid ""
 "Enter the available choices here. \n"
 "You can add options by clicking the \"Add another option\" button. Delete"
@@ -1367,7 +1641,7 @@ msgstr ""
 "de\n"
 "\"x\" naast een alternatief."
 
-#: exe/engine/field.py:3848
+#: exe/engine/field.py:3911
 msgid ""
 "Select as many correct answer \n"
 "options as required by clicking the check box beside the option."
@@ -1375,7 +1649,7 @@ msgstr ""
 "Duid alle juiste antwoorden aan\n"
 "die nodig zijn door het keuzerondje aan te klikken."
 
-#: exe/engine/field.py:3851
+#: exe/engine/field.py:3914
 msgid ""
 "Type in the feedback you want \n"
 "to provide the learner with."
@@ -1383,9 +1657,9 @@ msgstr ""
 "Voeg de feedback toe die u wilt\n"
 "tonen aan de studenten."
 
-#: exe/engine/field.py:3853 exe/engine/field.py:3923
-#: exe/engine/notaidevice.py:144 exe/engine/reflectionfpdidevice.py:68
-#: exe/engine/reflectionfpdidevice.py:203 exe/engine/reflectionidevice.py:66
+#: exe/engine/field.py:3916 exe/engine/field.py:3987
+#: exe/engine/notaidevice.py:145 exe/engine/reflectionfpdidevice.py:69
+#: exe/engine/reflectionfpdidevice.py:204 exe/engine/reflectionidevice.py:66
 #: exe/engine/reflectionidevice.py:200
 msgid "Feedback:"
 msgstr "Feedback:"
@@ -1403,13 +1677,19 @@ msgstr "Toughra Technologies FZ LLC."
 msgid "File Attachments Idevice."
 msgstr "Bijlagen iDevice"
 
+#: exe/engine/fileattachidevice.py:41
+msgid ""
+"Save files inside the project and provide a link to them allowing "
+"learners to downlad them.  Useful for handouts etc."
+msgstr ""
+
 #: exe/engine/fileattachidevice.py:45 exe/engine/fileattachidevice.py:66
-#: exe/engine/memorymatchidevice.py:59 exe/engine/memorymatchidevice.py:75
+#: exe/engine/memorymatchidevice.py:60 exe/engine/memorymatchidevice.py:76
 msgid "Yes"
 msgstr "Ja"
 
 #: exe/engine/fileattachidevice.py:45 exe/engine/fileattachidevice.py:66
-#: exe/engine/memorymatchidevice.py:59 exe/engine/memorymatchidevice.py:75
+#: exe/engine/memorymatchidevice.py:60 exe/engine/memorymatchidevice.py:76
 msgid "No"
 msgstr "Ne"
 
@@ -1542,12 +1822,11 @@ msgstr ""
 "Dit samen schept het kader waarin de leeractiviteiten worden gemaakt\n"
 "en aangeboden."
 
-#: exe/engine/freetextfpdidevice.py:46 exe/engine/freetextidevice.py:38
-#: exe/engine/freetextidevice.py:45
+#: exe/engine/freetextfpdidevice.py:46 exe/engine/freetextidevice.py:46
 msgid "Free Text"
 msgstr "Vrije tekst"
 
-#: exe/engine/freetextfpdidevice.py:47 exe/engine/freetextidevice.py:46
+#: exe/engine/freetextfpdidevice.py:47 exe/engine/freetextidevice.py:47
 msgid ""
 "Use this field to enter text. This \n"
 "iDevice has no emphasis applied although limited formatting can be "
@@ -1558,9 +1837,19 @@ msgstr ""
 "werkt niet met nadruk, maar met de opmaakknoppen die bij het veld horen\n"
 "kan de opmaak toch in beperkte mate worden verfraaid."
 
-#: exe/engine/freetextfpdidevice.py:122 exe/engine/freetextidevice.py:130
+#: exe/engine/freetextfpdidevice.py:122 exe/engine/freetextidevice.py:132
 msgid "This is a free text field general learning content can be entered."
 msgstr "Dit is een vrij tekstveld om algemene leerinhoud in te voeren"
+
+#: exe/engine/freetextidevice.py:38
+msgid "Free Text/Media"
+msgstr ""
+
+#: exe/engine/freetextidevice.py:44
+msgid ""
+"Add rich text without any specific heading - include images, audio, "
+"video, tables, etc."
+msgstr ""
 
 #: exe/engine/galleryidevice.py:140 exe/engine/galleryidevice.py:191
 msgid "No Thumbnail Available. Could not load original image."
@@ -1597,11 +1886,17 @@ msgstr ""
 msgid "Use this Idevice if you have a lot of images to show."
 msgstr "Gebruik dit iDevice om een groot aantal afbeeldingen te tonen."
 
-#: exe/engine/galleryidevice.py:472
+#: exe/engine/galleryidevice.py:468
+msgid ""
+"Make a gallery of images; will generate thumbnails and learner can select"
+" each individually"
+msgstr ""
+
+#: exe/engine/galleryidevice.py:473
 msgid "Enter a title for the gallery"
 msgstr "Geef een titel voor de galerij"
 
-#: exe/engine/galleryidevice.py:473
+#: exe/engine/galleryidevice.py:474
 msgid ""
 "Click on the Add images button to select an image file. The image will "
 "appear below where you will be able to label it. It's always good "
@@ -1611,157 +1906,196 @@ msgstr ""
 "afbeelding wordt getoond en u kan een label toevoegen. Tip: vermeld de "
 "bestandsgrootte in het label."
 
-#: exe/engine/genericidevice.py:302 exe/engine/idevicestore.py:663
+#: exe/engine/genericidevice.py:310 exe/engine/idevicestore.py:682
 msgid "Reading Activity 0.11"
 msgstr "Leesactiviteit 0.11"
 
-#: exe/engine/genericidevice.py:304 exe/engine/idevicestore.py:510
-#: exe/engine/idevicestore.py:554
+#: exe/engine/genericidevice.py:312 exe/engine/idevicestore.py:529
+#: exe/engine/idevicestore.py:573
 msgid "Reading Activity"
 msgstr "Leesactiviteit"
 
-#: exe/engine/hangmanidevice.py:51
+#: exe/engine/hangmanidevice.py:52
 msgid "Hangman Game"
 msgstr "Galgje"
 
-#: exe/engine/hangmanidevice.py:52
-msgid "Mike Dawson, Toughra Technologies FZ LLC"
-msgstr "Mike Dawson, Toughra Technologies FZ LLC"
-
 #: exe/engine/hangmanidevice.py:53
+msgid "Mike Dawson, UstadMobile Ltd"
+msgstr ""
+
+#: exe/engine/hangmanidevice.py:54
 msgid "Hangman style word game with customizable images."
 msgstr "Galge-stijl woordspel met aanpasbare afbeeldingen."
 
-#: exe/engine/hangmanidevice.py:61
+#: exe/engine/hangmanidevice.py:56
+msgid ""
+"Student has to guess letters from alphabet from a hint to complete word."
+"  Each wrong letter guessed gets the student closer to losing a life"
+msgstr ""
+
+#: exe/engine/hangmanidevice.py:66
 msgid "Instructions for Game."
 msgstr "Spelaanwijzingen "
 
-#: exe/engine/hangmanidevice.py:76
+#: exe/engine/hangmanidevice.py:67
+msgid ""
+"\n"
+"                          Enter the instructions for the\n"
+"                          student here<br/>E.g. Guess the \n"
+"                          word from the hint and click on\n"
+"                           letters you think are in the word."
+msgstr ""
+
+#: exe/engine/hangmanidevice.py:92
 msgid "Alphabet to Select From"
 msgstr "Alfabet waaruit een kjeuze gemaakt moet worden"
 
-#: exe/engine/hangmanidevice.py:76
+#: exe/engine/hangmanidevice.py:92
 msgid "Alphabet to show players"
 msgstr "Alfabet dat aan spelers getoond wordt"
 
-#: exe/engine/hangmanidevice.py:77
+#: exe/engine/hangmanidevice.py:93
 msgid "abcdefghijklmnopqrstuvwxyz"
 msgstr "abcdefghijklmnopqrstuvwxyz"
 
-#: exe/engine/hangmanidevice.py:83
+#: exe/engine/hangmanidevice.py:99
 msgid "Letter Button Style"
 msgstr "Stijl van de Letter-knop"
 
-#: exe/engine/hangmanidevice.py:84
+#: exe/engine/hangmanidevice.py:100
 msgid "Style of button to start with"
 msgstr "Stijl van de Start-knop"
 
-#: exe/engine/hangmanidevice.py:87
+#: exe/engine/hangmanidevice.py:103
 msgid "Letter Button Style Wrong Guess"
 msgstr "Stijl van de knop \"Fout geraden\""
 
-#: exe/engine/hangmanidevice.py:88
+#: exe/engine/hangmanidevice.py:104
 msgid "Style of letter button after wrong guess"
 msgstr "Stijl van de letter-knop na onjuist geraden te hebben"
 
-#: exe/engine/hangmanidevice.py:91
+#: exe/engine/hangmanidevice.py:107
 msgid "Letter Button Style Right Guess"
 msgstr "Stijl van de knop \"Juist geraden\""
 
-#: exe/engine/hangmanidevice.py:92
+#: exe/engine/hangmanidevice.py:108
 msgid "Style of letter button after correct guess"
 msgstr "Stijl van de Letter-knop na juist geraden te hebben"
 
-#: exe/engine/hangmanidevice.py:95
+#: exe/engine/hangmanidevice.py:111
 msgid "Style of Hint Text Field"
 msgstr "Stijl van het Hint-veld"
 
-#: exe/engine/hangmanidevice.py:95
+#: exe/engine/hangmanidevice.py:111
 msgid "Hint Text Field CSS"
 msgstr "CSS van hint-veld"
 
-#: exe/engine/hangmanidevice.py:98
+#: exe/engine/hangmanidevice.py:114
 msgid "Style of Word Display Field"
 msgstr "Stijl van het weergave veld voor het woord"
 
-#: exe/engine/hangmanidevice.py:98
+#: exe/engine/hangmanidevice.py:114
 msgid "Word Display CSS"
 msgstr "Woord weergave CSS"
 
-#: exe/engine/hangmanidevice.py:101
+#: exe/engine/hangmanidevice.py:117
 msgid "Restart Level Button Text"
 msgstr "Tekst van de \"Restart level\" knop"
 
-#: exe/engine/hangmanidevice.py:101
+#: exe/engine/hangmanidevice.py:117
 msgid "Text for reset button"
 msgstr "Tekst van de Reset-knop"
 
-#: exe/engine/hangmanidevice.py:101 exe/webui/element.py:1446
-#: exe/webui/element.py:1702
+#: exe/engine/hangmanidevice.py:117 exe/webui/element.py:1454
+#: exe/webui/element.py:1710
 msgid "Restart"
 msgstr "Herstarten"
 
-#: exe/engine/hangmanidevice.py:104
+#: exe/engine/hangmanidevice.py:120
 msgid "Restart Level Button Style (CSS)"
 msgstr "Stijl van de \"Herstart-level\" knop"
 
-#: exe/engine/hangmanidevice.py:104
+#: exe/engine/hangmanidevice.py:120
 msgid "Style of Reset Button"
 msgstr "Stijl van de Reset-knop"
 
-#: exe/engine/hangmanidevice.py:108 exe/engine/hangmanidevice.py:170
+#: exe/engine/hangmanidevice.py:124 exe/engine/hangmanidevice.py:189
 msgid "Wrong Guess Message"
 msgstr "Medeling \"Verkeerd geraden\""
 
-#: exe/engine/hangmanidevice.py:109 exe/engine/hangmanidevice.py:171
+#: exe/engine/hangmanidevice.py:125 exe/engine/hangmanidevice.py:190
 msgid "Player will see this message when they guess a letter wrong"
 msgstr "De speler ziet deze mededeling als ze een letter verkeerd raden"
 
-#: exe/engine/hangmanidevice.py:111 exe/engine/hangmanidevice.py:158
+#: exe/engine/hangmanidevice.py:126
+msgid ""
+"Enter here the message the player\n"
+"                 will see when they make a wrong letter guess"
+msgstr ""
+
+#: exe/engine/hangmanidevice.py:129 exe/engine/hangmanidevice.py:177
 msgid "Lost Level Message"
 msgstr "Medeling \"Level verloren\""
 
-#: exe/engine/hangmanidevice.py:112 exe/engine/hangmanidevice.py:159
+#: exe/engine/hangmanidevice.py:130 exe/engine/hangmanidevice.py:178
 msgid "Player will see this message when they loose the level"
 msgstr "De speler ziet deze mededeling als ze een level verliezen"
 
-#: exe/engine/hangmanidevice.py:114 exe/engine/hangmanidevice.py:162
+#: exe/engine/hangmanidevice.py:131
+msgid ""
+"Enter here the message the player\n"
+"                 will see when they have used up all their chances"
+msgstr ""
+
+#: exe/engine/hangmanidevice.py:134 exe/engine/hangmanidevice.py:181
 msgid "Level Passed Message"
 msgstr "Mededeling \"level gehaald\""
 
-#: exe/engine/hangmanidevice.py:115 exe/engine/hangmanidevice.py:163
+#: exe/engine/hangmanidevice.py:135 exe/engine/hangmanidevice.py:182
 msgid "Player will see this message when they guess the word correctly"
 msgstr "De speler ziet deze mededeling als ze een woord juist raden"
 
-#: exe/engine/hangmanidevice.py:117 exe/engine/hangmanidevice.py:166
+#: exe/engine/hangmanidevice.py:136
+msgid ""
+"Enter here the message the player\n"
+"                 will see when they successfully complete a word"
+msgstr ""
+
+#: exe/engine/hangmanidevice.py:139 exe/engine/hangmanidevice.py:185
 msgid "Game Won Message"
 msgstr "Mededeling \"Spel gewonnen\""
 
-#: exe/engine/hangmanidevice.py:118 exe/engine/hangmanidevice.py:167
+#: exe/engine/hangmanidevice.py:140 exe/engine/hangmanidevice.py:186
 msgid "Player will see this message when they guess all words correctly"
 msgstr "De speler ziet deze boodschap als ze alle woorden juist geraden hebben"
 
-#: exe/engine/hangmanidevice.py:142
-msgid "chance"
-msgstr "kans"
+#: exe/engine/hangmanidevice.py:141
+msgid ""
+"Enter here the message the player\n"
+"                 will see when they have guessed all the words on the list"
+msgstr ""
 
-#: exe/engine/hangmanidevice.py:148
-msgid "Word to Guess"
-msgstr "Woord dat geraden moet worden"
+#: exe/engine/hangmanidevice.py:153
+msgid "Image for this chance"
+msgstr ""
 
-#: exe/engine/hangmanidevice.py:148
-msgid "Word To Guess"
-msgstr "Woord dat geraden moet worden"
-
-#: exe/engine/hangmanidevice.py:150
+#: exe/engine/hangmanidevice.py:164
 msgid "Hint to Show User"
 msgstr "Hint voor de gebruiker"
 
-#: exe/engine/hangmanidevice.py:150
+#: exe/engine/hangmanidevice.py:164
 msgid "Hint for Word"
 msgstr "Hint voor het woord"
 
-#: exe/engine/idevicestore.py:557
+#: exe/engine/hangmanidevice.py:168
+msgid "Word to Guess"
+msgstr "Woord dat geraden moet worden"
+
+#: exe/engine/hangmanidevice.py:169
+msgid "Word To Guess"
+msgstr "Woord dat geraden moet worden"
+
+#: exe/engine/idevicestore.py:576
 msgid ""
 "<p>The Reading Activity will primarily \n"
 "be used to check a learner's comprehension of a given text. This can be "
@@ -1780,7 +2114,7 @@ msgstr ""
 "een andere opdracht te laten uitvoeren die gebaseerd is op de inhoud van "
 "de tekst."
 
-#: exe/engine/idevicestore.py:562
+#: exe/engine/idevicestore.py:581
 msgid ""
 "<p>Teachers should keep the following in mind when using this iDevice: "
 "</p><ol><li>Think about the number of different types of activity planned"
@@ -1804,11 +2138,11 @@ msgstr ""
 "activiteiten waarvan het nut opweegt tegen de tijd en moeite die het kost"
 " om ze tot een goed einde te brengen. </li></ol>"
 
-#: exe/engine/idevicestore.py:597 exe/engine/idevicestore.py:706
+#: exe/engine/idevicestore.py:616 exe/engine/idevicestore.py:725
 msgid "What to read"
 msgstr "Wat gelezen moet worden"
 
-#: exe/engine/idevicestore.py:598 exe/engine/idevicestore.py:707
+#: exe/engine/idevicestore.py:617 exe/engine/idevicestore.py:726
 msgid ""
 "Enter the details of the reading including reference details. The \n"
 "referencing style used will depend on the preference of your faculty or \n"
@@ -1818,14 +2152,14 @@ msgstr ""
 "De precieze opmaak van de bronvermelding hangt af van de afspraken\n"
 "binnen uw afdeling, departement of faculteit."
 
-#: exe/engine/idevicestore.py:601 exe/engine/idevicestore.py:640
-#: exe/engine/idevicestore.py:648 exe/engine/idevicestore.py:710
-#: exe/engine/idevicestore.py:747 exe/engine/idevicestore.py:755
+#: exe/engine/idevicestore.py:620 exe/engine/idevicestore.py:659
+#: exe/engine/idevicestore.py:667 exe/engine/idevicestore.py:729
+#: exe/engine/idevicestore.py:766 exe/engine/idevicestore.py:774
 #: exe/webui/questionelement.py:109
 msgid "Activity"
 msgstr "Activiteit"
 
-#: exe/engine/idevicestore.py:602 exe/engine/idevicestore.py:711
+#: exe/engine/idevicestore.py:621 exe/engine/idevicestore.py:730
 msgid ""
 "Describe the tasks related to the reading learners should undertake. \n"
 "This helps demonstrate relevance for learners."
@@ -1834,7 +2168,7 @@ msgstr ""
 "tot de leesopdracht. Dit helpt de reden van de leesactiviteit "
 "verduidelijken."
 
-#: exe/engine/idevicestore.py:606 exe/engine/idevicestore.py:715
+#: exe/engine/idevicestore.py:625 exe/engine/idevicestore.py:734
 msgid ""
 "Use feedback to provide a summary of the points covered in the reading, \n"
 "or as a starting point for further analysis of the reading by posing a "
@@ -1847,14 +2181,14 @@ msgstr ""
 "discussie\n"
 "op gang te helpen."
 
-#: exe/engine/idevicestore.py:612 exe/engine/idevicestore.py:621
-#: exe/engine/idevicestore.py:719 exe/engine/idevicestore.py:728
-#: exe/engine/package.py:649 exe/engine/package.py:660
+#: exe/engine/idevicestore.py:631 exe/engine/idevicestore.py:640
+#: exe/engine/idevicestore.py:738 exe/engine/idevicestore.py:747
+#: exe/engine/package.py:700 exe/engine/package.py:711
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:202
 msgid "Objectives"
 msgstr "Doelstellingen"
 
-#: exe/engine/idevicestore.py:615 exe/engine/idevicestore.py:722
+#: exe/engine/idevicestore.py:634 exe/engine/idevicestore.py:741
 msgid ""
 "Objectives describe the expected outcomes of the learning and should\n"
 "define what the learners will be able to do when they have completed the\n"
@@ -1865,18 +2199,18 @@ msgstr ""
 "Deze geven aan wat de student heeft bijgeleerd na het voltooien van de\n"
 "leeropdrachten."
 
-#: exe/engine/idevicestore.py:622 exe/engine/idevicestore.py:729
+#: exe/engine/idevicestore.py:641 exe/engine/idevicestore.py:748
 msgid "Type the learning objectives for this resource."
 msgstr "Geef de leerdoelstellingen voor deze bron."
 
-#: exe/engine/idevicestore.py:625 exe/engine/idevicestore.py:635
-#: exe/engine/idevicestore.py:732 exe/engine/idevicestore.py:742
-#: exe/engine/package.py:679 exe/engine/package.py:690
+#: exe/engine/idevicestore.py:644 exe/engine/idevicestore.py:654
+#: exe/engine/idevicestore.py:751 exe/engine/idevicestore.py:761
+#: exe/engine/package.py:730 exe/engine/package.py:741
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:216
 msgid "Preknowledge"
 msgstr "Voorkennis"
 
-#: exe/engine/idevicestore.py:628 exe/engine/idevicestore.py:735
+#: exe/engine/idevicestore.py:647 exe/engine/idevicestore.py:754
 msgid ""
 "Prerequisite knowledge refers to the knowledge learners should already\n"
 "have in order to be able to effectively complete the learning. Examples "
@@ -1894,7 +2228,7 @@ msgstr ""
 "<li>        De student moet een elektrisch schema kunnen tekenen en lezen"
 " </li></ul>\n"
 
-#: exe/engine/idevicestore.py:636 exe/engine/idevicestore.py:743
+#: exe/engine/idevicestore.py:655 exe/engine/idevicestore.py:762
 msgid ""
 "Describe the prerequisite knowledge learners should have to effectively\n"
 "complete this learning."
@@ -1902,7 +2236,7 @@ msgstr ""
 "Beschrijf de voorkennis die nodig is om de leeropdacht tot een goed\n"
 "einde te kunnen brengen."
 
-#: exe/engine/idevicestore.py:643 exe/engine/idevicestore.py:750
+#: exe/engine/idevicestore.py:662 exe/engine/idevicestore.py:769
 msgid ""
 "An activity can be defined as a task or set of tasks a learner must\n"
 "complete. Provide a clear statement of the task and consider any "
@@ -1914,11 +2248,11 @@ msgstr ""
 "let op elementen die de student kunnen helpen of hinderen bij het "
 "uitvoeren."
 
-#: exe/engine/idevicestore.py:649 exe/engine/idevicestore.py:756
+#: exe/engine/idevicestore.py:668 exe/engine/idevicestore.py:775
 msgid "Describe the tasks the learners should complete."
 msgstr "Beschrijf de opdracht die moet worden uitgevoerd."
 
-#: exe/engine/idevicestore.py:666
+#: exe/engine/idevicestore.py:685
 msgid ""
 "<p>The reading activity, as the name \n"
 "suggests, should ask the learner to perform some form of activity. This "
@@ -1934,7 +2268,7 @@ msgstr ""
 "moet lezen. Gepaste feedback kan de leerling helpen reflecteren over de "
 "tekst.</p>"
 
-#: exe/engine/idevicestore.py:671
+#: exe/engine/idevicestore.py:690
 msgid ""
 "Teachers should keep the following in mind when using this iDevice: "
 "<ol><li>Think about the number of different types of activity planned for"
@@ -1972,11 +2306,15 @@ msgstr ""
 "Met het vergrootglas kan de leerling inzoomen op\n"
 "de afbeelding en er de details van bestuderen."
 
-#: exe/engine/imagemagnifieridevice.py:49
+#: exe/engine/imagemagnifieridevice.py:48
+msgid "Allow learners to magnify a given view of an image"
+msgstr ""
+
+#: exe/engine/imagemagnifieridevice.py:50
 msgid "Choose an Image"
 msgstr "Kies een afbeelding"
 
-#: exe/engine/imagemagnifieridevice.py:49
+#: exe/engine/imagemagnifieridevice.py:50
 msgid ""
 "Click \n"
 "on the picture below or the \"Add Image\" button to select an image file "
@@ -1987,13 +2325,13 @@ msgstr ""
 "op de afbeelding beneden of op de knop \"Afbeelding toevoegen\" om een\n"
 "afbeelding te vergroten."
 
-#: exe/engine/imagemagnifieridevice.py:54 exe/engine/imagewithtextidevice.py:65
-#: exe/engine/multimediaidevice.py:64 exe/webui/listablock.py:169
+#: exe/engine/imagemagnifieridevice.py:55 exe/engine/imagewithtextidevice.py:65
+#: exe/engine/multimediaidevice.py:64 exe/webui/listablock.py:170
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 msgid "Text"
 msgstr "Tekst"
 
-#: exe/engine/imagemagnifieridevice.py:55 exe/engine/multimediaidevice.py:65
+#: exe/engine/imagemagnifieridevice.py:56 exe/engine/multimediaidevice.py:65
 msgid ""
 "Enter the text you wish to \n"
 "associate with the file."
@@ -2001,7 +2339,7 @@ msgstr ""
 "Geef de tekst die bij dit bestand\n"
 "hoort."
 
-#: exe/engine/imagemagnifieridevice.py:60
+#: exe/engine/imagemagnifieridevice.py:61
 msgid ""
 "Provide a caption for the \n"
 "image to be magnified."
@@ -2009,7 +2347,7 @@ msgstr ""
 "Geef een titel voor de\n"
 "in te zoomen afbeelding."
 
-#: exe/engine/imagemagnifieridevice.py:62
+#: exe/engine/imagemagnifieridevice.py:63
 msgid ""
 "Choose the size you want \n"
 "your image to display at. The measurements are in pixels. Generally, 100"
@@ -2024,8 +2362,8 @@ msgstr ""
 "overeen met ca. 3 cm. Laat beide velden leeg om de afbeelding in de\n"
 "originele grootte te tonen."
 
-#: exe/engine/imagemagnifieridevice.py:66
-#: exe/engine/imagemagnifieridevice.py:142
+#: exe/engine/imagemagnifieridevice.py:67
+#: exe/engine/imagemagnifieridevice.py:143
 msgid ""
 "Alignment allows you to \n"
 "choose where on the screen the image will be positioned."
@@ -2033,8 +2371,8 @@ msgstr ""
 "Met uitlijning bepaalt u waar \n"
 "de afbeelding op het scherm komt."
 
-#: exe/engine/imagemagnifieridevice.py:68
-#: exe/engine/imagemagnifieridevice.py:144
+#: exe/engine/imagemagnifieridevice.py:69
+#: exe/engine/imagemagnifieridevice.py:145
 msgid ""
 "Set the initial level of zoom \n"
 "when the IDevice loads, as a percentage of the original image size"
@@ -2043,8 +2381,8 @@ msgstr ""
 "bij het openen van het iDevice, in percent van de originele "
 "afbeeldingsgrootte."
 
-#: exe/engine/imagemagnifieridevice.py:70
-#: exe/engine/imagemagnifieridevice.py:146
+#: exe/engine/imagemagnifieridevice.py:71
+#: exe/engine/imagemagnifieridevice.py:147
 msgid ""
 "Set the maximum level of zoom, \n"
 "as a percentage of the original image size"
@@ -2052,17 +2390,67 @@ msgstr ""
 "Stel de maximumzoomwaarde in,\n"
 "in percent van de originele afbeeldingsgrootte."
 
-#: exe/engine/imagemagnifieridevice.py:72
+#: exe/engine/imagemagnifieridevice.py:73
 msgid "Select the size of the magnifying glass"
 msgstr "Kies de grootte van het vergrootglas"
 
-#: exe/engine/imagemagnifieridevice.py:148
+#: exe/engine/imagemagnifieridevice.py:149
 msgid ""
 "This chooses the initial size \n"
 "of the magnifying glass"
 msgstr ""
 "Dit bepaalt de begininstelling\n"
 "van het vergrootglas"
+
+#: exe/engine/imagemapidevice.py:25
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:54
+msgid "Image Map"
+msgstr "Afbeeldingsplattegrond"
+
+#: exe/engine/imagemapidevice.py:26
+msgid "Mike Dawson, Ustad Mobile"
+msgstr ""
+
+#: exe/engine/imagemapidevice.py:27
+msgid "Image Map Idevice with tooltips, sound support."
+msgstr ""
+
+#: exe/engine/imagemapidevice.py:42
+#, fuzzy
+msgid "Use for map background"
+msgstr "Achtergrond van de koptekst"
+
+#: exe/engine/imagemapidevice.py:106
+#, fuzzy
+msgid "Image Map Area"
+msgstr "Afbeeldingsplattegrond"
+
+#: exe/engine/imagemapidevice.py:111
+msgid "Popup tooltip"
+msgstr ""
+
+#: exe/engine/imagemapidevice.py:116
+msgid "Area Shape"
+msgstr ""
+
+#: exe/engine/imagemapidevice.py:117
+#, fuzzy
+msgid "Rectangle"
+msgstr "Oranje"
+
+#: exe/engine/imagemapidevice.py:118 exe/engine/imagemapidevice.py:131
+#, fuzzy
+msgid "Activate When"
+msgstr "actief"
+
+#: exe/engine/imagemapidevice.py:119 exe/engine/imagemapidevice.py:132
+msgid "Only when user clicks or taps the area"
+msgstr ""
+
+#: exe/engine/imagemapidevice.py:120 exe/engine/imagemapidevice.py:133
+msgid "User clicks, taps, or mouse hovers over area"
+msgstr ""
 
 #: exe/engine/imagewithtextidevice.py:43
 msgid "Image with Text"
@@ -2144,7 +2532,7 @@ msgstr ""
 "Geef een naam voor de\n"
 "zojuist toegevoegde afbeelding."
 
-#: exe/engine/listaidevice.py:66
+#: exe/engine/listaidevice.py:66 exe/webui/listablock.py:393
 msgid "DropDown Activity"
 msgstr "Selectielijst activiteit"
 
@@ -2214,19 +2602,25 @@ msgstr ""
 "vragen de  test/oefening uit te proberen om zeker te weten dat er geen "
 "verrassingen zijn! </p>  </dd></dl>"
 
-#: exe/engine/listaidevice.py:130
+#: exe/engine/listaidevice.py:128
+msgid ""
+"Fill in the blank exercise - blanks are shown as a dropdown menu that "
+"student uses to make selection for missing word."
+msgstr ""
+
+#: exe/engine/listaidevice.py:131
 msgid "Provide instruction on how the dropdown activity should be completed."
 msgstr "Geef informatie over hoe de Selectielijst activiteit moet worden afgerond"
 
-#: exe/engine/listaidevice.py:131
+#: exe/engine/listaidevice.py:132
 msgid "Read and complete"
 msgstr "Lees en vul aan"
 
-#: exe/engine/listaidevice.py:133
+#: exe/engine/listaidevice.py:134
 msgid "Dropdown"
 msgstr "Selectielijst"
 
-#: exe/engine/listaidevice.py:134
+#: exe/engine/listaidevice.py:135
 msgid ""
 "<p>Enter the text for the dropdown activity in to the dropdown field \n"
 "by either pasting text from another source or by typing text directly "
@@ -2240,11 +2634,27 @@ msgstr ""
 "kiezen: klik dubbel op een woord om het te selecteren en klik vervolgens "
 "op de 'Toon/verberg' knop hieronder. <p>"
 
-#: exe/engine/listaidevice.py:292
+#: exe/engine/listaidevice.py:139
+msgid ""
+"Enter the complete text here, \n"
+"                   then hilight and click Hide/Show Word on the words\n"
+"                   you want the learner to fill in.  In each blank\n"
+"                   space will be a dropdown menu with a list of hidden\n"
+"                   words to choose from."
+msgstr ""
+
+#: exe/engine/listaidevice.py:149
+msgid ""
+"Enter feedback to show the learner \n"
+"                     after completion here.  It will be shown regardless\n"
+"                     of their score"
+msgstr ""
+
+#: exe/engine/listaidevice.py:301
 msgid "Read the paragraph below and choose the correct words"
 msgstr "Lees de alinea hieronder en kies de juiste woorden"
 
-#: exe/engine/listaidevice.py:351
+#: exe/engine/listaidevice.py:361
 msgid ""
 "<p>Optional: Write other words to complete the dropdown activity.</br>Use"
 " | (vertical bar ) to separate words.</br>This field can be left blank. "
@@ -2254,23 +2664,15 @@ msgstr ""
 "ronden. </br>gebruik | (verticale streep ) om woorden van elkaar te "
 "scheiden.</br> Dit veld kan open gelaten worden. </p>"
 
-#: exe/engine/locationbuttons.py:29 exe/engine/locationbuttons.py:33
-#: exe/engine/locationbuttons.py:37
+#: exe/engine/locationbuttons.py:33 exe/engine/locationbuttons.py:37
+#: exe/engine/locationbuttons.py:41
 msgid "Desktop"
 msgstr "Bureaublad"
 
-#: exe/engine/locationbuttons.py:30
-msgid "My Documents"
-msgstr "Mijn Documenten"
-
-#: exe/engine/locationbuttons.py:31 exe/engine/locationbuttons.py:35
-#: exe/engine/locationbuttons.py:39
+#: exe/engine/locationbuttons.py:35 exe/engine/locationbuttons.py:39
+#: exe/engine/locationbuttons.py:43
 msgid "Home Folder"
 msgstr "Home-map"
-
-#: exe/engine/locationbuttons.py:34 exe/engine/locationbuttons.py:38
-msgid "Documents"
-msgstr "Documenten"
 
 #: exe/engine/mathidevice.py:41 exe/engine/mathidevice.py:54
 msgid "Maths"
@@ -2312,197 +2714,230 @@ msgstr "Memory spel"
 msgid "Memory Match Game Maker."
 msgstr "Memory spel maker."
 
-#: exe/engine/memorymatchidevice.py:55
-msgid "Instructions to show"
-msgstr "Aanwijzingen die getoond moeten worden"
+#: exe/engine/memorymatchidevice.py:48
+msgid ""
+"Game of matching pairs; student can click to reveal two at a time; after "
+"which they are re-hidden.  Student has to remember locations to match up "
+"all pairs. "
+msgstr ""
 
-#: exe/engine/memorymatchidevice.py:56
+#: exe/engine/memorymatchidevice.py:57
 msgid "Number of Rows"
 msgstr "AAntal rijen"
 
-#: exe/engine/memorymatchidevice.py:57
+#: exe/engine/memorymatchidevice.py:58
 msgid "Number of Columns"
 msgstr "Aantal kolommen"
 
-#: exe/engine/memorymatchidevice.py:58
+#: exe/engine/memorymatchidevice.py:59
 msgid "Split Question/Answer Pairs"
 msgstr "Scheid vraag/antwoord paren"
 
-#: exe/engine/memorymatchidevice.py:60
+#: exe/engine/memorymatchidevice.py:61
 msgid "Feedback to show on correct match"
 msgstr "Feedback die bij juiste match getoond wordt"
 
-#: exe/engine/memorymatchidevice.py:60
+#: exe/engine/memorymatchidevice.py:61
 msgid "Positive Feedback"
 msgstr "Positieve feedback"
 
-#: exe/engine/memorymatchidevice.py:61
+#: exe/engine/memorymatchidevice.py:62
 msgid "Feedback to show on incorrect pair"
 msgstr "Feedback die getoond wordt bij onjuiste combinatie"
 
-#: exe/engine/memorymatchidevice.py:61
+#: exe/engine/memorymatchidevice.py:62
 msgid "Negative Feedback"
 msgstr "Negatieve feedback"
 
-#: exe/engine/memorymatchidevice.py:62
+#: exe/engine/memorymatchidevice.py:63
 msgid "Style of Feedback Area (CSS)"
 msgstr "Stijl van het feedback-veld"
 
-#: exe/engine/memorymatchidevice.py:62
+#: exe/engine/memorymatchidevice.py:63
 msgid "CSS style for feedback area"
 msgstr "CSS stijl voor feedback-veld"
 
-#: exe/engine/memorymatchidevice.py:63
+#: exe/engine/memorymatchidevice.py:64
 msgid "Width of Cells (in pixels)"
 msgstr "Celbreedte (pixels)"
 
-#: exe/engine/memorymatchidevice.py:63
+#: exe/engine/memorymatchidevice.py:64
 msgid "Cell Width px"
 msgstr "Cel breedte (px)"
 
-#: exe/engine/memorymatchidevice.py:64
+#: exe/engine/memorymatchidevice.py:65
 msgid "Height of Cells (in pixels)"
 msgstr "Celhoogte (Pixels)"
 
-#: exe/engine/memorymatchidevice.py:64
+#: exe/engine/memorymatchidevice.py:65
 msgid "Cell Height px"
 msgstr "Celhoogte px"
 
-#: exe/engine/memorymatchidevice.py:65
+#: exe/engine/memorymatchidevice.py:66
 msgid "Time after which to re-hide incorrect match (ms)"
 msgstr "Tijd waarna een onjuiste combinatie opnieuw verborgen wordt"
 
-#: exe/engine/memorymatchidevice.py:65
+#: exe/engine/memorymatchidevice.py:66
 msgid "Time to hide"
 msgstr "Tij"
 
-#: exe/engine/memorymatchidevice.py:66
+#: exe/engine/memorymatchidevice.py:67
 msgid "Cover Image for cells (shown before selected)"
 msgstr "Bedekkende afbeeding voor cellen (wordt getoond voordat ze gekozen worden)"
 
-#: exe/engine/memorymatchidevice.py:66
+#: exe/engine/memorymatchidevice.py:67
 msgid "Cover Img"
 msgstr "Hoesafbeelding"
 
-#: exe/engine/memorymatchidevice.py:67
+#: exe/engine/memorymatchidevice.py:68
 msgid "Background Image for cells (shown after selected)"
 msgstr "Achtergrond afbeelding voor cellen (getoond na selectie)"
 
-#: exe/engine/memorymatchidevice.py:67
+#: exe/engine/memorymatchidevice.py:68
 msgid "Back Img"
 msgstr "Achtergrondafbeelding"
 
-#: exe/engine/memorymatchidevice.py:68
+#: exe/engine/memorymatchidevice.py:69
 msgid "Background image behind cells shown as cells are hidden"
 msgstr ""
 "Achtergrond afbeelding achter cellen, die getoond wordt zodra cellen "
 "verborgen worden."
 
-#: exe/engine/memorymatchidevice.py:68
+#: exe/engine/memorymatchidevice.py:69
 msgid "Bg Img"
 msgstr "Achtergrond afbeelding"
 
-#: exe/engine/memorymatchidevice.py:69
+#: exe/engine/memorymatchidevice.py:70
 msgid "Effect for showing positive feedback"
 msgstr "Effect bij weergave positieve feedback"
 
-#: exe/engine/memorymatchidevice.py:69
+#: exe/engine/memorymatchidevice.py:70
 msgid "Positive Feedback Effect"
 msgstr "Effect bij positieve feedback"
 
-#: exe/engine/memorymatchidevice.py:71
+#: exe/engine/memorymatchidevice.py:72
 msgid "Effect for showing negative feedback"
 msgstr "Effect bij weergave negatieve feedback"
 
-#: exe/engine/memorymatchidevice.py:71
+#: exe/engine/memorymatchidevice.py:72
 msgid "Negative Feedback Effect"
 msgstr "Effect bij negatieve feedback"
 
-#: exe/engine/memorymatchidevice.py:73
+#: exe/engine/memorymatchidevice.py:74
 msgid "Show / Use a timer?"
 msgstr "Klok tonen / gebruiken?"
 
-#: exe/engine/memorymatchidevice.py:74
+#: exe/engine/memorymatchidevice.py:75
 msgid "Hide Cells after match made?"
 msgstr "Cellen verbergen na juiste combinatie?"
 
-#: exe/engine/memorymatchidevice.py:74
+#: exe/engine/memorymatchidevice.py:75
 msgid "Hide after match"
 msgstr "Verbergen na juiste combinatie"
 
-#: exe/engine/memorymatchidevice.py:76
+#: exe/engine/memorymatchidevice.py:77
 msgid "Effect when hiding cells after match"
 msgstr "Effect bij het verbergen van de cellen na een juiste combinatie"
 
-#: exe/engine/memorymatchidevice.py:76
+#: exe/engine/memorymatchidevice.py:77
 msgid "Hide after match effect"
 msgstr "Verberg na \"juiste-combinatie\"-effect"
 
-#: exe/engine/memorymatchidevice.py:78
+#: exe/engine/memorymatchidevice.py:79
 msgid "Cell Padding in table"
 msgstr "Cell Padding van tabel"
 
-#: exe/engine/memorymatchidevice.py:78
+#: exe/engine/memorymatchidevice.py:79
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 msgid "Cell Padding"
 msgstr "Ruimte in cel"
 
-#: exe/engine/memorymatchidevice.py:79
+#: exe/engine/memorymatchidevice.py:80
 msgid "Cell Spacing of table"
 msgstr "Celruimte in tabel"
 
-#: exe/engine/memorymatchidevice.py:79
+#: exe/engine/memorymatchidevice.py:80
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 msgid "Cell Spacing"
 msgstr "Ruimte om cel"
 
-#: exe/engine/memorymatchidevice.py:80
+#: exe/engine/memorymatchidevice.py:81
 msgid "Cell Default Style (CSS)"
 msgstr "Standaard stijl voor een cel (CSS)"
 
-#: exe/engine/memorymatchidevice.py:80
+#: exe/engine/memorymatchidevice.py:81
 msgid "Cell Style CSS"
 msgstr "Celopmaak CSS"
 
-#: exe/engine/memorymatchidevice.py:81
+#: exe/engine/memorymatchidevice.py:82
 msgid "Text of Timer Label"
 msgstr "Tekst van het timer label"
 
-#: exe/engine/memorymatchidevice.py:81
+#: exe/engine/memorymatchidevice.py:82
 msgid "Timer Text"
 msgstr "Tekst bij de klok"
 
-#: exe/engine/memorymatchidevice.py:82
+#: exe/engine/memorymatchidevice.py:83
 msgid "CSS of Timer Field"
 msgstr "CSS van het timer veld"
 
-#: exe/engine/memorymatchidevice.py:82
+#: exe/engine/memorymatchidevice.py:83
 msgid "Timer CSS"
 msgstr "CSS van de Timer"
 
-#: exe/engine/memorymatchidevice.py:152
+#: exe/engine/memorymatchidevice.py:153
 msgid "Memory Match Pair Field"
 msgstr "Correct Memory-combinatie veld"
 
-#: exe/engine/memorymatchidevice.py:157
+#: exe/engine/memorymatchidevice.py:158
 msgid "Match Tile 1"
 msgstr "Identieke tegel 1"
 
-#: exe/engine/memorymatchidevice.py:157
+#: exe/engine/memorymatchidevice.py:158
 msgid "Match Tile1"
 msgstr "Identieke Tegel 1"
 
-#: exe/engine/memorymatchidevice.py:158
+#: exe/engine/memorymatchidevice.py:159
 msgid "Match Tile 2"
 msgstr "Identieke Tegel 2"
 
-#: exe/engine/memorymatchidevice.py:158
+#: exe/engine/memorymatchidevice.py:159
 msgid "Match Tile2"
 msgstr "Identieke tegel 2"
 
-#: exe/engine/multichoiceidevice.py:60
+#: exe/engine/multichoiceidevice.py:60 exe/webui/multichoiceblock.py:110
 msgid "Multi-choice"
 msgstr "Meerkeuzevraag"
+
+#: exe/engine/multichoiceidevice.py:88
+msgid "Multiple choice question with one right answer per question"
+msgstr ""
+
+#: exe/engine/multichoiceidevice.py:133
+msgid ""
+"Enter your question\n"
+"                          here you can use text, images, and media"
+msgstr ""
+
+#: exe/engine/multichoiceidevice.py:135
+msgid ""
+"(Optional) Enter a hint \n"
+"                         here and a hint popup button will appear \n"
+"                         to show this hint"
+msgstr ""
+
+#: exe/engine/multichoiceidevice.py:139
+msgid ""
+"Enter an option for the answer here - you\n"
+"             can use text, images, and media"
+msgstr ""
+
+#: exe/engine/multichoiceidevice.py:141
+msgid ""
+"Enter the feedback to show if the \n"
+"            student selects this option here - you can use text\n"
+"            , images, and media"
+msgstr ""
 
 #: exe/engine/multimediaidevice.py:40 exe/webui/editorelement.py:285
 msgid "MP3"
@@ -2553,6 +2988,19 @@ msgstr ""
 msgid "Multi-select"
 msgstr "Meervoudige selectie"
 
+#: exe/engine/multiselectidevice.py:84
+msgid ""
+"Enter a question that has one or more correct answers here. You can use "
+"text, images and media.  A list with checkboxes will be shown to "
+"students, and they check select all correct answers."
+msgstr ""
+
+#: exe/engine/multiselectidevice.py:85
+msgid ""
+"Enter an option for the answer here; click the toggle on the left to "
+"indicate if this answer is correct or incorrect."
+msgstr ""
+
 #: exe/engine/notaidevice.py:44
 msgid "Note"
 msgstr "OPmerking"
@@ -2561,7 +3009,13 @@ msgstr "OPmerking"
 msgid "exelearning.net"
 msgstr "exelearning.net"
 
-#: exe/engine/notaidevice.py:53
+#: exe/engine/notaidevice.py:48
+msgid ""
+"Post-it style note that student can click on the heading to reveal the "
+"note's contents"
+msgstr ""
+
+#: exe/engine/notaidevice.py:54
 msgid "Comment:"
 msgstr "kommentaar:"
 
@@ -2605,31 +3059,31 @@ msgstr "Begeleding leraar - tekst"
 msgid "Guidelines Teacher Text:"
 msgstr "Begeleiding leraar - tekst:"
 
-#: exe/engine/package.py:326
+#: exe/engine/package.py:331
 msgid "Topic"
 msgstr "Onderwerp"
 
-#: exe/engine/package.py:326
+#: exe/engine/package.py:331
 msgid "Section"
 msgstr "Element"
 
-#: exe/engine/package.py:326
+#: exe/engine/package.py:331
 msgid "Unit"
 msgstr "Eenheid"
 
-#: exe/engine/package.py:347
+#: exe/engine/package.py:353
 msgid "Home"
 msgstr "Start"
 
-#: exe/engine/package.py:499
+#: exe/engine/package.py:535
 msgid "Metadata creation date"
 msgstr "Aanmaakdatum metadata"
 
-#: exe/engine/package.py:996
+#: exe/engine/package.py:1053
 msgid "?????"
 msgstr "?????"
 
-#: exe/engine/package.py:1034 exe/engine/package.py:1041
+#: exe/engine/package.py:1091 exe/engine/package.py:1098
 #, python-format
 msgid ""
 "SAVE FAILED!\n"
@@ -2638,16 +3092,22 @@ msgstr ""
 "OPSLAAN MISLUKT!\n"
 "Laatst succesvol opgeslagen is %s."
 
-#: exe/engine/package.py:1445 exe/jsui/scripts/app/controller/Toolbar.js:352
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:355
+#: exe/engine/package.py:1775 exe/jsui/scripts/app/controller/Toolbar.js:1164
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:26
+#, fuzzy
+msgid "Untitled Project"
+msgstr "echt project"
+
+#: exe/engine/package.py:1848 exe/jsui/scripts/app/controller/Toolbar.js:429
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:378
 msgid "iDevice Editor"
 msgstr "iDevice-editor"
 
-#: exe/engine/package.py:1566
+#: exe/engine/package.py:1969
 msgid "My Catalog"
 msgstr "Mijn catalogus"
 
-#: exe/engine/package.py:1573
+#: exe/engine/package.py:1976
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 msgid "Default"
@@ -2691,121 +3151,126 @@ msgstr "Mike Dawson / PAIWASTOON Networking Services Ltd."
 msgid "User has to place various objects in the correct place."
 msgstr "De gebruiker moet de verschillende voorwerpen op de juiste plaats leggen"
 
-#: exe/engine/placetheobjectsidevice.py:53 exe/idevices/exampleidevice.py:45
+#: exe/engine/placetheobjectsidevice.py:52
+#, fuzzy
+msgid "Student has to place objects in their correct place on a diagram"
+msgstr "De gebruiker moet de verschillende voorwerpen op de juiste plaats leggen"
+
+#: exe/engine/placetheobjectsidevice.py:54 exe/idevices/exampleidevice.py:45
 msgid "This is a free text field."
 msgstr "Dit is een tekstveld."
 
-#: exe/engine/placetheobjectsidevice.py:61
+#: exe/engine/placetheobjectsidevice.py:62
 msgid "Main Area"
 msgstr "Centrale gebied"
 
-#: exe/engine/placetheobjectsidevice.py:62
+#: exe/engine/placetheobjectsidevice.py:63
 msgid "This is the main image where the user will drag / drop items to"
 msgstr ""
 "Dit is het centrale gebied waar de gebruiker voorwerpen naartoe  moet "
 "slepen en leggen"
 
-#: exe/engine/placetheobjectsidevice.py:66
+#: exe/engine/placetheobjectsidevice.py:67
 msgid "Time Limit (mm:ss)"
 msgstr "Tijdslimiet (mm:ss)"
 
-#: exe/engine/placetheobjectsidevice.py:66
+#: exe/engine/placetheobjectsidevice.py:67
 msgid "(Optional) Game Time Limit"
 msgstr "(Optioneel) Tijdslimiet van het spel"
 
-#: exe/engine/placetheobjectsidevice.py:68
+#: exe/engine/placetheobjectsidevice.py:69
 msgid "Show Timer"
 msgstr "Toon klok"
 
-#: exe/engine/placetheobjectsidevice.py:68
+#: exe/engine/placetheobjectsidevice.py:69
 msgid "Even if there is no time limit, show the timer..."
 msgstr "Toon de klok, ook al is er geen tijdslimiet..."
 
-#: exe/engine/placetheobjectsidevice.py:72
+#: exe/engine/placetheobjectsidevice.py:73
 msgid "Message to click game to start"
 msgstr "Mededeling \"Clik om het spel te beginnen\""
 
-#: exe/engine/placetheobjectsidevice.py:72
+#: exe/engine/placetheobjectsidevice.py:73
 msgid "This will when clicked start the game"
 msgstr "Het spel begint nadat hierop geklikt wordt"
 
-#: exe/engine/placetheobjectsidevice.py:74
+#: exe/engine/placetheobjectsidevice.py:75
 msgid "Positive Response"
 msgstr "positieve reactie"
 
-#: exe/engine/placetheobjectsidevice.py:74
+#: exe/engine/placetheobjectsidevice.py:75
 msgid "Overlays main area when player correctly places object"
 msgstr "Hoofdgebied van overlay nadat de speler een object juist heeft geplaatst"
 
-#: exe/engine/placetheobjectsidevice.py:76
+#: exe/engine/placetheobjectsidevice.py:77
 msgid "Negative Response"
 msgstr "Negatief antwoord"
 
-#: exe/engine/placetheobjectsidevice.py:76
+#: exe/engine/placetheobjectsidevice.py:77
 msgid "Overlays main area when player guesses wrong"
 msgstr "Hoofdgebeid van de overlay nadat de speler verkeerd heeft geraden"
 
-#: exe/engine/placetheobjectsidevice.py:79
+#: exe/engine/placetheobjectsidevice.py:80
 msgid "Number of Columns in part bin"
 msgstr "AAntal kolommen in onderdelenmagazijn"
 
-#: exe/engine/placetheobjectsidevice.py:79
+#: exe/engine/placetheobjectsidevice.py:80
 msgid "Columns part bin"
 msgstr "Kolommen onderdelenemagazijn"
 
-#: exe/engine/placetheobjectsidevice.py:90
+#: exe/engine/placetheobjectsidevice.py:91
 msgid "Object to Place"
 msgstr "Te plaatsen object"
 
-#: exe/engine/placetheobjectsidevice.py:118
+#: exe/engine/placetheobjectsidevice.py:119
 msgid "An object that has a correct place in the main area"
 msgstr "EEn voorwerp dat juist geplaatst is in het hoofdveld"
 
-#: exe/engine/placetheobjectsidevice.py:120
+#: exe/engine/placetheobjectsidevice.py:121
 msgid "Placable Object"
 msgstr "Plaatsbeer voorwerp"
 
-#: exe/engine/placetheobjectsidevice.py:120
+#: exe/engine/placetheobjectsidevice.py:121
 msgid "Object to be put in place"
 msgstr "Voorwerp dat op zijn plaats gelegd moet worden"
 
-#: exe/engine/placetheobjectsidevice.py:124
+#: exe/engine/placetheobjectsidevice.py:125
 msgid "Correct Location (x)"
 msgstr "Juiste locatie (x)"
 
-#: exe/engine/placetheobjectsidevice.py:124
+#: exe/engine/placetheobjectsidevice.py:125
 msgid "Where this object belongs in the main area x coordinate"
 msgstr "Waar dit voorwerp thuis hoort op de x-coordinat van het centrale gebied "
 
-#: exe/engine/placetheobjectsidevice.py:127
+#: exe/engine/placetheobjectsidevice.py:128
 msgid "Correct Location (y)"
 msgstr "Juiste locatie (y)"
 
-#: exe/engine/placetheobjectsidevice.py:127
+#: exe/engine/placetheobjectsidevice.py:128
 msgid "Where this object belongs in the main area y coordinate"
 msgstr "Waar dit voorwerp thuis hoort op de y-coordinat van het centrale gebied "
 
-#: exe/engine/placetheobjectsidevice.py:130
+#: exe/engine/placetheobjectsidevice.py:131
 msgid "Width (pixels)"
 msgstr "Breedte (pixels)"
 
-#: exe/engine/placetheobjectsidevice.py:130
+#: exe/engine/placetheobjectsidevice.py:131
 msgid "Width of object"
 msgstr "Breedte van het object"
 
-#: exe/engine/placetheobjectsidevice.py:133
+#: exe/engine/placetheobjectsidevice.py:134
 msgid "Height (pixels)"
 msgstr "Hoogte (Pixels)"
 
-#: exe/engine/placetheobjectsidevice.py:133
+#: exe/engine/placetheobjectsidevice.py:134
 msgid "Height of object"
 msgstr "Hoogte van het object"
 
-#: exe/engine/placetheobjectsidevice.py:136
+#: exe/engine/placetheobjectsidevice.py:137
 msgid "Tolerance (pixels)"
 msgstr "Speling (Pixels)"
 
-#: exe/engine/placetheobjectsidevice.py:136
+#: exe/engine/placetheobjectsidevice.py:137
 msgid "Tolerance when dropping num of pixels"
 msgstr "Speling als het aantal pixels verlaagd wordt"
 
@@ -2850,6 +3315,30 @@ msgstr ""
 "heeft\n"
 "kunnen instuderen of de vaardigheid heeft kunnen oefenen.\n"
 " "
+
+#: exe/engine/readabilityutil.py:159
+msgid "Words Per Page"
+msgstr ""
+
+#: exe/engine/readabilityutil.py:175
+msgid "Syllables Per Word"
+msgstr ""
+
+#: exe/engine/readabilityutil.py:179
+msgid "Word Count"
+msgstr ""
+
+#: exe/engine/readabilityutil.py:184
+msgid "Words Per Sentence"
+msgstr ""
+
+#: exe/engine/readabilityutil.py:189
+msgid "Number words total per unique word"
+msgstr ""
+
+#: exe/engine/readabilityutil.py:194
+msgid "Total number of unique words"
+msgstr ""
 
 #: exe/engine/recomendacionfpdidevice.py:30
 msgid "FPD - A Piece of Advice"
@@ -2898,6 +3387,12 @@ msgstr ""
 "middelen voor feedback."
 
 #: exe/engine/reflectionfpdidevice.py:57
+msgid ""
+"Rich text with a button below, which when clicked, will reveal another "
+"rich text area for feedback"
+msgstr ""
+
+#: exe/engine/reflectionfpdidevice.py:58
 #: exe/engine/reflectionfpdmodifidevice.py:56
 #: exe/engine/reflectionidevice.py:55
 msgid ""
@@ -2907,7 +3402,7 @@ msgstr ""
 "Geef een vraag op waarover\n"
 "gereflecteerd moet worden."
 
-#: exe/engine/reflectionfpdidevice.py:59
+#: exe/engine/reflectionfpdidevice.py:60
 msgid ""
 "Describe how learners will assess how \n"
 "they have done in the exercise. (Rubrics are useful devices for providing"
@@ -2918,7 +3413,7 @@ msgstr ""
 "kan beoordelen. (Rubrics zijn meestal goede instrumenten voor\n"
 "reflectieve feedback.)"
 
-#: exe/engine/reflectionfpdidevice.py:64 exe/engine/reflectionfpdidevice.py:200
+#: exe/engine/reflectionfpdidevice.py:65 exe/engine/reflectionfpdidevice.py:201
 #: exe/engine/reflectionfpdmodifidevice.py:63
 #: exe/engine/reflectionfpdmodifidevice.py:199
 #: exe/engine/reflectionidevice.py:62 exe/engine/reflectionidevice.py:197
@@ -2944,13 +3439,13 @@ msgstr ""
 " oefening gedaan hebben (Rubrieken zijn bruikbare instrumenten voor "
 "reflectieve feedback)."
 
-#: exe/engine/resource.py:597
+#: exe/engine/resource.py:598
 msgid ""
 "renamed a Resource for an Applet Idevice, and it should not have even "
 "made it this far!"
 msgstr "hernoem een bron voor een Applet iDevice, om dit te vermijden"
 
-#: exe/engine/rssidevice.py:40 exe/engine/rssidevice.py:48
+#: exe/engine/rssidevice.py:40 exe/engine/rssidevice.py:49
 msgid "RSS"
 msgstr "RSS"
 
@@ -2964,7 +3459,11 @@ msgstr ""
 "om nieuwe inhoud naar een individuele computer te versturen. Met dit\n"
 " iDevice kun je koppelingen van een RSS feed aanbieden aan de studenten."
 
-#: exe/engine/rssidevice.py:51
+#: exe/engine/rssidevice.py:47
+msgid "Show an RSS newsfeed on the page"
+msgstr ""
+
+#: exe/engine/rssidevice.py:52
 msgid ""
 "Enter an RSS URL for the RSS feed you \n"
 "want to attach to your content. Feeds are often identified by a small "
@@ -2997,7 +3496,7 @@ msgstr ""
 " toont ze op het scherm. Vanaf dan kun je deze bewerken en extra\n"
 " opdrachten of informatie toevoegen."
 
-#: exe/engine/rssidevice.py:110 exe/engine/rssidevice.py:113
+#: exe/engine/rssidevice.py:111 exe/engine/rssidevice.py:114
 #, python-format
 msgid ""
 "Unable to load RSS feed from %s <br/>Please check the spelling and "
@@ -3018,96 +3517,124 @@ msgstr "Groepeer de voorwe"
 msgid "Sortable list of items."
 msgstr "Sorteerbare lijst van voorwerpen"
 
-#: exe/engine/sortidevice.py:52 exe/engine/sortidevice.py:134
+#: exe/engine/sortidevice.py:48
+msgid ""
+"Learner has to sort items which are shuffled randomly into their correct "
+"order"
+msgstr ""
+
+#: exe/engine/sortidevice.py:53 exe/engine/sortidevice.py:148
+#: exe/engine/textinputidevice.py:44
 msgid "Title to show"
 msgstr "Te tonen titel"
 
-#: exe/engine/sortidevice.py:53
+#: exe/engine/sortidevice.py:55
 msgid "Instructions before sortable list"
 msgstr "Aanwijzingen voor studenten"
 
-#: exe/engine/sortidevice.py:54
-msgid "Correctly Sorted Overlay"
+#: exe/engine/sortidevice.py:56
+msgid ""
+"Put here instructions for what the user should do - e.g. sort the list "
+"from highest to lowest"
+msgstr ""
+
+#: exe/engine/sortidevice.py:57
+#, fuzzy
+msgid "Correctly Sorted Feedback"
 msgstr "Medeling \"Juist gesorteerd\""
 
-#: exe/engine/sortidevice.py:54
+#: exe/engine/sortidevice.py:58
 msgid "Shown when check is clicked and correct"
 msgstr "Wordt getoond als \"Controleer\" is geklikt en het resultaat is juist"
 
-#: exe/engine/sortidevice.py:55
-msgid "Wrongly Sorted Overlay"
+#: exe/engine/sortidevice.py:59
+msgid ""
+"Put here the feedback that will appear when the user correctly sorts the "
+"list and clicks the check button.  You can add media/images too."
+msgstr ""
+
+#: exe/engine/sortidevice.py:60
+#, fuzzy
+msgid "Wrongly Sorted Feedback"
 msgstr "Mededeling \"Verkeerd gesorteerd\""
 
-#: exe/engine/sortidevice.py:55
+#: exe/engine/sortidevice.py:61
 msgid "Shown when check is clicked and wrong"
 msgstr "getoond als de knop \"Check\" is geklikt bij onjuiste combinatie"
 
-#: exe/engine/sortidevice.py:56
+#: exe/engine/sortidevice.py:62
+msgid ""
+"Put here the feedback that will appear when the user has not correctly "
+"sorted the list and clicks the check button.  You can add media/images "
+"too."
+msgstr ""
+
+#: exe/engine/sortidevice.py:63
 msgid "Effect for showing correct overlay"
 msgstr "Effect voor het tonen van de juiste overlay"
 
-#: exe/engine/sortidevice.py:56
+#: exe/engine/sortidevice.py:63
 msgid "Effect showing correct overlay"
 msgstr "Effect tijdens het tonen van de juiste overlay"
 
-#: exe/engine/sortidevice.py:58
+#: exe/engine/sortidevice.py:65
 msgid "Effect showing wrong answer overlay"
 msgstr "Effect tijdens het tonen van de verkeerde overlay"
 
-#: exe/engine/sortidevice.py:58
+#: exe/engine/sortidevice.py:65
 msgid "Effect for showing wrong overlay"
 msgstr "Effect voor het tonen van de verkeerde overlay"
 
-#: exe/engine/sortidevice.py:60
+#: exe/engine/sortidevice.py:67
 msgid "Text for Check Button"
 msgstr "Tekst voor de knop \"controleren\""
 
-#: exe/engine/sortidevice.py:61 exe/webui/listablock.py:271
-#: exe/webui/listablock.py:273
+#: exe/engine/sortidevice.py:68 exe/webui/listablock.py:276
+#: exe/webui/listablock.py:278
 msgid "Check"
 msgstr "Controleer"
 
-#: exe/engine/sortidevice.py:62
+#: exe/engine/sortidevice.py:69
 msgid "Check Button Style (CSS)"
 msgstr "Stijl van de Controle-knop (CSS)"
 
-#: exe/engine/sortidevice.py:62
+#: exe/engine/sortidevice.py:69
 msgid "CSS for check button"
 msgstr "CSS voor de Controle-knop "
 
-#: exe/engine/sortidevice.py:63
+#: exe/engine/sortidevice.py:70
 msgid "Width of an item in the list (px)"
 msgstr "Breedte van een item in de lijst (px)"
 
-#: exe/engine/sortidevice.py:63
+#: exe/engine/sortidevice.py:70
 msgid "width"
 msgstr "Breedte"
 
-#: exe/engine/sortidevice.py:64
+#: exe/engine/sortidevice.py:71
 msgid "Height of an item in the list (px)"
 msgstr "Hoogte van een item in de lijst (px)"
 
-#: exe/engine/sortidevice.py:64
+#: exe/engine/sortidevice.py:71
 msgid "height"
 msgstr "Hoogte"
 
-#: exe/engine/sortidevice.py:65
+#: exe/engine/sortidevice.py:72
 msgid "Style (CSS) for sortable items"
 msgstr "Sijl (CSS) van de te sorteren items "
 
-#: exe/engine/sortidevice.py:65
+#: exe/engine/sortidevice.py:72
 msgid "Sortable Item CSS"
 msgstr "Sorteerbaar item CSS"
 
-#: exe/engine/sortidevice.py:66 exe/engine/sortidevice.py:117
+#: exe/engine/sortidevice.py:73 exe/engine/sortidevice.py:131
 msgid "Sort Direction"
 msgstr "Sorteerrichting"
 
-#: exe/engine/sortidevice.py:76 exe/engine/sortidevice.py:118
+#: exe/engine/sortidevice.py:83 exe/engine/sortidevice.py:132
 msgid "Top To Bottom"
 msgstr "Van boven naar onder"
 
-#: exe/engine/sortidevice.py:77 exe/engine/sortidevice.py:118
+#: exe/engine/sortidevice.py:84 exe/engine/sortidevice.py:132
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:57
@@ -3117,7 +3644,7 @@ msgstr "Van boven naar onder"
 msgid "Left to Right"
 msgstr "Van links naar rechts"
 
-#: exe/engine/sortidevice.py:78 exe/engine/sortidevice.py:118
+#: exe/engine/sortidevice.py:85 exe/engine/sortidevice.py:132
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:56
@@ -3127,13 +3654,49 @@ msgstr "Van links naar rechts"
 msgid "Right to Left"
 msgstr "Van rechts naar links"
 
-#: exe/engine/sortidevice.py:92
+#: exe/engine/sortidevice.py:104
 msgid "Sortable Item"
 msgstr "Sorteerbaar item"
 
-#: exe/engine/sortidevice.py:92
+#: exe/engine/sortidevice.py:105
 msgid "Text / Content of sortable item"
 msgstr "Tekst/ Inhoud van nde te sorteren items"
+
+#: exe/engine/sortidevice.py:106
+#, python-format
+msgid ""
+"Put an item to be sorted in here - you can put in text, images, and "
+"media.<br/>E.g. Item %s"
+msgstr ""
+
+#: exe/engine/textinputidevice.py:37
+#, fuzzy
+msgid "Text Input"
+msgstr "Tekstregel"
+
+#: exe/engine/textinputidevice.py:38
+#, fuzzy
+msgid "UstadMobile Inc."
+msgstr "Ustad Mobile"
+
+#: exe/engine/textinputidevice.py:39
+msgid "Text Input and record to XAPI."
+msgstr ""
+
+#: exe/engine/textinputidevice.py:47
+#, fuzzy
+msgid "Put here instructions for what the user should do"
+msgstr "Geef aanwijzingen voor de studenten"
+
+#: exe/engine/textinputidevice.py:48
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
+msgid "Rows"
+msgstr "Rijen"
+
+#: exe/engine/textinputidevice.py:49
+#, fuzzy
+msgid "Cols"
+msgstr "Kolommen"
 
 #: exe/engine/truefalseidevice.py:144
 msgid "True-False Question"
@@ -3154,7 +3717,11 @@ msgstr ""
 "geschikt\n"
 "voor feitelijke informatie en voor ofwel/ofwel-antwoorden."
 
-#: exe/engine/truefalseidevice.py:151
+#: exe/engine/truefalseidevice.py:150
+msgid "Question that can be either true or false"
+msgstr ""
+
+#: exe/engine/truefalseidevice.py:152
 #: exe/engine/verdaderofalsofpdidevice.py:153
 msgid ""
 "A hint may be provided to assist the \n"
@@ -3163,7 +3730,7 @@ msgstr ""
 "U kan een tip toevoegen die helpt\n"
 "om de vraag te beantwoorden."
 
-#: exe/engine/truefalseidevice.py:154
+#: exe/engine/truefalseidevice.py:155
 #: exe/engine/verdaderofalsofpdidevice.py:156
 msgid ""
 "Type the question stem. The question \n"
@@ -3176,7 +3743,7 @@ msgstr ""
 "want deze\n"
 "leiden vaak tot misverstanden."
 
-#: exe/engine/truefalseidevice.py:158
+#: exe/engine/truefalseidevice.py:159
 #: exe/engine/verdaderofalsofpdidevice.py:160
 msgid ""
 "Enter any feedback you wish to provide \n"
@@ -3187,7 +3754,7 @@ msgstr ""
 "Vul hier feedback in. Het veld mag ook \n"
 "leeg blijven, dan wordt de standaard feedback gegeven."
 
-#: exe/engine/truefalseidevice.py:165 exe/engine/truefalseidevice.py:392
+#: exe/engine/truefalseidevice.py:166 exe/engine/truefalseidevice.py:393
 #: exe/engine/verdaderofalsofpdidevice.py:167
 #: exe/engine/verdaderofalsofpdidevice.py:395
 msgid ""
@@ -3197,7 +3764,7 @@ msgstr ""
 "Geef aanwijzingen om de Waar/Niet waar-vraag op\n"
 "te lossen."
 
-#: exe/engine/truefalseidevice.py:372
+#: exe/engine/truefalseidevice.py:373
 #: exe/engine/verdaderofalsofpdidevice.py:375
 msgid ""
 "Type in the feedback that you want the \n"
@@ -3247,11 +3814,15 @@ msgstr ""
 "Wikipedia.</p><p>Artikelen uit Wikipedia vallen onder de regels van GNU "
 "free documentation</p>"
 
-#: exe/engine/wikipediaidevice.py:65
+#: exe/engine/wikipediaidevice.py:63
+msgid "Download and insert an article from Wikipedia into this project"
+msgstr ""
+
+#: exe/engine/wikipediaidevice.py:66
 msgid "Article"
 msgstr "Artikel"
 
-#: exe/engine/wikipediaidevice.py:70 exe/engine/wikipediaidevice.py:359
+#: exe/engine/wikipediaidevice.py:71 exe/engine/wikipediaidevice.py:360
 msgid ""
 "Select the appropriate language version \n"
 "of Wikipedia to search and enter search term."
@@ -3259,7 +3830,7 @@ msgstr ""
 "Selecteer de gewenste taalversie van\n"
 "Wikipedia en voer de zoekterm in."
 
-#: exe/engine/wikipediaidevice.py:72 exe/engine/wikipediaidevice.py:361
+#: exe/engine/wikipediaidevice.py:73 exe/engine/wikipediaidevice.py:362
 msgid ""
 "Enter a phrase or term you wish to search \n"
 "within Wikipedia."
@@ -3267,7 +3838,7 @@ msgstr ""
 "Geef een term of omschrijving die u wil\n"
 "opzoeken in Wikipedia."
 
-#: exe/engine/wikipediaidevice.py:98 exe/engine/wikipediaidevice.py:137
+#: exe/engine/wikipediaidevice.py:99 exe/engine/wikipediaidevice.py:138
 #, python-format
 msgid ""
 "Unable to download from %s <br/>Please check the spelling and connection "
@@ -3276,7 +3847,7 @@ msgstr ""
 "Download onmogelijk vanaf %s <br/>Controleer de spelling en het adres en "
 "probeer opnieuw."
 
-#: exe/engine/wikipediaidevice.py:313
+#: exe/engine/wikipediaidevice.py:314
 msgid "http://en.wikipedia.org/"
 msgstr "http://en.wikipedia.org/"
 
@@ -3294,17 +3865,17 @@ msgstr ""
 "Om help te tonen:\n"
 "%prog -h"
 
-#: exe/exe_do:75
+#: exe/exe_do:75 exe/run-exe_do.py:72
 msgid "Set ELP field values. Example: -s style=Default,root.title='Root Node'"
 msgstr ""
 "Voer de waarden van ELP velden in. Voorbeeld: -s "
 "stijl=Default,root.title='Root Node'"
 
-#: exe/exe_do:78
+#: exe/exe_do:78 exe/run-exe_do.py:75
 msgid "Set ELP field values options"
 msgstr "Voer de opties van de ELP velden in. "
 
-#: exe/exe_do:79
+#: exe/exe_do:79 exe/run-exe_do.py:76
 msgid ""
 "Once you have chosen Set ELP field values option using '-s <values>' or"
 "     '--set <values>', it's possible to configure the following options:"
@@ -3314,11 +3885,11 @@ msgstr ""
 "     '--set <waarden.', is het mogelijk om de volgende opties in te "
 "stellen:"
 
-#: exe/exe_do:84
+#: exe/exe_do:84 exe/run-exe_do.py:81
 msgid "Write field values to ELP"
 msgstr "Schrijf veldwaarden naar de ELP"
 
-#: exe/exe_do:90
+#: exe/exe_do:90 exe/run-exe_do.py:87
 msgid ""
 "Generates resource info report to text <output_file> from <input_file> "
 "elp package"
@@ -3336,7 +3907,7 @@ msgstr ""
 "van de volgende formaten: xml, scorm12, scorm2004, ims, website, website,"
 " webzip,enkele webpagina, xliff of epub3."
 
-#: exe/exe_do:108
+#: exe/exe_do:108 exe/run-exe_do.py:101
 msgid ""
 "Import to <output_file> elp package, <input_file> in one of the given "
 "formats: xml or xliff."
@@ -3344,21 +3915,21 @@ msgstr ""
 "Importeer naar <output_file> elp bestand, <input_file> in een van de "
 "vogende bestandsformaten: xml or xliff."
 
-#: exe/exe_do:113
+#: exe/exe_do:113 exe/run-exe_do.py:106
 msgid "Force overwrite of <output_file>"
 msgstr "Overschijven <output_file> forceren"
 
-#: exe/exe_do:117
+#: exe/exe_do:117 exe/run-exe_do.py:110
 msgid "Add the required files to generate a export editable by eXeLearning"
 msgstr ""
 "Voeg de benodigde bestanden toe om een een exportbestand  aan te maken "
 "dat door eXe aangepast kan worden"
 
-#: exe/exe_do:122
+#: exe/exe_do:122 exe/run-exe_do.py:115
 msgid "XLIFF export options"
 msgstr "XLIFF export opties"
 
-#: exe/exe_do:123
+#: exe/exe_do:123 exe/run-exe_do.py:116
 msgid ""
 "Once you have chosen XLIFF export option using '-x xliff' or '--export "
 "xliff', it's possible to configure the following export options:"
@@ -3366,19 +3937,20 @@ msgstr ""
 "Nadat U de XLIFF export opties gekozen hebt m.b.v '-x xliff' of '--export"
 " xliff' is het mogelijk om de volgende export opties in te stellen:"
 
-#: exe/exe_do:128
+#: exe/exe_do:128 exe/run-exe_do.py:121
 msgid "Don't copy source in target"
 msgstr "Kopieer de bron niet naar het doel"
 
-#: exe/exe_do:133 exe/jsui/scripts/app/controller/Toolbar.js:630
+#: exe/exe_do:133 exe/run-exe_do.py:126
+#: exe/jsui/scripts/app/controller/Toolbar.js:707
 msgid "Wrap fields in CDATA"
 msgstr "Opsluitvelden in CDATA"
 
-#: exe/exe_do:138
+#: exe/exe_do:138 exe/run-exe_do.py:131
 msgid "XLIFF import options"
 msgstr "XLIFF import opties"
 
-#: exe/exe_do:139
+#: exe/exe_do:139 exe/run-exe_do.py:132
 msgid ""
 "Once you have chosen XLIFF import option using  '-i xliff' or '--import "
 "xliff', it's possible to configure the following import options:"
@@ -3386,15 +3958,16 @@ msgstr ""
 "Nadat U de XLIFF importopties hebt gekozen d.m.v. '-i xliff' of '--import"
 " xliff', is het mogelijk om de volgende import opties in te stellen:"
 
-#: exe/exe_do:144 exe/webui/xliffimportpreferencespage.py:79
+#: exe/exe_do:144 exe/run-exe_do.py:137
+#: exe/webui/xliffimportpreferencespage.py:79
 msgid "Import from source language"
 msgstr "Importeer van broncode"
 
-#: exe/exe_do:149
+#: exe/exe_do:149 exe/run-exe_do.py:142
 msgid "SCORM export options"
 msgstr "SCORM export opties"
 
-#: exe/exe_do:150
+#: exe/exe_do:150 exe/run-exe_do.py:143
 msgid ""
 "Once you have chosen one SCORM export option using '-x scorm12' or '-x "
 "scorm2004' or 'x agrega', it's possible to configure the following export"
@@ -3404,35 +3977,35 @@ msgstr ""
 "scorm2004' of 'x agrega', is het mogelijk om  de volgende exportopties in"
 " te stellen:"
 
-#: exe/exe_do:155
+#: exe/exe_do:155 exe/run-exe_do.py:148
 msgid "Include Single Page export file"
 msgstr "Voeg Single Paege export bestand in"
 
-#: exe/exe_do:160
+#: exe/exe_do:160 exe/run-exe_do.py:153
 msgid "Include Web Site export files"
 msgstr "Website exportbestanden opnemen"
 
-#: exe/exe_do:175
+#: exe/exe_do:182 exe/run-exe_do.py:175
 msgid "Options --export and --import are mutually exclusive."
 msgstr "Opties --export en --import sluiten elkaar uit "
 
-#: exe/exe_do:178
+#: exe/exe_do:185 exe/run-exe_do.py:178
 msgid "No --export, --import, --set or --report option supplied."
 msgstr "Geen --export, --import, --set or --report optie beschikbaar."
 
-#: exe/exe_do:182
+#: exe/exe_do:189 exe/run-exe_do.py:182
 msgid "No file input supplied."
 msgstr "Geen bestandsinvoer aangeleverd"
 
-#: exe/exe_do:191
+#: exe/exe_do:198 exe/run-exe_do.py:191
 msgid "Bad number of arguments supplied"
 msgstr "Onjuist aantal argumenten aangeleverd"
 
-#: exe/exe_do:208 exe/export/cmdlineexporter.py:84
+#: exe/exe_do:215 exe/run-exe_do.py:201 exe/export/cmdlineexporter.py:85
 msgid "Invalid input package"
 msgstr "Onjuist invoerbestand"
 
-#: exe/exe_do:228
+#: exe/exe_do:252 exe/run-exe_do.py:233
 #, python-format
 msgid ""
 "exe_do: error: Unable to set values from '%s'.\n"
@@ -3441,12 +4014,12 @@ msgstr ""
 "exe_do: fout: Kon de waarden van '%s' in aanpassen.\n"
 "De fout was:"
 
-#: exe/exe_do:246
+#: exe/exe_do:270 exe/run-exe_do.py:251
 #, python-format
 msgid "Successfully exported '%s' from '%s'."
 msgstr "'%s' succesvol uitgevoerd van '%s'."
 
-#: exe/exe_do:249
+#: exe/exe_do:273 exe/run-exe_do.py:254
 #, python-format
 msgid ""
 "exe_do: error: Unable to export from '%s'.\n"
@@ -3455,12 +4028,12 @@ msgstr ""
 "exe-do: fout: Kan niet exporteren van '%s'.\n"
 "De fout was:"
 
-#: exe/exe_do:257
+#: exe/exe_do:282 exe/run-exe_do.py:262
 #, python-format
 msgid "File '%s' successfully imported to '%s'."
 msgstr "Bestand '%s' met succes geimporteerd naar '%s'."
 
-#: exe/exe_do:260
+#: exe/exe_do:285 exe/run-exe_do.py:265
 #, python-format
 msgid ""
 "exe_do: error: Unable to import '%s'.\n"
@@ -3469,9 +4042,10 @@ msgstr ""
 "exe_do: fout: Kan  '%s' niet importeren.\n"
 "De fout was:"
 
-#: exe/export/cmdlineexporter.py:70 exe/jsui/mainpage.py:296
-#: exe/jsui/mainpage.py:940 exe/jsui/mainpage.py:1104 exe/jsui/mainpage.py:1145
-#: exe/jsui/mainpage.py:1180 exe/jsui/mainpage.py:1201
+#: exe/export/cmdlineexporter.py:71 exe/jsui/mainpage.py:706
+#: exe/jsui/mainpage.py:1459 exe/jsui/mainpage.py:1636
+#: exe/jsui/mainpage.py:1677 exe/jsui/mainpage.py:1712
+#: exe/jsui/mainpage.py:1733
 #, python-format
 msgid ""
 "\"%s\" already exists.\n"
@@ -3480,12 +4054,13 @@ msgstr ""
 "\"%s\" bestaat al.\n"
 "Probeer opnieuw een andere bestandsnaam"
 
-#: exe/export/cmdlineexporter.py:92
+#: exe/export/cmdlineexporter.py:93
 msgid "Export format not implemented"
 msgstr "Export bestandsindeling niet geďmplementeerd\t"
 
-#: exe/export/epub3export.py:593 exe/export/imsexport.py:569
-#: exe/export/scormexport.py:669 exe/export/websiteexport.py:96
+#: exe/export/epub3export.py:639 exe/export/imsexport.py:569
+#: exe/export/scormexport.py:669 exe/export/websiteexport.py:161
+#: exe/export/xmlexport.py:204
 #, python-format
 msgid ""
 "EXPORT FAILED!\n"
@@ -3588,21 +4163,26 @@ msgstr "Dit artikel valt onder de licensiebepalingen van"
 msgid "Local Version"
 msgstr "Locale versie"
 
-#: exe/export/scormpage.py:154 exe/export/websitepage.py:326
+#: exe/export/scormpage.py:154 exe/export/websitepage.py:392
 msgid "Previous"
 msgstr "Vorige"
 
-#: exe/export/scormpage.py:155 exe/export/websitepage.py:332
+#: exe/export/scormpage.py:155 exe/export/websitepage.py:398
 msgid "Next"
 msgstr "Volgende"
 
-#: exe/export/singlepage.py:199
+#: exe/export/singlepage.py:204
 msgid "You can close this window"
 msgstr "U kunt dit venster sluiten"
 
-#: exe/export/websitepage.py:136
+#: exe/export/websitepage.py:184
 msgid "Skip navigation"
 msgstr "Stop navigatie"
+
+#: exe/export/xmlexport.py:213
+#, fuzzy
+msgid "Table of Contents"
+msgstr "Sorteerbare lijst van voorwerpen"
 
 #: exe/idevices/exampleidevice.py:39
 msgid "Example Example"
@@ -3662,23 +4242,41 @@ msgstr "Berekening link-diepte"
 msgid "Inserting %s"
 msgstr "%s invoegen"
 
-#: exe/jsui/idevicepane.py:132
+#: exe/jsui/idevicepane.py:138
 msgid "My iDevices"
 msgstr "Mijn iDevices"
 
-#: exe/jsui/mainpage.py:314 exe/jsui/mainpage.py:779 exe/jsui/mainpage.py:932
+#: exe/jsui/mainpage.py:368
+msgid ""
+"\n"
+"            Sorry! It seems like your system is not setup for Feature "
+"Phone Preview.  \n"
+"            You need to install Java and Java 2 Micro Edition WTK.  For "
+"help go to\n"
+"            www.ustadmobile.com"
+msgstr ""
+
+#: exe/jsui/mainpage.py:390
+#, fuzzy
+msgid "Saved Preset"
+msgstr "vertegenwoordigen"
+
+#: exe/jsui/mainpage.py:623 exe/jsui/mainpage.py:761 exe/jsui/mainpage.py:1292
+#: exe/jsui/mainpage.py:1451
 msgid "Cannot access directory named "
 msgstr "Geen toegang tot de map"
 
-#: exe/jsui/mainpage.py:314 exe/jsui/mainpage.py:781 exe/jsui/mainpage.py:932
+#: exe/jsui/mainpage.py:623 exe/jsui/mainpage.py:761 exe/jsui/mainpage.py:1294
+#: exe/jsui/mainpage.py:1451
 msgid ". Please use ASCII names."
 msgstr ". Gebruik alleen ASCII-tekens."
 
-#: exe/jsui/mainpage.py:323
+#: exe/jsui/mainpage.py:632 exe/jsui/mainpage.py:771
 msgid "SAVE FAILED!"
 msgstr "OPSLAAN MISLUKT!"
 
-#: exe/jsui/mainpage.py:327 exe/jsui/mainpage.py:635 exe/jsui/mainpage.py:1028
+#: exe/jsui/mainpage.py:636 exe/jsui/mainpage.py:780 exe/jsui/mainpage.py:1120
+#: exe/jsui/mainpage.py:1560
 #, python-format
 msgid ""
 "SAVE FAILED!\n"
@@ -3687,22 +4285,37 @@ msgstr ""
 "OPSLAAN MISLUKT!\n"
 "%s"
 
-#: exe/jsui/mainpage.py:331 exe/jsui/mainpage.py:336 exe/jsui/mainpage.py:339
+#: exe/jsui/mainpage.py:686
+#, python-format
+msgid "Your course: '%s' has uploaded. ID: %s"
+msgstr ""
+
+#: exe/jsui/mainpage.py:690
+#, python-format
+msgid "Server Error: %s"
+msgstr ""
+
+#: exe/jsui/mainpage.py:692
+#, fuzzy
+msgid "Invalid username/password - please try again"
+msgstr "is geen geldig getal - probeer aub opnieuw <br/>"
+
+#: exe/jsui/mainpage.py:784 exe/jsui/mainpage.py:789 exe/jsui/mainpage.py:792
 #, python-format
 msgid "Package saved to: %s"
 msgstr "Bestand opgeslagen naar: %s"
 
-#: exe/jsui/mainpage.py:557 exe/jsui/mainpage.py:663
+#: exe/jsui/mainpage.py:1034 exe/jsui/mainpage.py:1148
 #, python-format
 msgid "Preview directory %s is a file, cannot replace it"
 msgstr "Bestand directory %s bestaat al, kan niet vervangen"
 
-#: exe/jsui/mainpage.py:577
+#: exe/jsui/mainpage.py:1058
 #, python-format
 msgid "Local file %s is not found, cannot preview it"
 msgstr "Bestandsnaam %s niet gevonden, kan niet voorvertonen"
 
-#: exe/jsui/mainpage.py:705
+#: exe/jsui/mainpage.py:1190
 #, python-format
 msgid ""
 "MimeTeX compile failed!\n"
@@ -3711,11 +4324,11 @@ msgstr ""
 "Compileren MimeTeX mislukt!\n"
 "%s"
 
-#: exe/jsui/mainpage.py:744
+#: exe/jsui/mainpage.py:1229
 msgid "Importing HTML..."
 msgstr "HTML-import is bezig"
 
-#: exe/jsui/mainpage.py:750
+#: exe/jsui/mainpage.py:1235
 #, python-format
 msgid ""
 "LOM Metadata import FAILED!\n"
@@ -3724,26 +4337,28 @@ msgstr ""
 "De import van LOM Metadata is MISLUKT!\n"
 "%s"
 
-#: exe/jsui/mainpage.py:753
+#: exe/jsui/mainpage.py:1238
 msgid "Error importing HTML:\n"
 msgstr "HTLM-imort mislukt:\n"
 
-#: exe/jsui/mainpage.py:802 exe/jsui/mainpage.py:807 exe/jsui/mainpage.py:810
-#: exe/jsui/mainpage.py:813 exe/jsui/mainpage.py:816 exe/jsui/mainpage.py:819
-#: exe/jsui/mainpage.py:824 exe/jsui/mainpage.py:1088 exe/jsui/mainpage.py:1161
+#: exe/jsui/mainpage.py:1315 exe/jsui/mainpage.py:1321
+#: exe/jsui/mainpage.py:1324 exe/jsui/mainpage.py:1327
+#: exe/jsui/mainpage.py:1330 exe/jsui/mainpage.py:1333
+#: exe/jsui/mainpage.py:1338 exe/jsui/mainpage.py:1505
+#: exe/jsui/mainpage.py:1620 exe/jsui/mainpage.py:1693
 msgid "EXPORT FAILED!"
 msgstr "UITVOER MISLUKT!"
 
-#: exe/jsui/mainpage.py:895
+#: exe/jsui/mainpage.py:1412
 msgid "Correct XLIFF import"
 msgstr "Juiste XLIFF import"
 
-#: exe/jsui/mainpage.py:898
+#: exe/jsui/mainpage.py:1415
 #, python-format
 msgid "Error importing XLIFF: %s"
 msgstr "Fout bij import XLIFF: %s"
 
-#: exe/jsui/mainpage.py:941 exe/jsui/mainpage.py:958
+#: exe/jsui/mainpage.py:1460 exe/jsui/mainpage.py:1477
 #, python-format
 msgid ""
 "EXTRACT FAILED!\n"
@@ -3752,21 +4367,22 @@ msgstr ""
 "UITPAKKEN MISLUKT!\n"
 "%s"
 
-#: exe/jsui/mainpage.py:960
+#: exe/jsui/mainpage.py:1479
 #, python-format
 msgid "Package extracted to: %s"
 msgstr "Besatand uitgepakt naar: %s"
 
-#: exe/jsui/mainpage.py:972
+#: exe/jsui/mainpage.py:1493
 msgid "Directory exists"
 msgstr "Mapnaam bestaat al"
 
-#: exe/jsui/mainpage.py:986 exe/jsui/mainpage.py:1076 exe/jsui/mainpage.py:1092
-#: exe/jsui/mainpage.py:1105 exe/jsui/mainpage.py:1111
-#: exe/jsui/mainpage.py:1129 exe/jsui/mainpage.py:1146
-#: exe/jsui/mainpage.py:1152 exe/jsui/mainpage.py:1166
-#: exe/jsui/mainpage.py:1181 exe/jsui/mainpage.py:1187
-#: exe/jsui/mainpage.py:1202 exe/jsui/mainpage.py:1208
+#: exe/jsui/mainpage.py:1516 exe/jsui/mainpage.py:1608
+#: exe/jsui/mainpage.py:1624 exe/jsui/mainpage.py:1637
+#: exe/jsui/mainpage.py:1643 exe/jsui/mainpage.py:1661
+#: exe/jsui/mainpage.py:1678 exe/jsui/mainpage.py:1684
+#: exe/jsui/mainpage.py:1698 exe/jsui/mainpage.py:1713
+#: exe/jsui/mainpage.py:1719 exe/jsui/mainpage.py:1734
+#: exe/jsui/mainpage.py:1740
 #, python-format
 msgid ""
 "EXPORT FAILED!\n"
@@ -3775,12 +4391,19 @@ msgstr ""
 "UITVOER MISLUKT!\n"
 "%s"
 
-#: exe/jsui/mainpage.py:1014 exe/jsui/mainpage.py:1061
+#: exe/jsui/mainpage.py:1519
+#, fuzzy, python-format
+msgid ""
+"Exported to\n"
+"%s"
+msgstr "Geëxporteerd naar %s"
+
+#: exe/jsui/mainpage.py:1546 exe/jsui/mainpage.py:1593
 #, python-format
 msgid "Filename %s is a file, cannot replace it"
 msgstr "Bestandsnaam %s bestaat al, kan niet vervangen"
 
-#: exe/jsui/mainpage.py:1020 exe/jsui/mainpage.py:1068
+#: exe/jsui/mainpage.py:1552 exe/jsui/mainpage.py:1600
 #, python-format
 msgid ""
 "Folder name %s already exists. Please choose another one or delete "
@@ -3789,25 +4412,25 @@ msgstr ""
 "De map %s bestaat al. Kies een andere naam of verwijder de bestaande map "
 "en probeer opnieuw."
 
-#: exe/jsui/mainpage.py:1034 exe/jsui/mainpage.py:1079
-#: exe/jsui/mainpage.py:1094 exe/jsui/mainpage.py:1113
-#: exe/jsui/mainpage.py:1131 exe/jsui/mainpage.py:1154
-#: exe/jsui/mainpage.py:1168 exe/jsui/mainpage.py:1189
-#: exe/jsui/mainpage.py:1210
+#: exe/jsui/mainpage.py:1566 exe/jsui/mainpage.py:1611
+#: exe/jsui/mainpage.py:1626 exe/jsui/mainpage.py:1645
+#: exe/jsui/mainpage.py:1663 exe/jsui/mainpage.py:1686
+#: exe/jsui/mainpage.py:1700 exe/jsui/mainpage.py:1721
+#: exe/jsui/mainpage.py:1742
 #, python-format
 msgid "Exported to %s"
 msgstr "Geëxporteerd naar %s"
 
-#: exe/jsui/mainpage.py:1243 exe/webui/stylemanagerpage.py:130
+#: exe/jsui/mainpage.py:1775 exe/webui/stylemanagerpage.py:130
 #, python-format
 msgid "File %s does not exist or is not readable."
 msgstr "Bestand %s bestaat niet of is niet leesbaar."
 
-#: exe/jsui/mainpage.py:1247
+#: exe/jsui/mainpage.py:1779
 msgid "Couldn't load file, please email file to bugs@exelearning.org"
 msgstr "Kan het bestand niet laden, email bestand naar bugs@exelearning.org"
 
-#: exe/jsui/mainpage.py:1250
+#: exe/jsui/mainpage.py:1782
 #, python-format
 msgid ""
 "Sorry, wrong file format:\n"
@@ -3816,7 +4439,7 @@ msgstr ""
 "Sorry, fout bestandsformaat:\n"
 "%s"
 
-#: exe/jsui/mainpage.py:1252
+#: exe/jsui/mainpage.py:1784
 msgid "Sorry, wrong file format"
 msgstr "Sorry, fout bestandsformaat"
 
@@ -3824,7 +4447,7 @@ msgstr "Sorry, fout bestandsformaat"
 msgid "Failed to get properties"
 msgstr "Ophalen instellingen niet gelukt"
 
-#: exe/jsui/propertiespage.py:377
+#: exe/jsui/propertiespage.py:381
 msgid "Failed to save properties"
 msgstr "Opslaan instellingen niet gelukt"
 
@@ -3835,8 +4458,9 @@ msgstr "Opslaan instellingen niet gelukt"
 msgid "Show Image"
 msgstr "Toon afbeelding"
 
-#: exe/jsui/scripts/app/controller/MainTab.js:177 exe/webui/element.py:674
-#: exe/webui/element.py:1088
+#: exe/jsui/scripts/app/controller/MainTab.js:177
+#: exe/jsui/scripts/app/controller/Toolbar.js:1541 exe/webui/element.py:682
+#: exe/webui/element.py:1096
 msgid "Select an image"
 msgstr "Kies een afbeelding"
 
@@ -3847,23 +4471,27 @@ msgid "Hide Image"
 msgstr "Verberg afbeelding"
 
 #: exe/jsui/scripts/app/controller/MainTab.js:203
+#: exe/jsui/scripts/app/controller/Toolbar.js:1565
 msgid "Image Files"
 msgstr "Afbeeldingsbestanden"
 
 #: exe/jsui/scripts/app/controller/MainTab.js:204
-#: exe/jsui/scripts/app/controller/Toolbar.js:423
-#: exe/jsui/scripts/app/controller/Toolbar.js:444
-#: exe/jsui/scripts/app/controller/Toolbar.js:479
-#: exe/jsui/scripts/app/controller/Toolbar.js:498
-#: exe/jsui/scripts/app/controller/Toolbar.js:567
-#: exe/jsui/scripts/app/controller/Toolbar.js:678
-#: exe/jsui/scripts/app/controller/Toolbar.js:720
-#: exe/jsui/scripts/app/controller/Toolbar.js:737
-#: exe/jsui/scripts/app/controller/Toolbar.js:754
-#: exe/jsui/scripts/app/controller/Toolbar.js:783
-#: exe/jsui/scripts/app/controller/Toolbar.js:919
-#: exe/jsui/scripts/app/controller/Toolbar.js:1016
+#: exe/jsui/scripts/app/controller/Toolbar.js:500
+#: exe/jsui/scripts/app/controller/Toolbar.js:521
+#: exe/jsui/scripts/app/controller/Toolbar.js:556
+#: exe/jsui/scripts/app/controller/Toolbar.js:575
+#: exe/jsui/scripts/app/controller/Toolbar.js:644
+#: exe/jsui/scripts/app/controller/Toolbar.js:755
+#: exe/jsui/scripts/app/controller/Toolbar.js:797
+#: exe/jsui/scripts/app/controller/Toolbar.js:814
+#: exe/jsui/scripts/app/controller/Toolbar.js:831
+#: exe/jsui/scripts/app/controller/Toolbar.js:860
+#: exe/jsui/scripts/app/controller/Toolbar.js:997
+#: exe/jsui/scripts/app/controller/Toolbar.js:1095
+#: exe/jsui/scripts/app/controller/Toolbar.js:1566
 #: exe/jsui/scripts/app/view/forms/PreferencesPanel.js:136
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:376
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:455
 #: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:139
 #: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:321
 msgid "All Files"
@@ -3897,8 +4525,9 @@ msgstr "Het formulier bevat onjuiste velden. Controleer svp."
 
 #: exe/jsui/scripts/app/controller/MainTab.js:273
 #: exe/jsui/scripts/app/controller/MainTab.js:326
-#: exe/jsui/scripts/app/controller/Outline.js:204
-#: exe/jsui/scripts/app/controller/Toolbar.js:361
+#: exe/jsui/scripts/app/controller/Outline.js:211
+#: exe/jsui/scripts/app/controller/Readability.js:216
+#: exe/jsui/scripts/app/controller/Toolbar.js:438
 msgid "Confirm"
 msgstr "Stem in"
 
@@ -3914,134 +4543,225 @@ msgstr "Weet u zeker dat u alle velden van het formulier opnieuw wilt instellen?
 msgid "LOM Metadata import success!"
 msgstr "LOM metadata succesvol geimporteerd!"
 
-#: exe/jsui/scripts/app/controller/Outline.js:146
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:319
+#: exe/jsui/scripts/app/controller/Outline.js:153
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:340
 msgid "Insert Package"
 msgstr "bestand invoegen"
 
-#: exe/jsui/scripts/app/controller/Outline.js:149
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:325
+#: exe/jsui/scripts/app/controller/Outline.js:156
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:346
 msgid "Extract Package"
 msgstr "Bestand uitpakken"
 
-#: exe/jsui/scripts/app/controller/Outline.js:202
+#: exe/jsui/scripts/app/controller/Outline.js:209
 msgid "Delete \"{node}\" node and all its children?"
 msgstr "Verwijder \"{node}\" node en alle subnodes?"
 
-#: exe/jsui/scripts/app/controller/Outline.js:226
+#: exe/jsui/scripts/app/controller/Outline.js:233
 msgid "Rename \"{node}\" node"
 msgstr "Hernoemen \"{node}\" node"
 
-#: exe/jsui/scripts/app/controller/Outline.js:230
+#: exe/jsui/scripts/app/controller/Outline.js:237
+#: exe/jsui/scripts/app/controller/Toolbar.js:1137
+#: exe/jsui/scripts/app/controller/Wizard.js:71
+#: exe/jsui/scripts/app/controller/Wizard.js:95
 msgid "Enter the new name:"
 msgstr "Voer de nieuwe naam in:"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:298
+#: exe/jsui/scripts/app/controller/Publish.js:51
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:92
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:438
+#, fuzzy
+msgid "Publish"
+msgstr "uitgever"
+
+#: exe/jsui/scripts/app/controller/Publish.js:85
+#: exe/jsui/scripts/app/controller/Toolbar.js:1058
+msgid "Saving package to: {filename}"
+msgstr "Bestand opslaan als: (Bestandsnaam)"
+
+#: exe/jsui/scripts/app/controller/Publish.js:97
+#, fuzzy
+msgid "Uploading package:"
+msgstr "Bestand laden..."
+
+#: exe/jsui/scripts/app/controller/Publish.js:97
+#, fuzzy
+msgid " to server.."
+msgstr "observeren"
+
+#: exe/jsui/scripts/app/controller/Readability.js:10
+msgid "Total word count"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:11
+msgid "Word length: Book Average"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:12
+msgid "Word length"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:13
+msgid "Unique words in Text"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:14
+msgid "Sentence length"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:15
+msgid "Sentence length: Book Average"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:16
+msgid "Words per Page"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:17
+msgid "Syllables per word"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:18
+msgid "Syllables per word: Book Average"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:19
+msgid "Sentences Per Page"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:20
+msgid "Sentences Per Page: Book Average"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:21
+msgid "Words Per Page: Book Average"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:165
+msgid "New Untitled Preset"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:217
+msgid "Delete preset named: "
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Readability.js:437
+#, fuzzy
+msgid "New Preset"
+msgstr "vertegenwoordigen"
+
+#: exe/jsui/scripts/app/controller/Readability.js:442
+#, fuzzy
+msgid "Delete preset"
+msgstr "Vraag verwijderen"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:375
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
 msgid "About"
 msgstr "Over eXe"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:334
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:367
+#: exe/jsui/scripts/app/controller/Toolbar.js:411
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:404
 msgid "Preferences"
 msgstr "Voorkeuren"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:362
+#: exe/jsui/scripts/app/controller/Toolbar.js:439
 msgid ""
 "If you have made changes and have not saved them, they will be lost. Do "
 "you really want to quit?"
 msgstr "Niet opgeslagen wijzigingen zullen verloren gaan. Wilt u echt stoppen?"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:388
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:361
+#: exe/jsui/scripts/app/controller/Toolbar.js:465
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:398
 msgid "Style Manager"
 msgstr "Stijl manager"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:411
+#: exe/jsui/scripts/app/controller/Toolbar.js:488
 msgid "Select package to insert"
 msgstr "Kies een bestand om in te voegen"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:416
+#: exe/jsui/scripts/app/controller/Toolbar.js:493
 msgid "Inserting package: {filename}"
 msgstr "Bestand invoegen {filename}"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:422
-#: exe/jsui/scripts/app/controller/Toolbar.js:443
-#: exe/jsui/scripts/app/controller/Toolbar.js:918
-#: exe/jsui/scripts/app/controller/Toolbar.js:1015
+#: exe/jsui/scripts/app/controller/Toolbar.js:499
+#: exe/jsui/scripts/app/controller/Toolbar.js:520
+#: exe/jsui/scripts/app/controller/Toolbar.js:996
+#: exe/jsui/scripts/app/controller/Toolbar.js:1094
 msgid "eXe Package Files"
 msgstr "eXe Package Files"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:432
+#: exe/jsui/scripts/app/controller/Toolbar.js:509
 msgid "Save extracted package as"
 msgstr "Sla het uitgepakte bestand op als "
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:437
+#: exe/jsui/scripts/app/controller/Toolbar.js:514
 msgid "Extracting package: {filename}"
 msgstr "bestand uitpakken: {filename} "
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:453
+#: exe/jsui/scripts/app/controller/Toolbar.js:530
 msgid "Select the parent folder for import."
 msgstr "Kies een bovenliggende map voor import."
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:468
+#: exe/jsui/scripts/app/controller/Toolbar.js:545
 msgid "Select the entry point for import."
 msgstr "Kies het ingangspunt voor import."
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:478
+#: exe/jsui/scripts/app/controller/Toolbar.js:555
 msgid "HTML Files"
 msgstr "HTML bestanden"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:487
+#: exe/jsui/scripts/app/controller/Toolbar.js:564
 msgid "Select LOM Metadata file to import."
 msgstr "Kies LOM Metadata bestand om te importeren."
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:497
+#: exe/jsui/scripts/app/controller/Toolbar.js:574
 msgid "XML Files"
 msgstr "XML bestanden"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:512
+#: exe/jsui/scripts/app/controller/Toolbar.js:589
 msgid "Waiting progress..."
 msgstr "Wachten op voortgang..."
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:520
+#: exe/jsui/scripts/app/controller/Toolbar.js:597
 msgid "Cancel Import?"
 msgstr "Import annuleren?"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:521
+#: exe/jsui/scripts/app/controller/Toolbar.js:598
 msgid "There is an ongoing import. Do you want to cancel?"
 msgstr "Import is bezig. Wilt U afbreken?"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:544
+#: exe/jsui/scripts/app/controller/Toolbar.js:621
 msgid "Select Xliff file to import"
 msgstr "Kies XLIFF bestand voor import"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:554
+#: exe/jsui/scripts/app/controller/Toolbar.js:631
 msgid "XLIFF Import Preferences"
 msgstr "XLIFF import Voorkeuren"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:566
-#: exe/jsui/scripts/app/controller/Toolbar.js:677
+#: exe/jsui/scripts/app/controller/Toolbar.js:643
+#: exe/jsui/scripts/app/controller/Toolbar.js:754
 msgid "XLIFF Files"
 msgstr "XLIFF Bestanden"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:576
+#: exe/jsui/scripts/app/controller/Toolbar.js:653
 msgid "Export to Xliff as"
 msgstr "Exporteer naar XLIFF als"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:596
+#: exe/jsui/scripts/app/controller/Toolbar.js:673
 msgid "Select source language"
 msgstr "Kies de brontaal"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:607
+#: exe/jsui/scripts/app/controller/Toolbar.js:684
 msgid "Select target language"
 msgstr "Kies de doeltaal"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:618
+#: exe/jsui/scripts/app/controller/Toolbar.js:695
 msgid "Copy source also in target"
 msgstr "Kopieer de bron ook naar het doel"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:621
+#: exe/jsui/scripts/app/controller/Toolbar.js:698
 #, fuzzy
 msgid ""
 "If you don't choose this \n"
@@ -4058,7 +4778,7 @@ msgstr ""
 "uitsluitend de inhoud van het doelveld. Als U dit soort tools gebruikt "
 "zult U de doelveldden moeten vullen met een kopie van de bronvelden."
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:632
+#: exe/jsui/scripts/app/controller/Toolbar.js:709
 #, fuzzy
 msgid ""
 "This option will wrap all \n"
@@ -4073,91 +4793,94 @@ msgstr ""
 "een goede optie zijn als je een pre-process tool (zoals Rainbow) wilt "
 "gebruiken voordat je Computer Aided vertaal software wilt toepassen."
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:641
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:51
+#: exe/jsui/scripts/app/controller/Toolbar.js:718
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:59
 #: exe/webui/editorpane.py:273 exe/webui/xliffimportpreferencespage.py:94
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:647
+#: exe/jsui/scripts/app/controller/Toolbar.js:724
 msgid "Ok"
 msgstr ""
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:670
+#: exe/jsui/scripts/app/controller/Toolbar.js:747
 msgid "XLIFF Export Preferences"
 msgstr "XLIFF export opties"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:693
+#: exe/jsui/scripts/app/controller/Toolbar.js:770
 msgid "Select the parent folder for export."
 msgstr "Kies de hoofdmap voor export"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:710
+#: exe/jsui/scripts/app/controller/Toolbar.js:787
 msgid "Export text package as"
 msgstr "Exporteer tekstbestand als"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:719
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:283
+#: exe/jsui/scripts/app/controller/Toolbar.js:796
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:304
 msgid "Text File"
 msgstr "Tekstbestand"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:727
+#: exe/jsui/scripts/app/controller/Toolbar.js:804
 msgid "Save package resources report as"
 msgstr "Sla het bronnenreport op als"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:736
+#: exe/jsui/scripts/app/controller/Toolbar.js:813
 msgid "CSV File"
 msgstr "CSV bestand"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:744
+#: exe/jsui/scripts/app/controller/Toolbar.js:821
 msgid "Export EPUB3 package as"
 msgstr "Exporteer EPUB3 bestand als"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:753
+#: exe/jsui/scripts/app/controller/Toolbar.js:830
 msgid "EPUB3 File"
 msgstr "EPUB3 bestand"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:761
+#: exe/jsui/scripts/app/controller/Toolbar.js:838
 msgid "Export SCORM package as"
 msgstr "Exporteer SCORM bestand als"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:763
+#: exe/jsui/scripts/app/controller/Toolbar.js:840
 msgid "Export IMS package as"
 msgstr "Exporteer het IMS bestabnd als"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:765
+#: exe/jsui/scripts/app/controller/Toolbar.js:842
 msgid "Export Website package as"
 msgstr "Exporteer het Website bestand als"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:767
+#: exe/jsui/scripts/app/controller/Toolbar.js:844
 msgid "Export Common Cartridge as"
 msgstr "Exporteer Common Cartridge als"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:769
+#: exe/jsui/scripts/app/controller/Toolbar.js:846
 msgid "INVALID VALUE PASSED TO exportPackage"
 msgstr "VERKEERDE WAARDE MEEGEGEVEN aan exportbestand"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:782
+#: exe/jsui/scripts/app/controller/Toolbar.js:859
 msgid "SCORM/IMS/ZipFile"
 msgstr "SCORM/IMS/ZipFile"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:891
+#: exe/jsui/scripts/app/controller/Toolbar.js:968
+#: exe/jsui/scripts/app/controller/Wizard.js:47
+#: exe/jsui/scripts/app/controller/Wizard.js:180
 msgid "Loading package..."
 msgstr "Bestand laden..."
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:907
+#: exe/jsui/scripts/app/controller/Toolbar.js:984
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:93
 msgid "Open File"
 msgstr "Open Bestand"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:912
+#: exe/jsui/scripts/app/controller/Toolbar.js:989
 msgid "Loading package: {filename}"
 msgstr "Bestand laden...(Bestandsnaam)"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:931
+#: exe/jsui/scripts/app/controller/Toolbar.js:1010
 msgid "Save Package first?"
 msgstr "Bestand eerst opslaan?"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:932
+#: exe/jsui/scripts/app/controller/Toolbar.js:1011
 msgid ""
 "The current package has been modified and not yet saved. Would you like "
 "to save it?"
@@ -4165,61 +4888,152 @@ msgstr ""
 "Het huidige bestand is gewijzigd en nog niet opgeslagen. Wilt U het eerst"
 " opslaan?"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:979
-msgid "Saving package to: {filename}"
-msgstr "Bestand opslaan als: (Bestandsnaam)"
-
-#: exe/jsui/scripts/app/controller/Toolbar.js:995
+#: exe/jsui/scripts/app/controller/Toolbar.js:1074
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:357
 msgid "Save file"
 msgstr "Sla bestand op"
 
-#: exe/jsui/scripts/app/controller/Toolbar.js:1001
+#: exe/jsui/scripts/app/controller/Toolbar.js:1080
 msgid "Saving package..."
 msgstr "Bestand opslaan"
 
-#: exe/jsui/scripts/app/controller/filepicker/Directory.js:75
-#: exe/jsui/scripts/app/controller/filepicker/File.js:168
+#: exe/jsui/scripts/app/controller/Toolbar.js:1136
+#: exe/jsui/scripts/app/controller/Wizard.js:70
+#: exe/jsui/scripts/app/controller/Wizard.js:94
+#, fuzzy
+msgid "Project Title"
+msgstr "Project kenmerken"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1181
+#, fuzzy
+msgid "Add Widget"
+msgstr "Afbeeldingen toevoegen"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1279
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:384
+#, fuzzy
+msgid "Readability"
+msgstr "Modaliteit"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1298
+msgid "Readability Boundaries"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1328
+#, fuzzy
+msgid "Average"
+msgstr "Beheersing"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1340
+#, fuzzy
+msgid "Maximum"
+msgstr "Maximale zoom"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1353
+#, fuzzy
+msgid "Indicator"
+msgstr "initiatiefnemer"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1366
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
+msgid "Target"
+msgstr "Doel"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1372
+#, fuzzy
+msgid "Actual"
+msgstr "Catalogus"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1393
+#, fuzzy
+msgid "label"
+msgstr "Label:"
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1523
+msgid "Smartphone Preview"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1529
+msgid "Feature Phone Preview"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Toolbar.js:1535
+#, fuzzy
+msgid "Website Preview"
+msgstr "Wen design afdeling"
+
+#: exe/jsui/scripts/app/controller/Wizard.js:78
+msgid "Loading template: {text}"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Wizard.js:155
+msgid ""
+"You haven't opened any projects recently. To browse for a project click "
+"Open File or start one by clicking any of the templates"
+msgstr ""
+
+#: exe/jsui/scripts/app/controller/Wizard.js:220
+#, fuzzy
+msgid "Creates a new blank project"
+msgstr "echt project"
+
+#: exe/jsui/scripts/app/controller/Wizard.js:246
+#, fuzzy
+msgid "Blank Project"
+msgstr "echt project"
+
+#: exe/jsui/scripts/app/controller/Wizard.js:287
+#, fuzzy
+msgid "Start"
+msgstr "Herstarten"
+
+#: exe/jsui/scripts/app/controller/filepicker/Directory.js:78
+#: exe/jsui/scripts/app/controller/filepicker/File.js:173
 msgid "You do not have the permissions to open folder"
 msgstr "U hebt onvoldoende rechten om een map te opnenen"
 
-#: exe/jsui/scripts/app/controller/filepicker/File.js:160
+#: exe/jsui/scripts/app/controller/filepicker/File.js:165
 msgid "You do not have the permissions to write into folder"
 msgstr "U hebt onvoldoende rechten om in de map een bestand aan te maken"
 
-#: exe/jsui/scripts/app/controller/filepicker/File.js:170
+#: exe/jsui/scripts/app/controller/filepicker/File.js:175
 msgid "You do not have the permissions to open the file"
 msgstr "U hebt onvoldoende rechten om het bestand te opnene"
 
-#: exe/jsui/scripts/app/controller/filepicker/File.js:324
+#: exe/jsui/scripts/app/controller/filepicker/File.js:341
 msgid "You do not have the permissions to  save into folder"
 msgstr "U hebt onvoldoende rechten om in de map een bestand op te slaan"
 
-#: exe/jsui/scripts/app/controller/filepicker/File.js:336
+#: exe/jsui/scripts/app/controller/filepicker/File.js:353
 msgid "Create Folder"
 msgstr "Maar een map aan"
 
-#: exe/jsui/scripts/app/controller/filepicker/File.js:337
+#: exe/jsui/scripts/app/controller/filepicker/File.js:354
 msgid "Enter the new folder name:"
 msgstr "Voer de nieuwe map-naam in"
 
-#: exe/jsui/scripts/app/controller/filepicker/File.js:351
+#: exe/jsui/scripts/app/controller/filepicker/File.js:368
 msgid "You do not have the permissions to create a folder in folder"
 msgstr "U hebt onvoldoende rechten om een sub-map aan te maken"
 
-#: exe/jsui/scripts/app/controller/filepicker/File.js:357
+#: exe/jsui/scripts/app/controller/filepicker/File.js:374
 msgid "Confirm?"
 msgstr "Bevestigen?"
 
-#: exe/jsui/scripts/app/controller/filepicker/File.js:358
+#: exe/jsui/scripts/app/controller/filepicker/File.js:375
 msgid "The file already exists. Do you want to replace it?"
 msgstr "Het bestand bestaat al. Wilt U het vervangen?"
 
 #: exe/jsui/scripts/app/view/filepicker/FileList.js:48
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:54
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:62
 #: exe/jsui/scripts/app/view/forms/LomSections.js:64
 #: exe/jsui/scripts/app/view/forms/LomSections.js:87
 #: exe/jsui/scripts/app/view/forms/LomSections.js:103
 #: exe/jsui/scripts/app/view/forms/LomSections.js:153
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:35
 #: exe/webui/editorpane.py:327
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
@@ -4227,9 +5041,10 @@ msgid "Name"
 msgstr "Naam"
 
 #: exe/jsui/scripts/app/view/filepicker/FileList.js:95
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:62
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:70
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:111
 #: exe/jsui/scripts/app/view/forms/LomSections.js:102
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:84
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
@@ -4240,37 +5055,38 @@ msgstr "Type"
 msgid "Modified"
 msgstr "Gewijzigd"
 
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:52
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:112
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:60
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:133
 msgid "Open"
 msgstr "Open"
 
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:77
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:86
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:183
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:124
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:228
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:229
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:268
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:617
 #: exe/jsui/scripts/app/view/forms/PreferencesPanel.js:221
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:141 exe/webui/editorpage.py:260
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:97
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:162 exe/webui/editorpage.py:260
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 msgid "Save"
 msgstr "Opslaan"
 
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:78
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:89
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:87
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:98
 msgid "Create Directory"
 msgstr "Aanmaken map"
 
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:81
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:90
 msgid "Save in:"
 msgstr "Sla op in:"
 
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:87
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:96
 msgid "Folder"
 msgstr "Map"
 
-#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:88
+#: exe/jsui/scripts/app/view/filepicker/FilePicker.js:97
 msgid "Select Folder"
 msgstr "Kies een map"
 
@@ -4433,7 +5249,7 @@ msgid "Select a language."
 msgstr "Kies de taal"
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:156
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:223
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:224
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:263
 msgid "Relation"
 msgstr "Relatie"
@@ -4452,7 +5268,7 @@ msgid "The extent or scope of the content of the resource."
 msgstr "De uitbreiding van de broninhoud"
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:172
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:222
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:223
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:262
 msgid "Rights"
 msgstr "Rechten"
@@ -4478,7 +5294,7 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:189
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:130
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:233
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:234
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:273
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:623
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
@@ -4487,7 +5303,7 @@ msgstr "Vrijhouden"
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:195
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:136
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:238
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:239
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:278
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:629
 msgid "Reset"
@@ -4504,7 +5320,7 @@ msgid "Metadata Type"
 msgstr "Soort metadata"
 
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:46
-#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:64
+#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:66
 msgid "Dublin Core"
 msgstr "Dublin Core"
 
@@ -4603,7 +5419,7 @@ msgstr "Taal van het veld"
 msgid "Taxon"
 msgstr "Taxon"
 
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:217
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:218
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:257
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:188
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
@@ -4617,32 +5433,32 @@ msgstr "Taxon"
 msgid "General"
 msgstr "Algemeen"
 
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:218
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:219
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:258
 msgid "Life Cycle"
 msgstr "Life Cycle"
 
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:219
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:220
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:259
 msgid "Meta-Metadata"
 msgstr "Meta-Metadata"
 
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:220
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:221
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:260
 msgid "Technical"
 msgstr "technisch"
 
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:221
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:222
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:261
 msgid "Educational"
 msgstr "Onderwijskundig"
 
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:224
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:225
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:264
 msgid "Annotation"
 msgstr "Kanttekening"
 
-#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:225
+#: exe/jsui/scripts/app/view/forms/LomDataPanel.js:226
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:265
 msgid "Classification"
 msgstr "Classificatie"
@@ -4818,7 +5634,7 @@ msgstr "Bron"
 msgid "Entity"
 msgstr "Entiteit"
 
-#: exe/jsui/scripts/app/view/forms/LomSections.js:162 exe/webui/block.py:273
+#: exe/jsui/scripts/app/view/forms/LomSections.js:162 exe/webui/block.py:286
 msgid "Purpose"
 msgstr "Doelstelling"
 
@@ -4919,77 +5735,77 @@ msgstr "Let op!"
 msgid "Should be at least one section of this type"
 msgstr "Moet minstens een gedeele van dit type zijn"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:59
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:60
 msgid "creative commons: attribution 4.0"
 msgstr "creative commons: Naamsvermelding 4.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:63
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:64
 msgid "creative commons: attribution - non derived work 4.0"
 msgstr "Creative Commons Naamsvermelding - Geen afgeleide werken 4.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:67
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:68
 msgid "creative commons: attribution - non derived work - non commercial 4.0"
 msgstr ""
 "Creative Commons Naamsvermelding - Geen afgeleide werken - Niet "
 "commercieel 4.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:71
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:72
 msgid "creative commons: attribution - non commercial 4.0"
 msgstr "Creative Commons Naamsvermelding - Niet commercieel 4.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:75
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:76
 msgid "creative commons: attribution - non commercial - share alike 4.0"
 msgstr "Creative Commons Naamsvermelding - Niet commercieel - Gelijk delen 4.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:79
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:80
 msgid "creative commons: attribution - share alike 4.0"
 msgstr "Creative Commons Naamsvermelding  - Gelijk delen 4.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:83
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:84
 msgid "creative commons: attribution 3.0"
 msgstr "creative commons: Naamsvermelding 3.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:87
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:88
 msgid "creative commons: attribution - non derived work 3.0"
 msgstr "Creative Commons Naamsvermelding - Geen afgeleide werken 3.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:91
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:92
 msgid "creative commons: attribution - non derived work - non commercial 3.0"
 msgstr "creative commons: attribution - non derived work - non commercial 3.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:95
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:96
 msgid "creative commons: attribution - non commercial 3.0"
 msgstr "Creative Commons Naamsvermelding - Niet commercieel 3.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:99
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:100
 msgid "creative commons: attribution - non commercial - share alike 3.0"
 msgstr "Creative Commons Naamsvermelding - Niet commercieel - Gelijk delen 3.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:103
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:104
 msgid "creative commons: attribution - share alike 3.0"
 msgstr "Creative Commons Naamsvermelding  - Gelijk delen 3.0"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:107
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:108
 msgid "creative commons: attribution 2.5"
 msgstr "creative commons: Naamsvermelding 2.5"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:111
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:112
 msgid "creative commons: attribution - non derived work 2.5"
 msgstr "Creative Commons Naamsvermelding - Geen afgeleide werken 2.5"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:115
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:116
 msgid "creative commons: attribution - non derived work - non commercial 2.5"
 msgstr "creative commons: attribution - non derived work - non commercial 2.5"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:119
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:120
 msgid "creative commons: attribution - non commercial 2.5"
 msgstr "Creative Commons Naamsvermelding - Niet commercieel 2.5"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:123
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:124
 msgid "creative commons: attribution - non commercial - share alike 2.5"
 msgstr "Creative Commons Naamsvermelding - Niet commercieel - Gelijk delen 2.5"
 
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:127
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:128
 msgid "creative commons: attribution - share alike 2.5"
 msgstr "Creative Commons Naamsvermelding  - Gelijk delen 2.5"
 
@@ -5008,6 +5824,7 @@ msgid "Preknowledge."
 msgstr "Voorkennis"
 
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:232
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:240
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
 msgid "Author"
@@ -5027,6 +5844,7 @@ msgstr "Licentie"
 
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:247
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:250
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:252
 msgid "Select a license."
 msgstr "Kies een licentie"
 
@@ -5267,16 +6085,195 @@ msgstr "Interne hyperlinks volledig uitschakelen"
 msgid "Show this window on eXe start"
 msgstr "Toon dit venster als eXe opstart"
 
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:48
+#, fuzzy
+msgid "Username"
+msgstr "Hernoemen"
+
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:53
+msgid "You need to enter a username to log in"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:57
+msgid "Password"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:63
+msgid "You need to enter a password to log in"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:69
+#, fuzzy
+msgid "Server"
+msgstr "observeren"
+
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:75
+msgid "You need to enter a servername to log in"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:80
+msgid "Create an account"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:91
+msgid "Go to UMCloud"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:102
+msgid ""
+"Your block will become a course on first upload.If you are making changes"
+" to already published block,it will update the course"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/PublishPanel.js:131
+msgid "Login and Upload"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:50
+#, fuzzy
+msgid "Level Preset"
+msgstr "vertegenwoordigen"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:74
+#, fuzzy
+msgid "Level"
+msgstr "Niveau 3"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:76
+#, fuzzy
+msgid "Select a level."
+msgstr "Kies een licentie"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:104
+#: exe/jsui/scripts/app/view/ui/OutlineToolbar1.js:38 exe/webui/block.py:243
+#: exe/webui/block.py:355 exe/webui/editorelement.py:78
+#: exe/webui/editorelement.py:115 exe/webui/editorelement.py:156
+#: exe/webui/editorelement.py:196 exe/webui/editorelement.py:249
+#: exe/webui/editorelement.py:289 exe/webui/editorelement.py:332
+#: exe/webui/editorpage.py:251 exe/webui/editorpage.py:254
+#: exe/webui/galleryblock.py:303
+msgid "Delete"
+msgstr "Verwijderen"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:108
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:188
+msgid "Import"
+msgstr "Importeren"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:115
+#: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:97
+#: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:102
+#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:85
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:235
+msgid "Export"
+msgstr "Exporteren"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:141
+#, fuzzy
+msgid "Decoding"
+msgstr "Opening"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:205
+msgid "Calculate New Words"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:216
+msgid "Word List"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:323
+#, fuzzy
+msgid "Name preset"
+msgstr "vertegenwoordigen"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:324
+msgid "Enter name for preset:"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:375
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:454
+msgid "eXe Readability Boundaries"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityBoundariesPanel.js:443
+#, fuzzy
+msgid "Open file"
+msgstr "Open Bestand"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:32
+msgid "e.g. MyLevel 1"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:92
+msgid "Leveled Reader"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:99
+#, fuzzy
+msgid "Decodable Reader"
+msgstr "\"Clickable\" gebied"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:112
+msgid "Limits"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:146
+msgid "Decodable Words"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:159
+#, fuzzy
+msgid "Find Words"
+msgstr "Woord toevoegen aan spellingscontrole"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:177
+msgid "Letters and combinations to teach"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:183
+msgid "Word Length Limit"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:191
+msgid "Text to search"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:206
+#, fuzzy
+msgid "Suggested Words"
+msgstr "Suggesties"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:241
+#: exe/webui/xliffimportpreferencespage.py:90
+msgid "OK"
+msgstr "Ok"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:318
+msgid "to"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:26
+#, fuzzy
+msgid "Level:"
+msgstr "Niveau 3"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:67
+#, fuzzy
+msgid "Check It"
+msgstr "Controleer"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:148
+#, fuzzy
+msgid "This page: "
+msgstr "Witruimte"
+
+#: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:168
+msgid "Book: "
+msgstr ""
+
 #: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:66
 msgid "Export style: "
 msgstr "Export stijl:"
-
-#: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:97
-#: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:102
-#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:83
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:214
-msgid "Export"
-msgstr "Exporteren"
 
 #: exe/jsui/scripts/app/view/forms/StyleManagerPanel.js:120
 msgid "Export to ZIP Style as"
@@ -5334,80 +6331,86 @@ msgstr "Terug naar de stijlmanager"
 msgid "Return"
 msgstr "Enter"
 
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:53
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:101
+#, fuzzy
+msgid "Create New"
+msgstr "maken"
+
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:50
 msgid "Outline"
 msgstr "Schema"
 
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:85
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:88
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:94
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:125
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:83
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:86
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:92
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:123
 msgid "Ungroup iDevices"
 msgstr "Hef groepering van iDevices op"
 
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:100
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:105
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:123
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:98
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:103
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:121
 msgid "Edit iDevices"
 msgstr "Pas iDivices aan"
 
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:113
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:111
 msgid "Save iDevices"
 msgstr "Sla iDevices op"
 
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:155
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:153
 msgid "iDevices"
 msgstr "iDevices"
 
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:166
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:164
 msgid "Category"
 msgstr "Categorie"
 
-#: exe/jsui/scripts/app/view/ui/LeftPanel.js:178
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:176
 msgid "Visible"
 msgstr "Zichtbaar"
 
-#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:43
-msgid "Authoring"
-msgstr "Opstellen"
-
-#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:47
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:195
+#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:49
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 msgid "Properties"
 msgstr "Eigenschappen"
 
-#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:54
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:203
+#, fuzzy
+msgid "Cover Icon:"
+msgstr "Sla op in:"
+
+#: exe/jsui/scripts/app/view/ui/LeftPanel.js:251
+#, fuzzy
+msgid "Select a license..."
+msgstr "Kies een licentie"
+
+#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:45
+msgid "Authoring"
+msgstr "Opstellen"
+
+#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:56
 msgid "Package"
 msgstr "Bestand"
 
-#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:58
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:186
+#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:60
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:207
 msgid "Metadata"
 msgstr "Metadata"
 
-#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:70
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:195
+#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:72
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:216
 msgid "LOM"
 msgstr "LOM"
 
-#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:76
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:201
+#: exe/jsui/scripts/app/view/ui/MainTabPanel.js:78
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:222
 msgid "LOM-ES"
 msgstr "LOM-ES"
 
 #: exe/jsui/scripts/app/view/ui/OutlineToolbar1.js:31
 msgid "Add Page"
 msgstr "Nieuwe pagina"
-
-#: exe/jsui/scripts/app/view/ui/OutlineToolbar1.js:38 exe/webui/block.py:237
-#: exe/webui/block.py:338 exe/webui/editorelement.py:78
-#: exe/webui/editorelement.py:115 exe/webui/editorelement.py:156
-#: exe/webui/editorelement.py:196 exe/webui/editorelement.py:249
-#: exe/webui/editorelement.py:289 exe/webui/editorelement.py:332
-#: exe/webui/editorpage.py:251 exe/webui/editorpage.py:254
-#: exe/webui/galleryblock.py:303
-msgid "Delete"
-msgstr "Verwijderen"
 
 #: exe/jsui/scripts/app/view/ui/OutlineToolbar1.js:45
 msgid "Rename"
@@ -5429,110 +6432,13 @@ msgstr "Verplaats naar omhoog"
 msgid "Move node down"
 msgstr "Verplaats naar beneden"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:98
-msgid "New"
-msgstr "Nieuw"
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:35
+msgid "Click me to open the wizard"
+msgstr ""
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:105
-#: exe/webui/fileattachblock.py:158
-msgid "New Window"
-msgstr "Nieuw venster"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:119
-msgid "Recent Projects..."
-msgstr "Recente projecten"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:131
-msgid "Clear Recent Projects List"
-msgstr "Wis de onlangs geopende projecten"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:148
-msgid "Save As..."
-msgstr "Opslaan als..."
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:157
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-msgid "Print"
-msgstr "Afdrukken"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:167
-msgid "Import"
-msgstr "Importeren"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:176
-msgid "HTML Course"
-msgstr "HTML cursus"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:182
-msgid "XLIFF File"
-msgstr "XLIFF bestand"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:221
-msgid "Educational Standard"
-msgstr "Onderwijskundige standaard"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:228
-msgid "Common Cartridge"
-msgstr "Common Cartridge"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:234
-msgid "SCORM1.2"
-msgstr "SCORM1.2"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:240
-msgid "SCORM2004"
-msgstr "SCORM2004"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:246
-msgid "IMS Content Package"
-msgstr "IMS Content Package"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:255
-msgid "Web Site"
-msgstr "Website"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:262
-msgid "Self-contained Folder"
-msgstr "Map met webinhoud"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:268
-msgid "Zip File"
-msgstr "Zip-bestand"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:274
-msgid "Single Page"
-msgstr "Enkele pagina"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:289
-msgid "Ustad Mobile"
-msgstr "Ustad Mobile"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:295
-msgid "XLIFF"
-msgstr "XLIFF"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:301
-msgid "EPUB3"
-msgstr "EPUB3"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:310
-msgid "Merging"
-msgstr "Samenvoegend"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:338 exe/webui/editorpage.py:269
-msgid "Quit"
-msgstr "Afsluiten"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:345
-msgid "Tools"
-msgstr "Tools"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:373
-msgid "Resources Report"
-msgstr "Hulpmiddelenrapport"
-
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:379 exe/webui/editorpane.py:268
-#: exe/webui/element.py:1996
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:50
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:424 exe/webui/editorpane.py:268
+#: exe/webui/element.py:2004
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:11
@@ -5542,54 +6448,195 @@ msgstr "Hulpmiddelenrapport"
 msgid "Preview"
 msgstr "Voorbeeld"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:388
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:68
+#, fuzzy
+msgid "Smartphone"
+msgstr "simulatie"
+
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:73
+#, fuzzy
+msgid "Feature Phone"
+msgstr "Negatief antwoord"
+
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:78
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:178
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
+msgid "Print"
+msgstr "Afdrukken"
+
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:83
+#, fuzzy
+msgid "Website"
+msgstr "Website"
+
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:110
+#, fuzzy
+msgid "Ustad Mobile Cloud"
+msgstr "Ustad Mobile"
+
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:115
+#, fuzzy, python-format
+msgid "Export to EPUB"
+msgstr "Geëxporteerd naar %s"
+
+#: exe/jsui/scripts/app/view/ui/TitleToolbar.js:120
+msgid "PDF/Print"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:126
+msgid "New"
+msgstr "Nieuw"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:140
+msgid "Recent Projects..."
+msgstr "Recente projecten"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:152
+msgid "Clear Recent Projects List"
+msgstr "Wis de onlangs geopende projecten"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:169
+msgid "Save As..."
+msgstr "Opslaan als..."
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:197
+msgid "HTML Course"
+msgstr "HTML cursus"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:203
+msgid "XLIFF File"
+msgstr "XLIFF bestand"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:242
+msgid "Educational Standard"
+msgstr "Onderwijskundige standaard"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:249
+msgid "Common Cartridge"
+msgstr "Common Cartridge"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:255
+msgid "SCORM1.2"
+msgstr "SCORM1.2"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:261
+msgid "SCORM2004"
+msgstr "SCORM2004"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:267
+msgid "IMS Content Package"
+msgstr "IMS Content Package"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:276
+msgid "Web Site"
+msgstr "Website"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:283
+msgid "Self-contained Folder"
+msgstr "Map met webinhoud"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:289
+msgid "Zip File"
+msgstr "Zip-bestand"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:295
+msgid "Single Page"
+msgstr "Enkele pagina"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:310
+msgid "Ustad Mobile"
+msgstr "Ustad Mobile"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:316
+msgid "XLIFF"
+msgstr "XLIFF"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:322
+msgid "EPUB3"
+msgstr "EPUB3"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:331
+msgid "Merging"
+msgstr "Samenvoegend"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:359 exe/webui/editorpage.py:269
+msgid "Quit"
+msgstr "Afsluiten"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:368
+msgid "Tools"
+msgstr "Tools"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:391
+#, fuzzy
+msgid "Linguist"
+msgstr "linux"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:411
+msgid "Wizard"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:417
+msgid "Resources Report"
+msgstr "Hulpmiddelenrapport"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:431
+msgid "Preview Smartphone"
+msgstr ""
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:447
 msgid "Refresh Display"
 msgstr "Weergave vernieuwen"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:396
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:453
+#, fuzzy
+msgid "Insert Idevice"
+msgstr "Pas iDivices aan"
+
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:461
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
 msgid "Styles"
 msgstr "Stijlen"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:406
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:471
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
 msgid "Help"
 msgstr "Help"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:416
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:481
 msgid "eXe Tutorial"
 msgstr "Cursus eXe"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:422
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:487
 msgid "eXe Manual"
 msgstr "Handleiding eXe"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:428
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:493
 msgid "Release Notes"
 msgstr "Release Notes"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:437
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:502
 msgid "eXe Web Site"
 msgstr "eXe Website"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:443
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:508
 msgid "Report an Issue"
 msgstr "Meld een probleem"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:449
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:514
 msgid "eXe Forums"
 msgstr "eXe Forums"
 
-#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:458
+#: exe/jsui/scripts/app/view/ui/eXeToolbar.js:523
 msgid "About eXe"
 msgstr "About eXe"
 
-#: exe/jsui/scripts/exe.js:162
+#: exe/jsui/scripts/exe.js:193
 msgid "Load Error"
 msgstr "Fout bij het laden"
 
-#: exe/jsui/scripts/exe.js:187
+#: exe/jsui/scripts/exe.js:218
 msgid ""
 "If you leave this page eXe application continues to run. Please use the "
 "menu File->Quit if you really want to exit the application."
@@ -5597,7 +6644,7 @@ msgstr ""
 "Als U deze pagina sluit, blijft eXe toch actief. Gebruik a.u.b. het menu "
 "Bestand->Afsluiten als U het programma echt wilt afsluiten. "
 
-#: exe/jsui/scripts/exe.js:218 exe/jsui/scripts/app/view/ui/LeftPanel.js:90
+#: exe/jsui/scripts/exe.js:250 exe/jsui/scripts/app/view/ui/LeftPanel.js:88
 msgid "Group iDevices"
 msgstr "Groepeer iDevices"
 
@@ -7082,42 +8129,42 @@ msgid "distance"
 msgstr "afstandelijkheid"
 
 #: exe/jsui/scripts/lomvocab.js:1274
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:27
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:28
 msgid "propietary license"
 msgstr "eigendomslicentie"
 
 #: exe/jsui/scripts/lomvocab.js:1278
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:31
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:32
 msgid "free software license EUPL"
 msgstr "gratis software licentie EUPL"
 
 #: exe/jsui/scripts/lomvocab.js:1282
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:35
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:36
 msgid "free software license GPL"
 msgstr "gratis softwarelicentie GPL"
 
 #: exe/jsui/scripts/lomvocab.js:1286
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:39
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:40
 msgid "dual free content license GPL and EUPL"
 msgstr "tweeledige gratis content licentie GPL en EUPL"
 
 #: exe/jsui/scripts/lomvocab.js:1290
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:43
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:44
 msgid "other free software licenses"
 msgstr "andere gratis software licenties"
 
 #: exe/jsui/scripts/lomvocab.js:1294
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:47
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:48
 msgid "public domain"
 msgstr "public domain"
 
 #: exe/jsui/scripts/lomvocab.js:1298
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:51
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:52
 msgid "not appropriate"
 msgstr "niet gepast"
 
 #: exe/jsui/scripts/lomvocab.js:1302
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:55
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:56
 msgid "intellectual property license"
 msgstr "Licentie voor intellectueel eigendom"
 
@@ -7146,7 +8193,7 @@ msgid "creative commons: attribution - share alike"
 msgstr "crative commons: attribuut - Gelijk delen"
 
 #: exe/jsui/scripts/lomvocab.js:1330
-#: exe/jsui/scripts/app/view/forms/PackagePanel.js:131
+#: exe/jsui/scripts/app/view/forms/PackagePanel.js:132
 msgid "license GFDL"
 msgstr "licentie GFDL"
 
@@ -7205,6 +8252,30 @@ msgstr "Opvoedkundige"
 #: exe/jsui/stylemenu.py:37
 msgid "INTEF with horizontal menu"
 msgstr "INTEF met horizontaal menu"
+
+#: exe/run-exe_do.py:66
+#, fuzzy
+msgid ""
+"Usage: %prog [options] input_file [output_file]\n"
+"\n"
+"To show help:\n"
+"%prog -h"
+msgstr ""
+"Gebruik: %prog [options] input_file [output_file]\n"
+"\n"
+"Om help te tonen:\n"
+"%prog -h"
+
+#: exe/run-exe_do.py:95
+#, fuzzy
+msgid ""
+"Export <input_file> elp package to optional <output_file> on one of the "
+"given formats: xml, scorm12, scorm2004, agrega, ims, website, webzip, "
+"singlepage, xliff or epub3."
+msgstr ""
+"Exporteer <input_file> elp pakket naar  optionele <output_file> in een "
+"van de volgende formaten: xml, scorm12, scorm2004, ims, website, website,"
+" webzip,enkele webpagina, xliff of epub3."
 
 #: exe/webui/appletblock.py:84
 msgid "Please upload a .ggb file."
@@ -7270,12 +8341,12 @@ msgstr "Accepteer URL"
 msgid "Applet Code:"
 msgstr "Appletcode:"
 
-#: exe/webui/attachmentblock.py:87 exe/webui/element.py:963
+#: exe/webui/attachmentblock.py:87 exe/webui/element.py:971
 msgid "Filename:"
 msgstr "Bestandsnaam:"
 
 #: exe/webui/attachmentblock.py:104 exe/webui/editorelement.py:351
-#: exe/webui/element.py:973
+#: exe/webui/element.py:981
 msgid "Select a file"
 msgstr "Kies een bestand"
 
@@ -7283,64 +8354,69 @@ msgstr "Kies een bestand"
 msgid "Label:"
 msgstr "Label:"
 
+#: exe/webui/authoringpage.py:176
+#, fuzzy
+msgid "Add Content"
+msgstr "Inhoud"
+
 #: exe/webui/block.py:184
 msgid "IDevice broken"
 msgstr "iDevice beschadigd"
 
-#: exe/webui/block.py:222
+#: exe/webui/block.py:223
 msgid "Done"
 msgstr "Klaar"
 
-#: exe/webui/block.py:227
+#: exe/webui/block.py:230
 msgid "Undo Edits"
 msgstr "Bewerking ongedaan maken"
 
-#: exe/webui/block.py:231
+#: exe/webui/block.py:235
 msgid "Can NOT Undo Edits"
 msgstr "Kan de bewerking NIET ongedaan maken"
 
-#: exe/webui/block.py:234 exe/webui/block.py:335
+#: exe/webui/block.py:239 exe/webui/block.py:351
 msgid "This will delete this iDevice. Do you really want to do this?"
 msgstr "Hiermee verwijdert U het iDevice. Wilt U doorgaan?"
 
-#: exe/webui/block.py:244
+#: exe/webui/block.py:252
 msgid "Move Up"
 msgstr "Omhoog"
 
-#: exe/webui/block.py:251
+#: exe/webui/block.py:262
 msgid "Move Down"
 msgstr "Omlaag"
 
-#: exe/webui/block.py:253
+#: exe/webui/block.py:266
 msgid "---Move To---"
 msgstr "---Verplaats naar---"
 
-#: exe/webui/block.py:258 exe/webui/editorpane.py:377
+#: exe/webui/block.py:271 exe/webui/editorpane.py:377
 msgid "Pedagogical Help"
 msgstr "Pedagogische hulp"
 
-#: exe/webui/block.py:263
+#: exe/webui/block.py:276
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 msgid "Information"
 msgstr "Aanwijzingen"
 
-#: exe/webui/block.py:267 exe/webui/block.py:268 exe/webui/common.py:553
-#: exe/webui/common.py:554 exe/webui/editorpane.py:364
+#: exe/webui/block.py:280 exe/webui/block.py:281 exe/webui/common.py:603
+#: exe/webui/common.py:604 exe/webui/editorpane.py:364
 #: exe/webui/editorpane.py:365 exe/webui/editorpane.py:385
 #: exe/webui/editorpane.py:386
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 msgid "Close"
 msgstr "Sluiten"
 
-#: exe/webui/block.py:277
+#: exe/webui/block.py:290
 msgid "Tip:"
 msgstr "Tip:"
 
-#: exe/webui/block.py:323
+#: exe/webui/block.py:336
 msgid "ERROR: Block.renderViewContent called directly"
 msgstr "FOUT Block.renderViewContent rechtstreeks aangeroepen"
 
-#: exe/webui/block.py:333 exe/webui/editorpage.py:286
+#: exe/webui/block.py:347 exe/webui/editorpage.py:286
 #: exe/webui/editorpane.py:270
 msgid "Edit"
 msgstr "Bewerken"
@@ -7409,6 +8485,10 @@ msgstr "Voewg een \"Clickable\" gebied toe "
 msgid "Delete Clickable Area"
 msgstr "Verwijder \"Clickable\" gebieden "
 
+#: exe/webui/clozeblock.py:95
+msgid "Cloze Activity"
+msgstr "Invuloefening"
+
 #: exe/webui/clozefpdblock.py:117 exe/webui/eleccionmultiplefpdblock.py:114
 #: exe/webui/seleccionmultiplefpdblock.py:91
 #: exe/webui/verdaderofalsofpdblock.py:110
@@ -7432,8 +8512,8 @@ msgstr "Tonen"
 msgid "Hide"
 msgstr "Verbergen"
 
-#: exe/webui/common.py:216 exe/webui/common.py:425 exe/webui/element.py:1436
-#: exe/webui/element.py:2367 exe/webui/listablock.py:275
+#: exe/webui/common.py:216 exe/webui/common.py:469 exe/webui/element.py:1444
+#: exe/webui/element.py:2406 exe/webui/listablock.py:280
 msgid "Show Feedback"
 msgstr "Toon feedback"
 
@@ -7441,12 +8521,12 @@ msgstr "Toon feedback"
 msgid "Hide Feedback"
 msgstr "Verberg feedback"
 
-#: exe/webui/common.py:218 exe/webui/element.py:2170
+#: exe/webui/common.py:218 exe/webui/element.py:2200
 #: exe/webui/stylemanagerpage.py:184 exe/webui/stylemanagerpage.py:202
 msgid "Correct"
 msgstr "Juist"
 
-#: exe/webui/common.py:219 exe/webui/element.py:2173
+#: exe/webui/common.py:219 exe/webui/element.py:2203
 msgid "Incorrect"
 msgstr "Verkeerd!"
 
@@ -7459,13 +8539,18 @@ msgstr "Menu"
 msgid "eXe : elearning XHTML editor"
 msgstr "eXe : elearning XHTML-editor"
 
-#: exe/webui/common.py:544 exe/webui/common.py:548
+#: exe/webui/common.py:594 exe/webui/common.py:598
 msgid "Click for completion instructions"
 msgstr "Klik voor aanwijzingen"
 
 #: exe/webui/debesconocerfpdblock.py:68
 msgid "You Should Know"
 msgstr "verwachte voorkennis"
+
+#: exe/webui/dragndropblock.py:71
+#, fuzzy
+msgid "Add Area"
+msgstr "Nieuwe pagina"
 
 #: exe/webui/editorelement.py:74 exe/webui/editorpane.py:251
 msgid "Text Line"
@@ -7511,7 +8596,7 @@ msgstr "Rechts"
 msgid "Align:"
 msgstr "Uitlijnen:"
 
-#: exe/webui/editorelement.py:268 exe/webui/element.py:1787
+#: exe/webui/editorelement.py:268 exe/webui/element.py:1795
 msgid "Select Flash Object"
 msgstr "Kies een Flash-bestand"
 
@@ -7519,7 +8604,7 @@ msgstr "Kies een Flash-bestand"
 msgid "Select MP3 file"
 msgstr "Kies een MP3-bestand"
 
-#: exe/webui/editorelement.py:311 exe/webui/element.py:767
+#: exe/webui/editorelement.py:311 exe/webui/element.py:775
 #: exe/webui/flashmovieblock.py:92 exe/webui/flashwithtextblock.py:93
 #: exe/webui/imagemagnifierblock.py:114 exe/webui/imagewithtextblock.py:93
 msgid "Caption:"
@@ -7678,8 +8763,8 @@ msgstr "Pictogrammen"
 msgid "Info"
 msgstr "Info"
 
-#: exe/webui/editorpane.py:430 exe/webui/element.py:1443
-#: exe/webui/element.py:1445 exe/webui/element.py:1701
+#: exe/webui/editorpane.py:430 exe/webui/element.py:1451
+#: exe/webui/element.py:1453 exe/webui/element.py:1709
 msgid "Submit"
 msgstr "Verzenden"
 
@@ -7692,155 +8777,172 @@ msgstr "Vertaling"
 msgid "Please select a correct answer for each question."
 msgstr "Selecteer een juist antwoord voor iedere vraag"
 
-#: exe/webui/eleccionmultiplefpdblock.py:124 exe/webui/multichoiceblock.py:113
+#: exe/webui/eleccionmultiplefpdblock.py:124 exe/webui/multichoiceblock.py:120
 #: exe/webui/truefalseblock.py:109 exe/webui/verdaderofalsofpdblock.py:119
 msgid "Add another question"
 msgstr "Nieuwe vraag toevoegen"
 
-#: exe/webui/element.py:72
+#: exe/webui/element.py:75
 #, python-format
 msgid "ERROR Element.process called directly with %s class"
 msgstr "FOUT Element.process rechtstreeks aangeroepen met klasse %s"
 
-#: exe/webui/element.py:81
+#: exe/webui/element.py:84
 #, python-format
 msgid "ERROR Element.renderEdit called directly with %s class"
 msgstr "FOUT Element.renderEdit rechtstreeks aangeroepen met klasse %s"
 
-#: exe/webui/element.py:98
+#: exe/webui/element.py:101
 #, python-format
 msgid "ERROR Element.renderView called directly with %s class"
 msgstr "FOUT Element.renderView rechtstreeks aangeroepen met klasse %s"
 
-#: exe/webui/element.py:651 exe/webui/element.py:1072
+#: exe/webui/element.py:659 exe/webui/element.py:1080
 msgid "Add Image"
 msgstr "Afbeelding toevoegen"
 
-#: exe/webui/element.py:677 exe/webui/element.py:1094 exe/webui/element.py:1791
+#: exe/webui/element.py:685 exe/webui/element.py:1102 exe/webui/element.py:1799
 msgid "Display as:"
 msgstr "Toon als:"
 
-#: exe/webui/element.py:684
+#: exe/webui/element.py:692
 msgid "by"
 msgstr "door"
 
-#: exe/webui/element.py:691 exe/webui/element.py:1110
+#: exe/webui/element.py:699 exe/webui/element.py:1118
 msgid "blank for original size"
 msgstr "leeg voor originele afmetingen"
 
-#: exe/webui/element.py:761
+#: exe/webui/element.py:769
 msgid "Select an MP3"
 msgstr "Kies een MP3-bestand"
 
-#: exe/webui/element.py:1249 exe/webui/element.py:1582
+#: exe/webui/element.py:1257 exe/webui/element.py:1590
 msgid "Cloze Text"
 msgstr "Invultekst"
 
-#: exe/webui/element.py:1257 exe/webui/element.py:1590
-#: exe/webui/listablock.py:174
+#: exe/webui/element.py:1265 exe/webui/element.py:1598
+#: exe/webui/listablock.py:176
 msgid "Hide/Show Word"
 msgstr "Toon/verberg woord"
 
-#: exe/webui/element.py:1262 exe/webui/element.py:1595
+#: exe/webui/element.py:1270 exe/webui/element.py:1603
 msgid "Strict Marking?"
 msgstr "Streng verbeteren?"
 
-#: exe/webui/element.py:1267
+#: exe/webui/element.py:1275
 msgid "Check Capitalization?"
 msgstr "Hoofdletters controleren?"
 
-#: exe/webui/element.py:1272 exe/webui/element.py:1605
+#: exe/webui/element.py:1280 exe/webui/element.py:1613
 msgid "Instant Marking?"
 msgstr "Onmiddellijk verbeteren?"
 
-#: exe/webui/element.py:1383 exe/webui/element.py:1640
-#: exe/webui/listablock.py:223 exe/webui/quiztestblock.py:223
+#: exe/webui/element.py:1391 exe/webui/element.py:1648
+#: exe/webui/listablock.py:226 exe/webui/quiztestblock.py:223
 #: exe/webui/quiztestblock.py:318 exe/webui/quiztestblock.py:372
 msgid "Your score is "
 msgstr "Je score is"
 
-#: exe/webui/element.py:1433 exe/webui/element.py:1692
+#: exe/webui/element.py:1441 exe/webui/element.py:1700
 msgid "Get score"
 msgstr "Bekijk de score"
 
-#: exe/webui/element.py:1439 exe/webui/element.py:1698
+#: exe/webui/element.py:1447 exe/webui/element.py:1706
 msgid "Show/Clear Answers"
 msgstr "Toon/wis antwoorden"
 
-#: exe/webui/element.py:1449 exe/webui/element.py:1705
+#: exe/webui/element.py:1457 exe/webui/element.py:1713
 msgid "Show Answers"
 msgstr "Toon antwoorden"
 
-#: exe/webui/element.py:1485 exe/webui/element.py:1737
-#: exe/webui/element.py:2359 exe/webui/element.py:2819
-#: exe/webui/listablock.py:313 exe/webui/testquestionelement.py:158
+#: exe/webui/element.py:1493 exe/webui/element.py:1745
+#: exe/webui/element.py:2398 exe/webui/element.py:3070
+#: exe/webui/listablock.py:318 exe/webui/testquestionelement.py:158
 msgid "Answers"
 msgstr "AAntwoorden"
 
-#: exe/webui/element.py:1600
+#: exe/webui/element.py:1608
 msgid "Check Caps?"
 msgstr "Hoofdlettergevoelig?"
 
-#: exe/webui/element.py:1610
+#: exe/webui/element.py:1618
 msgid "Show Score?"
 msgstr "Score tonen?"
 
-#: exe/webui/element.py:1695
+#: exe/webui/element.py:1703
 msgid "Show/Hide Feedback"
 msgstr "Toon/verberg feedback"
 
-#: exe/webui/element.py:1853
+#: exe/webui/element.py:1861
 msgid "Please select a .flv file."
 msgstr "Selecteer een .flv-bestand."
 
-#: exe/webui/element.py:1869
+#: exe/webui/element.py:1877
 msgid "Select a flash video"
 msgstr "Kies een Flash-film"
 
-#: exe/webui/element.py:1978
+#: exe/webui/element.py:1986
 msgid "text"
 msgstr "tekst"
 
-#: exe/webui/element.py:1979
+#: exe/webui/element.py:1987
 msgid "newline"
 msgstr "nieuwe regel"
 
-#: exe/webui/element.py:1982
+#: exe/webui/element.py:1990
 msgid "Select a font size: "
 msgstr "Kies lettergrootte:"
 
-#: exe/webui/element.py:2092 exe/webui/element.py:2479
-#: exe/webui/element.py:2604 exe/webui/element.py:2622
-#: exe/webui/testoptionelement.py:111
-msgid "Correct Option"
-msgstr "Juiste keuze"
+#: exe/webui/element.py:2097 exe/webui/element.py:2539
+#: exe/webui/element.py:2881
+#, fuzzy, python-format
+msgid "Option %s"
+msgstr "Alternatieven"
 
-#: exe/webui/element.py:2120 exe/webui/element.py:2507
+#: exe/webui/element.py:2114 exe/webui/element.py:2550
 #: exe/webui/testoptionelement.py:139
 msgid "Delete option"
 msgstr "Alternatief verwijderen"
 
-#: exe/webui/element.py:2259 exe/webui/element.py:2714
-#: exe/webui/questionelement.py:120 exe/webui/testquestionelement.py:104
+#: exe/webui/element.py:2293 exe/webui/element.py:2863
+#: exe/webui/questionelement.py:121 exe/webui/testquestionelement.py:104
 #: exe/webui/truefalseelement.py:130
 msgid "Delete question"
 msgstr "Vraag verwijderen"
 
-#: exe/webui/element.py:2294 exe/webui/testquestionelement.py:122
+#: exe/webui/element.py:2332 exe/webui/testquestionelement.py:122
 msgid "Add another Option"
 msgstr "Nieuw alternatief toevoegen"
 
-#: exe/webui/element.py:2395 exe/webui/element.py:2838
+#: exe/webui/element.py:2434 exe/webui/element.py:3089
 msgid "Solution"
 msgstr "Oplossing"
 
-#: exe/webui/element.py:2606 exe/webui/element.py:2624
+#: exe/webui/element.py:2742 exe/webui/element.py:2764
+#: exe/webui/testoptionelement.py:111
+msgid "Correct Option"
+msgstr "Juiste keuze"
+
+#: exe/webui/element.py:2744 exe/webui/element.py:2766
 msgid "Wrong"
 msgstr "Fout"
 
-#: exe/webui/element.py:2729
+#: exe/webui/element.py:2868
+msgid ""
+"Select the correct option\n"
+"             for this question from the dropdown"
+msgstr ""
+
+#: exe/webui/element.py:2896
 msgid "Add another option"
 msgstr "Nieuw alternatief toevoegen"
+
+#: exe/webui/exportustadmobilepage.py:251 exe/webui/loginumcloudpage.py:131
+#: exe/webui/wizardpage.py:218
+#, fuzzy
+msgid "Failed to save preferences wizard"
+msgstr "Opslaan voorkeuren niet gelukt"
 
 #: exe/webui/externalurlblock.py:67
 msgid "URL:"
@@ -7862,15 +8964,15 @@ msgstr "zeer groot"
 msgid "Frame Height:"
 msgstr "Framehoogte:"
 
-#: exe/webui/fileattachblock.py:92
+#: exe/webui/fileattachblock.py:94
 msgid "<div>\n"
 msgstr "<div>\n"
 
-#: exe/webui/fileattachblock.py:93
+#: exe/webui/fileattachblock.py:95
 msgid "<h2>File Attachment</h2>"
 msgstr "<h2>Bijlage</h2>"
 
-#: exe/webui/fileattachblock.py:94
+#: exe/webui/fileattachblock.py:96
 msgid ""
 "<p>Here you can attach arbitary files to the package that will be "
 "included with the export</p>"
@@ -7878,21 +8980,25 @@ msgstr ""
 "<p>hie kun je willekeurige bestanden toeveogen aan het Pakket, die zullen"
 " worden ingevoegd in het exportbestand</p>"
 
-#: exe/webui/fileattachblock.py:95
+#: exe/webui/fileattachblock.py:97
 msgid "<p>You can choose to display links or not below</p>"
 msgstr "<p>onderaan kun je kiezen of je al of geen links wilt weeergeven<p>"
 
-#: exe/webui/fileattachblock.py:97
+#: exe/webui/fileattachblock.py:99
 msgid "<strong>Title:</strong><br/>"
 msgstr "<strong>Titel:</strong><br/>"
 
-#: exe/webui/fileattachblock.py:109
+#: exe/webui/fileattachblock.py:111
 msgid "Add Another File Attachment"
 msgstr "Voeg een bijlagen toe"
 
-#: exe/webui/fileattachblock.py:143
+#: exe/webui/fileattachblock.py:145
 msgid "File List (this list shows only in preview mode):"
 msgstr "Lijst van bestanden (deze lijst wordt alleen getoond in previeuw modus)"
+
+#: exe/webui/fileattachblock.py:161
+msgid "New Window"
+msgstr "Nieuw venster"
 
 #: exe/webui/galleryblock.py:223 exe/webui/galleryblock.py:307
 #: exe/webui/galleryblock.py:308
@@ -7943,25 +9049,46 @@ msgstr ""
 "Een of meer woorden of hint zijn opengelaten. Laat svp geen hints of "
 "woorden open - U kunt ongebruikte woorden of hints verwijderen."
 
-#: exe/webui/hangmanblock.py:350
-msgid "Remove This Life"
-msgstr "Verwijder dit leven"
-
-#: exe/webui/hangmanblock.py:352
-msgid "Add Chance"
-msgstr "Voeg een kans toe"
-
-#: exe/webui/hangmanblock.py:357
+#: exe/webui/hangmanblock.py:319
 msgid "<h2>Words to Guess</h2>"
 msgstr "<h2>Te raden woorden</h2>"
 
-#: exe/webui/hangmanblock.py:366
+#: exe/webui/hangmanblock.py:326
+#, fuzzy, python-format
+msgid "Word %s"
+msgstr "Sleutelwoorden"
+
+#: exe/webui/hangmanblock.py:334
 msgid "Remove This Word"
 msgstr "Verwijder dit woord"
 
-#: exe/webui/hangmanblock.py:368
+#: exe/webui/hangmanblock.py:338
 msgid "Add Word"
 msgstr "Voeg een woord toe"
+
+#: exe/webui/hangmanblock.py:352
+#, fuzzy
+msgid "Remove This Chance"
+msgstr "Verwijder dit leven"
+
+#: exe/webui/hangmanblock.py:356
+msgid "Add Chance"
+msgstr "Voeg een kans toe"
+
+#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:154
+#: exe/webui/wizardpage.py:147
+msgid "Default browser in your system"
+msgstr "Standaard browser op uw computer"
+
+#: exe/webui/idevicepage.py:181
+#, fuzzy
+msgid "Failed to get idevicep edit"
+msgstr "Ophalen instellingen niet gelukt"
+
+#: exe/webui/idevicepage.py:216
+#, fuzzy
+msgid "Failed to save preferences idevicep"
+msgstr "Opslaan voorkeuren niet gelukt"
 
 #: exe/webui/iecmwarning.py:42
 msgid "eXe problem"
@@ -8007,7 +9134,16 @@ msgstr "Extra groot"
 msgid "Size of magnifying glass: "
 msgstr "Grootte van vergrootglas:"
 
-#: exe/webui/listablock.py:180
+#: exe/webui/imagemapblock.py:77
+#, python-format
+msgid "Area %s"
+msgstr ""
+
+#: exe/webui/imagemapblock.py:82
+msgid "Add Area to Image Map"
+msgstr ""
+
+#: exe/webui/listablock.py:182
 msgid "Other words"
 msgstr "andere woorden"
 
@@ -8083,10 +9219,6 @@ msgstr "Timer in het spel tonen inschakelen"
 msgid "Add Placable Object"
 msgstr "Voeg een te plaatsen object toe"
 
-#: exe/webui/preferencespage.py:154
-msgid "Default browser in your system"
-msgstr "Standaard browser op uw computer"
-
 #: exe/webui/preferencespage.py:192
 msgid "Failed to get preferences"
 msgstr "Ophalen voorkeuren niet gelukt"
@@ -8095,15 +9227,15 @@ msgstr "Ophalen voorkeuren niet gelukt"
 msgid "Failed to save preferences"
 msgstr "Opslaan voorkeuren niet gelukt"
 
-#: exe/webui/quitpage.py:44
+#: exe/webui/quitpage.py:45
 msgid "eXe Closed"
 msgstr "eXe gaat sluiten"
 
-#: exe/webui/quitpage.py:48
+#: exe/webui/quitpage.py:49
 msgid "eXe has finished running in this window."
 msgstr "eXe is gestopt in dit venster"
 
-#: exe/webui/quitpage.py:52
+#: exe/webui/quitpage.py:53
 msgid "You can close it safely."
 msgstr "U kunt het nu veilig sluiten"
 
@@ -9008,11 +10140,6 @@ msgid "Swap Image"
 msgstr "Afbeelding wisselen"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:54
-msgid "Image Map"
-msgstr "Afbeeldingsplattegrond"
-
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:60
 msgid "Long Description Link"
 msgstr "Uitgebreide beschrijving"
@@ -9191,13 +10318,6 @@ msgstr "Taalcodering"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 msgid "Target Language"
 msgstr "Taal"
-
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-msgid "Target"
-msgstr "Doel"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
@@ -9613,10 +10733,6 @@ msgid "Value"
 msgstr "Waarde"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-msgid "Content"
-msgstr "Inhoud"
-
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 msgid "Rel"
 msgstr "Rel"
 
@@ -10011,11 +11127,6 @@ msgstr "geďntegreerd geluid"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 msgid "List"
 msgstr "Lijst"
-
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-msgid "Background"
-msgstr "Achtergrond"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:4
 msgid "Selected file"
@@ -10420,10 +11531,6 @@ msgid "Cell Type"
 msgstr "Celtype"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-msgid "Rows"
-msgstr "Rijen"
-
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 msgid "Columns"
 msgstr "Kolommen"
 
@@ -10819,7 +11926,16 @@ msgstr "Algemeen Gebruik"
 msgid "Invalid color value"
 msgstr "Ongeldige kleur code"
 
-#: exe/webui/sortblock.py:92
+#: exe/webui/sortblock.py:89
+msgid ""
+"<p class='edit_inline_hint'>Put each item you want to be sorted into\n"
+"             its own <b>sortable item</b> box below in the correct order."
+"  It will be\n"
+"             automatically shuffled when the student sees it\n"
+"             </p>"
+msgstr ""
+
+#: exe/webui/sortblock.py:104
 msgid "Add Another Item to be Sorted"
 msgstr "Voeg een nieuw item toe om te sorteren"
 
@@ -10864,13 +11980,13 @@ msgstr "De stijl is juist verwijderd"
 msgid "An unexpected error has occurred"
 msgstr "Er is een onverwachte fout opgetreden"
 
-#: exe/webui/truefalseelement.py:116 exe/webui/truefalseelement.py:214
-#: exe/webui/truefalseelement.py:262
+#: exe/webui/truefalseelement.py:116 exe/webui/truefalseelement.py:217
+#: exe/webui/truefalseelement.py:266
 msgid "True"
 msgstr "Waar"
 
-#: exe/webui/truefalseelement.py:118 exe/webui/truefalseelement.py:218
-#: exe/webui/truefalseelement.py:264
+#: exe/webui/truefalseelement.py:118 exe/webui/truefalseelement.py:221
+#: exe/webui/truefalseelement.py:268
 msgid "False"
 msgstr "Niet waar"
 
@@ -10966,6 +12082,11 @@ msgstr "Site"
 msgid "Own site"
 msgstr "Eigen website"
 
+#: exe/webui/wizardpage.py:183
+#, fuzzy
+msgid "Failed to get preferences wizard edit"
+msgstr "Ophalen voorkeuren niet gelukt"
+
 #: exe/webui/xliffimportpreferencespage.py:84
 msgid ""
 "If you choose this option, the import process will take the texts from "
@@ -10973,10 +12094,6 @@ msgid ""
 msgstr ""
 "Als U deze optie kiest dan zal het import proces de tekst van de broncode"
 " gebruiken in plaats van de doelcode."
-
-#: exe/webui/xliffimportpreferencespage.py:90
-msgid "OK"
-msgstr "Ok"
 
 #: twisted/persisted/styles.py:319 twisted/persisted/styles.py:332
 #: twisted/persisted/styles.py:478 twisted/persisted/styles.py:551
