@@ -39,7 +39,7 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
                         activeTab: 0,
                         items: [
                             {
-                                title: 'Templates',
+                                title: _('Templates'),
                                 bodyPadding: '10',
                                 autoScroll: true,
                                 xtype: 'panel',
@@ -58,7 +58,7 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
 	                            itemId: 'wizard_show_templates'
                             },
                             {
-                                title: 'Local Library',
+                                title: _('Local Library'),
                                 bodyPadding: '10',
                                 xtype: 'panel',
 								autoScroll:true,
@@ -106,7 +106,8 @@ var wizz = Ext.define('eXe.view.forms.WizardPanel', {
 							},
 							{
 							    xtype:  'label',
-							    html:   '<h3><i>Your recent projects:</i></h3>',
+							    html:   '<h3><i>' + _('Your recent projects') + 
+							    	':</i></h3>',
 							    region: 'north'
 							},
 							{ 

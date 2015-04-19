@@ -4758,12 +4758,12 @@ msgstr "التصنيف"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
 msgid "General"
-msgstr ""
+msgstr "عام"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:219
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:258
 msgid "Life Cycle"
-msgstr ""
+msgstr "دورة الحياة"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:220
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:259
@@ -4773,7 +4773,7 @@ msgstr "بيانات التعريف"
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:221
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:260
 msgid "Technical"
-msgstr ""
+msgstr "تقني"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:222
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:261
@@ -4788,7 +4788,7 @@ msgstr "اقتباس"
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:226
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:265
 msgid "Classification"
-msgstr ""
+msgstr "تصنيف"
 
 #: exe/jsui/scripts/app/view/forms/LomSections.js:23
 #: exe/jsui/scripts/app/view/forms/LomSections.js:193
@@ -7652,7 +7652,7 @@ msgstr "إضافة محتوى"
 
 #: exe/webui/block.py:184
 msgid "IDevice broken"
-msgstr "Device مقطوع"
+msgstr "IDevice مقطوع"
 
 #: exe/webui/block.py:223
 msgid "Done"

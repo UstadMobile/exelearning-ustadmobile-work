@@ -10,7 +10,7 @@ class AttemptIdevice(GenericHTMLIdevice):
     persistenceVersion = 1
     
     def __init__(self):
-        GenericHTMLIdevice.__init__(self, "Start/Finish Scoring", 
+        GenericHTMLIdevice.__init__(self, _("Start/Finish Scoring"), 
                                 "Mike Dawson, UstadMobile", 
                                 "Used to start/finish TinCan scoring")
         

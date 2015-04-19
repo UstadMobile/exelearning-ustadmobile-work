@@ -4805,12 +4805,12 @@ msgstr "ট্যাক্সোনমি"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
 msgid "General"
-msgstr ""
+msgstr "সাধারণ"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:219
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:258
 msgid "Life Cycle"
-msgstr ""
+msgstr "জীবনচক্র"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:220
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:259
@@ -4820,7 +4820,7 @@ msgstr "মেটাডেটা"
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:221
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:260
 msgid "Technical"
-msgstr ""
+msgstr "প্রযুক্তিগত"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:222
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:261
@@ -4835,7 +4835,7 @@ msgstr "উদ্ধৃতি"
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:226
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:265
 msgid "Classification"
-msgstr ""
+msgstr "শ্রেণীবিভাজন"
 
 #: exe/jsui/scripts/app/view/forms/LomSections.js:23
 #: exe/jsui/scripts/app/view/forms/LomSections.js:193

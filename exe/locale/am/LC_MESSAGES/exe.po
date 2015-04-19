@@ -4730,7 +4730,7 @@ msgstr "ታክሶኖሚ"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
 msgid "General"
-msgstr ""
+msgstr "አጠቃላይ"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:219
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:258
@@ -4745,7 +4745,7 @@ msgstr "ዲበ ውሂብ"
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:221
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:260
 msgid "Technical"
-msgstr ""
+msgstr "የቴክኒክ ዝርዝሮችን አሳይ"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:222
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:261
@@ -4760,7 +4760,7 @@ msgstr "ጥቅስ"
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:226
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:265
 msgid "Classification"
-msgstr ""
+msgstr "ምደባ"
 
 #: exe/jsui/scripts/app/view/forms/LomSections.js:23
 #: exe/jsui/scripts/app/view/forms/LomSections.js:193
