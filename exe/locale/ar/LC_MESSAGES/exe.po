@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-16 18:38+0400\n"
+"POT-Creation-Date: 2015-04-19 18:07+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ar <LL@li.org>\n"
@@ -100,7 +100,7 @@ msgid ""
 msgstr ""
 
 #: exe/engine/appletidevice.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "file %s has no parentNode"
 msgstr "الملف المرفق %s لا يتضمن عقدة الأصل  "
 
@@ -281,7 +281,6 @@ msgid ""
 msgstr "تقدم تعليقات ذات صلة بالموقف."
 
 #: exe/engine/casopracticofpdidevice.py:30
-#, fuzzy
 msgid "FPD - Situation"
 msgstr "موقف"
 
@@ -308,18 +307,15 @@ msgstr ""
 #: exe/engine/orientacionestutoriafpdidevice.py:35
 #: exe/engine/parasabermasfpdidevice.py:35
 #: exe/engine/recomendacionfpdidevice.py:35
-#, fuzzy
 msgid "Enter the text that will appear on this iDevice"
 msgstr "أدخل نصًا ليظهر داخل هذه المنطقة"
 
 #: exe/engine/casopracticofpdidevice.py:38
 #: exe/engine/casopracticofpdidevice.py:136
-#, fuzzy
 msgid "Situation Text:"
 msgstr "موقف"
 
 #: exe/engine/citasparapensarfpdidevice.py:32
-#, fuzzy
 msgid "FPD - Quotation"
 msgstr "اقتباس"
 
@@ -331,7 +327,6 @@ msgstr ""
 
 #: exe/engine/citasparapensarfpdidevice.py:40
 #: exe/engine/citasparapensarfpdidevice.py:139
-#, fuzzy
 msgid "Quotation Text:"
 msgstr "اقتباس"
 
@@ -369,17 +364,14 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Title"
 msgstr "موقع"
 
 #: exe/engine/clickinorderidevice.py:62
-#, fuzzy
 msgid "Game Instructions"
 msgstr "انقر للحصول على إرشادات الإكمال"
 
 #: exe/engine/clickinorderidevice.py:62
-#, fuzzy
 msgid "Instructions to show in leading paragraph"
 msgstr "إرشادات لعرضها"
 
@@ -392,7 +384,6 @@ msgid "Shown over when the game is won"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:64
-#, fuzzy
 msgid "Correct Answer Feedback Overlay"
 msgstr "تعليقات الإجابة الصحيحة"
 
@@ -401,7 +392,6 @@ msgid "Shown over game when correct answer given"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:65
-#, fuzzy
 msgid "Wrong Answer Feedback Overlay"
 msgstr "تعليقات الإجابة الخطأ"
 
@@ -410,7 +400,6 @@ msgid "Shown over game when wrong answer is given"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:66
-#, fuzzy
 msgid "Main Area To Show"
 msgstr "عنوان لعرضه"
 
@@ -427,7 +416,6 @@ msgid "User will click on this to start the game"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:79
-#, fuzzy
 msgid "Game Width"
 msgstr "العرض"
 
@@ -436,7 +424,6 @@ msgid "Width of game area (in pixels)"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:80
-#, fuzzy
 msgid "Game Height"
 msgstr "ارتفاع الإطار:"
 
@@ -453,7 +440,6 @@ msgid "Use CSS to style element that counts number items found"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:82
-#, fuzzy
 msgid "Hint Width"
 msgstr "العرض"
 
@@ -462,7 +448,6 @@ msgid "Width (px) of hint area"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:83
-#, fuzzy
 msgid "Hint Height"
 msgstr "الارتفاع"
 
@@ -479,7 +464,6 @@ msgid "Style of Hint Area"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:85
-#, fuzzy
 msgid "Style of timer Element"
 msgstr "صورة للعنصر"
 
@@ -505,7 +489,6 @@ msgid "Stopwatch Mode"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:108
-#, fuzzy
 msgid "Shuffle Questions"
 msgstr "حذف سؤال"
 
@@ -538,12 +521,10 @@ msgid "Left (X) Coord"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:154
-#, fuzzy
 msgid "Left CSS left property"
 msgstr "فشل الوصول إلى الخصائص"
 
 #: exe/engine/clickinorderidevice.py:155
-#, fuzzy
 msgid "Width (px)"
 msgstr "العرض"
 
@@ -552,7 +533,6 @@ msgid "Width of clickable area"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:156
-#, fuzzy
 msgid "Height (px)"
 msgstr "الارتفاع"
 
@@ -569,7 +549,6 @@ msgid "After delay ms hide the content prev revealed"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:167
-#, fuzzy
 msgid "Hint to Show for this item"
 msgstr "تلميح للعرض على المستخدم"
 
@@ -586,7 +565,6 @@ msgid "The Item that will be revealed in place"
 msgstr ""
 
 #: exe/engine/clozefpdidevice.py:50
-#, fuzzy
 msgid "FPD - Cloze Activity"
 msgstr "نشاط اختبار كلوز"
 
@@ -637,7 +615,6 @@ msgstr ""
 #: exe/engine/truefalseidevice.py:392
 #: exe/engine/verdaderofalsofpdidevice.py:166
 #: exe/engine/verdaderofalsofpdidevice.py:394 exe/webui/common.py:588
-#, fuzzy
 msgid "Instructions"
 msgstr "إرشادات لعرضها"
 
@@ -651,7 +628,6 @@ msgstr ""
 
 #: exe/engine/clozefpdidevice.py:126 exe/engine/clozeidevice.py:127
 #: exe/webui/element.py:1428 exe/webui/listablock.py:264
-#, fuzzy
 msgid "Cloze"
 msgstr "النتيجة"
 
@@ -690,7 +666,6 @@ msgstr "التعليقات"
 
 #: exe/engine/clozefpdidevice.py:133 exe/engine/clozeidevice.py:140
 #: exe/engine/clozelangfpdidevice.py:133 exe/engine/listaidevice.py:147
-#, fuzzy
 msgid ""
 "Enter any feedback you wish to provide the learner with-in the feedback "
 "field. This field can be left blank."
@@ -700,41 +675,34 @@ msgstr ""
 
 #: exe/engine/clozefpdidevice.py:278 exe/engine/clozeidevice.py:286
 #: exe/engine/clozelangfpdidevice.py:282 exe/engine/listaidevice.py:299
-#, fuzzy
 msgid "Instructions For Learners"
 msgstr "إرشادات للمتعلمين"
 
 #: exe/engine/clozefpdidevice.py:279 exe/engine/clozeidevice.py:287
 #: exe/engine/clozelangfpdidevice.py:283 exe/engine/listaidevice.py:300
-#, fuzzy
 msgid "Put instructions for learners here"
 msgstr "ضع إرشادات للمتعلمين هنا"
 
 #: exe/engine/clozefpdidevice.py:280 exe/engine/clozeidevice.py:288
 #: exe/engine/clozelangfpdidevice.py:284
-#, fuzzy
 msgid "Read the paragraph below and fill in the missing words"
 msgstr "اقرأ الفقرة أدناه واملأ الكلمات المفقودة"
 
 #: exe/engine/clozefpdidevice.py:291 exe/engine/clozeidevice.py:300
 #: exe/engine/clozelangfpdidevice.py:296
-#, fuzzy
 msgid "Allow auto completion when user filling the gaps."
 msgstr "السماح بالإكمال التلقائي عندما يقوم المستخدم بالملء."
 
 #: exe/engine/clozeidevice.py:49
-#, fuzzy
 msgid "Fill in the Blank"
 msgstr "ملء الفارغ"
 
 #: exe/engine/clozeidevice.py:118
-#, fuzzy
 msgid "Simple fill in the blank exercise - blank spaces shown as textboxes"
 msgstr "املأ ببساطة التمرين الفارغ - المسافات الفارغة المبينة على شكل مربعات نصية"
 
 #: exe/engine/clozeidevice.py:124 exe/engine/truefalseidevice.py:395
 #: exe/engine/verdaderofalsofpdidevice.py:397
-#, fuzzy
 msgid "Read the paragraph below and fill in the missing words."
 msgstr "اقرأ الفقرة أدناه واملأ الكلمات المفقودة."
 
@@ -838,7 +806,6 @@ msgid "You Should Know Text:"
 msgstr ""
 
 #: exe/engine/destacadofpdidevice.py:29
-#, fuzzy
 msgid "FPD - Highlighted"
 msgstr "مؤثر إبراز لون الخلفية"
 
@@ -849,7 +816,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/destacadofpdidevice.py:36 exe/engine/destacadofpdidevice.py:134
-#, fuzzy
 msgid "Highlighted Text:"
 msgstr "مؤثر إبراز لون الخلفية"
 
@@ -1025,7 +991,6 @@ msgid "Stay"
 msgstr "البقاء"
 
 #: exe/engine/ejercicioresueltofpdidevice.py:198
-#, fuzzy
 msgid "FPD - Translation"
 msgstr "ترجمة"
 
@@ -1226,7 +1191,6 @@ msgid "No File Uploaded Currently"
 msgstr "لا يوجد ملف محمل حاليًا"
 
 #: exe/engine/extendedfieldengine.py:629
-#, fuzzy
 msgid "is not a valid number - please try again<br/>"
 msgstr " ليس رقمًا صحيحًا - يرجى المحاولة مرة أخرى"
 
@@ -1430,12 +1394,10 @@ msgstr "اكتب التعليقات التي تود تقديمها للمتعل�
 #: exe/engine/notaidevice.py:145 exe/engine/reflectionfpdidevice.py:69
 #: exe/engine/reflectionfpdidevice.py:204 exe/engine/reflectionidevice.py:66
 #: exe/engine/reflectionidevice.py:200
-#, fuzzy
 msgid "Feedback:"
 msgstr "التعليقات:"
 
 #: exe/engine/fileattachidevice.py:37
-#, fuzzy
 msgid "File Attachments"
 msgstr "الملفات المرفقة"
 
@@ -1522,7 +1484,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/flashwithtextidevice.py:43 exe/engine/flashwithtextidevice.py:50
-#, fuzzy
 msgid "Flash with Text"
 msgstr "صورة مع نص"
 
@@ -1543,7 +1504,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/flashwithtextidevice.py:58 exe/engine/flashwithtextidevice.py:118
-#, fuzzy
 msgid ""
 "Provide a caption for the flash you \n"
 "                                  have just inserted."
@@ -1651,7 +1611,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/genericidevice.py:310 exe/engine/idevicestore.py:682
-#, fuzzy
 msgid "Reading Activity 0.11"
 msgstr "نشاط القراءة"
 
@@ -1704,7 +1663,6 @@ msgid "abcdefghijklmnopqrstuvwxyz"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:99
-#, fuzzy
 msgid "Letter Button Style"
 msgstr "حذف نمط؟"
 
@@ -1749,13 +1707,11 @@ msgid "Restart Level Button Text"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:117
-#, fuzzy
 msgid "Text for reset button"
 msgstr "نص لزر الفحص"
 
 #: exe/engine/hangmanidevice.py:117 exe/webui/element.py:1454
 #: exe/webui/element.py:1710
-#, fuzzy
 msgid "Restart"
 msgstr "بدء"
 
@@ -1790,7 +1746,6 @@ msgid "Player will see this message when they loose the level"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:131
-#, fuzzy
 msgid ""
 "Enter here the message the player\n"
 "                 will see when they have used up all their chances"
@@ -1805,7 +1760,6 @@ msgid "Player will see this message when they guess the word correctly"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:136
-#, fuzzy
 msgid ""
 "Enter here the message the player\n"
 "                 will see when they successfully complete a word"
@@ -1820,7 +1774,6 @@ msgid "Player will see this message when they guess all words correctly"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:141
-#, fuzzy
 msgid ""
 "Enter here the message the player\n"
 "                 will see when they have guessed all the words on the list"
@@ -1843,7 +1796,6 @@ msgid "Word to Guess"
 msgstr "كلمة لتخمينها"
 
 #: exe/engine/hangmanidevice.py:169
-#, fuzzy
 msgid "Word To Guess"
 msgstr "كلمة لتخمينها"
 
@@ -1875,7 +1827,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/idevicestore.py:616 exe/engine/idevicestore.py:725
-#, fuzzy
 msgid "What to read"
 msgstr "للقراءة"
 
@@ -1890,7 +1841,6 @@ msgstr ""
 #: exe/engine/idevicestore.py:667 exe/engine/idevicestore.py:729
 #: exe/engine/idevicestore.py:766 exe/engine/idevicestore.py:774
 #: exe/webui/questionelement.py:109
-#, fuzzy
 msgid "Activity"
 msgstr "النشاط"
 
@@ -2067,7 +2017,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/imagemagnifieridevice.py:73
-#, fuzzy
 msgid "Select the size of the magnifying glass"
 msgstr "حجم عدسة التكبير:  "
 
@@ -2155,7 +2104,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/imagewithtextidevice.py:66
-#, fuzzy
 msgid ""
 "Enter the text you wish to \n"
 "                                                associate with the image."
@@ -2172,7 +2120,6 @@ msgid "DropDown Activity"
 msgstr "نشاط منسدل"
 
 #: exe/engine/listaidevice.py:67
-#, fuzzy
 msgid "INTEF"
 msgstr "موقع"
 
@@ -2246,7 +2193,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/listaidevice.py:149
-#, fuzzy
 msgid ""
 "Enter feedback to show the learner \n"
 "                     after completion here.  It will be shown regardless\n"
@@ -2254,7 +2200,6 @@ msgid ""
 msgstr "اكتب أي تعليقات تود تقديمها للمتعلم.  فسيتم عرض ذلك بغض النظر عن النتيجة"
 
 #: exe/engine/listaidevice.py:301
-#, fuzzy
 msgid "Read the paragraph below and choose the correct words"
 msgstr "اقرأ الفقرة أدناه واملأ الكلمات المفقودة"
 
@@ -2362,7 +2307,6 @@ msgid "Height of Cells (in pixels)"
 msgstr ""
 
 #: exe/engine/memorymatchidevice.py:65
-#, fuzzy
 msgid "Cell Height px"
 msgstr "الارتفاع"
 
@@ -2419,7 +2363,6 @@ msgid "Show / Use a timer?"
 msgstr ""
 
 #: exe/engine/memorymatchidevice.py:75
-#, fuzzy
 msgid "Hide Cells after match made?"
 msgstr "إخفاء بعد المطابقة"
 
@@ -2458,7 +2401,6 @@ msgid "Cell Default Style (CSS)"
 msgstr ""
 
 #: exe/engine/memorymatchidevice.py:81
-#, fuzzy
 msgid "Cell Style CSS"
 msgstr "حذف نمط: "
 
@@ -2487,7 +2429,6 @@ msgid "Match Tile 1"
 msgstr "مطابقة البلاطة 1"
 
 #: exe/engine/memorymatchidevice.py:158
-#, fuzzy
 msgid "Match Tile1"
 msgstr "مطابقة البلاطة 1"
 
@@ -2496,7 +2437,6 @@ msgid "Match Tile 2"
 msgstr "مطابقة البلاطة 2"
 
 #: exe/engine/memorymatchidevice.py:159
-#, fuzzy
 msgid "Match Tile2"
 msgstr "مطابقة البلاطة 2"
 
@@ -2553,7 +2493,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/multimediaidevice.py:49
-#, fuzzy
 msgid "Choose an MP3 file"
 msgstr "اختر صورة"
 
@@ -2739,12 +2678,10 @@ msgid "Student has to place objects in their correct place on a diagram"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:54 exe/idevices/exampleidevice.py:45
-#, fuzzy
 msgid "This is a free text field."
 msgstr "هذا حقل اختياري."
 
 #: exe/engine/placetheobjectsidevice.py:62
-#, fuzzy
 msgid "Main Area"
 msgstr "منطقة مخطط الصورة"
 
@@ -2761,7 +2698,6 @@ msgid "(Optional) Game Time Limit"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:69
-#, fuzzy
 msgid "Show Timer"
 msgstr "عرض صورة"
 
@@ -2778,7 +2714,6 @@ msgid "This will when clicked start the game"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:75
-#, fuzzy
 msgid "Positive Response"
 msgstr "عملية معرفية"
 
@@ -2795,7 +2730,6 @@ msgid "Overlays main area when player guesses wrong"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:80
-#, fuzzy
 msgid "Number of Columns in part bin"
 msgstr "عدد الأعمدة"
 
@@ -2804,7 +2738,6 @@ msgid "Columns part bin"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:91
-#, fuzzy
 msgid "Object to Place"
 msgstr "عنوان المشروع"
 
@@ -2821,7 +2754,6 @@ msgid "Object to be put in place"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:125
-#, fuzzy
 msgid "Correct Location (x)"
 msgstr "خيار صحيح"
 
@@ -2830,7 +2762,6 @@ msgid "Where this object belongs in the main area x coordinate"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:128
-#, fuzzy
 msgid "Correct Location (y)"
 msgstr "خيار صحيح"
 
@@ -2976,7 +2907,6 @@ msgstr ""
 #: exe/engine/reflectionfpdmodifidevice.py:63
 #: exe/engine/reflectionfpdmodifidevice.py:199
 #: exe/engine/reflectionidevice.py:62 exe/engine/reflectionidevice.py:197
-#, fuzzy
 msgid "Reflective question:"
 msgstr "حذف سؤال"
 
@@ -2985,7 +2915,6 @@ msgid "FPD - Think About It (without Feedback)"
 msgstr ""
 
 #: exe/engine/reflectionidevice.py:46
-#, fuzzy
 msgid "Reflection"
 msgstr "قسم"
 
@@ -3071,12 +3000,10 @@ msgid "Title to show"
 msgstr "عنوان لعرضه"
 
 #: exe/engine/sortidevice.py:55
-#, fuzzy
 msgid "Instructions before sortable list"
 msgstr "إرشادات للعبة."
 
 #: exe/engine/sortidevice.py:56
-#, fuzzy
 msgid ""
 "Put here instructions for what the user should do - e.g. sort the list "
 "from highest to lowest"
@@ -3101,7 +3028,6 @@ msgid "Wrongly Sorted Feedback"
 msgstr "تعليقات التصنيف بشكل خاطئ"
 
 #: exe/engine/sortidevice.py:61
-#, fuzzy
 msgid "Shown when check is clicked and wrong"
 msgstr "تُعرض عند النقر على الفحص وتكون النتيجة صحيحة"
 
@@ -3113,22 +3039,18 @@ msgid ""
 msgstr ""
 
 #: exe/engine/sortidevice.py:63
-#, fuzzy
 msgid "Effect for showing correct overlay"
 msgstr "تأثير لإظهار التعليقات الإيجابية"
 
 #: exe/engine/sortidevice.py:63
-#, fuzzy
 msgid "Effect showing correct overlay"
 msgstr "تعليقات للعرض عند المطابقة الصحيحة"
 
 #: exe/engine/sortidevice.py:65
-#, fuzzy
 msgid "Effect showing wrong answer overlay"
 msgstr "تقدم تعليقات حول الإجابة الخطأ"
 
 #: exe/engine/sortidevice.py:65
-#, fuzzy
 msgid "Effect for showing wrong overlay"
 msgstr "تأثير لإظهار التعليقات السلبية"
 
@@ -3147,7 +3069,6 @@ msgid "Check Button Style (CSS)"
 msgstr ""
 
 #: exe/engine/sortidevice.py:69
-#, fuzzy
 msgid "CSS for check button"
 msgstr "نص لزر الفحص"
 
@@ -3172,7 +3093,6 @@ msgid "Style (CSS) for sortable items"
 msgstr ""
 
 #: exe/engine/sortidevice.py:72
-#, fuzzy
 msgid "Sortable Item CSS"
 msgstr "العنصر القابل للتصنيف"
 
@@ -3260,7 +3180,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/truefalseidevice.py:150
-#, fuzzy
 msgid "Question that can be either true or false"
 msgstr "السؤال يمكن أن يكون إما صوابًا أو خطأ"
 
@@ -3429,7 +3348,6 @@ msgid ""
 msgstr ""
 
 #: exe/exe_do:128 exe/run-exe_do.py:121
-#, fuzzy
 msgid "Don't copy source in target"
 msgstr "نسخ المصدر في الهدف أيضًا"
 
@@ -3450,7 +3368,6 @@ msgstr ""
 
 #: exe/exe_do:144 exe/run-exe_do.py:137
 #: exe/webui/xliffimportpreferencespage.py:79
-#, fuzzy
 msgid "Import from source language"
 msgstr "حدد اللغة المصدر"
 
@@ -3501,7 +3418,7 @@ msgid ""
 msgstr ""
 
 #: exe/exe_do:270 exe/run-exe_do.py:251
-#, fuzzy, python-format
+#, python-format
 msgid "Successfully exported '%s' from '%s'."
 msgstr "تم استيراد النمط بنجاح: %s"
 
@@ -3513,7 +3430,7 @@ msgid ""
 msgstr ""
 
 #: exe/exe_do:282 exe/run-exe_do.py:262
-#, fuzzy, python-format
+#, python-format
 msgid "File '%s' successfully imported to '%s'."
 msgstr "تم استيراد النمط بنجاح: %s"
 
@@ -3549,7 +3466,7 @@ msgstr "true"
 #: exe/export/epub3export.py:643 exe/export/imsexport.py:569
 #: exe/export/scormexport.py:669 exe/export/websiteexport.py:161
 #: exe/export/xmlexport.py:204
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "EXPORT FAILED!\n"
 "Last succesful export is %s."
@@ -3562,92 +3479,74 @@ msgid "GNU Free Documentation License"
 msgstr ""
 
 #: exe/export/pages.py:72
-#, fuzzy
 msgid "Creative Commons Attribution License 2.5"
 msgstr "creative commons: attribution 2.5"
 
 #: exe/export/pages.py:73
-#, fuzzy
 msgid "Creative Commons Attribution Share Alike License 2.5"
 msgstr "creative commons: attribution - share alike 2.5"
 
 #: exe/export/pages.py:74
-#, fuzzy
 msgid "Creative Commons Attribution No Derivatives License 2.5"
 msgstr "creative commons: attribution - non derived work 2.5"
 
 #: exe/export/pages.py:75
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial License 2.5"
 msgstr "creative commons: attribution - non commercial 2.5"
 
 #: exe/export/pages.py:76
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial Share Alike License 2.5"
 msgstr "creative commons: attribution - non commercial - share alike 2.5"
 
 #: exe/export/pages.py:77
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial No Derivatives License 2.5"
 msgstr "creative commons: attribution - non commercial - share alike 2.5"
 
 #: exe/export/pages.py:78
-#, fuzzy
 msgid "Creative Commons Attribution License 3.0"
 msgstr "creative commons: attribution 3.0"
 
 #: exe/export/pages.py:79
-#, fuzzy
 msgid "Creative Commons Attribution Share Alike License 3.0"
 msgstr "creative commons: attribution - share alike 3.0"
 
 #: exe/export/pages.py:80
-#, fuzzy
 msgid "Creative Commons Attribution No Derivatives License 3.0"
 msgstr "creative commons: attribution - non derived work 3.0"
 
 #: exe/export/pages.py:81
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial License 3.0"
 msgstr "creative commons: attribution - non commercial 3.0"
 
 #: exe/export/pages.py:82
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial Share Alike License 3.0"
 msgstr "creative commons: attribution - non commercial - share alike 3.0"
 
 #: exe/export/pages.py:83
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial No Derivatives License 3.0"
 msgstr "creative commons: attribution - non commercial - share alike 3.0"
 
 #: exe/export/pages.py:84
-#, fuzzy
 msgid "Creative Commons Attribution License 4.0"
 msgstr "creative commons: attribution 4.0"
 
 #: exe/export/pages.py:85
-#, fuzzy
 msgid "Creative Commons Attribution Share Alike License 4.0"
 msgstr "creative commons: attribution - share alike 4.0"
 
 #: exe/export/pages.py:86
-#, fuzzy
 msgid "Creative Commons Attribution No Derivatives License 4.0"
 msgstr "creative commons: attribution - non derived work 4.0"
 
 #: exe/export/pages.py:87
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial License 4.0"
 msgstr "creative commons: attribution - non commercial 4.0"
 
 #: exe/export/pages.py:88
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial Share Alike License 4.0"
 msgstr "creative commons: attribution - non commercial - share alike 4.0"
 
 #: exe/export/pages.py:89
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial No Derivatives License 4.0"
 msgstr "creative commons: attribution - non commercial - share alike 4.0"
 
@@ -3801,12 +3700,12 @@ msgid "Package saved to: %s"
 msgstr "تم حفظ الحزمة إلى: %s"
 
 #: exe/jsui/mainpage.py:1034 exe/jsui/mainpage.py:1148
-#, fuzzy, python-format
+#, python-format
 msgid "Preview directory %s is a file, cannot replace it"
 msgstr "اسم الملف %s هو ملف، ولا يمكن استبداله "
 
 #: exe/jsui/mainpage.py:1058
-#, fuzzy, python-format
+#, python-format
 msgid "Local file %s is not found, cannot preview it"
 msgstr "اسم الملف %s هو ملف، ولا يمكن استبداله "
 
@@ -3924,7 +3823,7 @@ msgid "Couldn't load file, please email file to bugs@exelearning.org"
 msgstr ""
 
 #: exe/jsui/mainpage.py:1782
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Sorry, wrong file format:\n"
 "%s"
@@ -4566,7 +4465,6 @@ msgid "The name given to the resource."
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:51
-#, fuzzy
 msgid "Creator"
 msgstr "المؤشر"
 
@@ -4593,12 +4491,10 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:71
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:189
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:193
-#, fuzzy
 msgid "An account of the content of the resource."
 msgstr "المؤلف الأساسي للمورد."
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:78
-#, fuzzy
 msgid "Publisher"
 msgstr "نشر"
 
@@ -4607,7 +4503,6 @@ msgid "An entity responsible for making the resource available."
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:85
-#, fuzzy
 msgid "Contributors"
 msgstr "مساهمة"
 
@@ -4658,7 +4553,6 @@ msgid "Format"
 msgstr "التنسيق"
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:128
-#, fuzzy
 msgid "Select a Format."
 msgstr "حدد معدل النجاح:  "
 
@@ -4676,7 +4570,6 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/LomSections.js:175
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Source"
 msgstr "المورد"
 
@@ -4715,7 +4608,6 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:163
 #: exe/jsui/scripts/app/view/forms/LomSections.js:52
-#, fuzzy
 msgid "Coverage"
 msgstr "متوسط"
 
@@ -4767,7 +4659,6 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:44
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:51
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:55
-#, fuzzy
 msgid "Metadata Type"
 msgstr "بيانات التعريف"
 
@@ -4852,7 +4743,6 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:408
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:426
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:433
-#, fuzzy
 msgid "Taxon"
 msgstr "التصنيف"
 
@@ -4877,7 +4767,6 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:220
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:259
-#, fuzzy
 msgid "Meta-Metadata"
 msgstr "بيانات التعريف"
 
@@ -4888,13 +4777,11 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:222
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:261
-#, fuzzy
 msgid "Educational"
 msgstr "قسم"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:225
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:264
-#, fuzzy
 msgid "Annotation"
 msgstr "اقتباس"
 
@@ -4910,7 +4797,6 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomSections.js:24
 #: exe/jsui/scripts/app/view/forms/LomSections.js:194
-#, fuzzy
 msgid "learning objects"
 msgstr "مشروع فارغ"
 
@@ -5133,7 +5019,6 @@ msgid ""
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:357
-#, fuzzy
 msgid "Years"
 msgstr "مسح"
 
@@ -5150,17 +5035,14 @@ msgid "Hours"
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:375
-#, fuzzy
 msgid "Minutes"
 msgstr "حدود"
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:376
-#, fuzzy
 msgid "Seconds"
 msgstr "رموز"
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:481
-#, fuzzy
 msgid "Id"
 msgstr "النوع"
 
@@ -5169,12 +5051,10 @@ msgid "Append Section"
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:659
-#, fuzzy
 msgid "Delete Section"
 msgstr "حذف سؤال"
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:673
-#, fuzzy
 msgid "Notice"
 msgstr "مقال"
 
@@ -5546,7 +5426,6 @@ msgid "Server"
 msgstr "خادم"
 
 #: exe/jsui/scripts/app/view/forms/PublishPanel.js:75
-#, fuzzy
 msgid "You need to enter a servername to log in"
 msgstr "يتعين عليك إدخال اسم مستخدم لتسجيل الدخول"
 
@@ -5641,7 +5520,6 @@ msgid "e.g. MyLevel 1"
 msgstr "مثال، المستوى 1 الخاص بي"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:49
-#, fuzzy
 msgid "New Guide"
 msgstr "سطر جديد"
 
@@ -5682,7 +5560,6 @@ msgid "Suggested Words"
 msgstr "كلمات مقترحة"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:225
-#, fuzzy
 msgid "Share"
 msgstr "كبير"
 
@@ -5700,12 +5577,10 @@ msgid "Level:"
 msgstr "المستوى:"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:35
-#, fuzzy
 msgid "Selected Level"
 msgstr "حدد مستوى"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:54
-#, fuzzy
 msgid "Setup"
 msgstr "إعادة تعيين"
 
@@ -6147,7 +6022,6 @@ msgid "Tibetan "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:68
-#, fuzzy
 msgid "Breton "
 msgstr "قسم"
 
@@ -6156,7 +6030,6 @@ msgid "Bosnian "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:76
-#, fuzzy
 msgid "Catalan "
 msgstr "فعلي"
 
@@ -6217,7 +6090,6 @@ msgid "Spanish "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:136
-#, fuzzy
 msgid "Estonian "
 msgstr "السؤال"
 
@@ -6226,7 +6098,6 @@ msgid "Basque "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:144
-#, fuzzy
 msgid "Persian "
 msgstr "الإصدار"
 
@@ -6239,7 +6110,6 @@ msgid "Fijian; Fiji "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:156
-#, fuzzy
 msgid "Faroese "
 msgstr "استعراض"
 
@@ -6268,7 +6138,6 @@ msgid "Guarani "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:184
-#, fuzzy
 msgid "Gujarati "
 msgstr "المدة"
 
@@ -6285,7 +6154,6 @@ msgid "Hebrew (formerly iw) "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:200
-#, fuzzy
 msgid "Hindi "
 msgstr "النوع"
 
@@ -6294,7 +6162,6 @@ msgid "Hiri Motu "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:208
-#, fuzzy
 msgid "Croatian "
 msgstr "الموقع"
 
@@ -6303,12 +6170,10 @@ msgid "Hungarian "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:216
-#, fuzzy
 msgid "Armenian "
 msgstr "تحذير"
 
 #: exe/jsui/scripts/langs.js:220
-#, fuzzy
 msgid "Herero "
 msgstr "خادم"
 
@@ -6321,7 +6186,6 @@ msgid "Indonesian (formerly in) "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:232
-#, fuzzy
 msgid "Interlingue "
 msgstr "سطر جديد"
 
@@ -6338,7 +6202,6 @@ msgid "Icelandic "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:248
-#, fuzzy
 msgid "Italian "
 msgstr "موقف"
 
@@ -6355,7 +6218,6 @@ msgid "Javanese "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:264
-#, fuzzy
 msgid "Georgian "
 msgstr "دمج"
 
@@ -6400,7 +6262,6 @@ msgid "Komi "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:308
-#, fuzzy
 msgid "Cornish "
 msgstr "رموز"
 
@@ -6409,7 +6270,6 @@ msgid "Kirghiz "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:316
-#, fuzzy
 msgid "Latin "
 msgstr "علاقة"
 
@@ -6426,7 +6286,6 @@ msgid "Lao; Laotian "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:332
-#, fuzzy
 msgid "Lithuanian "
 msgstr "موقف"
 
@@ -6439,12 +6298,10 @@ msgid "Malagasy "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:344
-#, fuzzy
 msgid "Marshall "
 msgstr "صغير"
 
 #: exe/jsui/scripts/langs.js:348
-#, fuzzy
 msgid "Maori "
 msgstr "البريد الإلكتروني"
 
@@ -6469,12 +6326,10 @@ msgid "Marathi "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:372
-#, fuzzy
 msgid "Malay "
 msgstr "صغير"
 
 #: exe/jsui/scripts/langs.js:376
-#, fuzzy
 msgid "Maltese "
 msgstr "خطأ"
 
@@ -6495,7 +6350,6 @@ msgid "Ndebele,North "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:396
-#, fuzzy
 msgid "Nepali "
 msgstr "سطر جديد"
 
@@ -6504,7 +6358,6 @@ msgid "Ndonga "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:404
-#, fuzzy
 msgid "Dutch "
 msgstr "العرض"
 
@@ -6553,7 +6406,6 @@ msgid "Pali "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:452
-#, fuzzy
 msgid "Polish "
 msgstr "نشر"
 
@@ -6578,7 +6430,6 @@ msgid "Rundi; Kirundi "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:476
-#, fuzzy
 msgid "Romanian "
 msgstr "مؤسسة"
 
@@ -6595,12 +6446,10 @@ msgid "Sanskrit "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:492
-#, fuzzy
 msgid "Sardinian "
 msgstr "تحذير"
 
 #: exe/jsui/scripts/langs.js:496
-#, fuzzy
 msgid "Sindhi "
 msgstr "النوع"
 
@@ -6633,7 +6482,6 @@ msgid "Shona "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:528
-#, fuzzy
 msgid "Somali "
 msgstr "صغير"
 
@@ -6666,7 +6514,6 @@ msgid "Swahili "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:560
-#, fuzzy
 msgid "Tamil "
 msgstr "البريد الإلكتروني"
 
@@ -6687,12 +6534,10 @@ msgid "Tigrinya "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:580
-#, fuzzy
 msgid "Turkmen "
 msgstr "رجوع"
 
 #: exe/jsui/scripts/langs.js:584
-#, fuzzy
 msgid "Tagalog "
 msgstr "كتالوج"
 
@@ -6713,7 +6558,6 @@ msgid "Tsonga "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:604
-#, fuzzy
 msgid "Tatar "
 msgstr "بيانات التعريف"
 
@@ -6746,7 +6590,6 @@ msgid "Valencian "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:636
-#, fuzzy
 msgid "Vietnamese "
 msgstr "اسم الملف:"
 
@@ -6787,7 +6630,6 @@ msgid "Zulu "
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:5 exe/jsui/scripts/lomvocab.js:664
-#, fuzzy
 msgid "active"
 msgstr "الأهداف"
 
@@ -6797,7 +6639,6 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:13 exe/jsui/scripts/lomvocab.js:672
 #: exe/jsui/scripts/lomvocab.js:1216
-#, fuzzy
 msgid "mixed"
 msgstr "ثابت"
 
@@ -6806,12 +6647,10 @@ msgid "exercise"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:23 exe/jsui/scripts/lomvocab.js:882
-#, fuzzy
 msgid "simulation"
 msgstr "موقف"
 
 #: exe/jsui/scripts/lomvocab.js:27 exe/jsui/scripts/lomvocab.js:886
-#, fuzzy
 msgid "questionnaire"
 msgstr "السؤال"
 
@@ -6828,17 +6667,14 @@ msgid "graph"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:43
-#, fuzzy
 msgid "index"
 msgstr "النوع"
 
 #: exe/jsui/scripts/lomvocab.js:47
-#, fuzzy
 msgid "slide"
 msgstr "مؤثر الانزلاق"
 
 #: exe/jsui/scripts/lomvocab.js:51 exe/jsui/scripts/lomvocab.js:730
-#, fuzzy
 msgid "table"
 msgstr "تسمية"
 
@@ -6847,7 +6683,6 @@ msgid "narrative text"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:59 exe/jsui/scripts/lomvocab.js:890
-#, fuzzy
 msgid "exam"
 msgstr "إعادة تسمية"
 
@@ -6865,7 +6700,6 @@ msgid "self assessment"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:75
-#, fuzzy
 msgid "lecture"
 msgstr "بنية"
 
@@ -6874,7 +6708,6 @@ msgid "discipline"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:103 exe/jsui/scripts/lomvocab.js:922
-#, fuzzy
 msgid "idea"
 msgstr "إخفاء"
 
@@ -6891,7 +6724,6 @@ msgid "accessibility restrictions"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:119 exe/jsui/scripts/lomvocab.js:938
-#, fuzzy
 msgid "educational level"
 msgstr "مستوى التجميع"
 
@@ -6900,7 +6732,6 @@ msgid "skill level"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:127 exe/jsui/scripts/lomvocab.js:946
-#, fuzzy
 msgid "security level"
 msgstr "حدد مستوى"
 
@@ -6909,7 +6740,6 @@ msgid "competency"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:137 exe/jsui/scripts/lomvocab.js:956
-#, fuzzy
 msgid "creator"
 msgstr "المؤشر"
 
@@ -6920,12 +6750,10 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:147 exe/jsui/scripts/lomvocab.js:613
 #: exe/jsui/scripts/lomvocab.js:966
-#, fuzzy
 msgid "author"
 msgstr "المؤلف"
 
 #: exe/jsui/scripts/lomvocab.js:151 exe/jsui/scripts/lomvocab.js:970
-#, fuzzy
 msgid "publisher"
 msgstr "نشر"
 
@@ -6934,7 +6762,6 @@ msgid "unknown"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:159 exe/jsui/scripts/lomvocab.js:974
-#, fuzzy
 msgid "initiator"
 msgstr "المؤشر"
 
@@ -6943,7 +6770,6 @@ msgid "terminator"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:171 exe/jsui/scripts/lomvocab.js:986
-#, fuzzy
 msgid "editor"
 msgstr "المؤشر"
 
@@ -6956,7 +6782,6 @@ msgid "technical implementer"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:183 exe/jsui/scripts/lomvocab.js:998
-#, fuzzy
 msgid "content provider"
 msgstr "نوع المحتوى"
 
@@ -6965,7 +6790,6 @@ msgid "technical validator"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:191 exe/jsui/scripts/lomvocab.js:1006
-#, fuzzy
 msgid "educational validator"
 msgstr "المعيار التعليمي"
 
@@ -6983,12 +6807,10 @@ msgid "subject matter expert"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:209 exe/jsui/scripts/lomvocab.js:1024
-#, fuzzy
 msgid "analyse"
 msgstr "خطأ"
 
 #: exe/jsui/scripts/lomvocab.js:213 exe/jsui/scripts/lomvocab.js:1028
-#, fuzzy
 msgid "implement"
 msgstr "متطلب"
 
@@ -6997,12 +6819,10 @@ msgid "collaborate"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:221 exe/jsui/scripts/lomvocab.js:1036
-#, fuzzy
 msgid "compare"
 msgstr "النتيجة"
 
 #: exe/jsui/scripts/lomvocab.js:225 exe/jsui/scripts/lomvocab.js:1040
-#, fuzzy
 msgid "share"
 msgstr "كبير"
 
@@ -7023,7 +6843,6 @@ msgid "communicate"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:245 exe/jsui/scripts/lomvocab.js:1060
-#, fuzzy
 msgid "contextualize"
 msgstr "السياق"
 
@@ -7032,22 +6851,18 @@ msgid "control"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:253 exe/jsui/scripts/lomvocab.js:1068
-#, fuzzy
 msgid "cooperate"
 msgstr "الخصائص"
 
 #: exe/jsui/scripts/lomvocab.js:257 exe/jsui/scripts/lomvocab.js:1072
-#, fuzzy
 msgid "create"
 msgstr "إنشاء جديد"
 
 #: exe/jsui/scripts/lomvocab.js:261 exe/jsui/scripts/lomvocab.js:1076
-#, fuzzy
 msgid "decide"
 msgstr "إخفاء"
 
 #: exe/jsui/scripts/lomvocab.js:265 exe/jsui/scripts/lomvocab.js:1080
-#, fuzzy
 msgid "define"
 msgstr "المعرف"
 
@@ -7060,17 +6875,14 @@ msgid "discuss"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:277 exe/jsui/scripts/lomvocab.js:1092
-#, fuzzy
 msgid "design"
 msgstr "الإصدار"
 
 #: exe/jsui/scripts/lomvocab.js:285 exe/jsui/scripts/lomvocab.js:1100
-#, fuzzy
 msgid "explain"
 msgstr "علاقة"
 
 #: exe/jsui/scripts/lomvocab.js:289 exe/jsui/scripts/lomvocab.js:1104
-#, fuzzy
 msgid "extrapolate"
 msgstr "كبير للغاية"
 
@@ -7091,12 +6903,10 @@ msgid "motivate"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:309 exe/jsui/scripts/lomvocab.js:1124
-#, fuzzy
 msgid "observe"
 msgstr " إلى الخادم."
 
 #: exe/jsui/scripts/lomvocab.js:313 exe/jsui/scripts/lomvocab.js:1128
-#, fuzzy
 msgid "organize"
 msgstr "مؤسسة"
 
@@ -7105,7 +6915,6 @@ msgid "organize oneself"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:321 exe/jsui/scripts/lomvocab.js:1136
-#, fuzzy
 msgid "plan"
 msgstr "تحميل"
 
@@ -7114,7 +6923,6 @@ msgid "practise"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:329 exe/jsui/scripts/lomvocab.js:1144
-#, fuzzy
 msgid "produce"
 msgstr "مؤثر الارتداد"
 
@@ -7131,49 +6939,40 @@ msgid "write up"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:345 exe/jsui/scripts/lomvocab.js:1160
-#, fuzzy
 msgid "consider"
 msgstr "رموز"
 
 #: exe/jsui/scripts/lomvocab.js:349 exe/jsui/scripts/lomvocab.js:1164
-#, fuzzy
 msgid "connect"
 msgstr "غير صحيح"
 
 #: exe/jsui/scripts/lomvocab.js:353 exe/jsui/scripts/lomvocab.js:1168
-#, fuzzy
 msgid "represent"
 msgstr "تسمية التعيين المسبق "
 
 #: exe/jsui/scripts/lomvocab.js:357 exe/jsui/scripts/lomvocab.js:1172
-#, fuzzy
 msgid "solve"
 msgstr "دور"
 
 #: exe/jsui/scripts/lomvocab.js:361 exe/jsui/scripts/lomvocab.js:1176
-#, fuzzy
 msgid "simulate"
 msgstr "مؤثر الخفقان"
 
 #: exe/jsui/scripts/lomvocab.js:365 exe/jsui/scripts/lomvocab.js:1180
-#, fuzzy
 msgid "summarize"
 msgstr "حجم فائق"
 
 #: exe/jsui/scripts/lomvocab.js:369 exe/jsui/scripts/lomvocab.js:1184
-#, fuzzy
 msgid "value"
 msgstr "مؤثر التحجيم"
 
 #: exe/jsui/scripts/lomvocab.js:375 exe/jsui/scripts/lomvocab.js:413
 #: exe/jsui/scripts/lomvocab.js:1190
-#, fuzzy
 msgid "yes"
 msgstr "نعم"
 
 #: exe/jsui/scripts/lomvocab.js:379 exe/jsui/scripts/lomvocab.js:417
 #: exe/jsui/scripts/lomvocab.js:1194
-#, fuzzy
 msgid "no"
 msgstr "معلومات"
 
@@ -7186,12 +6985,10 @@ msgid "higher education"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:393
-#, fuzzy
 msgid "training"
 msgstr "تحذير"
 
 #: exe/jsui/scripts/lomvocab.js:397
-#, fuzzy
 msgid "other"
 msgstr "تذييل الصفحة"
 
@@ -7200,7 +6997,6 @@ msgid "operating system"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:407 exe/jsui/scripts/lomvocab.js:1268
-#, fuzzy
 msgid "browser"
 msgstr "استعراض"
 
@@ -7213,32 +7009,26 @@ msgid "haspart"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:431 exe/jsui/scripts/lomvocab.js:1344
-#, fuzzy
 msgid "isversionof"
 msgstr "الإصدار"
 
 #: exe/jsui/scripts/lomvocab.js:435 exe/jsui/scripts/lomvocab.js:1348
-#, fuzzy
 msgid "hasversion"
 msgstr "الإصدار"
 
 #: exe/jsui/scripts/lomvocab.js:439 exe/jsui/scripts/lomvocab.js:1352
-#, fuzzy
 msgid "isformatof"
 msgstr "معلومات"
 
 #: exe/jsui/scripts/lomvocab.js:443 exe/jsui/scripts/lomvocab.js:1356
-#, fuzzy
 msgid "hasformat"
 msgstr "التنسيق"
 
 #: exe/jsui/scripts/lomvocab.js:447 exe/jsui/scripts/lomvocab.js:1360
-#, fuzzy
 msgid "references"
 msgstr "التفضيلات"
 
 #: exe/jsui/scripts/lomvocab.js:451 exe/jsui/scripts/lomvocab.js:1364
-#, fuzzy
 msgid "isreferencedby"
 msgstr "التفضيلات"
 
@@ -7251,12 +7041,10 @@ msgid "isbasisfor"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:463 exe/jsui/scripts/lomvocab.js:1376
-#, fuzzy
 msgid "requires"
 msgstr "مطلوب"
 
 #: exe/jsui/scripts/lomvocab.js:467 exe/jsui/scripts/lomvocab.js:1380
-#, fuzzy
 msgid "isrequiredby"
 msgstr "مطلوب"
 
@@ -7267,7 +7055,6 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:477 exe/jsui/scripts/lomvocab.js:545
 #: exe/jsui/scripts/lomvocab.js:1390 exe/jsui/scripts/lomvocab.js:1458
-#, fuzzy
 msgid "low"
 msgstr "الوقت الحالي"
 
@@ -7275,13 +7062,11 @@ msgstr "الوقت الحالي"
 #: exe/jsui/scripts/lomvocab.js:645 exe/jsui/scripts/lomvocab.js:1394
 #: exe/jsui/scripts/lomvocab.js:1462 exe/jsui/scripts/lomvocab.js:1614
 #: exe/webui/externalurlblock.py:73
-#, fuzzy
 msgid "medium"
 msgstr "متوسط"
 
 #: exe/jsui/scripts/lomvocab.js:485 exe/jsui/scripts/lomvocab.js:553
 #: exe/jsui/scripts/lomvocab.js:1398 exe/jsui/scripts/lomvocab.js:1466
-#, fuzzy
 msgid "high"
 msgstr "الارتفاع"
 
@@ -7295,12 +7080,10 @@ msgid "draft"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:499 exe/jsui/scripts/lomvocab.js:1412
-#, fuzzy
 msgid "final"
 msgstr "اختياري"
 
 #: exe/jsui/scripts/lomvocab.js:503 exe/jsui/scripts/lomvocab.js:1416
-#, fuzzy
 msgid "revised"
 msgstr "معاينة"
 
@@ -7317,12 +7100,10 @@ msgid "atomic"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:523 exe/jsui/scripts/lomvocab.js:1436
-#, fuzzy
 msgid "collection"
 msgstr "قسم"
 
 #: exe/jsui/scripts/lomvocab.js:527 exe/jsui/scripts/lomvocab.js:1440
-#, fuzzy
 msgid "networked"
 msgstr "كلمة أساسية"
 
@@ -7331,7 +7112,6 @@ msgid "hierarchical"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:535 exe/jsui/scripts/lomvocab.js:1448
-#, fuzzy
 msgid "linear"
 msgstr "مسح"
 
@@ -7340,12 +7120,10 @@ msgid "pc-dos"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:567 exe/jsui/scripts/lomvocab.js:1480
-#, fuzzy
 msgid "ms-windows"
 msgstr "نافذة جديدة"
 
 #: exe/jsui/scripts/lomvocab.js:571 exe/jsui/scripts/lomvocab.js:1484
-#, fuzzy
 msgid "macos"
 msgstr "رموز"
 
@@ -7354,13 +7132,11 @@ msgid "unix"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:579 exe/jsui/scripts/lomvocab.js:1496
-#, fuzzy
 msgid "multi-os"
 msgstr "متعدد التحديد"
 
 #: exe/jsui/scripts/lomvocab.js:583 exe/jsui/scripts/lomvocab.js:1500
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "none"
 msgstr "لا يوجد"
 
@@ -7390,12 +7166,10 @@ msgid "teacher"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:617 exe/jsui/scripts/lomvocab.js:1530
-#, fuzzy
 msgid "learner"
 msgstr "كبير"
 
 #: exe/jsui/scripts/lomvocab.js:621 exe/jsui/scripts/lomvocab.js:1582
-#, fuzzy
 msgid "manager"
 msgstr "اللغة"
 
@@ -7416,12 +7190,10 @@ msgid "easy"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:649 exe/jsui/scripts/lomvocab.js:1618
-#, fuzzy
 msgid "difficult"
 msgstr "الصعوبة"
 
 #: exe/jsui/scripts/lomvocab.js:653 exe/jsui/scripts/lomvocab.js:1622
-#, fuzzy
 msgid "very difficult"
 msgstr "الصعوبة"
 
@@ -7430,17 +7202,14 @@ msgid "photograph"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:682
-#, fuzzy
 msgid "illustration"
 msgstr "المدة"
 
 #: exe/jsui/scripts/lomvocab.js:686
-#, fuzzy
 msgid "video"
 msgstr "إخفاء"
 
 #: exe/jsui/scripts/lomvocab.js:690
-#, fuzzy
 msgid "animation"
 msgstr "مؤسسة"
 
@@ -7461,7 +7230,6 @@ msgid "compound audio"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:714
-#, fuzzy
 msgid "hypertext"
 msgstr "نص"
 
@@ -7482,7 +7250,6 @@ msgid "conceptual map"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:742
-#, fuzzy
 msgid "navigation map"
 msgstr "تخطي التنقل"
 
@@ -7491,7 +7258,6 @@ msgid "multimedia presentation"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:750
-#, fuzzy
 msgid "tutorial"
 msgstr "البرنامج التعليمي eXe "
 
@@ -7588,7 +7354,6 @@ msgid "textual-image analysis"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:846
-#, fuzzy
 msgid "discussion activity"
 msgstr "نشاط القراءة"
 
@@ -7601,7 +7366,6 @@ msgid "contextualized case problem"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:858
-#, fuzzy
 msgid "open problem"
 msgstr "مشكلة eXe "
 
@@ -7618,12 +7382,10 @@ msgid "webquest"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:878
-#, fuzzy
 msgid "real project"
 msgstr "مشروع eXe "
 
 #: exe/jsui/scripts/lomvocab.js:1200
-#, fuzzy
 msgid "classroom"
 msgstr "الفصل"
 
@@ -7632,12 +7394,10 @@ msgid "laboratory"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1208
-#, fuzzy
 msgid "real environment"
 msgstr "البيئة الحقيقية"
 
 #: exe/jsui/scripts/lomvocab.js:1212
-#, fuzzy
 msgid "home"
 msgstr "الصفحة الرئيسية"
 
@@ -7646,7 +7406,6 @@ msgid "family"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1228 exe/jsui/scripts/lomvocab.js:1566
-#, fuzzy
 msgid "tutor"
 msgstr "المؤلف"
 
@@ -7659,7 +7418,6 @@ msgid "independent"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1240
-#, fuzzy
 msgid "blended"
 msgstr "مزيج"
 
@@ -7668,18 +7426,15 @@ msgid "presencial"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1254
-#, fuzzy
 msgid "face to face"
 msgstr "وجهًا لوجه"
 
 #: exe/jsui/scripts/lomvocab.js:1258
-#, fuzzy
 msgid "distance"
 msgstr "من بُعد"
 
 #: exe/jsui/scripts/lomvocab.js:1274
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:28
-#, fuzzy
 msgid "propietary license"
 msgstr "حدد ترخيصًا."
 
@@ -7715,43 +7470,35 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1302
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:56
-#, fuzzy
 msgid "intellectual property license"
 msgstr "حدد ترخيصًا."
 
 #: exe/jsui/scripts/lomvocab.js:1306
-#, fuzzy
 msgid "creative commons: attribution"
 msgstr "creative commons: attribution 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1310
-#, fuzzy
 msgid "creative commons: attribution - non derived work"
 msgstr "creative commons: attribution - non derived work 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1314
-#, fuzzy
 msgid "creative commons: attribution - non derived work - non commercial"
 msgstr "creative commons: attribution - non derived work - non commercial 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1318
-#, fuzzy
 msgid "creative commons: attribution - non commercial"
 msgstr "creative commons: attribution - non commercial 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1322
-#, fuzzy
 msgid "creative commons: attribution - non commercial - share alike"
 msgstr "creative commons: attribution - non commercial - share alike 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1326
-#, fuzzy
 msgid "creative commons: attribution - share alike"
 msgstr "creative commons: attribution - share alike 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1330
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:132
-#, fuzzy
 msgid "license GFDL"
 msgstr "ترخيص"
 
@@ -7760,7 +7507,6 @@ msgid "LOM-ESv1.0"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1488
-#, fuzzy
 msgid "linux"
 msgstr "مؤثر التغطية"
 
@@ -7769,12 +7515,10 @@ msgid "mozilla firefox"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1534
-#, fuzzy
 msgid "special needs learner"
 msgstr "المتعلم ذو الاحتياجات الخاصة"
 
 #: exe/jsui/scripts/lomvocab.js:1538
-#, fuzzy
 msgid "gifted learner"
 msgstr "المتعلم الموهوب"
 
@@ -7795,12 +7539,10 @@ msgid "individual"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1558
-#, fuzzy
 msgid "group"
 msgstr "مؤثر الإسقاط"
 
 #: exe/jsui/scripts/lomvocab.js:1574
-#, fuzzy
 msgid "information scientist"
 msgstr "معلومات"
 
@@ -7872,7 +7614,6 @@ msgid "Scratch"
 msgstr ""
 
 #: exe/webui/appletblock.py:133 exe/webui/wikipediablock.py:135
-#, fuzzy
 msgid "Other"
 msgstr "تذييل الصفحة"
 
@@ -7881,7 +7622,6 @@ msgid "Applet Type"
 msgstr ""
 
 #: exe/webui/appletblock.py:155 exe/webui/appletblock.py:165
-#, fuzzy
 msgid "Add files"
 msgstr "حفظ الملف"
 
@@ -8003,7 +7743,6 @@ msgid ""
 msgstr ""
 
 #: exe/webui/clickinorderblock.py:320
-#, fuzzy
 msgid "Show advanced options"
 msgstr "عرض الخيارات المتقدمة"
 
@@ -8134,7 +7873,6 @@ msgid "Select Flash Object"
 msgstr ""
 
 #: exe/webui/editorelement.py:308
-#, fuzzy
 msgid "Select MP3 file"
 msgstr "حدد ملفًا"
 
@@ -8145,7 +7883,6 @@ msgid "Caption:"
 msgstr "تسمية توضيحية:"
 
 #: exe/webui/editorpage.py:125
-#, fuzzy
 msgid "Please enter an idevice name."
 msgstr "يرجى إدخال اسم idevice<br/>."
 
@@ -8334,7 +8071,6 @@ msgid "blank for original size"
 msgstr "فارغ للحجم الأصلي"
 
 #: exe/webui/element.py:769
-#, fuzzy
 msgid "Select an MP3"
 msgstr "حدد صورة"
 
@@ -8396,12 +8132,10 @@ msgid "Show/Hide Feedback"
 msgstr "عرض/إخفاء التعليقات"
 
 #: exe/webui/element.py:1861
-#, fuzzy
 msgid "Please select a .flv file."
 msgstr "حدد ملفًا"
 
 #: exe/webui/element.py:1877
-#, fuzzy
 msgid "Select a flash video"
 msgstr "حدد ملفًا"
 
@@ -8491,7 +8225,6 @@ msgid "<div>\n"
 msgstr ""
 
 #: exe/webui/fileattachblock.py:95
-#, fuzzy
 msgid "<h2>File Attachment</h2>"
 msgstr "الملفات المرفقة"
 
@@ -8599,12 +8332,10 @@ msgid "Default browser in your system"
 msgstr "المتصفح الافتراضي في نظامك"
 
 #: exe/webui/idevicepage.py:181
-#, fuzzy
 msgid "Failed to get idevicep edit"
 msgstr "فشل الوصول إلى الخصائص"
 
 #: exe/webui/idevicepage.py:216
-#, fuzzy
 msgid "Failed to save preferences idevicep"
 msgstr "فشل في حفظ معالج التفضيلات"
 
@@ -8716,7 +8447,6 @@ msgid "A Step Ahead"
 msgstr ""
 
 #: exe/webui/placetheobjectsblock.py:278
-#, fuzzy
 msgid "Game Options"
 msgstr "خيارات متقدمة"
 
@@ -8761,7 +8491,6 @@ msgid "SUBMIT ANSWERS"
 msgstr "إرسال الإجابات"
 
 #: exe/webui/recomendacionfpdblock.py:68
-#, fuzzy
 msgid "A Piece of Advice"
 msgstr "وجهًا لوجه"
 
@@ -8793,12 +8522,10 @@ msgid "-- Not Set --"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Update"
 msgstr "مؤثر الخفقان"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Insert"
 msgstr "ترخيص"
 
@@ -8831,7 +8558,6 @@ msgid "Insert Time"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Insert Date"
 msgstr "إدراج حزمة"
 
@@ -8845,12 +8571,10 @@ msgid "%Y-%m-%d"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Direction Right to Left"
 msgstr "الأيمن إلى الأيسر"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Direction Left to Right"
 msgstr "الأيسر إلى الأيمن"
 
@@ -8867,12 +8591,10 @@ msgid "Move Backward"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Move Forward"
 msgstr "الانتقال للأمام"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Insert New Layer"
 msgstr "أدخل الاسم الجديد:"
 
@@ -8893,12 +8615,10 @@ msgid "Check Spelling"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Insertion"
 msgstr "الإصدار"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Deletion"
 msgstr "علاقة"
 
@@ -8907,12 +8627,10 @@ msgid "Acronym"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Abbreviation"
 msgstr "علاقة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Citation"
 msgstr "موقف"
 
@@ -8930,12 +8648,10 @@ msgid ""
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Select All"
 msgstr "حدد مستوى"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Paste from Word"
 msgstr "كلمات أخرى"
 
@@ -8944,7 +8660,6 @@ msgid "Paste as Plain Text"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Cell"
 msgstr "إلغاء"
 
@@ -8953,12 +8668,10 @@ msgid "Column"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Row"
 msgstr "الوقت الحالي"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Delete Table"
 msgstr "حذف نمط؟"
 
@@ -8979,7 +8692,6 @@ msgid "Paste Table Row Before"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Table Properties"
 msgstr "فشل الوصول إلى الخصائص"
 
@@ -8988,7 +8700,6 @@ msgid "Split Merged Table Cells"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Delete Column"
 msgstr "حذف خيار"
 
@@ -9001,7 +8712,6 @@ msgid "Insert Column Before"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Delete Row"
 msgstr "حدد متصفحًا"
 
@@ -9042,7 +8752,6 @@ msgid "Spell Checker Settings"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Ignore Word"
 msgstr "تلميح لكلمة"
 
@@ -9051,7 +8760,6 @@ msgid "Ignore All"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Languages"
 msgstr "اللغة"
 
@@ -9060,12 +8768,10 @@ msgid "Please wait..."
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Suggestions"
 msgstr "السؤال"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "No Suggestions"
 msgstr "السؤال"
 
@@ -9074,7 +8780,6 @@ msgid "No misspellings found."
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Learn word"
 msgstr "كلمات أخرى"
 
@@ -9083,7 +8788,6 @@ msgid "Insert Page Break for Printing"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Types"
 msgstr "أنماط"
 
@@ -9108,7 +8812,6 @@ msgid "Upper Roman"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Circle"
 msgstr "مقال"
 
@@ -9129,7 +8832,6 @@ msgid "Burnt orange"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Black"
 msgstr "التعليقات"
 
@@ -9146,7 +8848,6 @@ msgid "Navy Blue"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Indigo"
 msgstr "النوع"
 
@@ -9155,17 +8856,14 @@ msgid "Very dark gray"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Maroon"
 msgstr "هاتف ذكي"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Orange"
 msgstr "متوسط"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Olive"
 msgstr "دور"
 
@@ -9174,7 +8872,6 @@ msgid "Green"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Teal"
 msgstr "فعلي"
 
@@ -9195,7 +8892,6 @@ msgid "Red"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Amber"
 msgstr "الاسم"
 
@@ -9208,7 +8904,6 @@ msgid "Sea green"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Turquoise"
 msgstr "الغرض"
 
@@ -9217,7 +8912,6 @@ msgid "Royal blue"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Purple"
 msgstr "الغرض"
 
@@ -9226,12 +8920,10 @@ msgid "Medium gray"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Magenta"
 msgstr "صورة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Gold"
 msgstr "مؤثر الطي"
 
@@ -9240,7 +8932,6 @@ msgid "Yellow"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Lime"
 msgstr "الوقت"
 
@@ -9253,17 +8944,14 @@ msgid "Sky blue"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Brown"
 msgstr "انسدال"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Silver"
 msgstr "مرئي"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Pink"
 msgstr "خيار"
 
@@ -9276,7 +8964,6 @@ msgid "Light yellow"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Pale green"
 msgstr "تحديث الشجرة"
 
@@ -9293,12 +8980,10 @@ msgid "Plum"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "White"
 msgstr "موقع"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Words:"
 msgstr "كلمة %s"
 
@@ -9311,7 +8996,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:38
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Alignment"
 msgstr "البيئة الحقيقية"
 
@@ -9341,13 +9025,11 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Emotions"
 msgstr "قسم"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Document Properties"
 msgstr "خصائص المشروع"
 
@@ -9359,7 +9041,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Center"
 msgstr "المعرف"
 
@@ -9381,13 +9062,11 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Find/Replace"
 msgstr "استبدال"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Find"
 msgstr "النوع"
 
@@ -9403,13 +9082,11 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Table Cell Properties"
 msgstr "فشل الوصول إلى الخصائص"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Table Row Properties"
 msgstr "فشل الوصول إلى الخصائص"
 
@@ -9472,7 +9149,6 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Rich Text Area"
 msgstr "نص منسق"
 
@@ -9491,12 +9167,10 @@ msgid "No Shadow"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advhr/langs/en_dlg.js:1
-#, fuzzy
 msgid "Normal"
 msgstr "التنسيق"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advhr/langs/en_dlg.js:1
-#, fuzzy
 msgid "Units"
 msgstr "وحدة"
 
@@ -9506,7 +9180,6 @@ msgstr "وحدة"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:70
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Width"
 msgstr "العرض"
 
@@ -9516,7 +9189,6 @@ msgstr "العرض"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:71
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Height"
 msgstr "الارتفاع"
 
@@ -9528,7 +9200,6 @@ msgstr "الارتفاع"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Style"
 msgstr "أنماط"
 
@@ -9538,7 +9209,6 @@ msgstr "أنماط"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "ID"
 msgstr "النوع"
 
@@ -9553,7 +9223,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:61
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Language Code"
 msgstr "اللغة"
 
@@ -9569,7 +9238,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:29
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:43
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Image List"
 msgstr "ملفات الصور"
 
@@ -9582,7 +9250,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:33
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Top"
 msgstr "نص"
 
@@ -9598,7 +9265,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:35
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Middle"
 msgstr "إخفاء"
 
@@ -9608,14 +9274,12 @@ msgstr "إخفاء"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Top"
 msgstr "إلى"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:37
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Baseline"
 msgstr "سطر جديد"
 
@@ -9643,21 +9307,18 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Border"
 msgstr "مجلد"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:44
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Image Description"
 msgstr "الوصف"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:45
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Image URL"
 msgstr "ملفات الصور"
 
@@ -9693,19 +9354,16 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:52
-#, fuzzy
 msgid "Alternative Image"
 msgstr "حذف هذه الصورة؟"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:53
-#, fuzzy
 msgid "Swap Image"
 msgstr "عرض صورة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:60
-#, fuzzy
 msgid "Long Description Link"
 msgstr "عرض الوصف والرابط"
 
@@ -9728,7 +9386,6 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:4
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:13
-#, fuzzy
 msgid "Title and Attribution"
 msgstr "creative commons: attribution 4.0"
 
@@ -9739,7 +9396,6 @@ msgid "Header"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:6
-#, fuzzy
 msgid "Image Title"
 msgstr "ملفات الصور"
 
@@ -9760,7 +9416,6 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:11
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:20
-#, fuzzy
 msgid "Choose a license..."
 msgstr "حدد ترخيصًا..."
 
@@ -9851,17 +9506,14 @@ msgid "Open in Parent Window/Frame"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
-#, fuzzy
 msgid "Open in This Window/Frame"
 msgstr "يمكنك إغلاق هذه النافذة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
-#, fuzzy
 msgid "Anchors"
 msgstr "تفريع إلى"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
-#, fuzzy
 msgid "Popup Properties"
 msgstr "الخصائص"
 
@@ -9882,19 +9534,16 @@ msgid "Target Character Encoding"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
-#, fuzzy
 msgid "Target Language"
 msgstr "حدد اللغة الهدف"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Advanced Properties"
 msgstr "خيارات متقدمة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "General Properties"
 msgstr "الإعدادات العامة"
 
@@ -9910,7 +9559,6 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "AccessKey"
 msgstr "وصول"
 
@@ -9948,7 +9596,6 @@ msgid "Anchors and nodes"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:5
-#, fuzzy
 msgid "Node"
 msgstr "مجلد"
 
@@ -9965,7 +9612,6 @@ msgid "Cry"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Cool"
 msgstr "أدوات"
 
@@ -9990,12 +9636,10 @@ msgid "Tongue Out"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Surprised"
 msgstr "الغرض"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Smile"
 msgstr "ملف"
 
@@ -10020,7 +9664,6 @@ msgid "Innocent"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Frown"
 msgstr "انسدال"
 
@@ -10054,22 +9697,18 @@ msgid "LaTeX Math Image properties"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:7
-#, fuzzy
 msgid "eXe LaTeX Math Image"
 msgstr "حذف هذه الصورة؟"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:8
-#, fuzzy
 msgid "Select a font size:"
 msgstr "حدد حجم الخط: "
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:9
-#, fuzzy
 msgid "Font size:"
 msgstr "حدد حجم الخط: "
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:10
-#, fuzzy
 msgid "Preview Math Image"
 msgstr "معاينة الهاتف الذكي"
 
@@ -10078,7 +9717,6 @@ msgid "Input LaTeX source:"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:13
-#, fuzzy
 msgid "generated Math Image"
 msgstr "حذف هذه الصورة؟"
 
@@ -10099,7 +9737,6 @@ msgid "verbatim text"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:18
-#, fuzzy
 msgid "new line"
 msgstr "سطر جديد"
 
@@ -10132,7 +9769,6 @@ msgid "No source code found."
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Meta Information"
 msgstr "معلومات نصية"
 
@@ -10141,7 +9777,6 @@ msgid "Language and Encoding"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Keywords"
 msgstr "كلمة أساسية"
 
@@ -10150,7 +9785,6 @@ msgid "Robots"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "XML Declaration"
 msgstr "علاقة"
 
@@ -10159,7 +9793,6 @@ msgid "Character Encoding"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Background Properties"
 msgstr "خصائص المشروع"
 
@@ -10172,12 +9805,10 @@ msgid "Link Colors"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Properties"
 msgstr "خصائص المشروع"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Left Margin"
 msgstr "حذف صورة"
 
@@ -10194,7 +9825,6 @@ msgid "Bottom Margin"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Color"
 msgstr "الحصول على الدرجة"
 
@@ -10207,7 +9837,6 @@ msgid "Link Color"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Hover Color"
 msgstr "رمز الغلاف:"
 
@@ -10236,12 +9865,10 @@ msgid "Do Not Index and Don't Follow the Links"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Stylesheet and Style Properties"
 msgstr "فشل الوصول إلى الخصائص"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Stylesheet"
 msgstr "أنماط"
 
@@ -10250,7 +9877,6 @@ msgid "Copyright"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Add New Element"
 msgstr "صورة للعنصر"
 
@@ -10267,17 +9893,14 @@ msgid "Move Selected Element Down"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Head Elements"
 msgstr "صورة للعنصر"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Title Element"
 msgstr "صورة للعنصر"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Meta Element"
 msgstr "صورة للعنصر"
 
@@ -10286,7 +9909,6 @@ msgid "Script Element"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Style Element"
 msgstr "صورة للعنصر"
 
@@ -10295,27 +9917,22 @@ msgid "Link Element"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Base Element"
 msgstr "صورة للعنصر"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Comment Node"
 msgstr "مجلد رئيسي"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Comment"
 msgstr "تعليق:"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Charset"
 msgstr "الهدف"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Defer"
 msgstr "المعرف"
 
@@ -10324,7 +9941,6 @@ msgid "Media"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Value"
 msgstr "مؤثر التحجيم"
 
@@ -10333,7 +9949,6 @@ msgid "Rel"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Rev"
 msgstr "معاينة"
 
@@ -10348,27 +9963,23 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Color"
 msgstr "النتيجة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Background Color"
 msgstr "خلفية"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Background Image"
 msgstr "تجانب صورة الخلفية؟"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Font Size"
 msgstr "حدد حجم الخط: "
 
@@ -10393,7 +10004,6 @@ msgid ""
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "QT Source"
 msgstr "المورد"
 
@@ -10414,7 +10024,6 @@ msgid "Stretch H-Align"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Stretch Style"
 msgstr "استيراد نمط"
 
@@ -10423,17 +10032,14 @@ msgid "Script Callbacks"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Top Right"
 msgstr "الأيسر إلى الأيمن"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "UI Mode"
 msgstr "وضع المحرر"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Rate"
 msgstr "التاريخ"
 
@@ -10442,12 +10048,10 @@ msgid "Play Count"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Default Frame"
 msgstr "افتراضي"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Current Position"
 msgstr "خيار صحيح"
 
@@ -10464,7 +10068,6 @@ msgid "Base URL"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Balance"
 msgstr "إلغاء"
 
@@ -10489,7 +10092,6 @@ msgid "Full Screen"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Enabled"
 msgstr "إعادة تسمية"
 
@@ -10498,7 +10100,6 @@ msgid "Auto Start"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Volume"
 msgstr "دور"
 
@@ -10515,7 +10116,6 @@ msgid "Start Time"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "No Correction"
 msgstr "غير صحيح"
 
@@ -10528,7 +10128,6 @@ msgid "Play Every Frame"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Kiosk Mode"
 msgstr "وضع المحرر"
 
@@ -10537,7 +10136,6 @@ msgid "Controller"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Show Menu"
 msgstr "عرض صورة"
 
@@ -10558,7 +10156,6 @@ msgid "V-Space"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Controls"
 msgstr "أدوات"
 
@@ -10567,12 +10164,10 @@ msgid "Num Loops"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Console"
 msgstr "رموز"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Cache"
 msgstr "مؤثر التحجيم"
 
@@ -10589,7 +10184,6 @@ msgid "Flash Vars"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Base"
 msgstr "خطأ"
 
@@ -10598,17 +10192,14 @@ msgid "WMode"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "SAlign"
 msgstr "محاذاة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Align"
 msgstr "محاذاة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Quality"
 msgstr "النمط "
 
@@ -10645,17 +10236,14 @@ msgid "Windows Media Player Options"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "QuickTime Options"
 msgstr "حذف خيار"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Flash Options"
 msgstr "حذف خيار"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Hidden"
 msgstr "إخفاء"
 
@@ -10664,7 +10252,6 @@ msgid "Bottom Left"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Bottom Right"
 msgstr "الأيسر إلى الأيمن"
 
@@ -10681,17 +10268,14 @@ msgid "Alternative source 2"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Preload"
 msgstr "تحميل"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Poster"
 msgstr "تذييل الصفحة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Audio Options"
 msgstr "خيارات"
 
@@ -10708,7 +10292,6 @@ msgid "Let user's browser decide"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Embedded Audio Options"
 msgstr "إضافة خيار آخر"
 
@@ -10741,7 +10324,6 @@ msgid "Real Media (ram)"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Iframe"
 msgstr "الوقت"
 
@@ -10755,7 +10337,6 @@ msgid "List"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:4
-#, fuzzy
 msgid "Selected file"
 msgstr "حدد ملفًا"
 
@@ -10825,12 +10406,10 @@ msgid "Find What"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Replace with"
 msgstr "استبدال"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Direction"
 msgstr "قسم"
 
@@ -10839,7 +10418,6 @@ msgid "Up"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Down"
 msgstr "انسدال"
 
@@ -10864,22 +10442,18 @@ msgid "The search has been completed. The search string could not be found."
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Replace All"
 msgstr "استبدال"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Line Height"
 msgstr "الارتفاع"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Variant"
 msgstr "طباعة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Weight"
 msgstr "الارتفاع"
 
@@ -10908,7 +10482,6 @@ msgid "Clip"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Placement"
 msgstr "المرفق"
 
@@ -10925,17 +10498,14 @@ msgid "Visibility"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Position"
 msgstr "خيار"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Bullet Image"
 msgstr "حدد صورة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Margin"
 msgstr "تحذير"
 
@@ -10944,7 +10514,6 @@ msgid "Same for All"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Padding"
 msgstr "مساحات الخلية"
 
@@ -10953,7 +10522,6 @@ msgid "Float"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Display"
 msgstr "عرض كـ:"
 
@@ -10962,17 +10530,14 @@ msgid "Whitespace"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Indent"
 msgstr "سطر النص"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Align"
 msgstr "سطر النص"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Letter Spacing"
 msgstr "تباعد الخلية"
 
@@ -10993,27 +10558,22 @@ msgid "Repeat"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Blink"
 msgstr "مؤثر التغطية"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Case"
 msgstr "مؤثر التحجيم"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Underline"
 msgstr "سطر جديد"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Overline"
 msgstr "سطر جديد"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Decoration"
 msgstr "قسم"
 
@@ -11029,7 +10589,6 @@ msgid "Strikethrough"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "border"
 msgstr "مجلد"
 
@@ -11038,7 +10597,6 @@ msgid "box"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "vsides"
 msgstr "إخفاء"
 
@@ -11051,17 +10609,14 @@ msgid "lhs"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "hsides"
 msgstr "إخفاء"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "below"
 msgstr "تسمية"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "above"
 msgstr "حفظ"
 
@@ -11070,37 +10625,30 @@ msgid "void"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Rules"
 msgstr "صواب"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "all"
 msgstr "صغير"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "cols"
 msgstr "الأعمدة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "rows"
 msgstr "استعراض"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "groups"
 msgstr "مؤثر الإسقاط"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Frame"
 msgstr "الاسم"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Table Caption"
 msgstr "حذف خيار"
 
@@ -11132,12 +10680,10 @@ msgid "Row Group"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Scope"
 msgstr "النتيجة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Body"
 msgstr "بواسطة"
 
@@ -11166,12 +10712,10 @@ msgid "Update All Cells in Row"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Update Current Cell"
 msgstr "تحديث الشجرة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Data"
 msgstr "بيانات التعريف"
 
@@ -11184,17 +10728,14 @@ msgid "Border Color"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Cell Type"
 msgstr "نوع المستند"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Columns"
 msgstr "رموز"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Row Type"
 msgstr "نوع المستند"
 
@@ -11203,17 +10744,14 @@ msgid "Update all cells in column"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-#, fuzzy
 msgid "Templates"
 msgstr "استبدال"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-#, fuzzy
 msgid "Template"
 msgstr "استبدال"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-#, fuzzy
 msgid "Select a Template"
 msgstr "حدد صورة"
 
@@ -11231,12 +10769,10 @@ msgid "Insert Current Date/Time"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Remove"
 msgstr "معاينة"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Citation Element"
 msgstr "صورة للعنصر"
 
@@ -11249,7 +10785,6 @@ msgid "Acronym Element"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Deletion Element"
 msgstr "صورة للعنصر"
 
@@ -11270,7 +10805,6 @@ msgid "Attributes"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Direction"
 msgstr "اتجاه التصنيف"
 
@@ -11279,12 +10813,10 @@ msgid "Date/Time"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Cite"
 msgstr "موقع"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Definition Description"
 msgstr "عرض الوصف"
 
@@ -11297,7 +10829,6 @@ msgid "Code Sample"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Code"
 msgstr "النتيجة"
 
@@ -11352,22 +10883,18 @@ msgid ""
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Are you sure you want clear all contents?"
 msgstr "هل أنت متأكد من أنك تود مسح جميع حقول النموذج؟"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Path"
 msgstr "الرياضيات"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "New Document"
 msgstr "مستندات"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Image Properties"
 msgstr "فشل الوصول إلى الخصائص"
 
@@ -11392,12 +10919,10 @@ msgid "Insert Special Character"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Select Background Color"
 msgstr "تجانب صورة الخلفية؟"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Select Text Color"
 msgstr "حدد مجلدًا"
 
@@ -11410,12 +10935,10 @@ msgid "Remove Formatting"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Superscript"
 msgstr "حجم فائق"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Subscript"
 msgstr "الوصف"
 
@@ -11424,12 +10947,10 @@ msgid "Edit HTML Source"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Unlink"
 msgstr "سطر جديد"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Increase Indent"
 msgstr "مرخص بموجب"
 
@@ -11442,7 +10963,6 @@ msgid "Align Full"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Align Right"
 msgstr "مؤثر إبراز لون الخلفية"
 
@@ -11520,12 +11040,10 @@ msgid "Open Link in the Same Window"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Select Special Character"
 msgstr "حدد معدل النجاح:  "
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Name:"
 msgstr "إعادة تسمية"
 
@@ -11538,7 +11056,6 @@ msgid "Named Colors"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Named"
 msgstr "إعادة تسمية"
 
@@ -11547,7 +11064,6 @@ msgid "Palette Colors"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Palette"
 msgstr "حذف"
 
@@ -11560,7 +11076,6 @@ msgid "Picker"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Select a Color"
 msgstr "حدد ملفًا"
 
@@ -11741,7 +11256,6 @@ msgid "Swedish Wikipedia Article"
 msgstr ""
 
 #: exe/webui/wikipediablock.py:131
-#, fuzzy
 msgid "Wikibooks Article"
 msgstr "مقال موسوعة ويكيبديا"
 
@@ -11766,7 +11280,6 @@ msgid "Own site"
 msgstr "موقع ذاتي"
 
 #: exe/webui/wizardpage.py:183
-#, fuzzy
 msgid "Failed to get preferences wizard edit"
 msgstr "فشل في حفظ معالج التفضيلات"
 

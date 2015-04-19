@@ -37,7 +37,7 @@ log = logging.getLogger(__name__)
 
 langNames = {
    'am': "አማርኛ",                                                      #Amharic
-   'ar': 'العربية',                    # Arabic
+   'ar': 'العربية',                    #Arabic
    'ast': 'asturianu',
    'bn': 'বাঙালি',                                                      # Bengali
    'bg': 'Български',                  # Bulgarian

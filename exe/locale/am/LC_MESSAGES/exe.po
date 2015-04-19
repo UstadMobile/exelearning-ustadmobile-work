@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-16 18:38+0400\n"
+"POT-Creation-Date: 2015-04-19 18:07+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: am <LL@li.org>\n"
@@ -99,7 +99,7 @@ msgid ""
 msgstr ""
 
 #: exe/engine/appletidevice.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "file %s has no parentNode"
 msgstr "አባሪ %s ምንም parentNode የለውም"
 
@@ -280,7 +280,6 @@ msgid ""
 msgstr "በሁኔታው ላይ ጠቃሚ የሆነ ግብረ መልስ ይስጡ።"
 
 #: exe/engine/casopracticofpdidevice.py:30
-#, fuzzy
 msgid "FPD - Situation"
 msgstr "ሁኔታ"
 
@@ -307,18 +306,15 @@ msgstr ""
 #: exe/engine/orientacionestutoriafpdidevice.py:35
 #: exe/engine/parasabermasfpdidevice.py:35
 #: exe/engine/recomendacionfpdidevice.py:35
-#, fuzzy
 msgid "Enter the text that will appear on this iDevice"
 msgstr "በዚህ ውስጥ እንዲታይ ጽሁፍ ያስገቡ።"
 
 #: exe/engine/casopracticofpdidevice.py:38
 #: exe/engine/casopracticofpdidevice.py:136
-#, fuzzy
 msgid "Situation Text:"
 msgstr "ሁኔታ"
 
 #: exe/engine/citasparapensarfpdidevice.py:32
-#, fuzzy
 msgid "FPD - Quotation"
 msgstr "ጥቅስ"
 
@@ -330,7 +326,6 @@ msgstr ""
 
 #: exe/engine/citasparapensarfpdidevice.py:40
 #: exe/engine/citasparapensarfpdidevice.py:139
-#, fuzzy
 msgid "Quotation Text:"
 msgstr "ጥቅስ"
 
@@ -368,17 +363,14 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Title"
 msgstr "ጣቢያ"
 
 #: exe/engine/clickinorderidevice.py:62
-#, fuzzy
 msgid "Game Instructions"
 msgstr "ለማጠናቀቂያ መመሪያዎች ጠቅ ያድርጉ"
 
 #: exe/engine/clickinorderidevice.py:62
-#, fuzzy
 msgid "Instructions to show in leading paragraph"
 msgstr "የሚታዩ መመሪያዎች"
 
@@ -391,7 +383,6 @@ msgid "Shown over when the game is won"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:64
-#, fuzzy
 msgid "Correct Answer Feedback Overlay"
 msgstr "የትክክለኛ ምላሽ ግብረ መልስ"
 
@@ -400,7 +391,6 @@ msgid "Shown over game when correct answer given"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:65
-#, fuzzy
 msgid "Wrong Answer Feedback Overlay"
 msgstr "የተሳሳተ ምላሽ ግብረ መልስ"
 
@@ -409,7 +399,6 @@ msgid "Shown over game when wrong answer is given"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:66
-#, fuzzy
 msgid "Main Area To Show"
 msgstr "የሚታይ ርዕስ"
 
@@ -426,7 +415,6 @@ msgid "User will click on this to start the game"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:79
-#, fuzzy
 msgid "Game Width"
 msgstr "ስፋት"
 
@@ -435,7 +423,6 @@ msgid "Width of game area (in pixels)"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:80
-#, fuzzy
 msgid "Game Height"
 msgstr "የማእቀፍ ከፍታ:"
 
@@ -452,7 +439,6 @@ msgid "Use CSS to style element that counts number items found"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:82
-#, fuzzy
 msgid "Hint Width"
 msgstr "ስፋት"
 
@@ -461,7 +447,6 @@ msgid "Width (px) of hint area"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:83
-#, fuzzy
 msgid "Hint Height"
 msgstr "ቁመት"
 
@@ -478,7 +463,6 @@ msgid "Style of Hint Area"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:85
-#, fuzzy
 msgid "Style of timer Element"
 msgstr "የንጥረ ነገር ምስል"
 
@@ -504,7 +488,6 @@ msgid "Stopwatch Mode"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:108
-#, fuzzy
 msgid "Shuffle Questions"
 msgstr "ጥያቄን ሰርዝ"
 
@@ -537,12 +520,10 @@ msgid "Left (X) Coord"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:154
-#, fuzzy
 msgid "Left CSS left property"
 msgstr "ባህሪያትን ማግኘት አልተሳካም"
 
 #: exe/engine/clickinorderidevice.py:155
-#, fuzzy
 msgid "Width (px)"
 msgstr "ስፋት"
 
@@ -551,7 +532,6 @@ msgid "Width of clickable area"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:156
-#, fuzzy
 msgid "Height (px)"
 msgstr "ቁመት"
 
@@ -568,7 +548,6 @@ msgid "After delay ms hide the content prev revealed"
 msgstr ""
 
 #: exe/engine/clickinorderidevice.py:167
-#, fuzzy
 msgid "Hint to Show for this item"
 msgstr "ለተጠቃው የሚታይ ፍንጭ"
 
@@ -585,7 +564,6 @@ msgid "The Item that will be revealed in place"
 msgstr ""
 
 #: exe/engine/clozefpdidevice.py:50
-#, fuzzy
 msgid "FPD - Cloze Activity"
 msgstr "እንቅስቃሴ ዝጋ"
 
@@ -636,7 +614,6 @@ msgstr ""
 #: exe/engine/truefalseidevice.py:392
 #: exe/engine/verdaderofalsofpdidevice.py:166
 #: exe/engine/verdaderofalsofpdidevice.py:394 exe/webui/common.py:588
-#, fuzzy
 msgid "Instructions"
 msgstr "የሚታዩ መመሪያዎች"
 
@@ -650,7 +627,6 @@ msgstr ""
 
 #: exe/engine/clozefpdidevice.py:126 exe/engine/clozeidevice.py:127
 #: exe/webui/element.py:1428 exe/webui/listablock.py:264
-#, fuzzy
 msgid "Cloze"
 msgstr "ውጤት"
 
@@ -689,7 +665,6 @@ msgstr "ግብረ መልስ"
 
 #: exe/engine/clozefpdidevice.py:133 exe/engine/clozeidevice.py:140
 #: exe/engine/clozelangfpdidevice.py:133 exe/engine/listaidevice.py:147
-#, fuzzy
 msgid ""
 "Enter any feedback you wish to provide the learner with-in the feedback "
 "field. This field can be left blank."
@@ -699,41 +674,34 @@ msgstr ""
 
 #: exe/engine/clozefpdidevice.py:278 exe/engine/clozeidevice.py:286
 #: exe/engine/clozelangfpdidevice.py:282 exe/engine/listaidevice.py:299
-#, fuzzy
 msgid "Instructions For Learners"
 msgstr "ለተማሪዎች የተሰጠ መመሪያ"
 
 #: exe/engine/clozefpdidevice.py:279 exe/engine/clozeidevice.py:287
 #: exe/engine/clozelangfpdidevice.py:283 exe/engine/listaidevice.py:300
-#, fuzzy
 msgid "Put instructions for learners here"
 msgstr "ለተማሪዎች የተሰጠውን መመሪያ እዚህ ጋር ያኑሩ"
 
 #: exe/engine/clozefpdidevice.py:280 exe/engine/clozeidevice.py:288
 #: exe/engine/clozelangfpdidevice.py:284
-#, fuzzy
 msgid "Read the paragraph below and fill in the missing words"
 msgstr "ከዚህ በታች ያለውን አንቀጽ ያንብቡና የጎደሉትን ቃላት ይሙሉ"
 
 #: exe/engine/clozefpdidevice.py:291 exe/engine/clozeidevice.py:300
 #: exe/engine/clozelangfpdidevice.py:296
-#, fuzzy
 msgid "Allow auto completion when user filling the gaps."
 msgstr "ተጠቃሚው ክፍተቶቹን ሲሞላ በራስ ሰር ማጠናቀቅን ፍቀድ።"
 
 #: exe/engine/clozeidevice.py:49
-#, fuzzy
 msgid "Fill in the Blank"
 msgstr "ባዶ ቦታውን ሙላ"
 
 #: exe/engine/clozeidevice.py:118
-#, fuzzy
 msgid "Simple fill in the blank exercise - blank spaces shown as textboxes"
 msgstr "ቀላል ባዶ ቦታውን የመሙላት መልመጃ- ባዶ ቦታዎች እንደ ጽሁፍ ማስገቢያ ሳጥኖች ይታያሉ"
 
 #: exe/engine/clozeidevice.py:124 exe/engine/truefalseidevice.py:395
 #: exe/engine/verdaderofalsofpdidevice.py:397
-#, fuzzy
 msgid "Read the paragraph below and fill in the missing words."
 msgstr "ከዚህ በታች ያለውን አንቀጽ ያንብቡና የጎደሉትን ቃላት ይሙሉ።"
 
@@ -836,7 +804,6 @@ msgid "You Should Know Text:"
 msgstr ""
 
 #: exe/engine/destacadofpdidevice.py:29
-#, fuzzy
 msgid "FPD - Highlighted"
 msgstr "አድምቅ"
 
@@ -847,7 +814,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/destacadofpdidevice.py:36 exe/engine/destacadofpdidevice.py:134
-#, fuzzy
 msgid "Highlighted Text:"
 msgstr "አድምቅ"
 
@@ -1023,7 +989,6 @@ msgid "Stay"
 msgstr "ቆይ"
 
 #: exe/engine/ejercicioresueltofpdidevice.py:198
-#, fuzzy
 msgid "FPD - Translation"
 msgstr "ትርጉም"
 
@@ -1224,7 +1189,6 @@ msgid "No File Uploaded Currently"
 msgstr "በአሁኑ ወቅት ምንም ፋይል አልተሰቀለም"
 
 #: exe/engine/extendedfieldengine.py:629
-#, fuzzy
 msgid "is not a valid number - please try again<br/>"
 msgstr "ትክክለኛ ቁጥር አይደለም - እባክዎ እንደገና ይሞክሩ"
 
@@ -1428,12 +1392,10 @@ msgstr "ለተማሪው መስጠት የሚፈልጉትን ግብረ መልስ �
 #: exe/engine/notaidevice.py:145 exe/engine/reflectionfpdidevice.py:69
 #: exe/engine/reflectionfpdidevice.py:204 exe/engine/reflectionidevice.py:66
 #: exe/engine/reflectionidevice.py:200
-#, fuzzy
 msgid "Feedback:"
 msgstr "ግብረ መልስ:"
 
 #: exe/engine/fileattachidevice.py:37
-#, fuzzy
 msgid "File Attachments"
 msgstr "የፋይል አባሪዎች"
 
@@ -1520,7 +1482,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/flashwithtextidevice.py:43 exe/engine/flashwithtextidevice.py:50
-#, fuzzy
 msgid "Flash with Text"
 msgstr "ምስል ለጽሁፍ ጋር"
 
@@ -1541,7 +1502,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/flashwithtextidevice.py:58 exe/engine/flashwithtextidevice.py:118
-#, fuzzy
 msgid ""
 "Provide a caption for the flash you \n"
 "                                  have just inserted."
@@ -1645,7 +1605,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/genericidevice.py:310 exe/engine/idevicestore.py:682
-#, fuzzy
 msgid "Reading Activity 0.11"
 msgstr "የማንበቢያ እንቅስቃሴ"
 
@@ -1698,7 +1657,6 @@ msgid "abcdefghijklmnopqrstuvwxyz"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:99
-#, fuzzy
 msgid "Letter Button Style"
 msgstr "ቅጥን ሰረዝ?"
 
@@ -1743,13 +1701,11 @@ msgid "Restart Level Button Text"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:117
-#, fuzzy
 msgid "Text for reset button"
 msgstr "የምልክት ማድረጊያ አዝራር ጽሁፍ"
 
 #: exe/engine/hangmanidevice.py:117 exe/webui/element.py:1454
 #: exe/webui/element.py:1710
-#, fuzzy
 msgid "Restart"
 msgstr "ጀምር"
 
@@ -1784,7 +1740,6 @@ msgid "Player will see this message when they loose the level"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:131
-#, fuzzy
 msgid ""
 "Enter here the message the player\n"
 "                 will see when they have used up all their chances"
@@ -1799,7 +1754,6 @@ msgid "Player will see this message when they guess the word correctly"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:136
-#, fuzzy
 msgid ""
 "Enter here the message the player\n"
 "                 will see when they successfully complete a word"
@@ -1814,7 +1768,6 @@ msgid "Player will see this message when they guess all words correctly"
 msgstr ""
 
 #: exe/engine/hangmanidevice.py:141
-#, fuzzy
 msgid ""
 "Enter here the message the player\n"
 "                 will see when they have guessed all the words on the list"
@@ -1837,7 +1790,6 @@ msgid "Word to Guess"
 msgstr "የሚገመተው ቃል"
 
 #: exe/engine/hangmanidevice.py:169
-#, fuzzy
 msgid "Word To Guess"
 msgstr "የሚገመተው ቃል"
 
@@ -1869,7 +1821,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/idevicestore.py:616 exe/engine/idevicestore.py:725
-#, fuzzy
 msgid "What to read"
 msgstr "የሚነበበው ነገር"
 
@@ -1884,7 +1835,6 @@ msgstr ""
 #: exe/engine/idevicestore.py:667 exe/engine/idevicestore.py:729
 #: exe/engine/idevicestore.py:766 exe/engine/idevicestore.py:774
 #: exe/webui/questionelement.py:109
-#, fuzzy
 msgid "Activity"
 msgstr "እንቅስቃሴ"
 
@@ -2061,7 +2011,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/imagemagnifieridevice.py:73
-#, fuzzy
 msgid "Select the size of the magnifying glass"
 msgstr "የማጉሊያ መስታወቶች መጠን:"
 
@@ -2149,7 +2098,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/imagewithtextidevice.py:66
-#, fuzzy
 msgid ""
 "Enter the text you wish to \n"
 "                                                associate with the image."
@@ -2166,7 +2114,6 @@ msgid "DropDown Activity"
 msgstr "የተሸቆልቋይ እንቅስቃሴ"
 
 #: exe/engine/listaidevice.py:67
-#, fuzzy
 msgid "INTEF"
 msgstr "ጣቢያ"
 
@@ -2240,7 +2187,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/listaidevice.py:149
-#, fuzzy
 msgid ""
 "Enter feedback to show the learner \n"
 "                     after completion here.  It will be shown regardless\n"
@@ -2248,7 +2194,6 @@ msgid ""
 msgstr "ለተማሪው መስጠት የሚፈልጉትን ማንኛውንም ግብረ መልስ ይተይቡ። ውጤቱ ምንም ይሁን ምንም ይህ ይታያል"
 
 #: exe/engine/listaidevice.py:301
-#, fuzzy
 msgid "Read the paragraph below and choose the correct words"
 msgstr "ከዚህ በታች ያለውን አንቀጽ ያንብቡና የጎደሉትን ቃላት ይሙሉ"
 
@@ -2356,7 +2301,6 @@ msgid "Height of Cells (in pixels)"
 msgstr ""
 
 #: exe/engine/memorymatchidevice.py:65
-#, fuzzy
 msgid "Cell Height px"
 msgstr "ቁመት"
 
@@ -2413,7 +2357,6 @@ msgid "Show / Use a timer?"
 msgstr ""
 
 #: exe/engine/memorymatchidevice.py:75
-#, fuzzy
 msgid "Hide Cells after match made?"
 msgstr "ከተዛመደ በኋላ ደብቅ"
 
@@ -2452,7 +2395,6 @@ msgid "Cell Default Style (CSS)"
 msgstr ""
 
 #: exe/engine/memorymatchidevice.py:81
-#, fuzzy
 msgid "Cell Style CSS"
 msgstr "ቅጥን ሰርዝ:-"
 
@@ -2481,7 +2423,6 @@ msgid "Match Tile 1"
 msgstr "የማዛመጃ ሰሌዳ 1"
 
 #: exe/engine/memorymatchidevice.py:158
-#, fuzzy
 msgid "Match Tile1"
 msgstr "የማዛመጃ ሰሌዳ 1"
 
@@ -2490,7 +2431,6 @@ msgid "Match Tile 2"
 msgstr "የማዛመጃ ሰሌዳ 2"
 
 #: exe/engine/memorymatchidevice.py:159
-#, fuzzy
 msgid "Match Tile2"
 msgstr "የማዛመጃ ሰሌዳ 2"
 
@@ -2503,7 +2443,6 @@ msgid "Multiple choice question with one right answer per question"
 msgstr "ለአንድ ጥያቄ አንድ መልስ ብቻ ያለበት የምርጫ ጥያቄ"
 
 #: exe/engine/multichoiceidevice.py:133
-#, fuzzy
 msgid ""
 "Enter your question\n"
 "                          here you can use text, images, and media"
@@ -2544,7 +2483,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/multimediaidevice.py:49
-#, fuzzy
 msgid "Choose an MP3 file"
 msgstr "ምስል ይምረጡ"
 
@@ -2728,12 +2666,10 @@ msgid "Student has to place objects in their correct place on a diagram"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:54 exe/idevices/exampleidevice.py:45
-#, fuzzy
 msgid "This is a free text field."
 msgstr "ይህ አማራጭ መስክ ነው።"
 
 #: exe/engine/placetheobjectsidevice.py:62
-#, fuzzy
 msgid "Main Area"
 msgstr "የምስል ካርታ አካባቢ"
 
@@ -2750,7 +2686,6 @@ msgid "(Optional) Game Time Limit"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:69
-#, fuzzy
 msgid "Show Timer"
 msgstr "ምስል አሳይ"
 
@@ -2767,7 +2702,6 @@ msgid "This will when clicked start the game"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:75
-#, fuzzy
 msgid "Positive Response"
 msgstr "የአስተሳሰብ ሂደት"
 
@@ -2784,7 +2718,6 @@ msgid "Overlays main area when player guesses wrong"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:80
-#, fuzzy
 msgid "Number of Columns in part bin"
 msgstr "የአምዶች ቁጥር"
 
@@ -2793,7 +2726,6 @@ msgid "Columns part bin"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:91
-#, fuzzy
 msgid "Object to Place"
 msgstr "የፕሮክት ርዕስ"
 
@@ -2810,7 +2742,6 @@ msgid "Object to be put in place"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:125
-#, fuzzy
 msgid "Correct Location (x)"
 msgstr "ትክክለኛ አማራጭ"
 
@@ -2819,7 +2750,6 @@ msgid "Where this object belongs in the main area x coordinate"
 msgstr ""
 
 #: exe/engine/placetheobjectsidevice.py:128
-#, fuzzy
 msgid "Correct Location (y)"
 msgstr "ትክክለኛ አማራጭ"
 
@@ -2965,7 +2895,6 @@ msgstr ""
 #: exe/engine/reflectionfpdmodifidevice.py:63
 #: exe/engine/reflectionfpdmodifidevice.py:199
 #: exe/engine/reflectionidevice.py:62 exe/engine/reflectionidevice.py:197
-#, fuzzy
 msgid "Reflective question:"
 msgstr "ጥያቄን ሰርዝ"
 
@@ -2974,7 +2903,6 @@ msgid "FPD - Think About It (without Feedback)"
 msgstr ""
 
 #: exe/engine/reflectionidevice.py:46
-#, fuzzy
 msgid "Reflection"
 msgstr "ክፍል"
 
@@ -3058,12 +2986,10 @@ msgid "Title to show"
 msgstr "የሚታይ ርዕስ"
 
 #: exe/engine/sortidevice.py:55
-#, fuzzy
 msgid "Instructions before sortable list"
 msgstr "የጨዋታው መመሪያዎች።"
 
 #: exe/engine/sortidevice.py:56
-#, fuzzy
 msgid ""
 "Put here instructions for what the user should do - e.g. sort the list "
 "from highest to lowest"
@@ -3088,7 +3014,6 @@ msgid "Wrongly Sorted Feedback"
 msgstr "በተሳሳተ ሁኔታ የተደረደረ ግብረ መልስ"
 
 #: exe/engine/sortidevice.py:61
-#, fuzzy
 msgid "Shown when check is clicked and wrong"
 msgstr "ምልክት ማድረጊያው ጠቅ ሲደረግና ትክክል ሲሆን የሚታይ"
 
@@ -3100,22 +3025,18 @@ msgid ""
 msgstr ""
 
 #: exe/engine/sortidevice.py:63
-#, fuzzy
 msgid "Effect for showing correct overlay"
 msgstr "አወንታዊ ግብረ መልስ የማሳያ ውጤት"
 
 #: exe/engine/sortidevice.py:63
-#, fuzzy
 msgid "Effect showing correct overlay"
 msgstr "በትክክል ሲዛመድ የሚሰጥ ግብረ መልስ"
 
 #: exe/engine/sortidevice.py:65
-#, fuzzy
 msgid "Effect showing wrong answer overlay"
 msgstr "የተሳሳተ ምላሽ ላይ የሚሰጥ ግብረ መልስ"
 
 #: exe/engine/sortidevice.py:65
-#, fuzzy
 msgid "Effect for showing wrong overlay"
 msgstr "አሉታዊ ግብረ መልስ የማሳያ ውጤት"
 
@@ -3134,7 +3055,6 @@ msgid "Check Button Style (CSS)"
 msgstr ""
 
 #: exe/engine/sortidevice.py:69
-#, fuzzy
 msgid "CSS for check button"
 msgstr "የምልክት ማድረጊያ አዝራር ጽሁፍ"
 
@@ -3159,7 +3079,6 @@ msgid "Style (CSS) for sortable items"
 msgstr ""
 
 #: exe/engine/sortidevice.py:72
-#, fuzzy
 msgid "Sortable Item CSS"
 msgstr "ሊደረደር የሚችል ንጥል ነገር"
 
@@ -3247,7 +3166,6 @@ msgid ""
 msgstr ""
 
 #: exe/engine/truefalseidevice.py:150
-#, fuzzy
 msgid "Question that can be either true or false"
 msgstr "እውነት ወይም ሀሰት ሊሆን የሚችል ጥያቄ"
 
@@ -3416,7 +3334,6 @@ msgid ""
 msgstr ""
 
 #: exe/exe_do:128 exe/run-exe_do.py:121
-#, fuzzy
 msgid "Don't copy source in target"
 msgstr "በኢላማው ውስጥም ያለን መገኛ ቅዳ"
 
@@ -3437,7 +3354,6 @@ msgstr ""
 
 #: exe/exe_do:144 exe/run-exe_do.py:137
 #: exe/webui/xliffimportpreferencespage.py:79
-#, fuzzy
 msgid "Import from source language"
 msgstr "የመገኛ ቋንቋ ምረጥ"
 
@@ -3488,7 +3404,7 @@ msgid ""
 msgstr ""
 
 #: exe/exe_do:270 exe/run-exe_do.py:251
-#, fuzzy, python-format
+#, python-format
 msgid "Successfully exported '%s' from '%s'."
 msgstr "ቅጥን በተሳካ ሁኔታ አስመጥቷል: %s"
 
@@ -3500,7 +3416,7 @@ msgid ""
 msgstr ""
 
 #: exe/exe_do:282 exe/run-exe_do.py:262
-#, fuzzy, python-format
+#, python-format
 msgid "File '%s' successfully imported to '%s'."
 msgstr "ቅጥን በተሳካ ሁኔታ አስመጥቷል: %s"
 
@@ -3536,7 +3452,7 @@ msgstr ""
 #: exe/export/epub3export.py:643 exe/export/imsexport.py:569
 #: exe/export/scormexport.py:669 exe/export/websiteexport.py:161
 #: exe/export/xmlexport.py:204
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "EXPORT FAILED!\n"
 "Last succesful export is %s."
@@ -3547,92 +3463,74 @@ msgid "GNU Free Documentation License"
 msgstr ""
 
 #: exe/export/pages.py:72
-#, fuzzy
 msgid "Creative Commons Attribution License 2.5"
 msgstr "creative commons: attribution 2.5"
 
 #: exe/export/pages.py:73
-#, fuzzy
 msgid "Creative Commons Attribution Share Alike License 2.5"
 msgstr "creative commons: attribution - share alike 2.5"
 
 #: exe/export/pages.py:74
-#, fuzzy
 msgid "Creative Commons Attribution No Derivatives License 2.5"
 msgstr "creative commons: attribution - non derived work 2.5"
 
 #: exe/export/pages.py:75
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial License 2.5"
 msgstr "creative commons: attribution - non commercial 2.5"
 
 #: exe/export/pages.py:76
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial Share Alike License 2.5"
 msgstr "creative commons: attribution - non commercial - share alike 2.5"
 
 #: exe/export/pages.py:77
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial No Derivatives License 2.5"
 msgstr "creative commons: attribution - non commercial - share alike 2.5"
 
 #: exe/export/pages.py:78
-#, fuzzy
 msgid "Creative Commons Attribution License 3.0"
 msgstr "creative commons: attribution 3.0"
 
 #: exe/export/pages.py:79
-#, fuzzy
 msgid "Creative Commons Attribution Share Alike License 3.0"
 msgstr "creative commons: attribution - share alike 3.0"
 
 #: exe/export/pages.py:80
-#, fuzzy
 msgid "Creative Commons Attribution No Derivatives License 3.0"
 msgstr "creative commons: attribution - non derived work 3.0"
 
 #: exe/export/pages.py:81
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial License 3.0"
 msgstr "creative commons: attribution - non commercial 3.0"
 
 #: exe/export/pages.py:82
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial Share Alike License 3.0"
 msgstr "creative commons: attribution - non commercial - share alike 3.0"
 
 #: exe/export/pages.py:83
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial No Derivatives License 3.0"
 msgstr "creative commons: attribution - non commercial - share alike 3.0"
 
 #: exe/export/pages.py:84
-#, fuzzy
 msgid "Creative Commons Attribution License 4.0"
 msgstr "creative commons: attribution 4.0"
 
 #: exe/export/pages.py:85
-#, fuzzy
 msgid "Creative Commons Attribution Share Alike License 4.0"
 msgstr "creative commons: attribution - share alike 4.0"
 
 #: exe/export/pages.py:86
-#, fuzzy
 msgid "Creative Commons Attribution No Derivatives License 4.0"
 msgstr "creative commons: attribution - non derived work 4.0"
 
 #: exe/export/pages.py:87
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial License 4.0"
 msgstr "creative commons: attribution - non commercial 4.0"
 
 #: exe/export/pages.py:88
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial Share Alike License 4.0"
 msgstr "creative commons: attribution - non commercial - share alike 4.0"
 
 #: exe/export/pages.py:89
-#, fuzzy
 msgid "Creative Commons Attribution Non-commercial No Derivatives License 4.0"
 msgstr "creative commons: attribution - non commercial - share alike 4.0"
 
@@ -3784,12 +3682,12 @@ msgid "Package saved to: %s"
 msgstr "ጥቅል ወደሚከተለው ተቀምጧል: %s"
 
 #: exe/jsui/mainpage.py:1034 exe/jsui/mainpage.py:1148
-#, fuzzy, python-format
+#, python-format
 msgid "Preview directory %s is a file, cannot replace it"
 msgstr "የፋይል ስም %s ፋይል ነው፣ ሊተካው አይችልም"
 
 #: exe/jsui/mainpage.py:1058
-#, fuzzy, python-format
+#, python-format
 msgid "Local file %s is not found, cannot preview it"
 msgstr "የፋይል ስም %s ፋይል ነው፣ ሊተካው አይችልም"
 
@@ -3899,7 +3797,7 @@ msgid "Couldn't load file, please email file to bugs@exelearning.org"
 msgstr ""
 
 #: exe/jsui/mainpage.py:1782
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Sorry, wrong file format:\n"
 "%s"
@@ -4539,7 +4437,6 @@ msgid "The name given to the resource."
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:51
-#, fuzzy
 msgid "Creator"
 msgstr "አመላካች"
 
@@ -4566,12 +4463,10 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:71
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:189
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:193
-#, fuzzy
 msgid "An account of the content of the resource."
 msgstr "የሃብቱ ተቀዳሚ ጸሃፊ።"
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:78
-#, fuzzy
 msgid "Publisher"
 msgstr "አትም"
 
@@ -4580,7 +4475,6 @@ msgid "An entity responsible for making the resource available."
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:85
-#, fuzzy
 msgid "Contributors"
 msgstr "አስተዋጽኦ"
 
@@ -4631,7 +4525,6 @@ msgid "Format"
 msgstr "ቅርጸጽ"
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:128
-#, fuzzy
 msgid "Select a Format."
 msgstr "የማለፊያ መጠንን ይምረጡ:"
 
@@ -4649,7 +4542,6 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/LomSections.js:175
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Source"
 msgstr "ሃብት"
 
@@ -4688,7 +4580,6 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/DublinCoreDataPanel.js:163
 #: exe/jsui/scripts/app/view/forms/LomSections.js:52
-#, fuzzy
 msgid "Coverage"
 msgstr "አማካይ"
 
@@ -4740,7 +4631,6 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:44
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:51
 #: exe/jsui/scripts/app/view/forms/ExportPanel.js:55
-#, fuzzy
 msgid "Metadata Type"
 msgstr "ዲበ ውሂብ"
 
@@ -4825,7 +4715,6 @@ msgstr ""
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:408
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:426
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:433
-#, fuzzy
 msgid "Taxon"
 msgstr "ታክሶኖሚ"
 
@@ -4850,7 +4739,6 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:220
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:259
-#, fuzzy
 msgid "Meta-Metadata"
 msgstr "ዲበ ውሂብ"
 
@@ -4861,13 +4749,11 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:222
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:261
-#, fuzzy
 msgid "Educational"
 msgstr "ክፍል"
 
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:225
 #: exe/jsui/scripts/app/view/forms/LomDataPanel.js:264
-#, fuzzy
 msgid "Annotation"
 msgstr "ጥቅስ"
 
@@ -4883,7 +4769,6 @@ msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomSections.js:24
 #: exe/jsui/scripts/app/view/forms/LomSections.js:194
-#, fuzzy
 msgid "learning objects"
 msgstr "ባዶ ፕሮጀክት"
 
@@ -5106,7 +4991,6 @@ msgid ""
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:357
-#, fuzzy
 msgid "Years"
 msgstr "አጽዳ"
 
@@ -5123,17 +5007,14 @@ msgid "Hours"
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:375
-#, fuzzy
 msgid "Minutes"
 msgstr "ገደቦች"
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:376
-#, fuzzy
 msgid "Seconds"
 msgstr "አዶዎች"
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:481
-#, fuzzy
 msgid "Id"
 msgstr "ዓይነት"
 
@@ -5142,12 +5023,10 @@ msgid "Append Section"
 msgstr ""
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:659
-#, fuzzy
 msgid "Delete Section"
 msgstr "ጥያቄን ሰርዝ"
 
 #: exe/jsui/scripts/app/view/forms/LomWidgets.js:673
-#, fuzzy
 msgid "Notice"
 msgstr "ጽሁፍ"
 
@@ -5515,7 +5394,6 @@ msgid "Server"
 msgstr "አገልጋይ"
 
 #: exe/jsui/scripts/app/view/forms/PublishPanel.js:75
-#, fuzzy
 msgid "You need to enter a servername to log in"
 msgstr "በመለያ ለመግባት የተጠቃሚ ስም ማስገባት አለብዎት"
 
@@ -5610,7 +5488,6 @@ msgid "e.g. MyLevel 1"
 msgstr "ለምሳሌ MyLevel 1"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:49
-#, fuzzy
 msgid "New Guide"
 msgstr "አዲስ መስመር"
 
@@ -5651,7 +5528,6 @@ msgid "Suggested Words"
 msgstr "የሚመከሩ ቃላት"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityLinguistPanel.js:225
-#, fuzzy
 msgid "Share"
 msgstr "ትልቅ"
 
@@ -5669,12 +5545,10 @@ msgid "Level:"
 msgstr "ደረጃ:"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:35
-#, fuzzy
 msgid "Selected Level"
 msgstr "ደረጃ ይምረጡ።"
 
 #: exe/jsui/scripts/app/view/forms/ReadabilityWriterPanel.js:54
-#, fuzzy
 msgid "Setup"
 msgstr "ዳግም አቀናብር"
 
@@ -6116,7 +5990,6 @@ msgid "Tibetan "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:68
-#, fuzzy
 msgid "Breton "
 msgstr "ክፍል"
 
@@ -6125,7 +5998,6 @@ msgid "Bosnian "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:76
-#, fuzzy
 msgid "Catalan "
 msgstr "እውነተኛ"
 
@@ -6186,7 +6058,6 @@ msgid "Spanish "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:136
-#, fuzzy
 msgid "Estonian "
 msgstr "ጥያቄ"
 
@@ -6195,7 +6066,6 @@ msgid "Basque "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:144
-#, fuzzy
 msgid "Persian "
 msgstr "ስሪት"
 
@@ -6208,7 +6078,6 @@ msgid "Fijian; Fiji "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:156
-#, fuzzy
 msgid "Faroese "
 msgstr "አሳይ"
 
@@ -6237,7 +6106,6 @@ msgid "Guarani "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:184
-#, fuzzy
 msgid "Gujarati "
 msgstr "የሚወስደው ጊዜ"
 
@@ -6254,7 +6122,6 @@ msgid "Hebrew (formerly iw) "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:200
-#, fuzzy
 msgid "Hindi "
 msgstr "ዓይነት"
 
@@ -6263,7 +6130,6 @@ msgid "Hiri Motu "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:208
-#, fuzzy
 msgid "Croatian "
 msgstr "አካባቢ"
 
@@ -6272,12 +6138,10 @@ msgid "Hungarian "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:216
-#, fuzzy
 msgid "Armenian "
 msgstr "ማስጠንቀቂያ"
 
 #: exe/jsui/scripts/langs.js:220
-#, fuzzy
 msgid "Herero "
 msgstr "አገልጋይ"
 
@@ -6290,7 +6154,6 @@ msgid "Indonesian (formerly in) "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:232
-#, fuzzy
 msgid "Interlingue "
 msgstr "አዲስ መስመር"
 
@@ -6307,7 +6170,6 @@ msgid "Icelandic "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:248
-#, fuzzy
 msgid "Italian "
 msgstr "ሁኔታ"
 
@@ -6324,7 +6186,6 @@ msgid "Javanese "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:264
-#, fuzzy
 msgid "Georgian "
 msgstr "ማዋሃድ"
 
@@ -6369,7 +6230,6 @@ msgid "Komi "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:308
-#, fuzzy
 msgid "Cornish "
 msgstr "አዶዎች"
 
@@ -6378,7 +6238,6 @@ msgid "Kirghiz "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:316
-#, fuzzy
 msgid "Latin "
 msgstr "ዝምድና"
 
@@ -6395,7 +6254,6 @@ msgid "Lao; Laotian "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:332
-#, fuzzy
 msgid "Lithuanian "
 msgstr "ሁኔታ"
 
@@ -6408,12 +6266,10 @@ msgid "Malagasy "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:344
-#, fuzzy
 msgid "Marshall "
 msgstr "ትንሽ"
 
 #: exe/jsui/scripts/langs.js:348
-#, fuzzy
 msgid "Maori "
 msgstr "ኢሜይል"
 
@@ -6438,12 +6294,10 @@ msgid "Marathi "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:372
-#, fuzzy
 msgid "Malay "
 msgstr "ትንሽ"
 
 #: exe/jsui/scripts/langs.js:376
-#, fuzzy
 msgid "Maltese "
 msgstr "ሃሰት"
 
@@ -6464,7 +6318,6 @@ msgid "Ndebele,North "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:396
-#, fuzzy
 msgid "Nepali "
 msgstr "አዲስ መስመር"
 
@@ -6473,7 +6326,6 @@ msgid "Ndonga "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:404
-#, fuzzy
 msgid "Dutch "
 msgstr "ስፋት"
 
@@ -6522,7 +6374,6 @@ msgid "Pali "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:452
-#, fuzzy
 msgid "Polish "
 msgstr "አትም"
 
@@ -6547,7 +6398,6 @@ msgid "Rundi; Kirundi "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:476
-#, fuzzy
 msgid "Romanian "
 msgstr "ድርጅት"
 
@@ -6564,12 +6414,10 @@ msgid "Sanskrit "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:492
-#, fuzzy
 msgid "Sardinian "
 msgstr "ማስጠንቀቂያ"
 
 #: exe/jsui/scripts/langs.js:496
-#, fuzzy
 msgid "Sindhi "
 msgstr "ዓይነት"
 
@@ -6602,7 +6450,6 @@ msgid "Shona "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:528
-#, fuzzy
 msgid "Somali "
 msgstr "ትንሽ"
 
@@ -6635,7 +6482,6 @@ msgid "Swahili "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:560
-#, fuzzy
 msgid "Tamil "
 msgstr "ኢሜይል"
 
@@ -6656,12 +6502,10 @@ msgid "Tigrinya "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:580
-#, fuzzy
 msgid "Turkmen "
 msgstr "ተመለስ"
 
 #: exe/jsui/scripts/langs.js:584
-#, fuzzy
 msgid "Tagalog "
 msgstr "ካታሎግ"
 
@@ -6682,7 +6526,6 @@ msgid "Tsonga "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:604
-#, fuzzy
 msgid "Tatar "
 msgstr "ዲበ ውሂብ"
 
@@ -6715,7 +6558,6 @@ msgid "Valencian "
 msgstr ""
 
 #: exe/jsui/scripts/langs.js:636
-#, fuzzy
 msgid "Vietnamese "
 msgstr "የፋይል ስም:"
 
@@ -6756,7 +6598,6 @@ msgid "Zulu "
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:5 exe/jsui/scripts/lomvocab.js:664
-#, fuzzy
 msgid "active"
 msgstr "አላማ"
 
@@ -6766,7 +6607,6 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:13 exe/jsui/scripts/lomvocab.js:672
 #: exe/jsui/scripts/lomvocab.js:1216
-#, fuzzy
 msgid "mixed"
 msgstr "ተቀርፏል"
 
@@ -6775,12 +6615,10 @@ msgid "exercise"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:23 exe/jsui/scripts/lomvocab.js:882
-#, fuzzy
 msgid "simulation"
 msgstr "ሁኔታ"
 
 #: exe/jsui/scripts/lomvocab.js:27 exe/jsui/scripts/lomvocab.js:886
-#, fuzzy
 msgid "questionnaire"
 msgstr "ጥያቄ"
 
@@ -6797,17 +6635,14 @@ msgid "graph"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:43
-#, fuzzy
 msgid "index"
 msgstr "ዓይነት"
 
 #: exe/jsui/scripts/lomvocab.js:47
-#, fuzzy
 msgid "slide"
 msgstr "አንሸታትት"
 
 #: exe/jsui/scripts/lomvocab.js:51 exe/jsui/scripts/lomvocab.js:730
-#, fuzzy
 msgid "table"
 msgstr "መለያ"
 
@@ -6816,7 +6651,6 @@ msgid "narrative text"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:59 exe/jsui/scripts/lomvocab.js:890
-#, fuzzy
 msgid "exam"
 msgstr "ዳግም ሰይም"
 
@@ -6834,7 +6668,6 @@ msgid "self assessment"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:75
-#, fuzzy
 msgid "lecture"
 msgstr "መዋቅር"
 
@@ -6843,7 +6676,6 @@ msgid "discipline"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:103 exe/jsui/scripts/lomvocab.js:922
-#, fuzzy
 msgid "idea"
 msgstr "ደብቅ"
 
@@ -6860,7 +6692,6 @@ msgid "accessibility restrictions"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:119 exe/jsui/scripts/lomvocab.js:938
-#, fuzzy
 msgid "educational level"
 msgstr "የውህደት ደረጃ"
 
@@ -6869,7 +6700,6 @@ msgid "skill level"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:127 exe/jsui/scripts/lomvocab.js:946
-#, fuzzy
 msgid "security level"
 msgstr "ደረጃ ይምረጡ።"
 
@@ -6878,7 +6708,6 @@ msgid "competency"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:137 exe/jsui/scripts/lomvocab.js:956
-#, fuzzy
 msgid "creator"
 msgstr "አመላካች"
 
@@ -6889,12 +6718,10 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:147 exe/jsui/scripts/lomvocab.js:613
 #: exe/jsui/scripts/lomvocab.js:966
-#, fuzzy
 msgid "author"
 msgstr "ጸሃፊ"
 
 #: exe/jsui/scripts/lomvocab.js:151 exe/jsui/scripts/lomvocab.js:970
-#, fuzzy
 msgid "publisher"
 msgstr "አትም"
 
@@ -6903,7 +6730,6 @@ msgid "unknown"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:159 exe/jsui/scripts/lomvocab.js:974
-#, fuzzy
 msgid "initiator"
 msgstr "አመላካች"
 
@@ -6912,7 +6738,6 @@ msgid "terminator"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:171 exe/jsui/scripts/lomvocab.js:986
-#, fuzzy
 msgid "editor"
 msgstr "አመላካች"
 
@@ -6925,7 +6750,6 @@ msgid "technical implementer"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:183 exe/jsui/scripts/lomvocab.js:998
-#, fuzzy
 msgid "content provider"
 msgstr "የይዘት ዓይነት"
 
@@ -6934,7 +6758,6 @@ msgid "technical validator"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:191 exe/jsui/scripts/lomvocab.js:1006
-#, fuzzy
 msgid "educational validator"
 msgstr "የትምህርት ደረጃ"
 
@@ -6952,12 +6775,10 @@ msgid "subject matter expert"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:209 exe/jsui/scripts/lomvocab.js:1024
-#, fuzzy
 msgid "analyse"
 msgstr "ሃሰት"
 
 #: exe/jsui/scripts/lomvocab.js:213 exe/jsui/scripts/lomvocab.js:1028
-#, fuzzy
 msgid "implement"
 msgstr "መስፈርት"
 
@@ -6966,12 +6787,10 @@ msgid "collaborate"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:221 exe/jsui/scripts/lomvocab.js:1036
-#, fuzzy
 msgid "compare"
 msgstr "ውጤት"
 
 #: exe/jsui/scripts/lomvocab.js:225 exe/jsui/scripts/lomvocab.js:1040
-#, fuzzy
 msgid "share"
 msgstr "ትልቅ"
 
@@ -6992,7 +6811,6 @@ msgid "communicate"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:245 exe/jsui/scripts/lomvocab.js:1060
-#, fuzzy
 msgid "contextualize"
 msgstr "አገባብ"
 
@@ -7001,22 +6819,18 @@ msgid "control"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:253 exe/jsui/scripts/lomvocab.js:1068
-#, fuzzy
 msgid "cooperate"
 msgstr "ባህሪያት"
 
 #: exe/jsui/scripts/lomvocab.js:257 exe/jsui/scripts/lomvocab.js:1072
-#, fuzzy
 msgid "create"
 msgstr "አዲስ ፍጠር"
 
 #: exe/jsui/scripts/lomvocab.js:261 exe/jsui/scripts/lomvocab.js:1076
-#, fuzzy
 msgid "decide"
 msgstr "ደብቅ"
 
 #: exe/jsui/scripts/lomvocab.js:265 exe/jsui/scripts/lomvocab.js:1080
-#, fuzzy
 msgid "define"
 msgstr "መለያ"
 
@@ -7029,17 +6843,14 @@ msgid "discuss"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:277 exe/jsui/scripts/lomvocab.js:1092
-#, fuzzy
 msgid "design"
 msgstr "ስሪት"
 
 #: exe/jsui/scripts/lomvocab.js:285 exe/jsui/scripts/lomvocab.js:1100
-#, fuzzy
 msgid "explain"
 msgstr "ዝምድና"
 
 #: exe/jsui/scripts/lomvocab.js:289 exe/jsui/scripts/lomvocab.js:1104
-#, fuzzy
 msgid "extrapolate"
 msgstr "እጅግ በጣም ትልቅ"
 
@@ -7060,12 +6871,10 @@ msgid "motivate"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:309 exe/jsui/scripts/lomvocab.js:1124
-#, fuzzy
 msgid "observe"
 msgstr "ወደ አገልጋይ.."
 
 #: exe/jsui/scripts/lomvocab.js:313 exe/jsui/scripts/lomvocab.js:1128
-#, fuzzy
 msgid "organize"
 msgstr "ድርጅት"
 
@@ -7074,7 +6883,6 @@ msgid "organize oneself"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:321 exe/jsui/scripts/lomvocab.js:1136
-#, fuzzy
 msgid "plan"
 msgstr "ስቀል"
 
@@ -7083,7 +6891,6 @@ msgid "practise"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:329 exe/jsui/scripts/lomvocab.js:1144
-#, fuzzy
 msgid "produce"
 msgstr "ንጠር"
 
@@ -7100,49 +6907,40 @@ msgid "write up"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:345 exe/jsui/scripts/lomvocab.js:1160
-#, fuzzy
 msgid "consider"
 msgstr "አዶዎች"
 
 #: exe/jsui/scripts/lomvocab.js:349 exe/jsui/scripts/lomvocab.js:1164
-#, fuzzy
 msgid "connect"
 msgstr "የተሳሳተ"
 
 #: exe/jsui/scripts/lomvocab.js:353 exe/jsui/scripts/lomvocab.js:1168
-#, fuzzy
 msgid "represent"
 msgstr "የስም ቅድመ ቅንብር"
 
 #: exe/jsui/scripts/lomvocab.js:357 exe/jsui/scripts/lomvocab.js:1172
-#, fuzzy
 msgid "solve"
 msgstr "ሚና"
 
 #: exe/jsui/scripts/lomvocab.js:361 exe/jsui/scripts/lomvocab.js:1176
-#, fuzzy
 msgid "simulate"
 msgstr "Pulsate"
 
 #: exe/jsui/scripts/lomvocab.js:365 exe/jsui/scripts/lomvocab.js:1180
-#, fuzzy
 msgid "summarize"
 msgstr "በጣም ትልቅ"
 
 #: exe/jsui/scripts/lomvocab.js:369 exe/jsui/scripts/lomvocab.js:1184
-#, fuzzy
 msgid "value"
 msgstr "መለኪያ"
 
 #: exe/jsui/scripts/lomvocab.js:375 exe/jsui/scripts/lomvocab.js:413
 #: exe/jsui/scripts/lomvocab.js:1190
-#, fuzzy
 msgid "yes"
 msgstr "አዎ"
 
 #: exe/jsui/scripts/lomvocab.js:379 exe/jsui/scripts/lomvocab.js:417
 #: exe/jsui/scripts/lomvocab.js:1194
-#, fuzzy
 msgid "no"
 msgstr "መረጃ"
 
@@ -7155,12 +6953,10 @@ msgid "higher education"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:393
-#, fuzzy
 msgid "training"
 msgstr "ማስጠንቀቂያ"
 
 #: exe/jsui/scripts/lomvocab.js:397
-#, fuzzy
 msgid "other"
 msgstr "ግርጌ"
 
@@ -7169,7 +6965,6 @@ msgid "operating system"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:407 exe/jsui/scripts/lomvocab.js:1268
-#, fuzzy
 msgid "browser"
 msgstr "አሳይ"
 
@@ -7182,32 +6977,26 @@ msgid "haspart"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:431 exe/jsui/scripts/lomvocab.js:1344
-#, fuzzy
 msgid "isversionof"
 msgstr "ስሪት"
 
 #: exe/jsui/scripts/lomvocab.js:435 exe/jsui/scripts/lomvocab.js:1348
-#, fuzzy
 msgid "hasversion"
 msgstr "ስሪት"
 
 #: exe/jsui/scripts/lomvocab.js:439 exe/jsui/scripts/lomvocab.js:1352
-#, fuzzy
 msgid "isformatof"
 msgstr "መረጃ"
 
 #: exe/jsui/scripts/lomvocab.js:443 exe/jsui/scripts/lomvocab.js:1356
-#, fuzzy
 msgid "hasformat"
 msgstr "ቅርጸጽ"
 
 #: exe/jsui/scripts/lomvocab.js:447 exe/jsui/scripts/lomvocab.js:1360
-#, fuzzy
 msgid "references"
 msgstr "ምርጫዎች"
 
 #: exe/jsui/scripts/lomvocab.js:451 exe/jsui/scripts/lomvocab.js:1364
-#, fuzzy
 msgid "isreferencedby"
 msgstr "ምርጫዎች"
 
@@ -7220,12 +7009,10 @@ msgid "isbasisfor"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:463 exe/jsui/scripts/lomvocab.js:1376
-#, fuzzy
 msgid "requires"
 msgstr "መስፈርት"
 
 #: exe/jsui/scripts/lomvocab.js:467 exe/jsui/scripts/lomvocab.js:1380
-#, fuzzy
 msgid "isrequiredby"
 msgstr "መስፈርት"
 
@@ -7236,7 +7023,6 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:477 exe/jsui/scripts/lomvocab.js:545
 #: exe/jsui/scripts/lomvocab.js:1390 exe/jsui/scripts/lomvocab.js:1458
-#, fuzzy
 msgid "low"
 msgstr "አሁን"
 
@@ -7244,13 +7030,11 @@ msgstr "አሁን"
 #: exe/jsui/scripts/lomvocab.js:645 exe/jsui/scripts/lomvocab.js:1394
 #: exe/jsui/scripts/lomvocab.js:1462 exe/jsui/scripts/lomvocab.js:1614
 #: exe/webui/externalurlblock.py:73
-#, fuzzy
 msgid "medium"
 msgstr "መካከለኛ"
 
 #: exe/jsui/scripts/lomvocab.js:485 exe/jsui/scripts/lomvocab.js:553
 #: exe/jsui/scripts/lomvocab.js:1398 exe/jsui/scripts/lomvocab.js:1466
-#, fuzzy
 msgid "high"
 msgstr "ቁመት"
 
@@ -7264,12 +7048,10 @@ msgid "draft"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:499 exe/jsui/scripts/lomvocab.js:1412
-#, fuzzy
 msgid "final"
 msgstr "አማራጭ"
 
 #: exe/jsui/scripts/lomvocab.js:503 exe/jsui/scripts/lomvocab.js:1416
-#, fuzzy
 msgid "revised"
 msgstr "ቅድመ እይታ"
 
@@ -7286,12 +7068,10 @@ msgid "atomic"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:523 exe/jsui/scripts/lomvocab.js:1436
-#, fuzzy
 msgid "collection"
 msgstr "ክፍል"
 
 #: exe/jsui/scripts/lomvocab.js:527 exe/jsui/scripts/lomvocab.js:1440
-#, fuzzy
 msgid "networked"
 msgstr "ቁልፍ ቃል"
 
@@ -7300,7 +7080,6 @@ msgid "hierarchical"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:535 exe/jsui/scripts/lomvocab.js:1448
-#, fuzzy
 msgid "linear"
 msgstr "አጽዳ"
 
@@ -7309,12 +7088,10 @@ msgid "pc-dos"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:567 exe/jsui/scripts/lomvocab.js:1480
-#, fuzzy
 msgid "ms-windows"
 msgstr "አዲስ መስኮት"
 
 #: exe/jsui/scripts/lomvocab.js:571 exe/jsui/scripts/lomvocab.js:1484
-#, fuzzy
 msgid "macos"
 msgstr "አዶዎች"
 
@@ -7323,13 +7100,11 @@ msgid "unix"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:579 exe/jsui/scripts/lomvocab.js:1496
-#, fuzzy
 msgid "multi-os"
 msgstr "ከአንድ በላይ መምረጥ"
 
 #: exe/jsui/scripts/lomvocab.js:583 exe/jsui/scripts/lomvocab.js:1500
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "none"
 msgstr "ምንም"
 
@@ -7359,12 +7134,10 @@ msgid "teacher"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:617 exe/jsui/scripts/lomvocab.js:1530
-#, fuzzy
 msgid "learner"
 msgstr "ትልቅ"
 
 #: exe/jsui/scripts/lomvocab.js:621 exe/jsui/scripts/lomvocab.js:1582
-#, fuzzy
 msgid "manager"
 msgstr "ቋንቋ"
 
@@ -7385,12 +7158,10 @@ msgid "easy"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:649 exe/jsui/scripts/lomvocab.js:1618
-#, fuzzy
 msgid "difficult"
 msgstr "ክብደት"
 
 #: exe/jsui/scripts/lomvocab.js:653 exe/jsui/scripts/lomvocab.js:1622
-#, fuzzy
 msgid "very difficult"
 msgstr "ክብደት"
 
@@ -7399,17 +7170,14 @@ msgid "photograph"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:682
-#, fuzzy
 msgid "illustration"
 msgstr "የሚወስደው ጊዜ"
 
 #: exe/jsui/scripts/lomvocab.js:686
-#, fuzzy
 msgid "video"
 msgstr "ደብቅ"
 
 #: exe/jsui/scripts/lomvocab.js:690
-#, fuzzy
 msgid "animation"
 msgstr "ድርጅት"
 
@@ -7430,7 +7198,6 @@ msgid "compound audio"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:714
-#, fuzzy
 msgid "hypertext"
 msgstr "ጽሁፍ"
 
@@ -7451,7 +7218,6 @@ msgid "conceptual map"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:742
-#, fuzzy
 msgid "navigation map"
 msgstr "አሰሳን ይዝለሉ"
 
@@ -7460,7 +7226,6 @@ msgid "multimedia presentation"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:750
-#, fuzzy
 msgid "tutorial"
 msgstr "eXe መለማመጃ"
 
@@ -7557,7 +7322,6 @@ msgid "textual-image analysis"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:846
-#, fuzzy
 msgid "discussion activity"
 msgstr "የማንበቢያ እንቅስቃሴ"
 
@@ -7570,7 +7334,6 @@ msgid "contextualized case problem"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:858
-#, fuzzy
 msgid "open problem"
 msgstr "eXe ችግር"
 
@@ -7587,12 +7350,10 @@ msgid "webquest"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:878
-#, fuzzy
 msgid "real project"
 msgstr "eXe Project"
 
 #: exe/jsui/scripts/lomvocab.js:1200
-#, fuzzy
 msgid "classroom"
 msgstr "ክፍል"
 
@@ -7601,12 +7362,10 @@ msgid "laboratory"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1208
-#, fuzzy
 msgid "real environment"
 msgstr "እውነተኛ አካባቢ"
 
 #: exe/jsui/scripts/lomvocab.js:1212
-#, fuzzy
 msgid "home"
 msgstr "መነሻ"
 
@@ -7615,7 +7374,6 @@ msgid "family"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1228 exe/jsui/scripts/lomvocab.js:1566
-#, fuzzy
 msgid "tutor"
 msgstr "ጸሃፊ"
 
@@ -7628,7 +7386,6 @@ msgid "independent"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1240
-#, fuzzy
 msgid "blended"
 msgstr "የተቀላቀለ"
 
@@ -7637,18 +7394,15 @@ msgid "presencial"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1254
-#, fuzzy
 msgid "face to face"
 msgstr "ፊት ለፊት"
 
 #: exe/jsui/scripts/lomvocab.js:1258
-#, fuzzy
 msgid "distance"
 msgstr "የርቀት"
 
 #: exe/jsui/scripts/lomvocab.js:1274
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:28
-#, fuzzy
 msgid "propietary license"
 msgstr "ፈቃድ ይምረጡ።"
 
@@ -7684,43 +7438,35 @@ msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1302
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:56
-#, fuzzy
 msgid "intellectual property license"
 msgstr "ፈቃድ ይምረጡ።"
 
 #: exe/jsui/scripts/lomvocab.js:1306
-#, fuzzy
 msgid "creative commons: attribution"
 msgstr "creative commons: attribution 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1310
-#, fuzzy
 msgid "creative commons: attribution - non derived work"
 msgstr "creative commons: attribution - non derived work 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1314
-#, fuzzy
 msgid "creative commons: attribution - non derived work - non commercial"
 msgstr "creative commons: attribution - non derived work - non commercial 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1318
-#, fuzzy
 msgid "creative commons: attribution - non commercial"
 msgstr "creative commons: attribution - non commercial 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1322
-#, fuzzy
 msgid "creative commons: attribution - non commercial - share alike"
 msgstr "creative commons: attribution - non commercial - share alike 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1326
-#, fuzzy
 msgid "creative commons: attribution - share alike"
 msgstr "creative commons: attribution - share alike 4.0"
 
 #: exe/jsui/scripts/lomvocab.js:1330
 #: exe/jsui/scripts/app/view/forms/PackagePanel.js:132
-#, fuzzy
 msgid "license GFDL"
 msgstr "ፈቃድ"
 
@@ -7729,7 +7475,6 @@ msgid "LOM-ESv1.0"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1488
-#, fuzzy
 msgid "linux"
 msgstr "እውር"
 
@@ -7738,12 +7483,10 @@ msgid "mozilla firefox"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1534
-#, fuzzy
 msgid "special needs learner"
 msgstr "ልዩ ፍላጎት ያለው ተማሪ"
 
 #: exe/jsui/scripts/lomvocab.js:1538
-#, fuzzy
 msgid "gifted learner"
 msgstr "ልዩ ተሰጥኦ ያለው ተማሪ"
 
@@ -7764,12 +7507,10 @@ msgid "individual"
 msgstr ""
 
 #: exe/jsui/scripts/lomvocab.js:1558
-#, fuzzy
 msgid "group"
 msgstr "አስቀምጥ"
 
 #: exe/jsui/scripts/lomvocab.js:1574
-#, fuzzy
 msgid "information scientist"
 msgstr "መረጃ"
 
@@ -7841,7 +7582,6 @@ msgid "Scratch"
 msgstr ""
 
 #: exe/webui/appletblock.py:133 exe/webui/wikipediablock.py:135
-#, fuzzy
 msgid "Other"
 msgstr "ግርጌ"
 
@@ -7850,7 +7590,6 @@ msgid "Applet Type"
 msgstr ""
 
 #: exe/webui/appletblock.py:155 exe/webui/appletblock.py:165
-#, fuzzy
 msgid "Add files"
 msgstr "ፋይል አስቀምጥ"
 
@@ -7972,7 +7711,6 @@ msgid ""
 msgstr ""
 
 #: exe/webui/clickinorderblock.py:320
-#, fuzzy
 msgid "Show advanced options"
 msgstr "የላቁ አማራጮችን አሳይ"
 
@@ -8103,7 +7841,6 @@ msgid "Select Flash Object"
 msgstr ""
 
 #: exe/webui/editorelement.py:308
-#, fuzzy
 msgid "Select MP3 file"
 msgstr "አንድ ፋይል ይምረጡ"
 
@@ -8114,7 +7851,6 @@ msgid "Caption:"
 msgstr "ማብራሪያ ጽሁፍ:"
 
 #: exe/webui/editorpage.py:125
-#, fuzzy
 msgid "Please enter an idevice name."
 msgstr "እባክዎ <br />የ idevice ስም ያስገቡ።"
 
@@ -8303,7 +8039,6 @@ msgid "blank for original size"
 msgstr "ለመጀመሪያው መጠን ባዶ"
 
 #: exe/webui/element.py:769
-#, fuzzy
 msgid "Select an MP3"
 msgstr "ምስል ምረጥ"
 
@@ -8365,12 +8100,10 @@ msgid "Show/Hide Feedback"
 msgstr "ግብረ መልስ አሳይ/ደብቅ"
 
 #: exe/webui/element.py:1861
-#, fuzzy
 msgid "Please select a .flv file."
 msgstr "አንድ ፋይል ይምረጡ"
 
 #: exe/webui/element.py:1877
-#, fuzzy
 msgid "Select a flash video"
 msgstr "አንድ ፋይል ይምረጡ"
 
@@ -8460,7 +8193,6 @@ msgid "<div>\n"
 msgstr ""
 
 #: exe/webui/fileattachblock.py:95
-#, fuzzy
 msgid "<h2>File Attachment</h2>"
 msgstr "የፋይል አባሪዎች"
 
@@ -8568,12 +8300,10 @@ msgid "Default browser in your system"
 msgstr "በስርዓትዎ ውስጥ ያለ ነባሪ አሳሽ"
 
 #: exe/webui/idevicepage.py:181
-#, fuzzy
 msgid "Failed to get idevicep edit"
 msgstr "ባህሪያትን ማግኘት አልተሳካም"
 
 #: exe/webui/idevicepage.py:216
-#, fuzzy
 msgid "Failed to save preferences idevicep"
 msgstr "አማራጮች ዊዛርዱን ማስቀመጥ አልተሳካም"
 
@@ -8685,7 +8415,6 @@ msgid "A Step Ahead"
 msgstr ""
 
 #: exe/webui/placetheobjectsblock.py:278
-#, fuzzy
 msgid "Game Options"
 msgstr "የላቁ አማራጮች"
 
@@ -8730,7 +8459,6 @@ msgid "SUBMIT ANSWERS"
 msgstr "መልሶችን ያስገቡ"
 
 #: exe/webui/recomendacionfpdblock.py:68
-#, fuzzy
 msgid "A Piece of Advice"
 msgstr "ፊት ለፊት"
 
@@ -8762,12 +8490,10 @@ msgid "-- Not Set --"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Update"
 msgstr "Pulsate"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Insert"
 msgstr "ፈቃድ"
 
@@ -8800,7 +8526,6 @@ msgid "Insert Time"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Insert Date"
 msgstr "ጥቅል አስገባ"
 
@@ -8814,12 +8539,10 @@ msgid "%Y-%m-%d"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Direction Right to Left"
 msgstr "ከቀኝ ወደ ግራ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Direction Left to Right"
 msgstr "ከግራ ወደ ቀኝ"
 
@@ -8836,12 +8559,10 @@ msgid "Move Backward"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Move Forward"
 msgstr "ወደ ፊት ሂድ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Insert New Layer"
 msgstr "አዲሱን ስም ያስገቡ:"
 
@@ -8862,12 +8583,10 @@ msgid "Check Spelling"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Insertion"
 msgstr "ስሪት"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Deletion"
 msgstr "ዝምድና"
 
@@ -8876,12 +8595,10 @@ msgid "Acronym"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Abbreviation"
 msgstr "ዝምድና"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Citation"
 msgstr "ሁኔታ"
 
@@ -8899,12 +8616,10 @@ msgid ""
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Select All"
 msgstr "ደረጃ ይምረጡ።"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Paste from Word"
 msgstr "ሌሎች ቃላት"
 
@@ -8913,7 +8628,6 @@ msgid "Paste as Plain Text"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Cell"
 msgstr "ተወው"
 
@@ -8922,12 +8636,10 @@ msgid "Column"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Row"
 msgstr "አሁን"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Delete Table"
 msgstr "ቅጥን ሰረዝ?"
 
@@ -8948,7 +8660,6 @@ msgid "Paste Table Row Before"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Table Properties"
 msgstr "ባህሪያትን ማግኘት አልተሳካም"
 
@@ -8957,7 +8668,6 @@ msgid "Split Merged Table Cells"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Delete Column"
 msgstr "አማራጭን ሰርዝ"
 
@@ -8970,7 +8680,6 @@ msgid "Insert Column Before"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Delete Row"
 msgstr "አሳሽ ምረጥ"
 
@@ -9011,7 +8720,6 @@ msgid "Spell Checker Settings"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Ignore Word"
 msgstr "የቃላት ፍንጭ"
 
@@ -9020,7 +8728,6 @@ msgid "Ignore All"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Languages"
 msgstr "ቋንቋ"
 
@@ -9029,12 +8736,10 @@ msgid "Please wait..."
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Suggestions"
 msgstr "ጥያቄ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "No Suggestions"
 msgstr "ጥያቄ"
 
@@ -9043,7 +8748,6 @@ msgid "No misspellings found."
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Learn word"
 msgstr "ሌሎች ቃላት"
 
@@ -9052,7 +8756,6 @@ msgid "Insert Page Break for Printing"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Types"
 msgstr "ቅጦች"
 
@@ -9077,7 +8780,6 @@ msgid "Upper Roman"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Circle"
 msgstr "ጽሁፍ"
 
@@ -9098,7 +8800,6 @@ msgid "Burnt orange"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Black"
 msgstr "ግብረ መልስ"
 
@@ -9115,7 +8816,6 @@ msgid "Navy Blue"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Indigo"
 msgstr "ዓይነት"
 
@@ -9124,17 +8824,14 @@ msgid "Very dark gray"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Maroon"
 msgstr "ዘመናዊ ስልክ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Orange"
 msgstr "አማካይ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Olive"
 msgstr "ሚና"
 
@@ -9143,7 +8840,6 @@ msgid "Green"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Teal"
 msgstr "እውነተኛ"
 
@@ -9164,7 +8860,6 @@ msgid "Red"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Amber"
 msgstr "ስም"
 
@@ -9177,7 +8872,6 @@ msgid "Sea green"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Turquoise"
 msgstr "አላማ"
 
@@ -9186,7 +8880,6 @@ msgid "Royal blue"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Purple"
 msgstr "አላማ"
 
@@ -9195,12 +8888,10 @@ msgid "Medium gray"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Magenta"
 msgstr "ምስል"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Gold"
 msgstr "ደማቅ"
 
@@ -9209,7 +8900,6 @@ msgid "Yellow"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Lime"
 msgstr "ጊዜ"
 
@@ -9222,17 +8912,14 @@ msgid "Sky blue"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Brown"
 msgstr "ተሸቆልቋይ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Silver"
 msgstr "የሚታይ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Pink"
 msgstr "አማራጭ"
 
@@ -9245,7 +8932,6 @@ msgid "Light yellow"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Pale green"
 msgstr "ዛፍ አዘምን"
 
@@ -9262,12 +8948,10 @@ msgid "Plum"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "White"
 msgstr "ጣቢያ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
-#, fuzzy
 msgid "Words:"
 msgstr "ቃል %s"
 
@@ -9280,7 +8964,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:38
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Alignment"
 msgstr "እውነተኛ አካባቢ"
 
@@ -9310,13 +8993,11 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Emotions"
 msgstr "ክፍል"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Document Properties"
 msgstr "የፕሮጀክት ባህሪያት"
 
@@ -9328,7 +9009,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Center"
 msgstr "መለያ"
 
@@ -9350,13 +9030,11 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Find/Replace"
 msgstr "ተካ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Find"
 msgstr "ዓይነት"
 
@@ -9372,13 +9050,11 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Table Cell Properties"
 msgstr "ባህሪያትን ማግኘት አልተሳካም"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Table Row Properties"
 msgstr "ባህሪያትን ማግኘት አልተሳካም"
 
@@ -9441,7 +9117,6 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/langs/en.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Rich Text Area"
 msgstr "ብልጽግ ጽሁፍ"
 
@@ -9460,12 +9135,10 @@ msgid "No Shadow"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advhr/langs/en_dlg.js:1
-#, fuzzy
 msgid "Normal"
 msgstr "ቅርጸጽ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advhr/langs/en_dlg.js:1
-#, fuzzy
 msgid "Units"
 msgstr "ምዕራፍ"
 
@@ -9475,7 +9148,6 @@ msgstr "ምዕራፍ"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:70
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Width"
 msgstr "ስፋት"
 
@@ -9485,7 +9157,6 @@ msgstr "ስፋት"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:71
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Height"
 msgstr "ቁመት"
 
@@ -9497,7 +9168,6 @@ msgstr "ቁመት"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Style"
 msgstr "ቅጦች"
 
@@ -9507,7 +9177,6 @@ msgstr "ቅጦች"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "ID"
 msgstr "ዓይነት"
 
@@ -9522,7 +9191,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:61
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Language Code"
 msgstr "ቋንቋ"
 
@@ -9538,7 +9206,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:29
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:43
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Image List"
 msgstr "የምስል ፋይሎች"
 
@@ -9551,7 +9218,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:33
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Top"
 msgstr "ጽሁፍ"
 
@@ -9567,7 +9233,6 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:35
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Middle"
 msgstr "ደብቅ"
 
@@ -9577,14 +9242,12 @@ msgstr "ደብቅ"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Top"
 msgstr "ወደ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:37
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Baseline"
 msgstr "አዲስ መስመር"
 
@@ -9612,21 +9275,18 @@ msgstr ""
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Border"
 msgstr "አቃፊ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:44
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Image Description"
 msgstr "መግለጫ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:45
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Image URL"
 msgstr "የምስል ፋይሎች"
 
@@ -9662,19 +9322,16 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:52
-#, fuzzy
 msgid "Alternative Image"
 msgstr "ይህ ምስል ይሰረዝ?"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:53
-#, fuzzy
 msgid "Swap Image"
 msgstr "ምስል አሳይ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:60
-#, fuzzy
 msgid "Long Description Link"
 msgstr "መግለጫና አገናኝ አሳይ"
 
@@ -9697,7 +9354,6 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:4
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:13
-#, fuzzy
 msgid "Title and Attribution"
 msgstr "creative commons: attribution 4.0"
 
@@ -9708,7 +9364,6 @@ msgid "Header"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:6
-#, fuzzy
 msgid "Image Title"
 msgstr "የምስል ፋይሎች"
 
@@ -9729,7 +9384,6 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advimage/langs/en_dlg.js:11
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:20
-#, fuzzy
 msgid "Choose a license..."
 msgstr "ፈቃድ ይምረጡ..."
 
@@ -9820,17 +9474,14 @@ msgid "Open in Parent Window/Frame"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
-#, fuzzy
 msgid "Open in This Window/Frame"
 msgstr "ይህንን መስኮት መዝጋት ይችላሉ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
-#, fuzzy
 msgid "Anchors"
 msgstr "ወደሚከተለው ቅርንጫፍ ለይ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
-#, fuzzy
 msgid "Popup Properties"
 msgstr "ባህሪያት"
 
@@ -9851,19 +9502,16 @@ msgid "Target Character Encoding"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
-#, fuzzy
 msgid "Target Language"
 msgstr "የኢላማ ቋንቋ ምረጥ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Advanced Properties"
 msgstr "የላቁ አማራጮች"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "General Properties"
 msgstr "አጠቃላይ ቅንብሮች"
 
@@ -9879,7 +9527,6 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "AccessKey"
 msgstr "መዳረሻ"
 
@@ -9917,7 +9564,6 @@ msgid "Anchors and nodes"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/advlink/langs/en_dlg.js:5
-#, fuzzy
 msgid "Node"
 msgstr "አቃፊ"
 
@@ -9934,7 +9580,6 @@ msgid "Cry"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Cool"
 msgstr "መሳሪያዎች"
 
@@ -9959,12 +9604,10 @@ msgid "Tongue Out"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Surprised"
 msgstr "አላማ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Smile"
 msgstr "ፋይል"
 
@@ -9989,7 +9632,6 @@ msgid "Innocent"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/emotions/langs/en_dlg.js:1
-#, fuzzy
 msgid "Frown"
 msgstr "ተሸቆልቋይ"
 
@@ -10023,22 +9665,18 @@ msgid "LaTeX Math Image properties"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:7
-#, fuzzy
 msgid "eXe LaTeX Math Image"
 msgstr "ይህ ምስል ይሰረዝ?"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:8
-#, fuzzy
 msgid "Select a font size:"
 msgstr "የቁምፊ መጠን ምረጥ:"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:9
-#, fuzzy
 msgid "Font size:"
 msgstr "የቁምፊ መጠን ምረጥ:"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:10
-#, fuzzy
 msgid "Preview Math Image"
 msgstr "የቅድመ እይታ ዘመናዊ ስልክ"
 
@@ -10047,7 +9685,6 @@ msgid "Input LaTeX source:"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:13
-#, fuzzy
 msgid "generated Math Image"
 msgstr "ይህ ምስል ይሰረዝ?"
 
@@ -10068,7 +9705,6 @@ msgid "verbatim text"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/exemath/langs/en.js:18
-#, fuzzy
 msgid "new line"
 msgstr "አዲስ መስመር"
 
@@ -10101,7 +9737,6 @@ msgid "No source code found."
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Meta Information"
 msgstr "የጽሁፍ መረጃ"
 
@@ -10110,7 +9745,6 @@ msgid "Language and Encoding"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Keywords"
 msgstr "ቁልፍ ቃል"
 
@@ -10119,7 +9753,6 @@ msgid "Robots"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "XML Declaration"
 msgstr "ዝምድና"
 
@@ -10128,7 +9761,6 @@ msgid "Character Encoding"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Background Properties"
 msgstr "የፕሮጀክት ባህሪያት"
 
@@ -10141,12 +9773,10 @@ msgid "Link Colors"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Properties"
 msgstr "የፕሮጀክት ባህሪያት"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Left Margin"
 msgstr "ምስልን ሰርዝ"
 
@@ -10163,7 +9793,6 @@ msgid "Bottom Margin"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Color"
 msgstr "ውጤት አግኝ"
 
@@ -10176,7 +9805,6 @@ msgid "Link Color"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Hover Color"
 msgstr "የሽፋን አዶ:"
 
@@ -10205,12 +9833,10 @@ msgid "Do Not Index and Don't Follow the Links"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Stylesheet and Style Properties"
 msgstr "ባህሪያትን ማግኘት አልተሳካም"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Stylesheet"
 msgstr "ቅጦች"
 
@@ -10219,7 +9845,6 @@ msgid "Copyright"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Add New Element"
 msgstr "የንጥረ ነገር ምስል"
 
@@ -10236,17 +9861,14 @@ msgid "Move Selected Element Down"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Head Elements"
 msgstr "የንጥረ ነገር ምስል"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Title Element"
 msgstr "የንጥረ ነገር ምስል"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Meta Element"
 msgstr "የንጥረ ነገር ምስል"
 
@@ -10255,7 +9877,6 @@ msgid "Script Element"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Style Element"
 msgstr "የንጥረ ነገር ምስል"
 
@@ -10264,27 +9885,22 @@ msgid "Link Element"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Base Element"
 msgstr "የንጥረ ነገር ምስል"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Comment Node"
 msgstr "የመነሻ አቃፊ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Comment"
 msgstr "አስተያየት:"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Charset"
 msgstr "ኢላማ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Defer"
 msgstr "መለያ"
 
@@ -10293,7 +9909,6 @@ msgid "Media"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Value"
 msgstr "መለኪያ"
 
@@ -10302,7 +9917,6 @@ msgid "Rel"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
-#, fuzzy
 msgid "Rev"
 msgstr "ቅድመ እይታ"
 
@@ -10317,27 +9931,23 @@ msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Color"
 msgstr "ውጤት"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Background Color"
 msgstr "ዳራ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Background Image"
 msgstr "የዳራ ምስልን ሰድር?"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/fullpage/langs/en_dlg.js:1
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Font Size"
 msgstr "የቁምፊ መጠን ምረጥ:"
 
@@ -10362,7 +9972,6 @@ msgid ""
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "QT Source"
 msgstr "ሃብት"
 
@@ -10383,7 +9992,6 @@ msgid "Stretch H-Align"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Stretch Style"
 msgstr "ቅጥ አስመጣ"
 
@@ -10392,17 +10000,14 @@ msgid "Script Callbacks"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Top Right"
 msgstr "ከግራ ወደ ቀኝ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "UI Mode"
 msgstr "የአርታኢ ሁኔታ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Rate"
 msgstr "ቀን"
 
@@ -10411,12 +10016,10 @@ msgid "Play Count"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Default Frame"
 msgstr "ነባሪ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Current Position"
 msgstr "ትክክለኛ አማራጭ"
 
@@ -10433,7 +10036,6 @@ msgid "Base URL"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Balance"
 msgstr "ተወው"
 
@@ -10458,7 +10060,6 @@ msgid "Full Screen"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Enabled"
 msgstr "ዳግም ሰይም"
 
@@ -10467,7 +10068,6 @@ msgid "Auto Start"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Volume"
 msgstr "ሚና"
 
@@ -10484,7 +10084,6 @@ msgid "Start Time"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "No Correction"
 msgstr "የተሳሳተ"
 
@@ -10497,7 +10096,6 @@ msgid "Play Every Frame"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Kiosk Mode"
 msgstr "የአርታኢ ሁኔታ"
 
@@ -10506,7 +10104,6 @@ msgid "Controller"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Show Menu"
 msgstr "ምስል አሳይ"
 
@@ -10527,7 +10124,6 @@ msgid "V-Space"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Controls"
 msgstr "መሳሪያዎች"
 
@@ -10536,12 +10132,10 @@ msgid "Num Loops"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Console"
 msgstr "አዶዎች"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Cache"
 msgstr "መለኪያ"
 
@@ -10558,7 +10152,6 @@ msgid "Flash Vars"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Base"
 msgstr "ሃሰት"
 
@@ -10567,17 +10160,14 @@ msgid "WMode"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "SAlign"
 msgstr "አሰልፍ:"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Align"
 msgstr "አሰልፍ:"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Quality"
 msgstr "የአሰጣጥ መንገድ"
 
@@ -10614,17 +10204,14 @@ msgid "Windows Media Player Options"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "QuickTime Options"
 msgstr "አማራጭን ሰርዝ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Flash Options"
 msgstr "አማራጭን ሰርዝ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Hidden"
 msgstr "ደብቅ"
 
@@ -10633,7 +10220,6 @@ msgid "Bottom Left"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Bottom Right"
 msgstr "ከግራ ወደ ቀኝ"
 
@@ -10650,17 +10236,14 @@ msgid "Alternative source 2"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Preload"
 msgstr "ስቀል"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Poster"
 msgstr "ግርጌ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Audio Options"
 msgstr "አማራጮች"
 
@@ -10677,7 +10260,6 @@ msgid "Let user's browser decide"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Embedded Audio Options"
 msgstr "ሌላ አማራጭ አክል"
 
@@ -10710,7 +10292,6 @@ msgid "Real Media (ram)"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:1
-#, fuzzy
 msgid "Iframe"
 msgstr "ጊዜ"
 
@@ -10724,7 +10305,6 @@ msgid "List"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/media/langs/en_dlg.js:4
-#, fuzzy
 msgid "Selected file"
 msgstr "አንድ ፋይል ይምረጡ"
 
@@ -10794,12 +10374,10 @@ msgid "Find What"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Replace with"
 msgstr "ተካ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Direction"
 msgstr "ክፍል"
 
@@ -10808,7 +10386,6 @@ msgid "Up"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Down"
 msgstr "ተሸቆልቋይ"
 
@@ -10833,22 +10410,18 @@ msgid "The search has been completed. The search string could not be found."
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/searchreplace/langs/en_dlg.js:1
-#, fuzzy
 msgid "Replace All"
 msgstr "ተካ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Line Height"
 msgstr "ቁመት"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Variant"
 msgstr "አትም"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Weight"
 msgstr "ቁመት"
 
@@ -10877,7 +10450,6 @@ msgid "Clip"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Placement"
 msgstr "አባሪ"
 
@@ -10894,17 +10466,14 @@ msgid "Visibility"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Position"
 msgstr "አማራጭ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Bullet Image"
 msgstr "ምስል ምረጥ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Margin"
 msgstr "ማስጠንቀቂያ"
 
@@ -10913,7 +10482,6 @@ msgid "Same for All"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Padding"
 msgstr "ህዋሶችን ማጠጋጋት"
 
@@ -10922,7 +10490,6 @@ msgid "Float"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Display"
 msgstr "እንደሚከተለው አሳይ:"
 
@@ -10931,17 +10498,14 @@ msgid "Whitespace"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Indent"
 msgstr "የጽሁፍ መስመር"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Align"
 msgstr "የጽሁፍ መስመር"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Letter Spacing"
 msgstr "ህዋሶችን ማራራቅ"
 
@@ -10962,27 +10526,22 @@ msgid "Repeat"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Blink"
 msgstr "እውር"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Case"
 msgstr "መለኪያ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Underline"
 msgstr "አዲስ መስመር"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Overline"
 msgstr "አዲስ መስመር"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/style/langs/en_dlg.js:1
-#, fuzzy
 msgid "Decoration"
 msgstr "ክፍል"
 
@@ -10998,7 +10557,6 @@ msgid "Strikethrough"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "border"
 msgstr "አቃፊ"
 
@@ -11007,7 +10565,6 @@ msgid "box"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "vsides"
 msgstr "ደብቅ"
 
@@ -11020,17 +10577,14 @@ msgid "lhs"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "hsides"
 msgstr "ደብቅ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "below"
 msgstr "መለያ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "above"
 msgstr "አስቀምጥ"
 
@@ -11039,37 +10593,30 @@ msgid "void"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Rules"
 msgstr "እውነት"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "all"
 msgstr "ትንሽ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "cols"
 msgstr "አምዶች"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "rows"
 msgstr "አሳይ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "groups"
 msgstr "አስቀምጥ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Frame"
 msgstr "ስም"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Table Caption"
 msgstr "አማራጭን ሰርዝ"
 
@@ -11101,12 +10648,10 @@ msgid "Row Group"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Scope"
 msgstr "ውጤት"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Body"
 msgstr "በ"
 
@@ -11135,12 +10680,10 @@ msgid "Update All Cells in Row"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Update Current Cell"
 msgstr "ዛፍ አዘምን"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Data"
 msgstr "ዲበ ውሂብ"
 
@@ -11153,17 +10696,14 @@ msgid "Border Color"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Cell Type"
 msgstr "የሰነድ ዓይነት"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Columns"
 msgstr "አዶዎች"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
-#, fuzzy
 msgid "Row Type"
 msgstr "የሰነድ ዓይነት"
 
@@ -11172,17 +10712,14 @@ msgid "Update all cells in column"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-#, fuzzy
 msgid "Templates"
 msgstr "ተካ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-#, fuzzy
 msgid "Template"
 msgstr "ተካ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-#, fuzzy
 msgid "Select a Template"
 msgstr "ምስል ምረጥ"
 
@@ -11200,12 +10737,10 @@ msgid "Insert Current Date/Time"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Remove"
 msgstr "ቅድመ እይታ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Citation Element"
 msgstr "የንጥረ ነገር ምስል"
 
@@ -11218,7 +10753,6 @@ msgid "Acronym Element"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Deletion Element"
 msgstr "የንጥረ ነገር ምስል"
 
@@ -11239,7 +10773,6 @@ msgid "Attributes"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Text Direction"
 msgstr "የመደርደሪያ አቅጣጫ"
 
@@ -11248,12 +10781,10 @@ msgid "Date/Time"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/xhtmlxtras/langs/en_dlg.js:1
-#, fuzzy
 msgid "Cite"
 msgstr "ጣቢያ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Definition Description"
 msgstr "መግለጫ አሳጥ"
 
@@ -11266,7 +10797,6 @@ msgid "Code Sample"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Code"
 msgstr "ውጤት"
 
@@ -11321,22 +10851,18 @@ msgid ""
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Are you sure you want clear all contents?"
 msgstr "እርግጠኛ ነዎት ሁሉንም የቅጽ መስኮች ማጽዳት ይፈልጋሉ?"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Path"
 msgstr "ሂሳብ ትምህርት"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "New Document"
 msgstr "ሰነዶች"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Image Properties"
 msgstr "ባህሪያትን ማግኘት አልተሳካም"
 
@@ -11361,12 +10887,10 @@ msgid "Insert Special Character"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Select Background Color"
 msgstr "የዳራ ምስልን ሰድር?"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Select Text Color"
 msgstr "አቃፊ ፍጠር"
 
@@ -11379,12 +10903,10 @@ msgid "Remove Formatting"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Superscript"
 msgstr "በጣም ትልቅ"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Subscript"
 msgstr "መግለጫ"
 
@@ -11393,12 +10915,10 @@ msgid "Edit HTML Source"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Unlink"
 msgstr "አዲስ መስመር"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Increase Indent"
 msgstr "ፈቃድ በሚከተለው ስር"
 
@@ -11411,7 +10931,6 @@ msgid "Align Full"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en.js:1
-#, fuzzy
 msgid "Align Right"
 msgstr "አድምቅ"
 
@@ -11489,12 +11008,10 @@ msgid "Open Link in the Same Window"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Select Special Character"
 msgstr "የማለፊያ መጠንን ይምረጡ:"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Name:"
 msgstr "ዳግም ሰይም"
 
@@ -11507,7 +11024,6 @@ msgid "Named Colors"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Named"
 msgstr "ዳግም ሰይም"
 
@@ -11516,7 +11032,6 @@ msgid "Palette Colors"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Palette"
 msgstr "ሰርዝ"
 
@@ -11529,7 +11044,6 @@ msgid "Picker"
 msgstr ""
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/themes/advanced/langs/en_dlg.js:1
-#, fuzzy
 msgid "Select a Color"
 msgstr "አንድ ፋይል ይምረጡ"
 
@@ -11710,7 +11224,6 @@ msgid "Swedish Wikipedia Article"
 msgstr ""
 
 #: exe/webui/wikipediablock.py:131
-#, fuzzy
 msgid "Wikibooks Article"
 msgstr "የ Wiki ጽሁፍ"
 
@@ -11735,7 +11248,6 @@ msgid "Own site"
 msgstr "የራስ ጣቢያ"
 
 #: exe/webui/wizardpage.py:183
-#, fuzzy
 msgid "Failed to get preferences wizard edit"
 msgstr "አማራጮች ዊዛርዱን ማስቀመጥ አልተሳካም"
 
