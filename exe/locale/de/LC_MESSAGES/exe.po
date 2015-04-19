@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-19 18:07+0400\n"
+"POT-Creation-Date: 2015-04-19 20:58+0400\n"
 "PO-Revision-Date: 2014-11-28 21:18+0100\n"
 "Last-Translator: Heike Koch <info@hei-ke-koch.de>\n"
 "Language-Team: Ralf Hilgenstock, DIALOGE Beratungsgesellschaft; Uwe "
@@ -254,6 +254,10 @@ msgstr ""
 #, python-format
 msgid "Attachment %s has no parentNode"
 msgstr "Anhang %s hat keinen parentNode"
+
+#: exe/engine/attemptidevice.py:13
+msgid "Start/Finish Scoring"
+msgstr ""
 
 #: exe/engine/casestudyidevice.py:63 exe/engine/dragndropidevice.py:104
 #: exe/engine/dragndropidevice.py:106
@@ -6313,10 +6317,25 @@ msgstr ""
 msgid "Return"
 msgstr ""
 
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:42
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
+msgid "Templates"
+msgstr "Templates"
+
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:61
+#, fuzzy
+msgid "Local Library"
+msgstr "Labor"
+
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:101
 #, fuzzy
 msgid "Create New"
 msgstr "Erstelle"
+
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:109
+#, fuzzy
+msgid "Your recent projects"
+msgstr "Letzte Projekte ..."
 
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:50
 msgid "Outline"
@@ -11511,10 +11530,6 @@ msgstr "Spaltentyp"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 msgid "Update all cells in column"
 msgstr "Alle Zellen dieser Spalte aktualisieren"
-
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-msgid "Templates"
-msgstr "Templates"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
 msgid "Template"

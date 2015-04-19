@@ -29,43 +29,43 @@ class ReadabilityUtil(object):
     """
     base_params = [{
                         "id": "word_count",
-                        "unit" : _("words")
+                        "unit" : "words"
                     },
                     {
                         "id" : "words_per_page",
-                        "unit" : _("words")
+                        "unit" : "words"
                     },
                     {
                         "id" : "word_length",
-                        "unit" : _("letters")
+                        "unit" : "letters"
                     },
                     {
                         "id" : "sentence_length",
-                        "unit" : _("words")
+                        "unit" : "words"
                     },
                     {
                         "id" : "sentences_per_page",
-                        "unit" : _("sentences")
+                        "unit" : "sentences"
                     },
                     {
                         "id" : "word_length_average",
-                        "unit" : _("letters") 
+                        "unit" : "letters" 
                     },
                     {
                         "id" : "sentence_length_average",
-                        "unit" : _("words")
+                        "unit" : "words"
                     },
                     {
                          "id" : "sentences_per_page_average",
-                         "unit" : _("sentences")
+                         "unit" : "sentences"
                      },
                     { 
                         "id": "words_per_page_average",
-                        "unit": _("words")
+                        "unit": "words"
                     },
                     {
                         "id" : "distinct_words",
-                        "unit" : _("words")
+                        "unit" : "words"
                     }
                     
                    ]
@@ -77,11 +77,11 @@ class ReadabilityUtil(object):
                             "noway" : [
                                 {
                                     "id" : "syllables_per_word_max",
-                                    "unit" : _("syllables")
+                                    "unit" : "syllables"
                                 },
                                 {
                                     "id" : "syllables_per_word_average",
-                                    "unit" : _("syllables")
+                                    "unit" : "syllables"
                                  }
                             ]    
                             }

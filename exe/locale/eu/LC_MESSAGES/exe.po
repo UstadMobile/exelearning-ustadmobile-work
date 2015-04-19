@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: <translations@exelearning.net>\n"
-"POT-Creation-Date: 2015-04-19 18:07+0400\n"
+"POT-Creation-Date: 2015-04-19 20:58+0400\n"
 "PO-Revision-Date: 2015-02-26 22:34+0100\n"
 "Last-Translator: Joxemi Andonegi <jm.andonegi@gmail.com>\n"
 "Language-Team: eXe <exelearning.euskaraz@gmail.com>\n"
@@ -267,6 +267,10 @@ msgstr ""
 #, python-format
 msgid "Attachment %s has no parentNode"
 msgstr "%s atxikitako fitxategiak ez du guraso nodorik"
+
+#: exe/engine/attemptidevice.py:13
+msgid "Start/Finish Scoring"
+msgstr ""
 
 #: exe/engine/casestudyidevice.py:63 exe/engine/dragndropidevice.py:104
 #: exe/engine/dragndropidevice.py:106
@@ -6327,10 +6331,25 @@ msgstr "Estiloen kudeatzailera itzuli"
 msgid "Return"
 msgstr "Irten"
 
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:42
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
+msgid "Templates"
+msgstr "Txantiloiak"
+
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:61
+#, fuzzy
+msgid "Local Library"
+msgstr "laborategia"
+
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:101
 #, fuzzy
 msgid "Create New"
 msgstr "sortu"
+
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:109
+#, fuzzy
+msgid "Your recent projects"
+msgstr "Azken proiektuak..."
 
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:50
 msgid "Outline"
@@ -11529,10 +11548,6 @@ msgstr "Lerro mota"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 msgid "Update all cells in column"
 msgstr "Eguneratu zutabeko gelaxka guztiak"
-
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-msgid "Templates"
-msgstr "Txantiloiak"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
 msgid "Template"

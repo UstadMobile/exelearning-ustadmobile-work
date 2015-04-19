@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-19 18:07+0400\n"
+"POT-Creation-Date: 2015-04-19 20:58+0400\n"
 "PO-Revision-Date: 2014-10-19 19:36+0200\n"
 "Last-Translator: AlexL <loginov.alex.valer@gmail.com>\n"
 "Language-Team: EXE Team <exe@exelearning.net>\n"
@@ -258,6 +258,10 @@ msgstr ""
 #, python-format
 msgid "Attachment %s has no parentNode"
 msgstr "Вложение %s не имеет parentNode"
+
+#: exe/engine/attemptidevice.py:13
+msgid "Start/Finish Scoring"
+msgstr ""
 
 #: exe/engine/casestudyidevice.py:63 exe/engine/dragndropidevice.py:104
 #: exe/engine/dragndropidevice.py:106
@@ -6403,10 +6407,25 @@ msgstr "Возвратиться к менеджеру стилей"
 msgid "Return"
 msgstr "Возврат"
 
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:42
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
+msgid "Templates"
+msgstr "Шаблоны"
+
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:61
+#, fuzzy
+msgid "Local Library"
+msgstr "лаборатория"
+
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:101
 #, fuzzy
 msgid "Create New"
 msgstr "создать"
+
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:109
+#, fuzzy
+msgid "Your recent projects"
+msgstr "Недавние проекты..."
 
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:50
 msgid "Outline"
@@ -11610,10 +11629,6 @@ msgstr "Тип строки"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 msgid "Update all cells in column"
 msgstr "Обновить все ячейки в столбце"
-
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-msgid "Templates"
-msgstr "Шаблоны"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
 msgid "Template"

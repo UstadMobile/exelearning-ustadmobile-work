@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: <translations@exelearning.net>\n"
-"POT-Creation-Date: 2015-04-19 18:07+0400\n"
+"POT-Creation-Date: 2015-04-19 20:58+0400\n"
 "PO-Revision-Date: 2014-06-29 14:15+0200\n"
 "Last-Translator: Carles Ferrando Garcia <carles.ferrando@gmail.com>\n"
 "Language-Team: Catalan <info@softcatala.org>\n"
@@ -261,6 +261,10 @@ msgstr ""
 #, python-format
 msgid "Attachment %s has no parentNode"
 msgstr "Adjunció %s no té node pare."
+
+#: exe/engine/attemptidevice.py:13
+msgid "Start/Finish Scoring"
+msgstr ""
 
 #: exe/engine/casestudyidevice.py:63 exe/engine/dragndropidevice.py:104
 #: exe/engine/dragndropidevice.py:106
@@ -6380,10 +6384,25 @@ msgstr "Torna al gestor d'estils"
 msgid "Return"
 msgstr "Retorn"
 
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:42
+#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
+msgid "Templates"
+msgstr "Plantilles"
+
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:61
+#, fuzzy
+msgid "Local Library"
+msgstr "laboratori "
+
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:101
 #, fuzzy
 msgid "Create New"
 msgstr "crea"
+
+#: exe/jsui/scripts/app/view/forms/WizardPanel.js:109
+#, fuzzy
+msgid "Your recent projects"
+msgstr "Projectes recents..."
 
 #: exe/jsui/scripts/app/view/ui/LeftPanel.js:50
 msgid "Outline"
@@ -11594,10 +11613,6 @@ msgstr "Tipus de fila"
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/table/langs/en_dlg.js:1
 msgid "Update all cells in column"
 msgstr "Actualitza totes les cel·les de la columna"
-
-#: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
-msgid "Templates"
-msgstr "Plantilles"
 
 #: exe/webui/scripts/tinymce_3.5.7/jscripts/tiny_mce/plugins/template/langs/en_dlg.js:1
 msgid "Template"
