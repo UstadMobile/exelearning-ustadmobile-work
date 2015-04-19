@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: <translations@exelearning.net>\n"
-"POT-Creation-Date: 2015-04-12 17:05+0400\n"
+"POT-Creation-Date: 2015-04-16 18:38+0400\n"
 "PO-Revision-Date: 2014-10-27 20:03+0100\n"
 "Last-Translator: Pablo Nimo Liboreiro <pablonimo@edu.xunta.es>\n"
 "Language-Team: TAGEN ATA <localizacion@tagenata.net>\n"
@@ -4099,6 +4099,7 @@ msgid "Export format not implemented"
 msgstr "Formato de exportación non implementado"
 
 #: exe/export/epub3export.py:374 exe/jsui/idevicepane.py:200
+#: exe/jsui/scripts/app/view/ui/eXeViewport.js:30
 #: exe/webui/authoringpage.py:146 exe/webui/element.py:2330
 #: exe/webui/element.py:2897 exe/webui/testoptionelement.py:106
 #: exe/webui/testoptionelement.py:113
@@ -9137,7 +9138,7 @@ msgstr "Liminar elemento asociado"
 msgid "Add Chance"
 msgstr "Engadir opción"
 
-#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:154
+#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:156
 #: exe/webui/wizardpage.py:147
 msgid "Default browser in your system"
 msgstr "Navegador predeterminado no seu sistema"
@@ -9282,11 +9283,11 @@ msgstr "Mostrar o cronómetro no xogo"
 msgid "Add Placable Object"
 msgstr "Engadir un obxecto que situar"
 
-#: exe/webui/preferencespage.py:192
+#: exe/webui/preferencespage.py:194
 msgid "Failed to get preferences"
 msgstr "Erro ao obter as preferencias"
 
-#: exe/webui/preferencespage.py:233
+#: exe/webui/preferencespage.py:235
 msgid "Failed to save preferences"
 msgstr "Erro ao gardar as preferencias"
 

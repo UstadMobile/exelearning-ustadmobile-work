@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: Juan Rafael Fernández <jrfern@gmail.com>\n"
-"POT-Creation-Date: 2015-04-12 17:05+0400\n"
+"POT-Creation-Date: 2015-04-16 18:38+0400\n"
 "PO-Revision-Date: 2014-10-22 23:33+0100\n"
 "Last-Translator: Dionisio Martínez Soler <dmsoler@edu.xunta.es>\n"
 "Language-Team: Dionisio Martínez Soler <dmsoler@edu.xunta.es>\n"
@@ -4126,6 +4126,7 @@ msgid "Export format not implemented"
 msgstr "Formato de exportação não implementado"
 
 #: exe/export/epub3export.py:374 exe/jsui/idevicepane.py:200
+#: exe/jsui/scripts/app/view/ui/eXeViewport.js:30
 #: exe/webui/authoringpage.py:146 exe/webui/element.py:2330
 #: exe/webui/element.py:2897 exe/webui/testoptionelement.py:106
 #: exe/webui/testoptionelement.py:113
@@ -9165,7 +9166,7 @@ msgstr "Eliminar esta vida"
 msgid "Add Chance"
 msgstr "Acrescentar uma possibilidade"
 
-#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:154
+#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:156
 #: exe/webui/wizardpage.py:147
 msgid "Default browser in your system"
 msgstr "Navegador por omissão no seu sistema"
@@ -9310,11 +9311,11 @@ msgstr "Ativar a visualização do cronómetro no jogo"
 msgid "Add Placable Object"
 msgstr "Acrescentar objeto placável"
 
-#: exe/webui/preferencespage.py:192
+#: exe/webui/preferencespage.py:194
 msgid "Failed to get preferences"
 msgstr "Não foi possível obter as preferências"
 
-#: exe/webui/preferencespage.py:233
+#: exe/webui/preferencespage.py:235
 msgid "Failed to save preferences"
 msgstr "Não foi possível guardar as preferencias"
 

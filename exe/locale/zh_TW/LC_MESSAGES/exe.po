@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: translations@exelearning.net\n"
-"POT-Creation-Date: 2015-04-12 17:05+0400\n"
+"POT-Creation-Date: 2015-04-16 18:38+0400\n"
 "PO-Revision-Date: 2014-05-15 18:08+0200\n"
 "Last-Translator: Franklin Weng <franklin at goodhorse dot idv dot tw>\n"
 "Language-Team: Chinese Traditional <zh-l10n@linux.org.tw>\n"
@@ -3595,6 +3595,7 @@ msgid "Export format not implemented"
 msgstr "匯出格式未實作"
 
 #: exe/export/epub3export.py:374 exe/jsui/idevicepane.py:200
+#: exe/jsui/scripts/app/view/ui/eXeViewport.js:30
 #: exe/webui/authoringpage.py:146 exe/webui/element.py:2330
 #: exe/webui/element.py:2897 exe/webui/testoptionelement.py:106
 #: exe/webui/testoptionelement.py:113
@@ -8535,7 +8536,7 @@ msgstr "移除此生命"
 msgid "Add Chance"
 msgstr "新增機會"
 
-#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:154
+#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:156
 #: exe/webui/wizardpage.py:147
 msgid "Default browser in your system"
 msgstr "您系統中的預設瀏覽器"
@@ -8673,11 +8674,11 @@ msgstr "在遊戲中顯示計時器"
 msgid "Add Placable Object"
 msgstr "新增可擺放物件"
 
-#: exe/webui/preferencespage.py:192
+#: exe/webui/preferencespage.py:194
 msgid "Failed to get preferences"
 msgstr "取得喜好設定失敗"
 
-#: exe/webui/preferencespage.py:233
+#: exe/webui/preferencespage.py:235
 msgid "Failed to save preferences"
 msgstr "儲存喜好設定失敗"
 

@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: <translations@exelearning.net>\n"
-"POT-Creation-Date: 2015-04-12 17:05+0400\n"
+"POT-Creation-Date: 2015-04-16 18:38+0400\n"
 "PO-Revision-Date: 2015-02-26 22:34+0100\n"
 "Last-Translator: Joxemi Andonegi <jm.andonegi@gmail.com>\n"
 "Language-Team: eXe <exelearning.euskaraz@gmail.com>\n"
@@ -4030,6 +4030,7 @@ msgid "Export format not implemented"
 msgstr "Esportazio formatua ez dago inplementatua"
 
 #: exe/export/epub3export.py:374 exe/jsui/idevicepane.py:200
+#: exe/jsui/scripts/app/view/ui/eXeViewport.js:30
 #: exe/webui/authoringpage.py:146 exe/webui/element.py:2330
 #: exe/webui/element.py:2897 exe/webui/testoptionelement.py:106
 #: exe/webui/testoptionelement.py:113
@@ -9067,7 +9068,7 @@ msgstr "Bizitza hau ezabatu"
 msgid "Add Chance"
 msgstr "Saiakera gehitu"
 
-#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:154
+#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:156
 #: exe/webui/wizardpage.py:147
 msgid "Default browser in your system"
 msgstr "Zure sisteman lehenetsitako nabigatzailea"
@@ -9211,11 +9212,11 @@ msgstr "Erakutsi kronometroa jokoan"
 msgid "Add Placable Object"
 msgstr "gehitu objektu kokagarria "
 
-#: exe/webui/preferencespage.py:192
+#: exe/webui/preferencespage.py:194
 msgid "Failed to get preferences"
 msgstr "Ezin izan dira irakurri lehenespenak"
 
-#: exe/webui/preferencespage.py:233
+#: exe/webui/preferencespage.py:235
 msgid "Failed to save preferences"
 msgstr "Ezin izan dira gorde lehenespenak"
 

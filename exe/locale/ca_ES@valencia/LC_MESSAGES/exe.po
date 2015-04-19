@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: <translations@exelearning.net>\n"
-"POT-Creation-Date: 2015-04-12 17:05+0400\n"
+"POT-Creation-Date: 2015-04-16 18:38+0400\n"
 "PO-Revision-Date: 2014-10-23 10:36+0200\n"
 "Last-Translator: Pilar Embid Giner <embid_mar@gva.es>\n"
 "Language-Team: LliureX\n"
@@ -4103,6 +4103,7 @@ msgid "Export format not implemented"
 msgstr "El format d'exportació no està implementat "
 
 #: exe/export/epub3export.py:374 exe/jsui/idevicepane.py:200
+#: exe/jsui/scripts/app/view/ui/eXeViewport.js:30
 #: exe/webui/authoringpage.py:146 exe/webui/element.py:2330
 #: exe/webui/element.py:2897 exe/webui/testoptionelement.py:106
 #: exe/webui/testoptionelement.py:113
@@ -9159,7 +9160,7 @@ msgstr "Suprimix esta vida"
 msgid "Add Chance"
 msgstr "Afig una oportunitat"
 
-#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:154
+#: exe/webui/idevicepage.py:145 exe/webui/preferencespage.py:156
 #: exe/webui/wizardpage.py:147
 msgid "Default browser in your system"
 msgstr "Navegador per defecte del sistema"
@@ -9304,11 +9305,11 @@ msgstr "Habilita que es mostre el temporitzador en el joc"
 msgid "Add Placable Object"
 msgstr "Afig un objecte que es puga col·locar"
 
-#: exe/webui/preferencespage.py:192
+#: exe/webui/preferencespage.py:194
 msgid "Failed to get preferences"
 msgstr "No s'han pogut obtindre les preferències"
 
-#: exe/webui/preferencespage.py:233
+#: exe/webui/preferencespage.py:235
 msgid "Failed to save preferences"
 msgstr "No s'han pogut guardar les preferències"
 

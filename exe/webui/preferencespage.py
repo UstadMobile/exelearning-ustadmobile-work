@@ -36,8 +36,10 @@ from exe.webui import common
 log = logging.getLogger(__name__)
 
 langNames = {
+   'am': "አማርኛ",                                                      #Amharic
    'ar': 'العربية',                    # Arabic
    'ast': 'asturianu',
+   'bn': 'বাঙালি',                                                      # Bengali
    'bg': 'Български',                  # Bulgarian
    'br': 'Brezhoneg',                  # Breton
    'ca': 'Català',                     # Catal\xc3\xa0, Catalonian
