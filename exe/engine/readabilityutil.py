@@ -69,6 +69,10 @@ class ReadabilityUtil(object):
                     }
                     
                    ]
+    def _(self):
+        pass
+    unit_names = [ _("words"), _("letters"), _("sentences") ]
+    
     """
     Extra parameters that may be available for readability in different
     languages

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-19 20:58+0400\n"
+"POT-Creation-Date: 2015-04-20 17:08+0400\n"
 "PO-Revision-Date: 2008-02-25 11:27+1300\n"
 "Last-Translator: Håvard Holte Os <havard.holte.os@froya.kommune.no>\n"
 "Language-Team: EXE Team <exe@exelearning.org>\n"
@@ -2904,27 +2904,41 @@ msgid ""
 " "
 msgstr ""
 
-#: exe/engine/readabilityutil.py:159
+#: exe/engine/readabilityutil.py:74
+msgid "words"
+msgstr ""
+
+#: exe/engine/readabilityutil.py:74
+#, fuzzy
+msgid "letters"
+msgstr "Slett"
+
+#: exe/engine/readabilityutil.py:74
+#, fuzzy
+msgid "sentences"
+msgstr "Innstillinger"
+
+#: exe/engine/readabilityutil.py:163
 msgid "Words Per Page"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:175
+#: exe/engine/readabilityutil.py:179
 msgid "Syllables Per Word"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:179
+#: exe/engine/readabilityutil.py:183
 msgid "Word Count"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:184
+#: exe/engine/readabilityutil.py:188
 msgid "Words Per Sentence"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:189
+#: exe/engine/readabilityutil.py:193
 msgid "Number words total per unique word"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:194
+#: exe/engine/readabilityutil.py:198
 msgid "Total number of unique words"
 msgstr ""
 

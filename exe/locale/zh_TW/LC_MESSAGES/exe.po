@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: translations@exelearning.net\n"
-"POT-Creation-Date: 2015-04-19 20:58+0400\n"
+"POT-Creation-Date: 2015-04-20 17:08+0400\n"
 "PO-Revision-Date: 2014-05-15 18:08+0200\n"
 "Last-Translator: Franklin Weng <franklin at goodhorse dot idv dot tw>\n"
 "Language-Team: Chinese Traditional <zh-l10n@linux.org.tw>\n"
@@ -2923,27 +2923,42 @@ msgstr ""
 "與選擇題測驗不同，共享內容物件參考模型（Shareable Content Object Reference "
 "Model，SCORM）測驗用於在不提供學生回饋或正確答案的狀況下，測試學生對某個主題的知識。通常這種測驗會在學生有足夠的時間學習並練習此技能時使用。"
 
-#: exe/engine/readabilityutil.py:159
+#: exe/engine/readabilityutil.py:74
+#, fuzzy
+msgid "words"
+msgstr "關鍵字"
+
+#: exe/engine/readabilityutil.py:74
+#, fuzzy
+msgid "letters"
+msgstr "調色盤"
+
+#: exe/engine/readabilityutil.py:74
+#, fuzzy
+msgid "sentences"
+msgstr "參考"
+
+#: exe/engine/readabilityutil.py:163
 msgid "Words Per Page"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:175
+#: exe/engine/readabilityutil.py:179
 msgid "Syllables Per Word"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:179
+#: exe/engine/readabilityutil.py:183
 msgid "Word Count"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:184
+#: exe/engine/readabilityutil.py:188
 msgid "Words Per Sentence"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:189
+#: exe/engine/readabilityutil.py:193
 msgid "Number words total per unique word"
 msgstr ""
 
-#: exe/engine/readabilityutil.py:194
+#: exe/engine/readabilityutil.py:198
 msgid "Total number of unique words"
 msgstr ""
 

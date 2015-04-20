@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-19 20:58+0400\n"
+"POT-Creation-Date: 2015-04-20 17:08+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: bn <LL@li.org>\n"
@@ -2865,27 +2865,40 @@ msgid ""
 " "
 msgstr ""
 
-#: exe/engine/readabilityutil.py:159
+#: exe/engine/readabilityutil.py:74
+msgid "words"
+msgstr "শব্দগুলো"
+
+#: exe/engine/readabilityutil.py:74
+msgid "letters"
+msgstr "ফর্মের বর্ণ"
+
+#: exe/engine/readabilityutil.py:74
+#, fuzzy
+msgid "sentences"
+msgstr "বাক্যগুলো"
+
+#: exe/engine/readabilityutil.py:163
 msgid "Words Per Page"
 msgstr "প্রতি পৃষ্ঠার শব্দ সংখ্যা"
 
-#: exe/engine/readabilityutil.py:175
+#: exe/engine/readabilityutil.py:179
 msgid "Syllables Per Word"
 msgstr "প্রতি শব্দের দলগুলির সংখ্যা"
 
-#: exe/engine/readabilityutil.py:179
+#: exe/engine/readabilityutil.py:183
 msgid "Word Count"
 msgstr "শব্দ সংখ্যা"
 
-#: exe/engine/readabilityutil.py:184
+#: exe/engine/readabilityutil.py:188
 msgid "Words Per Sentence"
 msgstr "প্রতি বাক্যের শব্দ সংখ্যা"
 
-#: exe/engine/readabilityutil.py:189
+#: exe/engine/readabilityutil.py:193
 msgid "Number words total per unique word"
 msgstr "প্রতিতি অদ্বিতীয় শব্দপিছু মোট শব্দ সংখ্যা"
 
-#: exe/engine/readabilityutil.py:194
+#: exe/engine/readabilityutil.py:198
 msgid "Total number of unique words"
 msgstr "মোট অদ্বিতীয় শব্দ সংখ্যা"
 
@@ -5708,7 +5721,7 @@ msgstr "প্রতিস্থাপণ"
 
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:61
 msgid "Local Library"
-msgstr ""
+msgstr "্\"স্থানীয় লাইব্রেরি"
 
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:101
 msgid "Create New"

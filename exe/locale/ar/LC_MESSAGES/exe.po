@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-19 20:58+0400\n"
+"POT-Creation-Date: 2015-04-20 17:08+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ar <LL@li.org>\n"
@@ -2826,27 +2826,39 @@ msgid ""
 " "
 msgstr ""
 
-#: exe/engine/readabilityutil.py:159
+#: exe/engine/readabilityutil.py:74
+msgid "words"
+msgstr "لكلمات"
+
+#: exe/engine/readabilityutil.py:74
+msgid "letters"
+msgstr "رسائل"
+
+#: exe/engine/readabilityutil.py:74
+msgid "sentences"
+msgstr "الجمل"
+
+#: exe/engine/readabilityutil.py:163
 msgid "Words Per Page"
 msgstr "الكلمات لكل صفحة"
 
-#: exe/engine/readabilityutil.py:175
+#: exe/engine/readabilityutil.py:179
 msgid "Syllables Per Word"
 msgstr "المقاطع لكل كلمة"
 
-#: exe/engine/readabilityutil.py:179
+#: exe/engine/readabilityutil.py:183
 msgid "Word Count"
 msgstr "عدد الكلمات"
 
-#: exe/engine/readabilityutil.py:184
+#: exe/engine/readabilityutil.py:188
 msgid "Words Per Sentence"
 msgstr "الكلمات لكل جملة"
 
-#: exe/engine/readabilityutil.py:189
+#: exe/engine/readabilityutil.py:193
 msgid "Number words total per unique word"
 msgstr "إجمالي عدد الكلمات لكل كلمة فريدة"
 
-#: exe/engine/readabilityutil.py:194
+#: exe/engine/readabilityutil.py:198
 msgid "Total number of unique words"
 msgstr "إجمالي عدد الكلمات الفريدة"
 
@@ -5663,7 +5675,7 @@ msgstr "استبدال"
 
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:61
 msgid "Local Library"
-msgstr ""
+msgstr "المكتبة المحلية"
 
 #: exe/jsui/scripts/app/view/forms/WizardPanel.js:101
 msgid "Create New"
