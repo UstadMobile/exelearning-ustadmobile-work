@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-22 19:35+0400\n"
+"POT-Creation-Date: 2015-04-22 19:58+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: bn <LL@li.org>\n"
@@ -2867,16 +2867,15 @@ msgstr ""
 
 #: exe/engine/readabilityutil.py:74
 msgid "words"
-msgstr "শব্দগুলো"
+msgstr "শব্দ"
 
 #: exe/engine/readabilityutil.py:74
 msgid "letters"
-msgstr "ফর্মের বর্ণ"
+msgstr "অক্ষর"
 
 #: exe/engine/readabilityutil.py:74
-#, fuzzy
 msgid "sentences"
-msgstr "বাক্যগুলো"
+msgstr "বাক্যসমূহ"
 
 #: exe/engine/readabilityutil.py:163
 msgid "Words Per Page"

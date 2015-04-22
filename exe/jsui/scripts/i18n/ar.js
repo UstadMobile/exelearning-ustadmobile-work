@@ -1,5 +1,5 @@
 translations = {
- "": "Project-Id-Version: eXeLearning 2.1\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-04-22 19:35+0400\nPO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\nLast-Translator: FULL NAME <EMAIL@ADDRESS>\nLanguage-Team: ar <LL@li.org>\nLanguage: ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n>=3 && n<=10 ? 3 : n>=11 && n<=99 ? 4 : 5)\nMIME-Version: 1.0\nContent-Type: text\/plain; charset=utf-8\nContent-Transfer-Encoding: 8bit\nGenerated-By: Babel 1.3\n", 
+ "": "Project-Id-Version: eXeLearning 2.1\nReport-Msgid-Bugs-To: \nPOT-Creation-Date: 2015-04-22 19:58+0400\nPO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\nLast-Translator: FULL NAME <EMAIL@ADDRESS>\nLanguage-Team: ar <LL@li.org>\nLanguage: ar\nPlural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n>=3 && n<=10 ? 3 : n>=11 && n<=99 ? 4 : 5)\nMIME-Version: 1.0\nContent-Type: text\/plain; charset=utf-8\nContent-Transfer-Encoding: 8bit\nGenerated-By: Babel 1.3\n", 
  "represent": "\u062a\u0633\u0645\u064a\u0629 \u0627\u0644\u062a\u0639\u064a\u064a\u0646 \u0627\u0644\u0645\u0633\u0628\u0642 ", 
  "Web pages footer.": "\u062a\u0630\u064a\u064a\u0644 \u0635\u0641\u062d\u0627\u062a \u0627\u0644\u0648\u064a\u0628", 
  "DropDown Activity": "\u0646\u0634\u0627\u0637 \u0645\u0646\u0633\u062f\u0644", 
