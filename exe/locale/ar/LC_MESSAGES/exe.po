@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eXeLearning 2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-20 17:08+0400\n"
+"POT-Creation-Date: 2015-04-22 19:35+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ar <LL@li.org>\n"
@@ -3436,7 +3436,7 @@ msgstr ""
 #: exe/exe_do:270 exe/run-exe_do.py:251
 #, python-format
 msgid "Successfully exported '%s' from '%s'."
-msgstr "تم استيراد النمط بنجاح: %s"
+msgstr ""
 
 #: exe/exe_do:273 exe/run-exe_do.py:254
 #, python-format
@@ -3448,7 +3448,7 @@ msgstr ""
 #: exe/exe_do:282 exe/run-exe_do.py:262
 #, python-format
 msgid "File '%s' successfully imported to '%s'."
-msgstr "تم استيراد النمط بنجاح: %s"
+msgstr ""
 
 #: exe/exe_do:285 exe/run-exe_do.py:265
 #, python-format
@@ -3843,7 +3843,7 @@ msgstr ""
 msgid ""
 "Sorry, wrong file format:\n"
 "%s"
-msgstr "عذرًا، تنسيق الملف خاطئ"
+msgstr "عذرًا، تنسيق الملف خاطئ %s"
 
 #: exe/jsui/mainpage.py:1784
 msgid "Sorry, wrong file format"
