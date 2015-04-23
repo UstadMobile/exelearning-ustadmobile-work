@@ -16,6 +16,29 @@ ReadabilityHelper.prototype = {
 			return value;
 		}
 	},
+	
+	/**
+	 * From an array of words return an array of unique words
+	 * 
+	 */
+	getUniqueWords: function(words) {
+		words = (typeof words !== "undefined") ? words : this.textStats.getWords();
+		var unique_words_dict = {};
+		var unique_words_arr = [];
+		
+		for(var k = 0; k < words.length; k++) {
+			var thisUWord = words[k].toLowerCase().replace(".", "").replace(",", "").replace("?","");
+			unique_words_dict[thisUWord] = thisUWord; 
+		}
+		
+		for(uWord in unique_words_dict) {
+			if(unique_words_dict.hasOwnProperty(uWord)) {
+				unique_words_arr.push(uWord);
+			}
+		}
+		
+		return unique_words_arr;
+	},
 		
 	getReadabilityStats: function() {
 		var result = {};
@@ -58,19 +81,8 @@ ReadabilityHelper.prototype = {
 		}
 		 
 		//figure out unique words
-		var unique_words_dict = {};
-		for(var k = 0; k < words.length; k++) {
-			var thisUWord = words[k].toLowerCase().replace(".", "").replace(",", "").replace("?","");
-			unique_words_dict[thisUWord] = thisUWord; 
-		}
-		
-		var uWordCount = 0;
-		for(uWord in unique_words_dict) {
-			if(unique_words_dict.hasOwnProperty(uWord)) {
-				uWordCount++;
-			}
-		}
-		result.distinct_words = uWordCount;
+		var unique_words = this.getUniqueWords(words);
+		result.distinct_words = unique_words.length;
 		
 		//sentence length
 		result.sentence_length = [null, null];

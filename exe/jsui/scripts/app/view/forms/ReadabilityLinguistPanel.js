@@ -207,7 +207,8 @@ var readabilityLinguistPanel = Ext.define('eXe.view.forms.ReadabilityLinguistPan
 				        	        	         	 },
 				        	        	         	 {//panel to show word suggestions in
 				        	        	         		 xtype: "panel",
-				        	        	         		 rowspan: 2
+				        	        	         		 rowspan: 2,
+				        	        	         		 itemId: "readability_linguist_decodable_suggestions"
 				        	        	         	 }
 			        	        	         	]
 						        	        }

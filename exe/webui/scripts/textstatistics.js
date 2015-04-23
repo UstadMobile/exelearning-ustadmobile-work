@@ -31,46 +31,46 @@
 	}
 	
 	var TextStatistics = function TextStatistics(text) {
-		this.text = text ? cleanText(text) : this.text;
+		this.text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 	};
 	
 	TextStatistics.prototype.fleschKincaidReadingEase = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		return Math.round((206.835 - (1.015 * this.averageWordsPerSentence(text)) - (84.6 * this.averageSyllablesPerWord(text)))*10)/10;
 	};
 	
 	TextStatistics.prototype.fleschKincaidGradeLevel = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		return Math.round(((0.39 * this.averageWordsPerSentence(text)) + (11.8 * this.averageSyllablesPerWord(text)) - 15.59)*10)/10;
 	};
 	
 	TextStatistics.prototype.gunningFogScore = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		return Math.round(((this.averageWordsPerSentence(text) + this.percentageWordsWithThreeSyllables(text, false)) * 0.4)*10)/10;
 	};
 	
 	TextStatistics.prototype.colemanLiauIndex = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		return Math.round(((5.89 * (this.letterCount(text) / this.wordCount(text))) - (0.3 * (this.sentenceCount(text) / this.wordCount(text))) - 15.8 ) *10)/10;
 	};
 	
 	TextStatistics.prototype.smogIndex = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		return Math.round(1.043 * Math.sqrt((this.wordsWithThreeSyllables(text) * (30 / this.sentenceCount(text))) + 3.1291)*10)/10;
 	};
 	
 	TextStatistics.prototype.automatedReadabilityIndex = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		return Math.round(((4.71 * (this.letterCount(text) / this.wordCount(text))) + (0.5 * (this.wordCount(text) / this.sentenceCount(text))) - 21.43)*10)/10;
 	};
 
 	TextStatistics.prototype.textLength = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		return text.length;
 	};
 	
 	TextStatistics.prototype.letterCount = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		text = text.replace(/[^a-z]+/ig,"");
 		return text.length;
 	};
@@ -98,21 +98,17 @@
 	};
 	
 	TextStatistics.prototype.sentenceCount = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		
 		// Will be tripped up by "Mr." or "U.K.". Not a major concern at this point.
 		return text.replace(/[^\.!?]/g, '').length || 1;
 	};
 	
 	TextStatistics.prototype.wordCount = function(text) {
-		text = text ? cleanText(text) : this.text;
-		try {
-			return text.split(/[^a-z0-9]+/i).length || 1;
-		}catch(e) {
-			//exception will happen when there is no return value
-			return 1;
-		}
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
+		return text.split(/[^a-z0-9]+/i).length || 1;
 	};
+	
 	
 	TextStatistics.prototype.getWords = function(text) {
 		text = text ? cleanText(text) : this.text;
@@ -121,15 +117,15 @@
 		words = this.removeBlanks(words);
 		
 		return words;
-	}
+	};
 	
 	TextStatistics.prototype.averageWordsPerSentence = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		return this.wordCount(text) / this.sentenceCount(text);
 	};
 	
 	TextStatistics.prototype.averageSyllablesPerWord = function(text) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		var syllableCount = 0, wordCount = this.wordCount(text), self = this;
 		
 		text.split(/\s+/).forEach(function(word) {
@@ -141,7 +137,7 @@
 	};
 	
 	TextStatistics.prototype.wordsWithThreeSyllables = function(text, countProperNouns) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		var longWordCount = 0, self = this;
 		
 		countProperNouns = countProperNouns === false ? false : true;
@@ -159,7 +155,7 @@
 	};
 	
 	TextStatistics.prototype.percentageWordsWithThreeSyllables = function(text, countProperNouns) {
-		text = text ? cleanText(text) : this.text;
+		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
 		
 		return (this.wordsWithThreeSyllables(text,countProperNouns) / this.wordCount(text)) * 100;
 	};

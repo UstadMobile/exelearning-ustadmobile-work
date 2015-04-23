@@ -64,6 +64,34 @@ Ext.define('eXe.controller.Readability', {
     	{
     		selector: "#writer_panel_limit_subpanel",
 			ref: 'writerPanelLimitSubPanel'
+    	},
+    	{
+    		selector: '#readability_linguist_decodable_to_teach',
+    		ref: 'linguistPanelDecodableToTeach'
+    	},
+    	{
+    		selector: '#readability_linguist_decodable_lengthlim',
+    		ref: 'linguistPanelDecodableLengthLim'
+    	},
+    	{
+    		selector: "#readability_linguist_decodable_searchlist",
+    		ref: 'linguistPanelDecodableSearchList'
+    	},
+    	{
+    		selector: "#readability_linguist_decodable_suggestions",
+    		ref: "linguistPanelDecodableSuggestions"
+    	},
+    	{
+    		selector: "#readability_linguist_decodablewords",
+    		ref: "linguistPanelDecodableWords"
+    	},
+    	{
+    		selector: "#linguist_panel_leveled_button",
+    		ref: "linguistPanelLeveledButton"
+    	},
+    	{
+    		selector: "#linguist_panel_decodable_button",
+    		ref: "linguistPanelDecodableButton"
     	}
     ],
     
@@ -117,6 +145,9 @@ Ext.define('eXe.controller.Readability', {
      	   },
      	   '#writer_panel_check_button' : {
      		   click: this.updateWriterStats
+     	   },
+     	   '#readability_linguist_decodable_searchlist' : {
+     		   change: this.updateDecodableWords
      	   }
        });
     },
@@ -296,6 +327,32 @@ Ext.define('eXe.controller.Readability', {
 						currentValues.levelLimits[paramName]);
     			}
     		}
+    		
+    		var decodableInfo = currentValues.decodableInfo || {};
+    		this.getLinguistPanelDecodableToTeach().setValue(
+				decodableInfo.toTeach || "");
+    		this.getLinguistPanelDecodableLengthLim().setValue(
+				decodableInfo.lengthLim || "");
+    		this.getLinguistPanelDecodableSearchList().setValue(
+				decodableInfo.searchList || "");
+			var decodableWords = decodableInfo.words || [];
+			var decodableWordsStr = "";
+			for(var j = 0; j < decodableWords.length; j++) {
+				decodableWordsStr += decodableWords[j] + " ";
+			}
+			this.getLinguistPanelDecodableWords().setValue(
+				decodableWordsStr);
+			
+			if(currentValues.type === "decodable") {
+				this.showTypePanelDecodable();
+			}else {
+				this.showTypePanelLeveled();
+			}
+			
+			this.getLinguistPanelDecodableButton().setPressed(
+				currentValues.type === "decodable");
+			this.getLinguistPanelLeveledButton().setPressed(
+				currentValues.type !== "decodable");
     	}
     	
     },
@@ -318,7 +375,13 @@ Ext.define('eXe.controller.Readability', {
 			
 			levelLimits : {},
 			
+			decodableInfo: {}
+			
     	};
+    	
+    	presetObj.type = this.getLinguistPanelDecodableButton().pressed ? 
+			"decodable" : "leveled";
+    	
     	//go through the level panel
     	
     	var levelComps = this.getLinguistLevelPanel().query(
@@ -331,6 +394,18 @@ Ext.define('eXe.controller.Readability', {
     		}
     	}
     	
+    	presetObj.decodableInfo.toTeach = 
+    		this.getLinguistPanelDecodableToTeach().getValue();
+    	presetObj.decodableInfo.lengthLim = 
+			this.getLinguistPanelDecodableLengthLim().getValue();
+    	presetObj.decodableInfo.searchList = 
+    		this.getLinguistPanelDecodableSearchList().getValue();
+    	var wordsReadabilityHelper = new ReadabilityHelper(
+			this.getLinguistPanelDecodableWords().getValue());
+    	presetObj.decodableInfo.words =
+    		wordsReadabilityHelper.getUniqueWords();
+    	
+    	this.updateDecodableWords();
     	return presetObj;
     },
     
@@ -730,7 +805,66 @@ Ext.define('eXe.controller.Readability', {
     	}
     },
     
+    /**
+     * Port of decodable word checker
+     */
+    updateDecodableWords: function() {
+    	//the text in which we search
+    	var textToSearchStr = this.getLinguistPanelDecodableSearchList().getValue();
+    	var textToSearchHelper = new ReadabilityHelper(textToSearchStr);
+    	var textToSearchWords = textToSearchHelper.getUniqueWords();
+    	
+    	//the word limit length
+    	var wordLenLimit = parseInt(this.getLinguistPanelDecodableLengthLim());
+    	wordLenLimit = isNaN(wordLenLimit) ? -1 : wordLenLimit;
+    	
+    	//combos to teach
+    	var toTeachStr = this.getLinguistPanelDecodableToTeach().getValue();
+    	var toTeachHelper = new ReadabilityHelper(toTeachStr);
+    	var toTeachWords = toTeachHelper.getUniqueWords();
+    	
+    	//determine which are valid suggestions
+    	var suggestions = [];
+    	for(var i = 0; i < textToSearchWords.length; i++) {
+    		var thisWordLower = textToSearchWords[i].toLowerCase();
+    		var foundCombo = false;
+    		for(var j = 0; (j < toTeachWords.length) && (foundCombo === false); j++) {
+    			var thisComboLower = toTeachWords[j].toLowerCase();
+    			if(thisWordLower.indexOf(thisComboLower) !== -1) {
+    				if(wordLenLimit === -1 || thisWordLower.length <= wordLenLimit) {
+    					foundCombo = true;
+        				suggestions.push(thisWordLower);
+    				}
+    			}
+    		}
+    	}
+    	
+    	var suggestionPanel = this.getLinguistPanelDecodableSuggestions();
+    	suggestionPanel.removeAll();
+    	
+    	for(var k = 0; k < suggestions.length; k++) {
+    		suggestionPanel.add({
+    			xtype: "label",
+				text: suggestions[k],
+				padding: 5,
+				listeners: {
+	        		click: {
+	        			element: 'el',
+	        			fn : this.handleClickSuggestedDecodableWord
+	        		},
+	        		scope: this
+				}
+    		});
+    	}
+    },
     
-
+    handleClickSuggestedDecodableWord: function(evt) {
+    	var text = evt.delegatedTarget.textContent;
+    	var decodableWordsTextArea = this.getLinguistPanelDecodableWords();
+    	var decodableWordsStr = decodableWordsTextArea.getValue();
+    	if(decodableWordsStr.toLowerCase().indexOf(text) === -1) {
+    		decodableWordsTextArea.setValue(decodableWordsStr + " " + text);
+    	}
+    }
 });
 
