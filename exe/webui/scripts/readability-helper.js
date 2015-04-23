@@ -42,22 +42,16 @@ ReadabilityHelper.prototype = {
 		
 	getReadabilityStats: function() {
 		var result = {};
-		if(this.text === "") {
-			result.word_count = 0;
-			result.sentences = [];
-			result.sentence_count = 0;
-		}else {
-			result.word_count = this.textStats.wordCount();
-			
-			//sentence length
-			sentences = this.textStats.getSentences();
-			result.sentence_count = sentences.length || 1;
-		}
 		
+		result.word_count = this.textStats.wordCount();
 		
+		//sentence length
+		sentences = this.textStats.getSentences();
+		result.sentence_count = sentences.length || 1;
+	
 		
 		//word length
-		result.word_length = [null, null];
+		result.word_length = [0, 0];
 		var words = this.text ?  this.textStats.getWords() : [];
 		var wordLenTotal = 0;
 		for(var i = 0; i < words.length; i++) {
@@ -85,7 +79,7 @@ ReadabilityHelper.prototype = {
 		result.distinct_words = unique_words.length;
 		
 		//sentence length
-		result.sentence_length = [null, null];
+		result.sentence_length = sentences.length !== 0 ? [null, null] : [0, 0];
 		var sentenceLenTotal = 0;
 		for(var j = 0; j < sentences.length; j++) {
 			var wordsInSentence = this.textStats.getWords(sentences[j]);

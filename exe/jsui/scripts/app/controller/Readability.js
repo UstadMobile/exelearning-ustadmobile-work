@@ -626,9 +626,17 @@ Ext.define('eXe.controller.Readability', {
         		});
         	}
     	}else {
-    		//do decodable panel
+    		limitSubPanel.add([{
+    			xtype: "panel",
+    			itemId: "writer_limit_decodable_words",
+    			title: _("Decodable Words")
+    		},
+    		{
+    			xtype: "panel",
+    			itemId: "writer_limit_nondecodable_words",
+    			title: _("Undecodable Words")
+    		}]);
     	}
-    	
     },
 
     /**
@@ -717,6 +725,9 @@ Ext.define('eXe.controller.Readability', {
     		var pgHelper = new ReadabilityHelper(pgText);
     		var pgResults = pgHelper.getReadabilityStats();
     		
+    		//because this is one page - the average sentence length is equal to sentence length
+    		//pgResults.sentences_per_page_average = pgResults.sentence_count;
+    		
     		pgResults.words_per_page = pgResults.word_count;
     		pgResults.sentences_per_page = pgResults.sentence_count;
     		
@@ -726,7 +737,7 @@ Ext.define('eXe.controller.Readability', {
     		
     		for(var r = 0; r < rangeTrackerList.length; r++) {
     			var trackerName = rangeTrackerList[r];
-    			if(pgResults[trackerName]) {
+    			if(typeof pgResults[trackerName] !== "undefined") {
     				if(!rangeTrackerResults[trackerName]) {
     					rangeTrackerResults[trackerName] = [null, null];
     				}
@@ -764,6 +775,17 @@ Ext.define('eXe.controller.Readability', {
     	result.wholeCourse.sentence_length = rangeTrackerResults['sentence_length'];
     	result.wholeCourse.words_per_page_average = 
     		allTextHelper._roundNum(result.wholeCourse.words_per_page / pkgText.length,2);
+    	result.wholeCourse.sentences_per_page_average =
+    		allTextHelper._roundNum(result.wholeCourse.sentence_count / pkgText.length, 2);
+    	
+    	//remove items on the pages that are not meaningful on
+    	//individual pages... e.g. total word count word_count 
+    	//instead of words_per_page
+    	
+    	for(var p = 0; p < result.pages.length; p++) {
+    		delete result.pages[p].word_count;
+    	}
+    	
     	
     	return result;
     },
@@ -793,12 +815,12 @@ Ext.define('eXe.controller.Readability', {
     			var writerLimitId = "#writer_limit_" + limitParamId;
     			var paramWriterLimitPanel = writerLimitPanel.query(writerLimitId)[0];
     			var thisParamWholeCourse = readabilityStats.wholeCourse[limitParamId];
-    			if(thisParamWholeCourse) {
+    			if(typeof thisParamWholeCourse !== "undefined") {
     				paramWriterLimitPanel.setActualValWholeCourse(thisParamWholeCourse);
     			}
     			
     			var thisParamSelectedPg = selectedPgStats[limitParamId];
-    			if(selectedPgStats && selectedPgStats[limitParamId]) {
+    			if(selectedPgStats && typeof selectedPgStats[limitParamId] !== "undefined") {
     				paramWriterLimitPanel.setActualValPage(selectedPgStats[limitParamId]);
     			}
     		}

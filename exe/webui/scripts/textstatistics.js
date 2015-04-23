@@ -30,8 +30,25 @@
 		return text;
 	}
 	
-	var TextStatistics = function TextStatistics(text) {
+	var TextStatistics = function TextStatistics(text, options) {
 		this.text = (typeof text !== "undefined") ? cleanText(text) : this.text;
+		this.options = options || {};
+	};
+	
+	TextStatistics.defaultOptions = {
+		sentenceTerminatorRegex : /[\.\?\!]+/,
+		nonAlphaNumericChars: /['"\.,:;\+\-\*\$\%\/\\\(\)\}\{&]+/
+	};
+	
+	/**
+	 * Get an option for this TextStatistics; if we have it set use
+	 * instance option, otherwise fall back to defaults
+	 * 
+	 * @param optName {String} name of option
+	 * @returns value of the option
+	 */
+	TextStatistics.prototype.getOption = function(optName) {
+		return this.options[optName] || TextStatistics.defaultOptions[optName];
 	};
 	
 	TextStatistics.prototype.fleschKincaidReadingEase = function(text) {
@@ -105,15 +122,16 @@
 	};
 	
 	TextStatistics.prototype.wordCount = function(text) {
-		text = (typeof text !== "undefined") ? cleanText(text) : this.text;
-		return text.split(/[^a-z0-9]+/i).length || 1;
+		return this.getWords(text).length;
 	};
 	
 	
 	TextStatistics.prototype.getWords = function(text) {
 		text = text ? cleanText(text) : this.text;
 		
-		var words = text.split(/\s+/);
+		/* cleanText will convert sentence terminators into . */
+		var nonAlphaRegex = this.getOption("nonAlphaNumericChars");
+		var words = text.replace(".", "").replace(nonAlphaRegex, "").split(/\s+/);
 		words = this.removeBlanks(words);
 		
 		return words;
