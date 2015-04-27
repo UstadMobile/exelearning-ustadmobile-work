@@ -53,4 +53,17 @@ fieldset.collapsed-with-data > legend > div, fieldset.collapsed-with-data > lege
 	font-size: large;
 }
 
+.exe-readability-decodableword {
+	display: inline-block;
+}
+
+.exe-readability-word-count {
+    border-radius: 50%;
+    padding: 2px;
+    background: #666;
+    color: #fff;
+    text-align: center;
+    font-size: 1em;
+}
+
 /* End additional UstadMobile branch items */

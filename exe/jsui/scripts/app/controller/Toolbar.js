@@ -1271,19 +1271,7 @@ Translation software.')
      * Open Readability linguist panel
      */
     readabilityLinguistClick: function() {
-    	var linguistPanel = new Ext.Window( {
-    		height: "80%",
-    		width: 800,
-    		modal: true,
-    		id: "readabilityLinguistWin",
-    		title: _("Readability"),
-    		layout: "fit",
-    		items: [ {
-    			xtype: "readabilitylinguistpanel"
-    		}]
-    		        
-    	});
-    	linguistPanel.show();
+    	eXe.app.getController("Readability").showLinguistWindow();
     },
     
     /**

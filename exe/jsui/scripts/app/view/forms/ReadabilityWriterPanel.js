@@ -15,6 +15,7 @@ var readabilityWriterPanel = Ext.define('eXe.view.forms.ReadabilityWriterPanel',
     	align: "stretch"
     },
     
+    
     initComponent: function() {
 		var me = this;
 		
@@ -56,16 +57,101 @@ var readabilityWriterPanel = Ext.define('eXe.view.forms.ReadabilityWriterPanel',
         	        ]
                 },
                 {
-                	xtype: "panel",
-                	itemId: "writer_panel_limit_subpanel",
-                	items : [] 
+                	xtype: "container",
+                	itemId: "writer_panel_limits_holder",
+                	layout: "fit",
+                	flex: 1,
+                	items: [{
+                    	xtype: "panel",
+                    	itemId: "writer_panel_limit_subpanel",
+                    	items : [],
+                    	scrollable: "vertical",
+                    	hidden: false,
+                    },
+                    {
+                    	xtype:"panel",
+                    	itemId: "writer_panel_decodable_subpanel",
+                    	hidden: true,
+                    	layout: {
+                    		type: "vbox",
+                    		align: "stretch"
+                    	},
+                    	items: [{
+                    		xtype: "toolbar",
+                    		layout: "fit",
+                    		items: [{
+	                    		xtype: "segmentedbutton",
+	                    		itemId: "writer_panel_decodable_sort_segmentedbutton",
+	                    		items: [{
+	                    			xtype: "button",
+	                    			icon: "/images/readability-sort-a-z.png",
+	                    			pressed: true,
+	                    			readabilitySortKey: "word",
+	                    			readabilitySortOrder: 1,
+	                    			scale: "medium"
+	                    		},
+	                    		{
+	                    			xtype: "button",
+	                    			icon: "/images/readability-sort-z-a.png",
+	                    			readabilitySortKey: "word",
+	                    			readabilitySortOrder: -1,
+	                    			scale: "medium"
+	                    		},
+	                    		{
+	                    			xtype: "button",
+	                    			icon: "/images/readability-sort-desc.png",
+                    				readabilitySortKey: "pageCount",
+                    				readabilitySortOrder: -1,
+	                    			scale: "medium"
+	                    		},
+	                    		{
+	                    			xtype: "button",
+	                    			icon: "/images/readability-sort-asc.png",
+	                    			readabilitySortKey: "pageCount",
+                    				readabilitySortOrder: 1,
+	                    			scale: "medium"
+	                    		},
+	                    		{
+	                    			xtype: "button",
+	                    			icon: "/images/readability-sort-desc-book.png",
+	                    			readabilitySortKey: "bookCount",
+	                    			readabilitySortOrder: -1,
+	                    			scale: "medium"
+	                    		},
+	                    		{
+	                    			xtype: "button",
+	                    			icon: "/images/readability-sort-asc-book.png",
+	                    			readabilitySortKey: "bookCount",
+	                    			readabilitySortOrder: 1,
+	                    			scale: "medium"
+	                    		}]
+	                    	}]
+                    	},
+            	        {
+                			xtype: "fieldset",
+                			itemId: "writer_panel_decodable_words",
+                			title: _("Decodable Words"),
+                			margin: 2,
+                			maxHeight: 130,
+                			scrollable: "y"
+                		},
+                		{
+                			xtype: "fieldset",
+                			itemId: "writer_panel_undecodable_words",
+                			title: _("Undecodable Words"),
+                			margin: 2,
+                			maxHeight: 130,
+                			scrollable: "y"
+                		}]
+                    }]      
                 },
                 {
                 	xtype: "button",
                 	itemId: "writer_panel_check_button",
                 	scale: "medium",
                 	text: _("Check"),
-                	padding: 4
+                	padding: 4,
+                	margin: 5
                 }
             ]
 		});

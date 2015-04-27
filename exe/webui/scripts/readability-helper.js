@@ -7,6 +7,17 @@ var ReadabilityHelper = function(text) {
 	this.textStats = textstatistics(text);
 };
 
+ReadabilityHelper.getDictKeysLength = function(dict) {
+	var count = 0;
+	for(key in dict) {
+		if(dict.hasOwnProperty(key)) {
+			count++;
+		}
+	}
+	
+	return count;
+};
+
 ReadabilityHelper.prototype = {
 	
 	_roundNum: function(value, decimals) {
@@ -17,6 +28,7 @@ ReadabilityHelper.prototype = {
 		}
 	},
 	
+	
 	/**
 	 * From an array of words return an array of unique words
 	 * 
@@ -24,20 +36,19 @@ ReadabilityHelper.prototype = {
 	getUniqueWords: function(words) {
 		words = (typeof words !== "undefined") ? words : this.textStats.getWords();
 		var unique_words_dict = {};
-		var unique_words_arr = [];
 		
 		for(var k = 0; k < words.length; k++) {
 			var thisUWord = words[k].toLowerCase().replace(".", "").replace(",", "").replace("?","");
-			unique_words_dict[thisUWord] = thisUWord; 
-		}
-		
-		for(uWord in unique_words_dict) {
-			if(unique_words_dict.hasOwnProperty(uWord)) {
-				unique_words_arr.push(uWord);
+			if(typeof unique_words_dict[thisUWord] === "undefined") {
+				unique_words_dict[thisUWord] = 1;
+			}else {
+				unique_words_dict[thisUWord]++;
 			}
 		}
 		
-		return unique_words_arr;
+		
+		
+		return unique_words_dict;
 	},
 		
 	getReadabilityStats: function() {
@@ -75,8 +86,9 @@ ReadabilityHelper.prototype = {
 		}
 		 
 		//figure out unique words
-		var unique_words = this.getUniqueWords(words);
-		result.distinct_words = unique_words.length;
+		result.unique_words_dict = this.getUniqueWords(words);
+		result.distinct_words = 
+			ReadabilityHelper.getDictKeysLength(result.unique_words_dict);
 		
 		//sentence length
 		result.sentence_length = sentences.length !== 0 ? [null, null] : [0, 0];

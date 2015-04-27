@@ -12,12 +12,27 @@
 		
 		fullStopTags.forEach(function(tag) {
 			text = text.replace("</" + tag + ">",".");
-		})
+		});
+		
+		if(!TextStatistics.defaultOptions.sentenceTerminatorsRegex) {
+			var terminatorChars = "";
+			for(var set in TextStatistics.defaultOptions.sentenceTerminators) {
+				if(TextStatistics.defaultOptions.sentenceTerminators.hasOwnProperty(set)) {
+					terminatorChars += 
+						TextStatistics.defaultOptions.sentenceTerminators[set];
+				}
+			}
+			
+			TextStatistics.defaultOptions.sentenceTerminatorsRegex =
+				new RegExp("[" + terminatorChars + "]");
+		}
+		
+		
 		
 		text = text
 			.replace(/<[^>]+>/g, "")				// Strip tags
 			.replace(/[,:;()\-]/, " ")				// Replace commans, hyphens etc (count them as spaces)
-			.replace(/[\.!?]/, ".")					// Unify terminators
+			.replace(TextStatistics.defaultOptions.sentenceTerminatorsRegex, ".")		// Unify terminators
 			.replace(/^\s+/,"")						// Strip leading whitespace
 			.replace(/[ ]*(\n|\r\n|\r)[ ]*/," ")	// Replace new lines with spaces
 			.replace(/([\.])[\. ]+/,".")			// Check for duplicated terminators
@@ -36,7 +51,42 @@
 	};
 	
 	TextStatistics.defaultOptions = {
-		sentenceTerminatorRegex : /[\.\?\!]+/,
+		/* All sentence terminators as per output from:
+		 * $ unichars -gas '[\p{Sentence_Break=STerm}\p{Sentence_Break=ATerm}]' '\p{Terminal_Punctuation}'
+		 * 
+		 */
+		sentenceTerminators : {
+			"common" : "\u00021\u0002E\u0003F\u203C\u203D\u2047\u2048"+
+				"\u2049\u2E2E\u3002\uFE52\uFE56\uFE57\uFF01\uFF0E"+
+				"\uFF1F\uFF61",
+			"armenian" : "\u0589",
+			"arabic" : "\u061F\u06D4",
+			"syriac" : "\u0700\u0701\u0702",
+			"nko" : "\u07F9",
+			"devanagari" : "\u0964\u0965",
+			"myanmar" : "\u104A\u104B",
+			"ethiopic" : "\u1362\u1367\u1368",
+			"canadian_aboriginal" : "\u166E",
+			"mongolian" : "\u1803\u1809",
+			"limbu": "\u1944\u1945",
+			"tai_tham": "\u1AA8\u1AA9\u1AAA\u1AAB",
+			"balinese" : "\u1B5A\u1B5B\u1B5E\u1B5F",
+			"lepcha": "\u1C3B\u1C3C",
+			"ol_chiki" : "\u1C7E\u1C7F",
+			"lisu" : "\uA4FF",
+			"vai" : "\uA60E\uA60F",
+			"bamum" : "\uA6F3\uA6F7",
+			"phags_pa" : "\uA876\uA877",
+			"saurashtra" : "\uA8CE\uA8CF",
+			"kayah_li" : "\uA92F",
+			"javanese" : "\uA9C8\uA9C9",
+			"cham" : "\uAA5D\uAA5E\uAA5F",
+			"meetei_mayek" : "\uAAF0\uAAF1\uABEB",
+			"brahmi" : "\u11047\u11048",
+			"kaithi" : "\u110BE\u110BF\u110C0\u110C1",
+			"chakma" : "\u11141\u11142\u11143",
+			"sharada" : "\u111C5\u111C6"
+		},
 		nonAlphaNumericChars: /['"\.,:;\+\-\*\$\%\/\\\(\)\}\{&]+/
 	};
 	

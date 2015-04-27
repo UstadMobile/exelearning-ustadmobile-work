@@ -27,6 +27,14 @@ Ext.define('eXe.controller.Readability', {
     
     currentReadabilityPreset: null,
     
+    currentReadabilityStats: null,
+    
+    /** Sort key for decodable writer panel: word, countPage, countBook */
+    writerPanelDecodableSortKey: "word",
+    
+    /** direction: 1 for asc, -1 for desc */
+    writerPanelDecodableSortOrder: 1,
+    
     packageReadabilityInfo: {},
     
     refs: [{
@@ -64,6 +72,18 @@ Ext.define('eXe.controller.Readability', {
     	{
     		selector: "#writer_panel_limit_subpanel",
 			ref: 'writerPanelLimitSubPanel'
+    	},
+    	{
+    		selector: "#writer_panel_decodable_subpanel",
+    		ref: 'writerPanelDecodableSubpanel'
+    	},
+    	{
+    		selector: "#writer_panel_decodable_words",
+    		ref: "writerPanelDecodableWords"
+    	},
+    	{
+    		selector: "#writer_panel_undecodable_words",
+    		ref : 'writerPanelUndecodableWords'
     	},
     	{
     		selector: '#readability_linguist_decodable_to_teach',
@@ -146,6 +166,9 @@ Ext.define('eXe.controller.Readability', {
      	   '#writer_panel_check_button' : {
      		   click: this.updateWriterStats
      	   },
+     	   '#writer_panel_decodable_sort_segmentedbutton' : {
+     		   toggle: this.handleClickWriterPanelDecodableSortOrder
+     	   },
      	   '#readability_linguist_decodable_searchlist' : {
      		   change: this.updateDecodableWords
      	   }
@@ -153,9 +176,25 @@ Ext.define('eXe.controller.Readability', {
     },
     
     
+    showLinguistWindow: function() {
+    	this.presetHasChanged = false;
+    	var linguistPanel = new Ext.Window( {
+    		height: "80%",
+    		width: 800,
+    		modal: true,
+    		id: "readabilityLinguistWin",
+    		title: _("Readability"),
+    		layout: "fit",
+    		items: [ {
+    			xtype: "readabilitylinguistpanel"
+    		}]
+    		        
+    	});
+    	linguistPanel.show();
+    },
+    
     _setPresetChanged: function() {
     	this.presetHasChanged = true;
-    	console.log("preset has changed");
     },
     
     /**
@@ -450,23 +489,24 @@ Ext.define('eXe.controller.Readability', {
     },
     
     handleBeforeDestroy: function() {
+    	var updateDisplayFn = function(readabilityPreset) {
+    		this.updateWriterPanelLevelMenu();
+    		this.showWriterLimitsForPreset();
+    	};
+    	
     	if(this.presetHasChanged) {
     		this.savePreset({ noformupdate : true}, function() {
     			//update display for the writer
     			if(this.currentReadabilityPreset.uuid !== "") {
     				this.updateCourseLevelFromUUID(
 		    			this.currentReadabilityPreset.uuid,{}, 
-	    	    		function(readabilityPreset) {
-    	    	    		this.showWriterLimitsForPreset();
-    	    	    	});
+		    			updateDisplayFn);
     			}
     		});
     	}else {
     		this.updateCourseLevelFromUUID(
     			this.currentReadabilityPreset.uuid,{}, 
-	    		function(readabilityPreset) {
-    	    		this.showWriterLimitsForPreset();
-    	    	}
+    			updateDisplayFn
 			);
     	}
     },
@@ -616,6 +656,11 @@ Ext.define('eXe.controller.Readability', {
     	var limitSubPanel = this.getWriterPanelLimitSubPanel();
     	limitSubPanel.removeAll();
     	
+    	this.getWriterPanelDecodableSubpanel().setHidden(
+			preset.type !== "decodable");
+		this.getWriterPanelLimitSubPanel().setHidden(
+			preset.type === "decodable");
+    	
     	if(preset.type !== "decodable") {
     		for(var limitId in preset.levelLimits) {
         		limitSubPanel.add({
@@ -626,25 +671,26 @@ Ext.define('eXe.controller.Readability', {
         		});
         	}
     	}else {
-    		limitSubPanel.add([{
-    			xtype: "panel",
-    			itemId: "writer_limit_decodable_words",
-    			title: _("Decodable Words")
-    		},
-    		{
-    			xtype: "panel",
-    			itemId: "writer_limit_nondecodable_words",
-    			title: _("Undecodable Words")
-    		}]);
+    		
     	}
     },
 
     /**
      * Get info about this UUID from server; update our currentReadabilityPreset
      * 
+     * @param {String} presetUUID The Unique ID for this preset.  If undefined or null
+     * then run the successFn immediately, with no preset values
+     * @param {Object} options 
+     * @param {function} successFn success callback function
+     * @param {function} failFn failure callback function
      */
     updateCourseLevelFromUUID: function(presetUUID, options, successFn, failFn) {
     	//Load the preset from the server
+    	if(!presetUUID) {
+    		this._runOptionalCallback(successFn, this, [null]);
+    		return;
+    	}
+    	
     	var loadURL = '/readabilitypresets?action=get_preset_by_id&presetid='
     		+ presetUUID;
     	
@@ -766,6 +812,9 @@ Ext.define('eXe.controller.Readability', {
     		}
     		
     		allText += pgText;
+    		if(pgText.length > 0) {
+    			allText += ".";
+    		}
     	}
     	
     	var allTextHelper = new ReadabilityHelper(allText);
@@ -790,10 +839,61 @@ Ext.define('eXe.controller.Readability', {
     	return result;
     },
     
-    updateWriterPanelDisplay: function(readabilityStats) {
-    	var presetLimits = this.currentReadabilityPreset;
-    	var writerLimitPanel = this.getWriterPanelLimitSubPanel();
+    /**
+     * Make a span element that is used to show the frequency counts 
+     * for a decodable or non decodable word
+     * 
+     * @param word {String} the word e.g. cat
+     * @param countAll {Number} count for whole course
+     * @param countPg {Number} count for current page
+     * @returns {String} html formatted 
+     */
+    _mkWordCountSpan: function(word, countAll, countPg) {
+    	var htmlVal = " <span class='exe-readability-word-count'>"
+    		+ countPg + "/" + countAll + "</span>";
+    	return htmlVal;
+    },
+    
+    /**
+     * Makes an array in which the 
+     */
+    _mkWordFrequencyArr: function(wordArr, wordDictBook, wordDictPage) {
+    	var result = [];
+    	for(var i = 0; i < wordArr.length; i++) {
+    		result.push({
+    			word: wordArr[i],
+    			bookCount: wordDictBook[wordArr[i]] || 0,
+    			pageCount: wordDictPage[wordArr[i]] || 0
+    		});
+    	}
+    	return result;
+    },
+    
+    /**
+     * 
+     * @param {Array} wordArr Array of words from _mkWordFrequencyArr
+     * @param {String} sortKey "word", "bookCount" or "pageCount"
+     * @param {Number} sortDir 1 for asc, -1 for desc
+     */
+    _sortWordFrequencyArr: function(wordArr, sortKey, sortDir) {
+    	wordArr.sort(function(item1, item2) {
+    		if(sortKey === "word") {
+    			return item1.word.localeCompare(item2.word) * sortDir;
+    		}else {
+				return (item1[sortKey] - item2[sortKey]) * sortDir;
+			}
+    	});
     	
+    	return wordArr;
+    },
+    
+    /**
+     * Get the readability stats object for the currently 
+     * selected page
+     * 
+     * @param {Object} readability stats with pages array
+     */
+    _getSelectedPageStats: function(readabilityStats) {
     	//find out what page is selected
     	var outlineTreePanel = eXe.app.getController("Outline").getOutlineTreePanel();
 	    var selectedPg = outlineTreePanel.getSelectionModel().getSelection();
@@ -806,10 +906,29 @@ Ext.define('eXe.controller.Readability', {
 	    var selectedPgStats = null;
 	    for(var i = 0; i < readabilityStats.pages.length; i++) {
 	    	if(readabilityStats.pages[i].id == selectedNodeid) {
-	    		selectedPgStats = readabilityStats.pages[i];
+	    		return readabilityStats.pages[i];
 	    	}
 	    }
-	    
+    },
+    
+    /**
+     * Update the writer panel display
+     * 
+     * @param {Object} readabilityStats object for the course/by page 
+     */
+    updateWriterPanelDisplay: function(readabilityStats) {
+    	if(readabilityStats) {
+    		this.currentReadabilityStats = readabilityStats;
+    	}else {
+    		readabilityStats = this.currentReadabilityStats;
+    	}
+    	
+    	var presetLimits = this.currentReadabilityPreset;
+    	var writerLimitPanel = this.getWriterPanelLimitSubPanel();
+    	
+	    //selectedPgStats
+	    var selectedPgStats = this._getSelectedPageStats(readabilityStats);
+    	
     	for(limitParamId in presetLimits.levelLimits) {
     		if(presetLimits.levelLimits.hasOwnProperty(limitParamId)) {
     			var writerLimitId = "#writer_limit_" + limitParamId;
@@ -825,7 +944,79 @@ Ext.define('eXe.controller.Readability', {
     			}
     		}
     	}
+    	
+    	if(this.currentReadabilityPreset && this.currentReadabilityPreset.type === "decodable") {
+    		this.updateWriterPanelDisplayDecodable(readabilityStats, selectedPgStats);
+    	}
     },
+    
+    updateWriterPanelDisplayDecodable: function(readabilityStats, selectedPgStats) {
+    	if(!readabilityStats) {
+    		readabilityStats = this.currentReadabilityStats;
+    		selectedPgStats = this._getSelectedPageStats(readabilityStats);
+    	}
+    	
+    	var decodableSubPanel = this.getWriterPanelDecodableWords();
+		decodableSubPanel.removeAll();
+		var decodableWordList = this.currentReadabilityPreset.decodableInfo.words;
+		var wordDictAll = readabilityStats.wholeCourse.unique_words_dict;
+		var wordDictPg = selectedPgStats.unique_words_dict;
+		
+		var decodableWordArr = this._mkWordFrequencyArr(
+			decodableWordList, wordDictAll, wordDictPg);
+		var decodableWordDict = {};
+		
+		decodableWordArr = this._sortWordFrequencyArr(decodableWordArr, 
+				this.writerPanelDecodableSortKey, 
+				this.writerPanelDecodableSortOrder);
+		
+    	for(var j = 0; j < decodableWordArr.length; j++) {
+    		var curWord = decodableWordArr[j].word;
+    		var countSpan = this._mkWordCountSpan(curWord, 
+				decodableWordArr[j].bookCount, 
+				decodableWordArr[j].pageCount);
+    		
+    		decodableSubPanel.add({
+    			xtype: "label",
+    			html: curWord + " " + countSpan,
+    			cls: "exe-readability-decodableword",
+    			padding: 5
+    		});
+    		decodableWordDict[curWord] = 1;
+    	}
+    	
+    	var undecodableWords = [];
+    	for(currentWord in readabilityStats.wholeCourse.unique_words_dict) {
+    		if(!decodableWordDict[currentWord]) {
+    			undecodableWords.push(currentWord);
+    		}
+    	}
+
+    	var undecodableWordArr = this._mkWordFrequencyArr(
+    			undecodableWords, wordDictAll, wordDictPg);
+    	
+    	undecodableWordArr = this._sortWordFrequencyArr(undecodableWordArr, 
+				this.writerPanelDecodableSortKey, 
+				this.writerPanelDecodableSortOrder);
+    	
+    	var undecodableSubpanel = this.getWriterPanelUndecodableWords();
+    	undecodableSubpanel.removeAll();
+    	
+    	for(var k = 0; k < undecodableWords.length; k++) {
+    		var curUnWord = undecodableWordArr[k].word;
+    		var unWordSpan = this._mkWordCountSpan(curUnWord, 
+				undecodableWordArr[k].bookCount, 
+				undecodableWordArr[k].pageCount);
+
+    		undecodableSubpanel.add({
+    			xtype: "label",
+    			html: curUnWord + " " + unWordSpan,
+    			cls: "exe-readability-decodableword",
+    			padding: 5
+    		});
+    	}
+    },
+    
     
     /**
      * Port of decodable word checker
@@ -878,6 +1069,12 @@ Ext.define('eXe.controller.Readability', {
 				}
     		});
     	}
+    },
+    
+    handleClickWriterPanelDecodableSortOrder: function(container, button, pressed) {
+    	this.writerPanelDecodableSortKey = button.readabilitySortKey;
+    	this.writerPanelDecodableSortOrder = button.readabilitySortOrder;
+    	this.updateWriterPanelDisplayDecodable();
     },
     
     handleClickSuggestedDecodableWord: function(evt) {
