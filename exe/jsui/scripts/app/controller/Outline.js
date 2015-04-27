@@ -278,9 +278,12 @@ Ext.define('eXe.controller.Outline', {
     },
     
     disableButtons: function() {
+    	/*  Temp branch: disable this: on slow-ish win machines this
+    	 * can lead to the button not coming back.
     	this.getOutlineAddNodeBtn().disable();
     	this.getOutlineDelNodeBtn().disable();
     	this.getOutlineRenNodeBtn().disable();
+    	*/
     },
 
     reload: function() {
