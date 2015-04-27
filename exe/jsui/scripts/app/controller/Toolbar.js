@@ -1251,18 +1251,31 @@ Translation software.')
                    });
                }
                
+               var categoryNameArr = [];
                for(categoryName in deviceItemsByCategory) {
-                   ideviceTabPanel.add({
-                       title : categoryName,
+            	   categoryNameArr.push(categoryName);
+               }
+               
+               var textMediaTabNum = 0;
+               for(var j = 0; j < categoryNameArr.length; j++) {
+            	   ideviceTabPanel.add({
+                       title : categoryNameArr[j],
                        xtype : "panel",
                        layout : {
                            type : "vbox",
                            align : "sretch"
                        },
-                       items: deviceItemsByCategory[categoryName]
+                       items: deviceItemsByCategory[categoryNameArr[j]]
                    });
+            	   
+            	   if(categoryNameArr[j] === _("Text/Media")) {
+            		   textMediaTabNum = j;
+            	   }
                }
-               ideviceTabPanel.setActiveTab(0);
+               
+               
+               ideviceTabPanel.setActiveTab(textMediaTabNum);
+               
            }
        });
    },

@@ -378,13 +378,6 @@ Ext.define('eXe.view.ui.eXeToolbar', {
                                 text: _('iDevice Editor')
                             },
                             {
-                                xtype: 'accesskey_menuitem',
-                                itemId: 'tools_readability_boundaries',
-                                accesskey: 'b',
-                                text: _('Readability'),
-                                icon: '/images/readability.png'
-                            },
-                            {
                             	xtype: 'accesskey_menuitem',
                             	itemId: 'tools_readability_linguist',
                             	accesskey : 'l',
